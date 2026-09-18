@@ -1,0 +1,31 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f3eee4;
+  --color-ink: #1c1915;
+  --color-muted: #5e574c;
+  --color-line: #d8cfc0;
+  --color-forest: #1f5c45;
+  --color-apply: #1b7a4e;
+  --color-maybe: #b7791f;
+  --color-skip: #9b2c2c;
+}
+
+html,
+body {
+  background: var(--color-paper);
+  color: var(--color-ink);
+}
+
+body {
+  font-family: var(--font-sans), "Source Sans 3", sans-serif;
+  min-height: 100vh;
+}
+
+h1,
+h2,
+h3,
+.font-display {
+  font-family: var(--font-display), "Fraunces", serif;
+  font-optical-sizing: auto;
+}

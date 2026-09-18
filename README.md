@@ -73,9 +73,24 @@ POST   /api/voice/action
 
 All responses use a consistent `{ data, error }` envelope. The shared analysis contract lives in `packages/shared/types`.
 
+## Run locally
+
+```bash
+npm install
+copy .env.example .env
+npm run dev
+```
+
+- Web: http://localhost:3000
+- API health: http://localhost:4000/api/health
+
+The decision engine runs without Claude or Voxide keys. Add `ANTHROPIC_API_KEY` only if you want LLM wording on top of the structured decision. Voice currently uses text + quick actions until Voxide is configured.
+
+`npm test` runs requirement-matching and APPLY / MAYBE / SKIP cases.
+
 ## Project status
 
-**v0.1 — MVP in progress.** Built for the STARK Official Hackathon 2026 (September 9 – October 2, 2026).
+**v0.1 — first vertical slice.** Built for the STARK Official Hackathon 2026 (September 9 – October 2, 2026).
 
 | Phase | Focus |
 |---|---|
