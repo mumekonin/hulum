@@ -6,6 +6,8 @@
 
 This is the user-facing journey HULUM must keep intact. It is a decision product, not a chatbot and not an opportunity directory.
 
+Related: `docs/product/problem.md`, `docs/product/personas.md`.
+
 ## Core journey
 
 ```text

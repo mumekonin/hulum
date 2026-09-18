@@ -177,26 +177,26 @@ hulum/
 
 ## Problem validation
 
-- [ ] **P0** Document the opportunity-discovery problem.
-- [ ] **P0** Document the opportunity-decision problem.
-- [ ] **P0** Document why users waste time applying to opportunities they are unlikely to qualify for.
-- [ ] **P0** Document uncertainty around eligibility requirements.
-- [ ] **P0** Document readiness gaps after a user finds an opportunity.
-- [ ] **P0** Document relevant Ethiopian user context.
-- [ ] **P1** Define target user personas.
-- [ ] **P1** Define the exact product gap HULUM addresses.
+- [x] **P0** Document the opportunity-discovery problem.
+- [x] **P0** Document the opportunity-decision problem.
+- [x] **P0** Document why users waste time applying to opportunities they are unlikely to qualify for.
+- [x] **P0** Document uncertainty around eligibility requirements.
+- [x] **P0** Document readiness gaps after a user finds an opportunity.
+- [x] **P0** Document relevant Ethiopian user context.
+- [x] **P1** Define target user personas.
+- [x] **P1** Define the exact product gap HULUM addresses.
 
 ## Research questions
 
-- [ ] Barriers to applying for eligible opportunities among Ethiopian students.
-- [ ] Causes of opportunity application failure among African youth.
-- [ ] Responsible AI eligibility uncertainty.
-- [ ] Opportunity matching and decision-support systems.
-- [ ] Voice-first design for non-English speakers.
-- [ ] Multilingual interaction for English/Amharic/Afaan Oromo users.
-- [ ] Readiness support for scholarship/internship/job applications.
-- [ ] Trust and verification of opportunity requirements.
-- [ ] Human oversight when AI assists eligibility decisions.
+- [-] Barriers to applying for eligible opportunities among Ethiopian students.
+- [-] Causes of opportunity application failure among African youth.
+- [-] Responsible AI eligibility uncertainty.
+- [-] Opportunity matching and decision-support systems.
+- [-] Voice-first design for non-English speakers.
+- [-] Multilingual interaction for English/Amharic/Afaan Oromo users.
+- [-] Readiness support for scholarship/internship/job applications.
+- [-] Trust and verification of opportunity requirements.
+- [-] Human oversight when AI assists eligibility decisions.
 
 ---
 
@@ -1044,7 +1044,7 @@ Never manufacture commits, dates, research activity, or progress.
 
 - [x] Repository foundation.
 - [x] Team workflow.
-- [-] Product/problem documentation.
+- [x] Product/problem documentation.
 - [ ] ScholarXIV setup.
 - [ ] Competitive research.
 - [-] Architecture confirmation.

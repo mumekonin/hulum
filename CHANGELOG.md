@@ -2,6 +2,19 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Kidist / Phase 1 product definition
+
+### Added
+- `docs/product/problem.md` — discovery vs decision, wasted applications, uncertainty, readiness, Ethiopian context, product gap.
+- `docs/product/personas.md` — student, professional, guest, demo persona Abeba Tesfaye.
+- `docs/product/research-questions.md` — Phase 1 questions with hypotheses; no fabricated papers.
+
+### Why
+`task.md` Phase 1 is Kidist P0 before ScholarXIV (Phase 2) and further UX polish.
+
+### Decision
+Working hypotheses are labeled as such. ScholarXIV evidence is explicitly deferred.
+
 ## 2026-09-18 — Kidist / Phase 4 product UX
 
 ### Added
