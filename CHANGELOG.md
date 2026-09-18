@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Phase 3 competitive research
+
+### Added
+- `docs/research/competitive-analysis.md` — EthioScholarship, Fastweb, Bold.org, Scholly, Scholar Africa, and related channels, checked on public web.
+- Unverified v0.1 spec names left off the judge-facing list.
+- Voice-decision competitors: none verified this pass (not claimed as proof of uniqueness).
+
+### Why
+Phase 3 is P0. Differentiation is decision + readiness + voice + local language, not “AI matching.”
+
 ## 2026-09-18 — Kidist / Phase 2 ScholarXIV ideation space
 
 ### Added

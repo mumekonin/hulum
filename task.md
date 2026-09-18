@@ -245,15 +245,15 @@ Final MVP
 
 # 7. Phase 3 — Competitive Research
 
-- [ ] **P0** Research Ethiopian opportunity platforms.
-- [ ] **P0** Research global scholarship/opportunity platforms.
-- [ ] **P1** Research AI opportunity-matching products.
-- [ ] **P1** Research voice-enabled opportunity systems.
-- [ ] **P1** Research African opportunity platforms.
-- [ ] **P1** Record competitor capabilities.
-- [ ] **P1** Record relevant gaps/differences.
-- [ ] **P1** Record features explicitly excluded from HULUM.
-- [ ] **P1** Save findings to `docs/research/competitive-analysis.md`.
+- [x] **P0** Research Ethiopian opportunity platforms.
+- [x] **P0** Research global scholarship/opportunity platforms.
+- [x] **P1** Research AI opportunity-matching products.
+- [-] **P1** Research voice-enabled opportunity systems.
+- [x] **P1** Research African opportunity platforms.
+- [x] **P1** Record competitor capabilities.
+- [x] **P1** Record relevant gaps/differences.
+- [x] **P1** Record features explicitly excluded from HULUM.
+- [x] **P1** Save findings to `docs/research/competitive-analysis.md`.
 
 ## Positioning to preserve
 
@@ -1046,7 +1046,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Team workflow.
 - [x] Product/problem documentation.
 - [x] ScholarXIV setup.
-- [ ] Competitive research.
+- [x] Competitive research.
 - [-] Architecture confirmation.
 
 ## Days 3–4 — Data + Profile
