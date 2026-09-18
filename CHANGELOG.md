@@ -2,6 +2,18 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Architecture confirmation
+
+### Added
+- `docs/architecture/overview.md` — runtime as built (Next.js, Express, JSON store, engine).
+- ADRs: file store before Supabase; engine as source of truth; text voice fallback until Voxide.
+
+### Why
+Days 1–2 required architecture confirmation before treating later phases as unblocked.
+
+### Decision
+Do not pretend Supabase or Voxide are live. Shared contracts stay in `packages/shared`.
+
 ## 2026-09-18 — Phase 3 competitive research
 
 ### Added

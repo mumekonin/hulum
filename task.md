@@ -999,19 +999,19 @@ Interest: AI
 
 # 30. Phase 26 — Documentation
 
-- [ ] **P0** README.
-- [ ] **P0** Product overview.
-- [ ] **P0** Architecture overview.
-- [ ] **P0** Setup guide.
-- [ ] **P0** Environment variables.
-- [ ] **P0** API contracts.
-- [ ] **P0** Database model.
-- [ ] **P0** Decision-engine documentation.
-- [ ] **P0** AI architecture.
-- [ ] **P0** Voice architecture.
-- [ ] **P0** Research/competitive analysis.
-- [ ] **P0** ScholarXIV ideation evidence.
-- [ ] **P1** Architecture decision records.
+- [x] **P0** README.
+- [x] **P0** Product overview.
+- [x] **P0** Architecture overview.
+- [x] **P0** Setup guide.
+- [-] **P0** Environment variables.
+- [-] **P0** API contracts.
+- [x] **P0** Database model.
+- [x] **P0** Decision-engine documentation.
+- [x] **P0** AI architecture.
+- [x] **P0** Voice architecture.
+- [x] **P0** Research/competitive analysis.
+- [x] **P0** ScholarXIV ideation evidence.
+- [x] **P1** Architecture decision records.
 - [ ] **P1** Demo instructions.
 - [ ] **P1** Deployment guide.
 - [ ] **P1** STARK evidence checklist.
@@ -1047,32 +1047,32 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Product/problem documentation.
 - [x] ScholarXIV setup.
 - [x] Competitive research.
-- [-] Architecture confirmation.
+- [x] Architecture confirmation.
 
 ## Days 3–4 — Data + Profile
 
-- [ ] Database schema.
-- [ ] Shared contracts.
-- [ ] Profile API.
-- [ ] Profile UI.
-- [ ] Opportunity schema.
-- [ ] Demo opportunity seeds.
+- [x] Database schema.
+- [x] Shared contracts.
+- [x] Profile API.
+- [x] Profile UI.
+- [x] Opportunity schema.
+- [x] Demo opportunity seeds.
 
 ## Days 5–7 — Decision Engine
 
-- [ ] Requirement model.
-- [ ] Requirement matching.
-- [ ] APPLY/MAYBE/SKIP.
-- [ ] Analysis API.
-- [ ] Analysis UI.
-- [ ] Unit tests.
+- [x] Requirement model.
+- [x] Requirement matching.
+- [x] APPLY/MAYBE/SKIP.
+- [x] Analysis API.
+- [x] Analysis UI.
+- [x] Unit tests.
 
 ## Days 8–9 — Readiness
 
-- [ ] Readiness schema.
-- [ ] Checklist generation.
-- [ ] Readiness UI.
-- [ ] Next-action behavior.
+- [x] Readiness schema.
+- [x] Checklist generation.
+- [x] Readiness UI.
+- [x] Next-action behavior.
 - [ ] Integration tests.
 
 ## Days 10–12 — Voice
@@ -1259,30 +1259,30 @@ However, STARK-required research and ideation documentation must be maintained t
 
 ## Gate 1 — Concept
 
-- [ ] Problem documented.
-- [ ] Research documented.
-- [ ] Alternatives documented.
-- [ ] Rejected ideas documented.
-- [ ] HULUM concept selected.
-- [ ] MVP scope defined.
+- [x] Problem documented.
+- [-] Research documented.
+- [x] Alternatives documented.
+- [x] Rejected ideas documented.
+- [x] HULUM concept selected.
+- [x] MVP scope defined.
 
 ## Gate 2 — Architecture
 
-- [ ] Architecture documented.
-- [ ] Database model documented.
-- [ ] Decision engine documented.
-- [ ] AI responsibility documented.
-- [ ] Voice integration approach documented.
-- [ ] Shared contracts documented.
+- [x] Architecture documented.
+- [x] Database model documented.
+- [x] Decision engine documented.
+- [x] AI responsibility documented.
+- [x] Voice integration approach documented.
+- [x] Shared contracts documented.
 
 ## Gate 3 — Vertical Slice
 
-- [ ] Profile works.
-- [ ] Opportunity works.
-- [ ] Requirement matching works.
-- [ ] APPLY/MAYBE/SKIP works.
-- [ ] Explanation works.
-- [ ] Readiness works.
+- [x] Profile works.
+- [x] Opportunity works.
+- [x] Requirement matching works.
+- [x] APPLY/MAYBE/SKIP works.
+- [x] Explanation works.
+- [x] Readiness works.
 
 ## Gate 4 — Voice Slice
 
