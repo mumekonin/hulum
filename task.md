@@ -120,18 +120,18 @@ Primary ownership:
 
 # 4. Phase 0 — Project Foundation
 
-- [ ] **P0** Confirm repository and GitHub workflow.
-- [ ] **P0** Add/verify `README.md`.
-- [ ] **P0** Add/verify `task.md`.
-- [ ] **P0** Add/verify `team_assignments.md`.
-- [ ] **P0** Add/verify `git-workflow.md`.
-- [ ] **P0** Add/verify `CHANGELOG.md`.
-- [ ] **P0** Add `.gitignore`.
-- [ ] **P0** Add `.env.example`.
-- [ ] **P0** Configure package manager and scripts.
-- [ ] **P0** Initialize frontend.
-- [ ] **P0** Initialize backend.
-- [ ] **P0** Establish shared types/constants.
+- [x] **P0** Confirm repository and GitHub workflow.
+- [x] **P0** Add/verify `README.md`.
+- [x] **P0** Add/verify `task.md`.
+- [x] **P0** Add/verify `team_assignments.md`.
+- [x] **P0** Add/verify `git-workflow.md`.
+- [x] **P0** Add/verify `CHANGELOG.md`.
+- [x] **P0** Add `.gitignore`.
+- [x] **P0** Add `.env.example`.
+- [x] **P0** Configure package manager and scripts.
+- [x] **P0** Initialize frontend.
+- [-] **P0** Initialize backend.
+- [x] **P0** Establish shared types/constants.
 - [ ] **P1** Configure linting.
 - [ ] **P1** Configure formatting.
 - [ ] **P1** Configure testing.
@@ -311,20 +311,20 @@ Official opportunity source
 
 ## Core screens
 
-- [ ] **P0** Landing/home.
-- [ ] **P0** Profile creation/edit.
-- [ ] **P0** Opportunity list.
-- [ ] **P0** Opportunity details.
-- [ ] **P0** Analyze opportunity.
-- [ ] **P0** APPLY/MAYBE/SKIP result.
-- [ ] **P0** Explanation view.
-- [ ] **P0** Requirement status view.
-- [ ] **P0** Readiness checklist.
-- [ ] **P0** Voice interaction.
-- [ ] **P0** Official source/application link.
-- [ ] **P1** Filters.
+- [x] **P0** Landing/home.
+- [x] **P0** Profile creation/edit.
+- [x] **P0** Opportunity list.
+- [x] **P0** Opportunity details.
+- [x] **P0** Analyze opportunity.
+- [x] **P0** APPLY/MAYBE/SKIP result.
+- [x] **P0** Explanation view.
+- [x] **P0** Requirement status view.
+- [x] **P0** Readiness checklist.
+- [-] **P0** Voice interaction.
+- [x] **P0** Official source/application link.
+- [x] **P1** Filters.
 - [ ] **P1** Search.
-- [ ] **P1** Error/failure states.
+- [-] **P1** Error/failure states.
 - [ ] **P1** Loading/empty states.
 - [ ] **P1** Accessibility improvements.
 
@@ -747,16 +747,16 @@ Analysis
 
 ## User experience
 
-- [ ] **P0** Landing/home.
-- [ ] **P0** Profile setup.
-- [ ] **P0** Opportunity list.
-- [ ] **P0** Opportunity detail.
-- [ ] **P0** Analyze action.
-- [ ] **P0** Decision result.
-- [ ] **P0** Requirement breakdown.
-- [ ] **P0** Readiness checklist.
-- [ ] **P0** Voice interaction.
-- [ ] **P0** Official source/application action.
+- [x] **P0** Landing/home.
+- [x] **P0** Profile setup.
+- [x] **P0** Opportunity list.
+- [x] **P0** Opportunity detail.
+- [x] **P0** Analyze action.
+- [x] **P0** Decision result.
+- [x] **P0** Requirement breakdown.
+- [x] **P0** Readiness checklist.
+- [-] **P0** Voice interaction.
+- [x] **P0** Official source/application action.
 - [ ] **P1** Search/filter.
 - [ ] **P1** Error states.
 - [ ] **P1** Network fallback.
@@ -1042,12 +1042,12 @@ Never manufacture commits, dates, research activity, or progress.
 
 ## Days 1–2 — Foundation + Research
 
-- [ ] Repository foundation.
-- [ ] Team workflow.
-- [ ] Product/problem documentation.
+- [x] Repository foundation.
+- [x] Team workflow.
+- [-] Product/problem documentation.
 - [ ] ScholarXIV setup.
 - [ ] Competitive research.
-- [ ] Architecture confirmation.
+- [-] Architecture confirmation.
 
 ## Days 3–4 — Data + Profile
 
