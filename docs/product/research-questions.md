@@ -19,4 +19,4 @@ Do not treat the working hypotheses below as published findings. Do not add fake
 | How should requirement sources be trusted? | Verification UI | Official URL + last verified + disclaimer | Implemented on opportunity records |
 | Where must humans stay in the loop? | Responsible AI | User confirms profile facts; official org remains eligibility authority | Product rule |
 
-Phase 2 will create `docs/research/` and attach real ScholarXIV queries, papers, and rejected alternatives. Until then, HULUM copy and engine behavior should follow the implemented rules, not unverified academic claims.
+Phase 2 research space is `docs/research/`. Paper-backed answers are still empty (`docs/research/scholarxiv.md`). Product copy should follow implemented rules, not unverified academic claims.

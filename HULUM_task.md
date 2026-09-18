@@ -204,18 +204,18 @@ hulum/
 
 ScholarXIV is part of the STARK ideation requirement.
 
-- [ ] **P0** Create ScholarXIV ideation/research space.
-- [ ] **P0** Document the original problem.
-- [ ] **P0** Add relevant research papers.
-- [ ] **P0** Record research findings.
-- [ ] **P0** Document how the HULUM idea developed.
-- [ ] **P0** Document alternative ideas considered.
-- [ ] **P0** Document rejected ideas.
-- [ ] **P0** Explain why HULUM was selected.
+- [x] **P0** Create ScholarXIV ideation/research space.
+- [x] **P0** Document the original problem.
+- [!] **P0** Add relevant research papers.
+- [!] **P0** Record research findings.
+- [x] **P0** Document how the HULUM idea developed.
+- [x] **P0** Document alternative ideas considered.
+- [x] **P0** Document rejected ideas.
+- [x] **P0** Explain why HULUM was selected.
 - [ ] **P1** Explore ScholarXIV MCP integration.
 - [ ] **P1** Explore ScholarXIV Papers API.
-- [ ] **P1** Link research findings to product decisions.
-- [ ] **P1** Preserve research evidence in repository documentation.
+- [-] **P1** Link research findings to product decisions.
+- [x] **P1** Preserve research evidence in repository documentation.
 
 ## Required ideation narrative
 
@@ -1045,7 +1045,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Repository foundation.
 - [x] Team workflow.
 - [x] Product/problem documentation.
-- [ ] ScholarXIV setup.
+- [x] ScholarXIV setup.
 - [ ] Competitive research.
 - [-] Architecture confirmation.
 

@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Kidist / Phase 2 ScholarXIV ideation space
+
+### Added
+- `docs/research/` — canonical ideation/research folder.
+- `docs/research/ideation.md` — alternatives, rejected ideas, why HULUM was selected.
+- `docs/research/scholarxiv.md` — query list and empty paper table (no fabricated citations).
+
+### Why
+STARK ideation needs a real trail. Papers and MCP/API calls have not been run yet and are marked blocked.
+
 ## 2026-09-18 — Kidist / Phase 1 product definition
 
 ### Added
