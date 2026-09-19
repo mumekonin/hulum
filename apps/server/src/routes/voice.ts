@@ -174,7 +174,7 @@ voiceRouter.post("/action", async (req, res) => {
       });
       return;
     }
-    if (intent.intent === "SHOW_GAPS") {
+    if (intent.intent === "SHOW_MISSING_REQUIREMENTS") {
       const relatedOpportunity =
         opportunity ?? store.opportunities.find((item) => item.id === analysis.opportunityId);
       const relatedProfile = store.profiles.find((item) => item.userId === analysis.userId);
@@ -211,7 +211,7 @@ voiceRouter.post("/action", async (req, res) => {
     }
   }
 
-  if (["EXPLAIN_DECISION", "SHOW_GAPS", "SHOW_READINESS"].includes(intent.intent)) {
+  if (["EXPLAIN_DECISION", "SHOW_MISSING_REQUIREMENTS", "SHOW_READINESS"].includes(intent.intent)) {
     ok(res, {
       intent: intent.intent,
       reply: "Analyze an opportunity first, then I can explain the decision, gaps, or readiness plan.",
