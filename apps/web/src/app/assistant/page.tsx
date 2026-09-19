@@ -3,11 +3,12 @@
 import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import type { VoiceActionResponse } from "@hulum/shared";
+import type { LanguageCode, Profile, VoiceActionResponse } from "@hulum/shared";
 import { Notice } from "@/components/Notice";
 import { StatusPanel } from "@/components/StatusPanel";
 import { api, userFacingError } from "@/lib/api";
-import { getUserId } from "@/lib/storage";
+import { LANGUAGE_OPTIONS } from "@/lib/languages";
+import { getLanguage, getUserId, setLanguage } from "@/lib/storage";
 
 const quickActions = [
   "Show me internships",
@@ -45,6 +46,7 @@ function AssistantInner() {
   const [sessionOpportunityId, setSessionOpportunityId] = useState<string | undefined>();
   const [sessionAnalysisId, setSessionAnalysisId] = useState<string | undefined>();
   const [voiceSession, setVoiceSession] = useState<{ id: string; provider: string } | null>(null);
+  const [language, setLanguageState] = useState<LanguageCode>(getLanguage);
   const opportunityId = sessionOpportunityId ?? search.get("opportunityId") ?? undefined;
   const analysisId = sessionAnalysisId ?? search.get("analysisId") ?? undefined;
   const needsProfile = Boolean(error?.toLowerCase().includes("profile"));
@@ -53,9 +55,25 @@ function AssistantInner() {
     const userId = getUserId();
     if (!userId) return;
     let cancelled = false;
+    void api<Profile>(`/api/profile/${userId}`)
+      .then((profile) => {
+        if (!cancelled) chooseLanguage(profile.preferredLanguage, false);
+      })
+      .catch(() => {
+        // Keep the stored or default language.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  useEffect(() => {
+    const userId = getUserId();
+    if (!userId) return;
+    let cancelled = false;
     void api<{ id: string; provider: string }>("/api/voice/session", {
       method: "POST",
-      body: JSON.stringify({ userId, language: "en" }),
+      body: JSON.stringify({ userId, language }),
     })
       .then((session) => {
         if (!cancelled) setVoiceSession(session);
@@ -66,7 +84,21 @@ function AssistantInner() {
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [language]);
+
+  function chooseLanguage(next: LanguageCode, persistProfile: boolean) {
+    setLanguageState(next);
+    setLanguage(next);
+    if (!persistProfile) return;
+    const userId = getUserId();
+    if (!userId) return;
+    void api<Profile>(`/api/profile/${userId}`, {
+      method: "PATCH",
+      body: JSON.stringify({ preferredLanguage: next }),
+    }).catch(() => {
+      // Local selection still applies if profile patch fails.
+    });
+  }
 
   const contextLabel = useMemo(() => {
     const sessionNote = voiceSession
@@ -95,7 +127,7 @@ function AssistantInner() {
     try {
       const response = await api<VoiceActionResponse>("/api/voice/action", {
         method: "POST",
-        body: JSON.stringify({ userId, text: value, opportunityId, analysisId, language: "en" }),
+        body: JSON.stringify({ userId, text: value, opportunityId, analysisId, language }),
       });
       if (response.opportunity?.id) setSessionOpportunityId(response.opportunity.id);
       if (response.analysis?.id) setSessionAnalysisId(response.analysis.id);
@@ -117,7 +149,7 @@ function AssistantInner() {
   }
 
   return (
-    <section className="max-w-2xl">
+    <section className="max-w-2xl" lang={language}>
       <h1 className="font-display text-4xl">Ask HULUM</h1>
       <p className="mt-3 text-muted">
         Voice must perform real product actions. v0.1 ships with text and quick actions so a missing Voxide
@@ -126,6 +158,26 @@ function AssistantInner() {
       <div className="mt-6">
         <Notice>{contextLabel}</Notice>
       </div>
+      <fieldset className="mt-6 border-0 p-0">
+        <legend className="text-sm font-medium">Language</legend>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {LANGUAGE_OPTIONS.map((option) => (
+            <label key={option.code} className="inline-flex min-h-11 items-center gap-2 border border-line px-3 py-2 text-sm">
+              <input
+                type="radio"
+                name="assistant-language"
+                value={option.code}
+                checked={language === option.code}
+                onChange={() => chooseLanguage(option.code, true)}
+              />
+              {option.label}
+            </label>
+          ))}
+        </div>
+        <p className="mt-2 text-sm text-muted">
+          English is the stable v0.1 path. Amharic and Afaan Oromo are stored for Voxide; they do not enable live speech yet.
+        </p>
+      </fieldset>
       {error ? (
         <StatusPanel
           variant="error"

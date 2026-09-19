@@ -2,9 +2,10 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { EDUCATION_LABELS, EDUCATION_LEVELS, type EducationLevel, type Profile } from "@hulum/shared";
+import { EDUCATION_LABELS, EDUCATION_LEVELS, type EducationLevel, type LanguageCode, type Profile } from "@hulum/shared";
 import { api, isNotFound, userFacingError } from "@/lib/api";
-import { getUserId, setUserId } from "@/lib/storage";
+import { LANGUAGE_OPTIONS } from "@/lib/languages";
+import { getUserId, setLanguage, setUserId } from "@/lib/storage";
 import { Notice } from "@/components/Notice";
 import { StatusPanel } from "@/components/StatusPanel";
 
@@ -21,6 +22,7 @@ const emptyForm = {
   yearsExperience: 0,
   interests: "",
   documentsHeld: "",
+  preferredLanguage: "en" as LanguageCode,
 };
 
 function splitList(value: string): string[] {
@@ -63,6 +65,7 @@ export default function ProfilePage() {
           yearsExperience: profile.yearsExperience,
           interests: profile.interests.join(", "),
           documentsHeld: profile.documentsHeld.join(", "),
+          preferredLanguage: profile.preferredLanguage,
         });
         setBoot("ready");
       })
@@ -98,10 +101,11 @@ export default function ProfilePage() {
           yearsExperience: Number(form.yearsExperience),
           interests: splitList(form.interests),
           documentsHeld: splitList(form.documentsHeld),
-          preferredLanguage: "en",
+          preferredLanguage: form.preferredLanguage,
         }),
       });
       setUserId(profile.userId);
+      setLanguage(profile.preferredLanguage);
       setSaved(true);
       router.push("/opportunities");
     } catch (err) {
@@ -117,6 +121,7 @@ export default function ProfilePage() {
     try {
       const profile = await api<Profile>("/api/profile/demo", { method: "POST" });
       setUserId(profile.userId);
+      setLanguage(profile.preferredLanguage);
       router.push("/opportunities");
     } catch (err) {
       setError(userFacingError(err));
@@ -208,6 +213,20 @@ export default function ProfilePage() {
             <label className="grid gap-1 text-sm">
               Languages (comma separated)
               <input required value={form.languages} onChange={(e) => setForm({ ...form, languages: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+            </label>
+            <label className="grid gap-1 text-sm">
+              HULUM language
+              <select
+                value={form.preferredLanguage}
+                onChange={(e) => setForm({ ...form, preferredLanguage: e.target.value as LanguageCode })}
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              >
+                {LANGUAGE_OPTIONS.map((option) => (
+                  <option key={option.code} value={option.code}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
             </label>
             <label className="grid gap-1 text-sm">
               Skills

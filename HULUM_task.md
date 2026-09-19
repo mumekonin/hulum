@@ -617,10 +617,10 @@ Initial target:
 Actual support depends on Voxide capabilities and quality.
 
 - [ ] **P0** Verify Voxide supported languages.
-- [ ] **P0** Define language architecture.
-- [ ] **P0** Implement language selection.
-- [ ] **P0** Test one language end-to-end.
-- [ ] **P0** Ensure core voice interaction works.
+- [x] **P0** Define language architecture.
+- [x] **P0** Implement language selection.
+- [x] **P0** Test one language end-to-end.
+- [x] **P0** Ensure core voice interaction works.
 - [ ] **P1** Add second language.
 - [ ] **P1** Add third language if stable.
 - [ ] **P1** Test mixed-language input.
@@ -983,7 +983,7 @@ Interest: AI
 - [ ] **P0** Show missing/uncertain requirements.
 - [ ] **P0** Show readiness checklist.
 - [ ] **P0** Demonstrate voice.
-- [ ] **P0** Demonstrate English.
+- [x] **P0** Demonstrate English.
 - [ ] **P1** Demonstrate Amharic if stable.
 - [ ] **P0** Open official opportunity source.
 - [ ] **P0** Show responsible-AI notice.
@@ -1086,7 +1086,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Voice → gaps.
 - [x] Voice → filter by decision.
 - [x] Voice fallback.
-- [ ] First stable language end-to-end.
+- [x] First stable language end-to-end.
 
 ## Days 13–14 — AI + Multilingual
 
@@ -1149,8 +1149,8 @@ The HULUM MVP requires these capabilities to work together:
 - [ ] **P0** Missing/uncertain requirements.
 - [ ] **P0** Readiness checklist.
 - [ ] **P0** Voxide voice interaction.
-- [ ] **P0** At least one stable language end-to-end.
-- [ ] **P0** English support.
+- [x] **P0** At least one stable language end-to-end.
+- [x] **P0** English support.
 - [ ] **P0** Amharic support if Voxide quality is sufficient.
 - [ ] **P0** Official source/application link.
 - [ ] **P0** Responsible-AI notice.
