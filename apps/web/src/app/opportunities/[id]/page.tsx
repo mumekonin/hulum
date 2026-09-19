@@ -5,7 +5,8 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { TYPE_LABELS, type AnalysisDetail, type Opportunity } from "@hulum/shared";
 import { Notice } from "@/components/Notice";
-import { api } from "@/lib/api";
+import { StatusPanel } from "@/components/StatusPanel";
+import { api, isNotFound, userFacingError } from "@/lib/api";
 import { formatDeadline } from "@/lib/format";
 import { getUserId } from "@/lib/storage";
 
@@ -14,13 +15,32 @@ export default function OpportunityDetailPage() {
   const router = useRouter();
   const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [missing, setMissing] = useState(false);
   const [analyzing, setAnalyzing] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
+    setLoadError(null);
+    setMissing(false);
+    setOpportunity(null);
     void api<Opportunity>(`/api/opportunities/${params.id}`)
-      .then(setOpportunity)
-      .catch((err: Error) => setError(err.message));
-  }, [params.id]);
+      .then((data) => {
+        if (!cancelled) setOpportunity(data);
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        if (isNotFound(err)) {
+          setMissing(true);
+          return;
+        }
+        setLoadError(userFacingError(err));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [params.id, reloadKey]);
 
   async function analyze() {
     const userId = getUserId();
@@ -37,14 +57,46 @@ export default function OpportunityDetailPage() {
       });
       router.push(`/analysis/${analysis.id}`);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "We couldn't analyze this opportunity right now.");
+      setError(userFacingError(err) || "We couldn't analyze this opportunity right now.");
     } finally {
       setAnalyzing(false);
     }
   }
 
-  if (error && !opportunity) return <p className="text-skip">{error}</p>;
-  if (!opportunity) return <p>Loading opportunity…</p>;
+  if (loadError) {
+    return (
+      <StatusPanel
+        variant="error"
+        title="We couldn't load this opportunity"
+        primary={{ label: "Try again", onClick: () => setReloadKey((value) => value + 1) }}
+        secondary={{ label: "Back to opportunities", href: "/opportunities" }}
+      >
+        {loadError}
+      </StatusPanel>
+    );
+  }
+
+  if (missing) {
+    return (
+      <StatusPanel
+        variant="empty"
+        title="This opportunity is not in the current list"
+        primary={{ label: "Browse opportunities", href: "/opportunities" }}
+      >
+        It may have been removed from the stored records. Open the list and pick another sourced opportunity.
+      </StatusPanel>
+    );
+  }
+
+  if (!opportunity) {
+    return (
+      <StatusPanel variant="loading" title="Loading opportunity">
+        Fetching the official source, deadline, and structured requirements.
+      </StatusPanel>
+    );
+  }
+
+  const needsProfile = error?.toLowerCase().includes("profile");
 
   return (
     <article className="max-w-3xl">
@@ -93,7 +145,19 @@ export default function OpportunityDetailPage() {
           Official source
         </a>
       </div>
-      {error ? <p className="mt-4 text-skip">{error}</p> : null}
+      {error ? (
+        <StatusPanel
+          variant="error"
+          title="We couldn't analyze this opportunity right now"
+          primary={
+            needsProfile
+              ? { label: "Open profile", href: "/profile" }
+              : { label: "Try again", onClick: () => void analyze() }
+          }
+        >
+          {error} {needsProfile ? "Create or save a profile first." : "The decision engine did not finish. Try again."}
+        </StatusPanel>
+      ) : null}
       <div className="mt-6">
         <Notice>
           Always confirm eligibility and deadlines with the official organization.{" "}

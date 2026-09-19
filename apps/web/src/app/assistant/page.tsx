@@ -1,11 +1,11 @@
 "use client";
 
 import { FormEvent, Suspense, useMemo, useState } from "react";
-import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { VoiceActionResponse } from "@hulum/shared";
 import { Notice } from "@/components/Notice";
-import { api } from "@/lib/api";
+import { StatusPanel } from "@/components/StatusPanel";
+import { api, userFacingError } from "@/lib/api";
 import { getUserId } from "@/lib/storage";
 
 const quickActions = [
@@ -19,7 +19,13 @@ const quickActions = [
 
 export default function AssistantPage() {
   return (
-    <Suspense fallback={<p>Loading assistant…</p>}>
+    <Suspense
+      fallback={
+        <StatusPanel variant="loading" title="Loading assistant">
+          Preparing text and quick actions. Voice is not connected yet.
+        </StatusPanel>
+      }
+    >
       <AssistantInner />
     </Suspense>
   );
@@ -30,8 +36,11 @@ function AssistantInner() {
   const [text, setText] = useState("");
   const [messages, setMessages] = useState<Array<{ role: "user" | "hulum"; text: string }>>([]);
   const [error, setError] = useState<string | null>(null);
+  const [pending, setPending] = useState(false);
+  const [lastFailed, setLastFailed] = useState<string | null>(null);
   const opportunityId = search.get("opportunityId") ?? undefined;
   const analysisId = search.get("analysisId") ?? undefined;
+  const needsProfile = Boolean(error?.toLowerCase().includes("profile"));
 
   const contextLabel = useMemo(() => {
     if (analysisId) return "This conversation is attached to your latest analysis.";
@@ -39,14 +48,19 @@ function AssistantInner() {
     return "No analysis selected yet. You can still browse or filter opportunities by voice/text.";
   }, [analysisId, opportunityId]);
 
-  async function send(value: string) {
+  async function send(value: string, echo = true) {
     const userId = getUserId();
     if (!userId) {
       setError("Create a profile first so HULUM knows who you are.");
+      setLastFailed(value);
       return;
     }
     setError(null);
-    setMessages((current) => [...current, { role: "user", text: value }]);
+    setLastFailed(null);
+    if (echo) {
+      setMessages((current) => [...current, { role: "user", text: value }]);
+    }
+    setPending(true);
     try {
       const response = await api<VoiceActionResponse>("/api/voice/action", {
         method: "POST",
@@ -54,14 +68,17 @@ function AssistantInner() {
       });
       setMessages((current) => [...current, { role: "hulum", text: response.reply }]);
     } catch (err) {
-      setError(err instanceof Error ? err.message : "Voice action failed. Type your request instead.");
+      setLastFailed(value);
+      setError(userFacingError(err));
+    } finally {
+      setPending(false);
     }
   }
 
   function submit(event: FormEvent) {
     event.preventDefault();
     const value = text.trim();
-    if (!value) return;
+    if (!value || pending) return;
     setText("");
     void send(value);
   }
@@ -77,24 +94,58 @@ function AssistantInner() {
         <Notice>{contextLabel}</Notice>
       </div>
       {error ? (
-        <p className="mt-4 text-skip">
-          {error} {error.includes("profile") ? <Link href="/profile" className="underline">Open profile</Link> : null}
-        </p>
+        <StatusPanel
+          variant="error"
+          title={needsProfile ? "Profile needed" : "We couldn't complete that request"}
+          primary={
+            needsProfile
+              ? { label: "Open profile", href: "/profile" }
+              : lastFailed
+                ? { label: "Try again", onClick: () => void send(lastFailed, false) }
+                : undefined
+          }
+        >
+          {error}
+        </StatusPanel>
       ) : null}
       <div className="mt-6 flex flex-wrap gap-2">
         {quickActions.map((action) => (
-          <button key={action} type="button" onClick={() => void send(action)} className="border border-line px-3 py-2 text-sm">
+          <button
+            key={action}
+            type="button"
+            disabled={pending}
+            onClick={() => void send(action)}
+            className="border border-line px-3 py-2 text-sm disabled:opacity-60"
+          >
             {action}
           </button>
         ))}
+        <button
+          type="button"
+          disabled
+          className="border border-dashed border-line px-3 py-2 text-sm text-muted"
+          title="Voxide is not connected in v0.1"
+        >
+          Voice (not connected)
+        </button>
       </div>
       <div className="mt-6 min-h-48 space-y-3">
+        {messages.length === 0 && !pending && !error ? (
+          <StatusPanel variant="empty" title="No question yet" primary={{ label: "Show internships", onClick: () => void send("Show me internships") }}>
+            Type a request or use a quick action. Microphone input waits until Voxide is wired.
+          </StatusPanel>
+        ) : null}
         {messages.map((message, index) => (
           <p key={`${message.role}-${index}`} className={message.role === "hulum" ? "border border-line bg-white/70 p-4" : "text-muted"}>
             <span className="block text-xs uppercase tracking-wide">{message.role === "hulum" ? "HULUM" : "You"}</span>
             {message.text}
           </p>
         ))}
+        {pending ? (
+          <StatusPanel variant="loading" title="HULUM is responding">
+            Running the same product actions as the screens, not a free-form chatbot.
+          </StatusPanel>
+        ) : null}
       </div>
       <form onSubmit={submit} className="mt-6 flex gap-2">
         <input
@@ -102,8 +153,11 @@ function AssistantInner() {
           onChange={(e) => setText(e.target.value)}
           placeholder="Should I apply for this?"
           className="flex-1 border border-line bg-white px-3 py-3"
+          disabled={pending}
         />
-        <button className="bg-ink px-5 py-3 text-paper">Send</button>
+        <button disabled={pending} className="bg-ink px-5 py-3 text-paper disabled:opacity-60">
+          {pending ? "Sending…" : "Send"}
+        </button>
       </form>
     </section>
   );

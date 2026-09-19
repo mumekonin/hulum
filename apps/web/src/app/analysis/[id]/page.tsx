@@ -8,18 +8,37 @@ import { DecisionBadge } from "@/components/DecisionBadge";
 import { Notice } from "@/components/Notice";
 import { ReadinessList } from "@/components/ReadinessList";
 import { RequirementList } from "@/components/RequirementList";
-import { api } from "@/lib/api";
+import { StatusPanel } from "@/components/StatusPanel";
+import { api, isNotFound, userFacingError } from "@/lib/api";
 
 export default function AnalysisPage() {
   const params = useParams<{ id: string }>();
   const [analysis, setAnalysis] = useState<AnalysisDetail | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [missing, setMissing] = useState(false);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
+    setError(null);
+    setMissing(false);
+    setAnalysis(null);
     void api<AnalysisDetail>(`/api/analyses/${params.id}`)
-      .then(setAnalysis)
-      .catch((err: Error) => setError(err.message));
-  }, [params.id]);
+      .then((data) => {
+        if (!cancelled) setAnalysis(data);
+      })
+      .catch((err: unknown) => {
+        if (cancelled) return;
+        if (isNotFound(err)) {
+          setMissing(true);
+          return;
+        }
+        setError(userFacingError(err));
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [params.id, reloadKey]);
 
   function replaceReadiness(item: ReadinessItem) {
     setAnalysis((current) =>
@@ -29,8 +48,39 @@ export default function AnalysisPage() {
     );
   }
 
-  if (error) return <p className="text-skip">{error}</p>;
-  if (!analysis) return <p>Loading analysis…</p>;
+  if (error) {
+    return (
+      <StatusPanel
+        variant="error"
+        title="We couldn't load this analysis"
+        primary={{ label: "Try again", onClick: () => setReloadKey((value) => value + 1) }}
+        secondary={{ label: "Back to opportunities", href: "/opportunities" }}
+      >
+        {error}
+      </StatusPanel>
+    );
+  }
+
+  if (missing) {
+    return (
+      <StatusPanel
+        variant="empty"
+        title="This analysis is not available"
+        primary={{ label: "Browse opportunities", href: "/opportunities" }}
+        secondary={{ label: "Create a profile", href: "/profile" }}
+      >
+        Analyses live in the local store for this session. Open an opportunity and ask HULUM again.
+      </StatusPanel>
+    );
+  }
+
+  if (!analysis) {
+    return (
+      <StatusPanel variant="loading" title="Loading analysis">
+        Fetching APPLY / MAYBE / SKIP, matched requirements, and the readiness checklist.
+      </StatusPanel>
+    );
+  }
 
   const matched = analysis.requirements.filter((item) => item.status === "MET");
   const attention = analysis.requirements.filter((item) => item.status !== "MET");
@@ -49,19 +99,35 @@ export default function AnalysisPage() {
 
       <h2 className="mt-12 font-display text-2xl">Matched</h2>
       <div className="mt-4">
-        <RequirementList items={matched} />
-        {matched.length === 0 ? <p className="text-muted">No matched requirements.</p> : null}
+        {matched.length === 0 ? (
+          <StatusPanel variant="empty" title="No matched requirements">
+            Nothing on this profile is marked MET for this opportunity.
+          </StatusPanel>
+        ) : (
+          <RequirementList items={matched} />
+        )}
       </div>
 
       <h2 className="mt-12 font-display text-2xl">Needs attention</h2>
       <div className="mt-4">
-        <RequirementList items={attention} />
-        {attention.length === 0 ? <p className="text-muted">No uncertain or missing requirements.</p> : null}
+        {attention.length === 0 ? (
+          <StatusPanel variant="empty" title="No gaps on this analysis">
+            No uncertain or missing requirements were recorded.
+          </StatusPanel>
+        ) : (
+          <RequirementList items={attention} />
+        )}
       </div>
 
       <h2 className="mt-12 font-display text-2xl">Readiness</h2>
       <div className="mt-4">
-        <ReadinessList items={analysis.readiness} onChange={replaceReadiness} />
+        {analysis.readiness.length === 0 ? (
+          <StatusPanel variant="empty" title="No readiness items yet">
+            This analysis did not generate a checklist.
+          </StatusPanel>
+        ) : (
+          <ReadinessList items={analysis.readiness} onChange={replaceReadiness} />
+        )}
       </div>
 
       <div className="mt-10 flex flex-wrap gap-3">

@@ -324,8 +324,8 @@ Official opportunity source
 - [x] **P0** Official source/application link.
 - [x] **P1** Filters.
 - [ ] **P1** Search.
-- [-] **P1** Error/failure states.
-- [ ] **P1** Loading/empty states.
+- [x] **P1** Error/failure states.
+- [x] **P1** Loading/empty states.
 - [ ] **P1** Accessibility improvements.
 
 ## Decision UI

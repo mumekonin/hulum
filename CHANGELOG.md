@@ -2,6 +2,19 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Phase 4 loading, empty, and error states
+
+### Added
+- Shared `StatusPanel` on profile, opportunities, analysis, and assistant.
+- Retry / next-action paths for API, network, missing profile, empty lists, and missing records.
+- Safer client fetch: connection failures no longer surface raw `Failed to fetch` text.
+
+### Why
+Phase 4 P1 required loading, empty, and failure UI with recovery, without exposing technical errors.
+
+### Decision
+Voice microphone failure is an honest “not connected” control. Voxide is still not live.
+
 ## 2026-09-18 — Architecture confirmation
 
 ### Added

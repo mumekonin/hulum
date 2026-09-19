@@ -49,6 +49,7 @@ Official opportunity source
 | Readiness checklist | `/analysis/[id]` | TODO / IN_PROGRESS / DONE / NOT_REQUIRED |
 | Voice interaction | `/assistant` | Text and quick actions until Voxide is wired |
 | Official source/application | links on detail + analysis | Never invented; opens the organization URL |
+| Loading / empty / error | `StatusPanel` on core screens | Retry, clear filter, open profile, or return to the list |
 
 ## Decision UI rule
 

@@ -3,19 +3,38 @@
 import { useEffect, useState } from "react";
 import { OPPORTUNITY_TYPES, TYPE_LABELS, type Opportunity, type OpportunityType } from "@hulum/shared";
 import { OpportunityCard } from "@/components/OpportunityCard";
-import { api } from "@/lib/api";
+import { StatusPanel } from "@/components/StatusPanel";
+import { api, userFacingError } from "@/lib/api";
 
 export default function OpportunitiesPage() {
   const [items, setItems] = useState<Opportunity[]>([]);
   const [type, setType] = useState<OpportunityType | "">("");
   const [error, setError] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
+    let cancelled = false;
+    setLoading(true);
+    setError(null);
     const query = type ? `?type=${type}` : "";
     void api<Opportunity[]>(`/api/opportunities${query}`)
-      .then(setItems)
-      .catch((err: Error) => setError(err.message));
-  }, [type]);
+      .then((data) => {
+        if (!cancelled) setItems(data);
+      })
+      .catch((err: unknown) => {
+        if (!cancelled) {
+          setItems([]);
+          setError(userFacingError(err));
+        }
+      })
+      .finally(() => {
+        if (!cancelled) setLoading(false);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [type, reloadKey]);
 
   return (
     <section>
@@ -38,12 +57,38 @@ export default function OpportunitiesPage() {
           </select>
         </label>
       </div>
-      {error ? <p className="mt-6 text-skip">{error}</p> : null}
-      <div className="mt-8 grid gap-4 md:grid-cols-2">
-        {items.map((opportunity) => (
-          <OpportunityCard key={opportunity.id} opportunity={opportunity} />
-        ))}
-      </div>
+      {loading ? (
+        <StatusPanel variant="loading" title="Loading opportunities">
+          Checking the curated list{type ? ` for ${TYPE_LABELS[type]}` : ""}.
+        </StatusPanel>
+      ) : null}
+      {!loading && error ? (
+        <StatusPanel
+          variant="error"
+          title="We couldn't load opportunities"
+          primary={{ label: "Try again", onClick: () => setReloadKey((value) => value + 1) }}
+        >
+          {error}
+        </StatusPanel>
+      ) : null}
+      {!loading && !error && items.length === 0 ? (
+        <StatusPanel
+          variant="empty"
+          title={type ? `No ${TYPE_LABELS[type].toLowerCase()} records` : "No opportunities yet"}
+          primary={type ? { label: "Clear filter", onClick: () => setType("") } : { label: "Create a profile", href: "/profile" }}
+        >
+          {type
+            ? "Nothing in the current list matches this filter. Clear it to see every curated record."
+            : "HULUM only shows stored, sourced opportunities. Create a profile so you are ready when records are available."}
+        </StatusPanel>
+      ) : null}
+      {!loading && !error && items.length > 0 ? (
+        <div className="mt-8 grid gap-4 md:grid-cols-2">
+          {items.map((opportunity) => (
+            <OpportunityCard key={opportunity.id} opportunity={opportunity} />
+          ))}
+        </div>
+      ) : null}
     </section>
   );
 }
