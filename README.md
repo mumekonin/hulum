@@ -74,6 +74,10 @@ npm run db:smoke
 
 Schema details: `database/README.md`.
 
+## Shared contracts
+
+Web, mobile, and server import types from `@hulum/shared` only. See `packages/shared/README.md`.
+
 ## API overview
 
 ```http
