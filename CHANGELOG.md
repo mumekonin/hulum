@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Profile → opportunity → analysis is covered through the API
+
+### Added
+- Integration test: demo profile, sourced A2SV record, Analyze, then GET the stored APPLY/MAYBE/SKIP result.
+
+### Why
+Days 15–16 required the full profile → opportunity → analysis flow against the real API.
+
 ## 2026-09-19 — Assistant describes the current opportunity from stored facts
 
 ### Added
