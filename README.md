@@ -90,6 +90,12 @@ Postgres schema exists (`npm run db:migrate` / `npm run db:smoke` when `DATABASE
 
 ---
 
+## Shared contracts
+
+Web and server import types from `@hulum/shared`. Task 22 lock notes are in `packages/shared/README.md`. The running voice parser still uses `SHOW_GAPS`; Mulualem’s lock names that intent `SHOW_MISSING_REQUIREMENTS`.
+
+---
+
 ## API
 
 ```http

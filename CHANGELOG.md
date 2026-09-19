@@ -5,7 +5,7 @@ HULUM records actual work. Do not invent history.
 ## 2026-09-19 — Git history reviewed (branches, not a rewrite)
 
 ### Added
-- `docs/stark/git-history.md`: `main` has Mulualem PRs #1–#3; Kidist product work is still on stacked `feat/*`. No Cursor co-author on recent Kidist commits. History was not rewritten.
+- `docs/stark/git-history.md`: `main` has Mulualem PRs #1–#4; Kidist product work is still on stacked `feat/*`. No Cursor co-author on recent Kidist commits. History was not rewritten.
 
 ### Why
 Day 20 required a final Git history review. Judges should not treat `main` as the full product.
@@ -18,6 +18,20 @@ Day 20 required a final Git history review. Judges should not treat `main` as th
 
 ### Why
 Day 20 required a final task status. Stale empty boxes were more misleading than the code.
+
+## 2026-09-19 — Mulualem
+
+### Changed
+Added `@hulum/shared` contracts and switched the server envelope to import them.
+
+### Why
+Web, mobile, and server must use one Profile, Opportunity, Analysis, and voice-intent contract.
+
+### Evidence
+Branch: `feat/shared-contracts`
+
+### Decision
+Voice intents are the locked 9 names. `SHOW_GAPS` is not a contract value; use `SHOW_MISSING_REQUIREMENTS`.
 
 ## 2026-09-19 — Mulualem
 
