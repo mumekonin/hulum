@@ -8,6 +8,7 @@
   "scripts": {
     "dev:server": "npm run dev -w @hulum/server",
     "build:server": "npm run build -w @hulum/server",
+    "typecheck:shared": "npm run typecheck -w @hulum/shared",
     "typecheck:server": "npm run typecheck -w @hulum/server",
     "test:server": "npm run test -w @hulum/server",
     "db:migrate": "npm run db:migrate -w @hulum/server",

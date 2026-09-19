@@ -3,6 +3,20 @@
 ## 2026-09-19 — Mulualem
 
 ### Changed
+Added `@hulum/shared` contracts and switched the server envelope to import them.
+
+### Why
+Web, mobile, and server must use one Profile, Opportunity, Analysis, and voice-intent contract.
+
+### Evidence
+Branch: `feat/shared-contracts`
+
+### Decision
+Voice intents are the locked 9 names. `SHOW_GAPS` is not a contract value; use `SHOW_MISSING_REQUIREMENTS`.
+
+## 2026-09-19 — Mulualem
+
+### Changed
 Added PostgreSQL v1 schema, migration runner, and rollback smoke insert/select.
 
 ### Why
