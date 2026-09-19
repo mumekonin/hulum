@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — README matches the running v0.1 product
+
+### Changed
+- README no longer treats Supabase, Voxide, ScholarXIV, or EthioDeploy as live. It describes the file store, text/quick-action voice, optional Claude, and local demo.
+
+### Why
+Day 19 required a README review against the code, not the original pitch stack.
+
 ## 2026-09-19 — STARK evidence index (honest gaps included)
 
 ### Added

@@ -2,9 +2,9 @@
 
 **Your AI opportunity decision agent.**
 
-HULUM evaluates scholarships, fellowships, internships, jobs, grants, and competitions against your personal profile and tells you whether to **APPLY**, **MAYBE**, or **SKIP** — then explains why, shows what you're missing, and tells you what to do next.
+HULUM compares a personal profile to a curated opportunity and returns one answer: **APPLY**, **MAYBE**, or **SKIP** — then why, what is missing, and what to prepare. Official organization pages stay the eligibility authority.
 
-Built voice-first for Ethiopian students and young professionals, with Amharic, English, and Afaan Oromo support.
+Built for Ethiopian students and young professionals (STARK Hackathon 2026). English is the stable v0.1 path. Amharic and Afaan Oromo language codes are stored; live speech is not connected.
 
 ---
 
@@ -14,76 +14,58 @@ Built voice-first for Ethiopian students and young professionals, with Amharic, 
 Profile  →  Opportunity  →  Fit Analysis  →  APPLY / MAYBE / SKIP
                                                     ↓
                               Why  →  Gap Analysis  →  Readiness Checklist
+                                                    ↓
+                                        Official source
 ```
 
-## Features
+A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that decision. Fit score is a signal only.
 
-- **Voice or text profile intake** — speak naturally in Amharic, English, or Afaan Oromo; the AI extracts structured profile fields.
-- **APPLY / MAYBE / SKIP decisions** — one clear verdict per opportunity, with a 0–100 fit score.
-- **Plain-language reasoning** — every decision is explained, requirement by requirement, with evidence.
-- **Gap analysis** — exactly which requirements are unmet, and how to close them.
-- **Readiness checklist** — a document-by-document action plan with a spoken next step.
-- **Verified opportunities** — curated from official sources with deadline and verification state.
+---
 
-## Tech stack
+## What v0.1 actually does
 
-| Layer | Technology |
-|---|---|
-| Frontend | Next.js, TypeScript, Tailwind CSS |
-| Backend | Node.js, Express, TypeScript |
-| Database | Supabase (PostgreSQL + Row-Level Security) |
-| Reasoning | Claude API |
-| Voice | Voxide (STT / TTS) |
-| Research | ScholarXIV Papers API + MCP |
-| Deployment | EthioDeploy |
+- **Structured profile** — form plus Abeba Tesfaye demo persona. Not voice-extracted facts.
+- **APPLY / MAYBE / SKIP** — one verdict per opportunity; fit 0–100 does not override the rules.
+- **Explanation** — engine summary; optional Claude wording if a key and model are set.
+- **Gaps and readiness** — MET / NOT_MET / UNCERTAIN, then a TODO checklist.
+- **Official source** — stored `sourceUrl` / `applicationUrl` on opportunity and analysis screens.
+- **Ask HULUM** — text and quick actions (ADR 003). Voxide STT/TTS is not wired.
+- **Backup mode** — Voice unavailable keeps typing and the rest of the UI.
 
-## Repository structure
+Out of v0.1: auto-apply, payments, native mobile, scraping unverified lists, live ScholarXIV in the API.
+
+---
+
+## Tech stack (as built)
+
+| Layer | v0.1 | Planned / unused in runtime |
+|---|---|---|
+| Web | Next.js 15, TypeScript, Tailwind 4 (`:3000`) | — |
+| API | Express, TypeScript (`:4000`) | — |
+| Store | JSON file (`STORE_PATH`) | Supabase/Postgres + RLS (`001_init.sql`) |
+| Decision | `apps/server/src/decision/` | Claude must not decide |
+| Explanation | Engine summary; optional Claude | — |
+| Voice | Keyword intents + text/quick actions | Voxide STT/TTS |
+| Research | `docs/research/` (design-time) | ScholarXIV Papers API — **no papers retrieved yet** |
+| Host | Local `npm run dev` | EthioDeploy / production — **not deployed** |
+
+---
+
+## Repository
 
 ```
 hulum/
-├── apps/
-│   ├── web/          # Next.js frontend
-│   └── server/       # Express API (routes, services, decision, ai, voice)
-├── packages/
-│   └── shared/       # Shared types, schemas, constants
-├── database/         # Migrations, seeds
-├── docs/             # Product, research, architecture, decisions, demo
-└── scripts/
+├── apps/web/          # Next.js: /, /profile, /opportunities, /analysis/[id], /assistant
+├── apps/server/       # Express API, engine, optional Claude, voice-text
+├── packages/shared/   # Zod contracts
+├── database/          # Postgres migration for later
+├── docs/              # Product, research, ADRs, demo script, STARK evidence
+└── CHANGELOG.md
 ```
 
-## Getting started (server)
+Judges: start at `docs/stark/evidence.md` and `docs/demo/script.md`.
 
-```bash
-npm install
-cp apps/server/.env.example apps/server/.env
-npm run dev:server
-```
-
-`GET http://localhost:4000/api/health` should return `{ "data": { "status": "ok" }, "error": null }`.
-
-Do not put real API keys in chat or in committed files. Local `.env` only.
-
-## API overview
-
-```http
-POST   /api/profile
-GET    /api/profile/:userId
-PATCH  /api/profile/:userId
-
-GET    /api/opportunities
-GET    /api/opportunities/:id
-
-POST   /api/opportunities/:id/analyze
-GET    /api/analyses/:id
-
-GET    /api/analyses/:id/readiness
-PATCH  /api/readiness/:id
-
-POST   /api/voice/session
-POST   /api/voice/action
-```
-
-All responses use a consistent `{ data, error }` envelope. The shared analysis contract lives in `packages/shared/types`.
+---
 
 ## Run locally
 
@@ -94,15 +76,43 @@ npm run dev
 ```
 
 - Web: http://localhost:3000
-- API health: http://localhost:4000/api/health
+- API health: http://localhost:4000/api/health → `{ "data": { "status": "ok" }, "error": null }`
 
-The decision engine runs without Claude or Voxide keys. Add `CLAUDE_API_KEY` (or `ANTHROPIC_API_KEY`) and `CLAUDE_MODEL` (or `ANTHROPIC_MODEL`) only if you want LLM wording on top of the structured decision. Voice currently uses text + quick actions until Voxide is configured.
+Never put real keys in chat or in Git. `.env.example` is names only.
 
-`npm test` runs requirement-matching and APPLY / MAYBE / SKIP cases.
+The engine runs with empty Claude/Voxide keys. Set `CLAUDE_API_KEY` (or `ANTHROPIC_API_KEY`) **and** `CLAUDE_MODEL` only if you want LLM wording on top of the structured decision.
+
+`npm test` runs matching, APPLY / MAYBE / SKIP, API flows, and failure cases.
+
+API-only: `cp apps/server/.env.example apps/server/.env` then `npm run dev:server`.
+
+---
+
+## API
+
+```http
+GET    /api/health
+POST   /api/profile
+POST   /api/profile/demo
+GET    /api/profile/:userId
+PATCH  /api/profile/:userId
+GET    /api/opportunities
+GET    /api/opportunities/:id
+POST   /api/opportunities/:id/analyze
+GET    /api/analyses/:id
+GET    /api/analyses/:id/readiness
+PATCH  /api/readiness/:id
+POST   /api/voice/session
+POST   /api/voice/action
+```
+
+Envelope: `{ data, error }`. Auth is a local `userId` (full login is P1).
+
+---
 
 ## Production configuration
 
-v0.1 is not deployed yet. When a host is ready, set variable **names** in the host env (never commit values):
+v0.1 is **not deployed**. When a host exists:
 
 | Variable | Required in production | Role |
 |---|---|---|
@@ -112,30 +122,19 @@ v0.1 is not deployed yet. When a host is ready, set variable **names** in the ho
 | `NEXT_PUBLIC_API_URL` | web build | Browser → API origin |
 | `STORE_PATH` | no | File-store path (gitignored) |
 | `CLAUDE_API_KEY` + `CLAUDE_MODEL` | no | Optional explanation wording |
-| `VOXIDE_API_KEY` | no | Not wired; text fallback remains |
+| `VOXIDE_API_KEY` | no | Not wired |
 | `DATABASE_URL` / `SUPABASE_*` | no | Unused until the store switches |
 
-The API refuses to start in production without `CLIENT_URL`. Claude and Voxide stay optional so a missing key cannot kill the demo.
+The API refuses to start in production without `CLIENT_URL`.
 
-## Project status
-
-**v0.1 — first vertical slice.** Built for the STARK Official Hackathon 2026 (September 9 – October 2, 2026).
-
-| Phase | Focus |
-|---|---|
-| 1 | Foundation — repo, schema, seed opportunities |
-| 2 | AI engine — APPLY/MAYBE/SKIP loop, readiness checklist |
-| 3 | Voice — Voxide in English, Amharic, Afaan Oromo |
-| 4 | Polish — UI, mobile responsiveness, deployment |
-| 5 | Demo preparation |
-
-Out of scope for v0.1: direct application submission, payments, native mobile apps, automated scraping of unverified sources.
+---
 
 ## Disclaimer
 
-HULUM is a decision-support tool, not an official eligibility authority. It evaluates user-declared information and does not verify credentials or guarantee acceptance. Always confirm requirements with the official source.
+HULUM is a decision aid, not an official eligibility authority. It uses declared profile facts and stored opportunity records. Always confirm requirements and deadlines with the official organization.
+
+---
 
 ## Team
 
-Built by **Team Ethiopian Builders** — Kidist (frontend, UX, voice experience) and Mulualem (backend, database, decision engine, infrastructure).
-
+**Team Ethiopian Builders** — Kidist (frontend, UX, voice experience) and Mulualem (backend, database, decision engine, infrastructure).
