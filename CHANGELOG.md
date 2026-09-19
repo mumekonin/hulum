@@ -3,6 +3,20 @@
 ## 2026-09-19 — Mulualem
 
 ### Changed
+Added profile create, read, and update APIs with completeness handling.
+
+### Why
+Task 24 needs a persisted profile the decision engine can read.
+
+### Evidence
+Branch: `feat/profile-service`
+
+### Decision
+Full auth waits. POST /api/profile creates a users row plus a profiles row. Completeness lists empty analysis fields.
+
+## 2026-09-19 — Mulualem
+
+### Changed
 Added `GET /api/opportunities` and `GET /api/opportunities/:id` with structured requirements and official source fields.
 
 ### Why
