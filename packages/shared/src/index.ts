@@ -10,6 +10,7 @@ export {
   VerificationStatus,
   VoiceIntent,
   isDecision,
+  isReadinessStatus,
   isVoiceIntent,
 } from "./enums.js";
 export type {
@@ -18,6 +19,7 @@ export type {
   DecisionResult,
   Opportunity,
   Profile,
+  PatchReadinessRequest,
   ReadinessItem,
   Requirement,
   RequirementMatch,
