@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Failure paths keep APPLY/MAYBE/SKIP from the engine
+
+### Added
+- API tests: UCT MAYBE (uncertain), Chevening SKIP (not met), expired A2SV SKIP, Voxide missing → text-fallback.
+- Claude timeout uses the engine summary instead of failing Analyze.
+
+### Why
+Days 17–18 required failure testing. Microphone and live Voxide STT stay blocked.
+
 ## 2026-09-19 — Analysis keeps an official source link and the responsible-AI notice
 
 ### Added

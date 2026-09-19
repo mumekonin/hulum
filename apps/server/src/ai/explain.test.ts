@@ -106,4 +106,14 @@ describe("explainDecision", () => {
 
     await expect(explainDecision(profile, contract)).resolves.toBe(contract.summary);
   });
+
+  it("falls back to the engine summary if Claude times out", async () => {
+    process.env.CLAUDE_API_KEY = "test-key";
+    process.env.CLAUDE_MODEL = "test-model";
+    globalThis.fetch = vi.fn(async () => {
+      throw new Error("timeout");
+    }) as typeof fetch;
+
+    await expect(explainDecision(profile, contract)).resolves.toBe(contract.summary);
+  });
 });

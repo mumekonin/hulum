@@ -870,15 +870,15 @@ Never commit:
 
 - [ ] Microphone unavailable.
 - [ ] Speech recognition failure.
-- [ ] Voxide failure.
-- [ ] Claude timeout.
-- [ ] Malformed AI response.
+- [x] Voxide failure.
+- [x] Claude timeout.
+- [x] Malformed AI response.
 - [ ] Database failure.
 - [ ] Network interruption.
 - [x] Missing profile information.
 - [ ] Contradictory profile information.
-- [ ] Uncertain requirement.
-- [ ] Expired opportunity.
+- [x] Uncertain requirement.
+- [x] Expired opportunity.
 - [x] Unsupported voice request.
 
 ---
@@ -987,8 +987,8 @@ Interest: AI
 - [ ] **P1** Demonstrate Amharic if stable.
 - [x] **P0** Open official opportunity source.
 - [x] **P0** Show responsible-AI notice.
-- [ ] **P1** Demonstrate a MAYBE case.
-- [ ] **P1** Demonstrate a SKIP case.
+- [x] **P1** Demonstrate a MAYBE case.
+- [x] **P1** Demonstrate a SKIP case.
 - [ ] **P0** Prepare backup mode for external-service failure.
 - [ ] **P0** Test clean browser/device.
 - [ ] **P0** Test microphone.
@@ -1110,7 +1110,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [ ] Deploy.
 - [ ] Production voice test.
 - [x] E2E testing.
-- [ ] Failure testing.
+- [x] Failure testing.
 - [ ] Browser/device testing.
 - [ ] Fix critical bugs.
 
