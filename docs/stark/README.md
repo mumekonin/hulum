@@ -20,6 +20,7 @@ This folder is the judge entry. It does not invent ScholarXIV papers, a producti
 | 4 | `docs/architecture/overview.md` | What actually runs |
 | 5 | `docs/demo/script.md` | Abeba Tesfaye walkthrough |
 | 6 | `docs/stark/evidence.md` | Task 47 map |
+| 7 | `docs/stark/narrative.md` | How it was built (honest) |
 
 Then run locally (README at repo root): `npm install` → `npm run dev` → http://localhost:3000
 
@@ -54,5 +55,6 @@ Expected demo labels: A2SV **APPLY**, UCT **MAYBE**, Chevening **SKIP**.
 | `git-history.md` | Branches vs `main` |
 | `changelog-review.md` | Day 19 changelog check |
 | `changelog-final.md` | Day 20 changelog check |
+| `narrative.md` | How HULUM was built |
 
 Changelog: `CHANGELOG.md` at the repo root. Do not rewrite it.

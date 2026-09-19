@@ -1032,7 +1032,7 @@ The build must leave truthful evidence of development.
 - [x] **P0** Keep implementation progress visible.
 - [x] **P0** Keep team contribution traceable.
 - [ ] **P1** Add milestone tags.
-- [ ] **P1** Prepare final development narrative.
+- [x] **P1** Prepare final development narrative.
 
 Never manufacture commits, dates, research activity, or progress.
 
