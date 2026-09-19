@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Voice intent mapping covers documented utterances
+
+### Added
+- Unit tests for `parseVoiceIntent` against the Phase 12 examples plus Amharic keywords already in the parser.
+- Confirms “Should I apply for this?” stays analyze, while “Show me opportunities I should apply for” stays APPLY catalog filter.
+
+### Why
+Days 10–12 required voice intent mapping. No new intents. Voxide is still not live.
+
 ## 2026-09-18 — Voice session is persisted without transcripts
 
 ### Added
