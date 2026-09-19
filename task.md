@@ -842,10 +842,10 @@ Never commit:
 
 ## Integration tests
 
-- [ ] Profile → backend.
-- [ ] Opportunity → backend.
-- [ ] Profile + opportunity → analysis.
-- [ ] Analysis → decision.
+- [x] Profile → backend.
+- [x] Opportunity → backend.
+- [x] Profile + opportunity → analysis.
+- [x] Analysis → decision.
 - [ ] Decision → explanation.
 - [ ] Decision → readiness.
 - [x] Voice → intent.
@@ -1098,7 +1098,7 @@ Never manufacture commits, dates, research activity, or progress.
 
 ## Days 15–16 — Integration
 
-- [ ] Full profile → opportunity → analysis flow.
+- [x] Full profile → opportunity → analysis flow.
 - [ ] Full analysis → readiness flow.
 - [ ] Full voice flow.
 - [ ] Error handling.
@@ -1296,7 +1296,7 @@ However, STARK-required research and ideation documentation must be maintained t
 
 ## Gate 5 — Integrated MVP
 
-- [ ] Profile → opportunity → analysis works.
+- [x] Profile → opportunity → analysis works.
 - [ ] Analysis → readiness works.
 - [ ] Voice → analysis works.
 - [x] Voice → explanation works.
