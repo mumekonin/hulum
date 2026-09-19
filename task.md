@@ -420,8 +420,8 @@ HULUM should not treat generated AI content as authoritative opportunity require
 - [ ] **P0** Store source URL.
 - [ ] **P0** Store official application URL.
 - [ ] **P0** Store last verification date.
-- [ ] **P0** Display source/verification information.
-- [ ] **P0** Add responsible-AI notice.
+- [x] **P0** Display source/verification information.
+- [x] **P0** Add responsible-AI notice.
 - [ ] **P1** Define manual verification workflow.
 - [ ] **P1** Define stale-opportunity behavior.
 
@@ -855,16 +855,16 @@ Never commit:
 
 ## End-to-end
 
-- [ ] Create profile.
-- [ ] Browse opportunity.
-- [ ] Open opportunity.
-- [ ] Analyze.
-- [ ] Receive APPLY/MAYBE/SKIP.
-- [ ] Ask why.
-- [ ] View missing requirements.
-- [ ] View readiness.
-- [ ] Use voice.
-- [ ] Open official application source.
+- [x] Create profile.
+- [x] Browse opportunity.
+- [x] Open opportunity.
+- [x] Analyze.
+- [x] Receive APPLY/MAYBE/SKIP.
+- [x] Ask why.
+- [x] View missing requirements.
+- [x] View readiness.
+- [x] Use voice.
+- [x] Open official application source.
 
 ## Failure tests
 
@@ -985,8 +985,8 @@ Interest: AI
 - [ ] **P0** Demonstrate voice.
 - [x] **P0** Demonstrate English.
 - [ ] **P1** Demonstrate Amharic if stable.
-- [ ] **P0** Open official opportunity source.
-- [ ] **P0** Show responsible-AI notice.
+- [x] **P0** Open official opportunity source.
+- [x] **P0** Show responsible-AI notice.
 - [ ] **P1** Demonstrate a MAYBE case.
 - [ ] **P1** Demonstrate a SKIP case.
 - [ ] **P0** Prepare backup mode for external-service failure.
@@ -1109,7 +1109,7 @@ Never manufacture commits, dates, research activity, or progress.
 
 - [ ] Deploy.
 - [ ] Production voice test.
-- [ ] E2E testing.
+- [x] E2E testing.
 - [ ] Failure testing.
 - [ ] Browser/device testing.
 - [ ] Fix critical bugs.
@@ -1152,8 +1152,8 @@ The HULUM MVP requires these capabilities to work together:
 - [x] **P0** At least one stable language end-to-end.
 - [x] **P0** English support.
 - [ ] **P0** Amharic support if Voxide quality is sufficient.
-- [ ] **P0** Official source/application link.
-- [ ] **P0** Responsible-AI notice.
+- [x] **P0** Official source/application link.
+- [x] **P0** Responsible-AI notice.
 - [ ] **P0** Working deployed prototype.
 - [ ] **P0** Failure fallback.
 - [ ] **P0** Documented research/ideation basis.
@@ -1300,8 +1300,8 @@ However, STARK-required research and ideation documentation must be maintained t
 - [x] Analysis → readiness works.
 - [x] Voice → analysis works.
 - [x] Voice → explanation works.
-- [ ] Official source link works.
-- [ ] Responsible-AI notice works.
+- [x] Official source link works.
+- [x] Responsible-AI notice works.
 
 ## Gate 6 — Demo Ready
 

@@ -142,6 +142,9 @@ export default function AnalysisPage() {
         <ExternalLink href={analysis.opportunity.applicationUrl} className="inline-flex min-h-11 items-center bg-ink px-5 py-3 text-paper">
           Apply officially
         </ExternalLink>
+        <ExternalLink href={analysis.opportunity.sourceUrl} className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
+          Official source
+        </ExternalLink>
         <Link href={`/assistant?analysisId=${analysis.id}&opportunityId=${analysis.opportunityId}`} className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
           Ask HULUM
         </Link>
