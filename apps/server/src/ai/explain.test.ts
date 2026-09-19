@@ -74,25 +74,34 @@ describe("explainDecision", () => {
     process.env.CLAUDE_API_KEY = "test-key";
     process.env.CLAUDE_MODEL = "test-model";
     globalThis.fetch = vi.fn(async () =>
-      new Response(JSON.stringify({ content: [{ text: "APPLY. Abeba meets the stored country and field facts." }] }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
-      }),
+      new Response(
+        JSON.stringify({
+          content: [
+            {
+              text: JSON.stringify({
+                decision: "APPLY",
+                explanation: "Abeba meets the stored country and field facts.",
+              }),
+            },
+          ],
+        }),
+        { status: 200, headers: { "content-type": "application/json" } },
+      ),
     ) as typeof fetch;
 
-    await expect(explainDecision(profile, contract)).resolves.toBe(
-      "APPLY. Abeba meets the stored country and field facts.",
-    );
+    await expect(explainDecision(profile, contract)).resolves.toBe("Abeba meets the stored country and field facts.");
   });
 
-  it("falls back to the engine summary if Claude contradicts the decision", async () => {
+  it("falls back to the engine summary if Claude JSON names a different decision", async () => {
     process.env.ANTHROPIC_API_KEY = "test-key";
     process.env.ANTHROPIC_MODEL = "test-model";
     globalThis.fetch = vi.fn(async () =>
-      new Response(JSON.stringify({ content: [{ text: "SKIP. This is not a good fit." }] }), {
-        status: 200,
-        headers: { "content-type": "application/json" },
-      }),
+      new Response(
+        JSON.stringify({
+          content: [{ text: JSON.stringify({ decision: "SKIP", explanation: "This is not a good fit." }) }],
+        }),
+        { status: 200, headers: { "content-type": "application/json" } },
+      ),
     ) as typeof fetch;
 
     await expect(explainDecision(profile, contract)).resolves.toBe(contract.summary);
