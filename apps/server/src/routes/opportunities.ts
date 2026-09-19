@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { opportunityTypeSchema } from "@hulum/shared";
 import { fail, ok } from "../lib/http.js";
+import { filterOpportunities } from "../opportunities/search.js";
 import { loadStore } from "../store/fileStore.js";
 
 export const opportunitiesRouter = Router();
@@ -8,11 +9,12 @@ export const opportunitiesRouter = Router();
 opportunitiesRouter.get("/", async (req, res) => {
   const store = await loadStore();
   const type = typeof req.query.type === "string" ? req.query.type : undefined;
+  const q = typeof req.query.q === "string" ? req.query.q : undefined;
   const parsedType = type ? opportunityTypeSchema.safeParse(type) : null;
-  let items = store.opportunities;
-  if (parsedType?.success) {
-    items = items.filter((item) => item.type === parsedType.data);
-  }
+  const items = filterOpportunities(store.opportunities, {
+    type: parsedType?.success ? parsedType.data : undefined,
+    q,
+  });
   ok(res, items);
 });
 

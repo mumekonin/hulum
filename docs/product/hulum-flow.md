@@ -40,7 +40,7 @@ Official opportunity source
 |---|---|---|
 | Landing/home | `/` | States the product thesis and the journey |
 | Profile creation/edit | `/profile` | Structured facts only; demo persona available |
-| Opportunity list | `/opportunities` | Curated records with verification and deadline |
+| Opportunity list | `/opportunities` | Curated records with verification, search, type filter, and deadline |
 | Opportunity details | `/opportunities/[id]` | Requirements, official source, Analyze |
 | Analyze opportunity | POST via details page | Calls the backend decision engine |
 | APPLY/MAYBE/SKIP result | `/analysis/[id]` | Decision is visually dominant |

@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Phase 4 opportunity search
+
+### Added
+- Opportunity list search box combined with the existing type filter.
+- `GET /api/opportunities?q=` matches title, organization, description, type, country, and field text.
+- Empty-search recovery: clear search or clear filter.
+
+### Why
+Phase 4 P1 required list search so users can find a sourced record without scrolling the full catalog.
+
 ## 2026-09-18 — Phase 4 loading, empty, and error states
 
 ### Added

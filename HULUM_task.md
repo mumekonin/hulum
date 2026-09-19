@@ -323,7 +323,7 @@ Official opportunity source
 - [-] **P0** Voice interaction.
 - [x] **P0** Official source/application link.
 - [x] **P1** Filters.
-- [ ] **P1** Search.
+- [x] **P1** Search.
 - [x] **P1** Error/failure states.
 - [x] **P1** Loading/empty states.
 - [ ] **P1** Accessibility improvements.
@@ -407,7 +407,7 @@ Opportunity
 - [ ] **P0** Store application URL where available.
 - [ ] **P0** Store verification status.
 - [ ] **P0** Store last verified date.
-- [ ] **P1** Add opportunity search/filtering.
+- [x] **P1** Add opportunity search/filtering.
 - [ ] **P1** Add opportunity import workflow if required.
 
 ---

@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "start": "tsx src/index.ts",
-    "test": "tsx --test src/decision/engine.test.ts"
+    "test": "tsx --test src/decision/engine.test.ts src/opportunities/search.test.ts"
   },
   "dependencies": {
     "@hulum/shared": "0.1.0",
