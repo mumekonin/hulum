@@ -10,7 +10,7 @@ Read these on demand. Open only the sections you need, never all files at once.
 
 | File | Use it for |
 |---|---|
-| `HULUM_TEAM_ASSIGNMENTS_v1.0.md` | Tasks 1–47, owners, "Depends on", "Verify" lines, working rules |
+| `task.md` | Tasks 1–47, owners, "Depends on", "Verify" lines, working rules |
 | `HULUM_v0.1_COMPLETE_BUILD_SPEC.md` | Scope (P0/P1/P2), decision engine, data model, API, contracts, repo structure |
 | `HULUM_GIT_WORKFLOW_v1.0.md` | Branches, commits, PRs, changelog, tags |
 | `HULUM_Documentation.md` | Background SRS only (older document) |
