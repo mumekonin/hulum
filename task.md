@@ -1014,7 +1014,7 @@ Interest: AI
 - [x] **P1** Architecture decision records.
 - [x] **P1** Demo instructions.
 - [ ] **P1** Deployment guide.
-- [ ] **P1** STARK evidence checklist.
+- [x] **P1** STARK evidence checklist.
 
 ---
 
@@ -1022,15 +1022,15 @@ Interest: AI
 
 The build must leave truthful evidence of development.
 
-- [ ] **P0** Preserve GitHub history.
-- [ ] **P0** Use real commits.
-- [ ] **P0** Keep meaningful changelog entries.
-- [ ] **P0** Document major product decisions.
-- [ ] **P0** Document rejected ideas.
-- [ ] **P0** Document iteration.
-- [ ] **P0** Keep research evidence.
-- [ ] **P0** Keep implementation progress visible.
-- [ ] **P0** Keep team contribution traceable.
+- [x] **P0** Preserve GitHub history.
+- [x] **P0** Use real commits.
+- [x] **P0** Keep meaningful changelog entries.
+- [x] **P0** Document major product decisions.
+- [x] **P0** Document rejected ideas.
+- [x] **P0** Document iteration.
+- [x] **P0** Keep research evidence.
+- [x] **P0** Keep implementation progress visible.
+- [x] **P0** Keep team contribution traceable.
 - [ ] **P1** Add milestone tags.
 - [ ] **P1** Prepare final development narrative.
 
@@ -1117,7 +1117,7 @@ Never manufacture commits, dates, research activity, or progress.
 ## Day 19 — Demo + Documentation
 
 - [x] Demo script.
-- [ ] STARK documentation.
+- [x] STARK documentation.
 - [ ] Research evidence.
 - [ ] Changelog review.
 - [ ] README review.
@@ -1156,7 +1156,7 @@ The HULUM MVP requires these capabilities to work together:
 - [x] **P0** Responsible-AI notice.
 - [ ] **P0** Working deployed prototype.
 - [x] **P0** Failure fallback.
-- [ ] **P0** Documented research/ideation basis.
+- [x] **P0** Documented research/ideation basis.
 
 ---
 

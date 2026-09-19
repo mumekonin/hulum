@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — STARK evidence index (honest gaps included)
+
+### Added
+- `docs/stark/evidence.md` maps problem, ideation, ADRs, demo, changelog, and GitHub to files. ScholarXIV papers, production deploy, and Voxide stay listed as gaps.
+
+### Why
+Day 19 required STARK documentation a judge can follow without invented research or a fake host.
+
 ## 2026-09-19 — STARK demo script for Abeba Tesfaye
 
 ### Added

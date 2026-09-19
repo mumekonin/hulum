@@ -13,6 +13,7 @@ This folder is the canonical STARK ideation/research record. ScholarXIV is **des
 | `competitive-analysis.md` | Ethiopian / global / African products checked 2026-09-18 |
 | `../product/research-questions.md` | Questions and labeled hypotheses |
 | `../product/problem.md` | Problem definition |
+| `../stark/evidence.md` | STARK evidence index (what exists vs still empty) |
 
 ## Rules
 
