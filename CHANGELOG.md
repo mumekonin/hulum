@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Day 20 final changelog (no rewrite)
+
+### Added
+- `docs/stark/changelog-final.md`: freeze pass of `CHANGELOG.md` against git through Mulualem PR #10. Historical entries were not rewritten. File-store demo vs Postgres services stays explicit.
+
+### Why
+Day 20 required a final changelog. STARK tracking must still match the repository.
+
 ## 2026-09-19 — Git history reviewed (branches, not a rewrite)
 
 ### Added

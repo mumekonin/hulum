@@ -1131,7 +1131,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [ ] Final production test.
 - [x] Final Git history review.
 - [x] Final task status.
-- [ ] Final changelog.
+- [x] Final changelog.
 - [ ] Final demo rehearsal.
 - [ ] Final STARK submission package.
 

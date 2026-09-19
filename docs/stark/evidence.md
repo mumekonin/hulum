@@ -27,10 +27,10 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Voice UX | ADR 003, ADR 004, `docs/demo/script.md` | Text/quick-action fallback; Voxide unwired |
 | Implementation | `apps/web`, `apps/server`, `packages/shared` | Present |
 | Testing | `npm test` in `apps/server` | Engine, API, voice-text, failures |
-| Iteration | `CHANGELOG.md` | Present; do not rewrite history |
+| Iteration | `CHANGELOG.md` | Present; Day 20 final pass; do not rewrite history |
 | Deployment | README production table | **Not deployed** |
 | Demo | `docs/demo/script.md`, `docs/demo/backup.md` | Abeba Tesfaye; text/API backup; **no video** |
-| Changelog | `CHANGELOG.md`, `docs/stark/changelog-review.md` | Present; reviewed 2026-09-19 |
+| Changelog | `CHANGELOG.md`, `docs/stark/changelog-review.md`, `docs/stark/changelog-final.md` | Present; Day 20 freeze pass 2026-09-19 |
 | Git history | this GitHub repo, `docs/stark/git-history.md` | Real commits; Kidist pushes without Cursor co-author; **most Kidist `feat/*` not on `main`** |
 | Team | `team_assignments.md`, `git-workflow.md` | Present |
 
