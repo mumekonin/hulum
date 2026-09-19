@@ -1003,7 +1003,7 @@ Interest: AI
 - [x] **P0** Product overview.
 - [x] **P0** Architecture overview.
 - [x] **P0** Setup guide.
-- [-] **P0** Environment variables.
+- [x] **P0** Environment variables.
 - [-] **P0** API contracts.
 - [x] **P0** Database model.
 - [x] **P0** Decision-engine documentation.
@@ -1120,7 +1120,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] STARK documentation.
 - [ ] Research evidence.
 - [ ] Changelog review.
-- [ ] README review.
+- [x] README review.
 - [ ] Architecture review.
 - [ ] Backup demo.
 
