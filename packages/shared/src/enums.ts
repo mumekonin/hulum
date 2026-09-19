@@ -87,3 +87,7 @@ export function isVoiceIntent(value: string): value is VoiceIntent {
 export function isDecision(value: string): value is Decision {
   return value === Decision.APPLY || value === Decision.MAYBE || value === Decision.SKIP;
 }
+
+export function isReadinessStatus(value: string): value is ReadinessStatus {
+  return Object.values(ReadinessStatus).some((status) => status === value);
+}

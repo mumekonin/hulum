@@ -4,6 +4,7 @@ import { HttpError } from "../http/errors.js";
 import type { OpportunityService } from "../opportunities/service.js";
 import type { ProfileService } from "../profiles/service.js";
 import { matchRequirements } from "../requirements/match.js";
+import { buildReadinessItems } from "../readiness/build.js";
 import type { Clock } from "../services/common/clock.js";
 import type { AnalysisStore } from "./store.js";
 import { ANALYSIS_SUMMARY } from "./summary.js";
@@ -40,6 +41,7 @@ export function createAnalysisService(deps: {
         fitScore: result.fitScore,
         summary: ANALYSIS_SUMMARY[result.decision],
         matches,
+        readiness: buildReadinessItems(matches),
       });
     },
 
