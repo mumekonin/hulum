@@ -6,6 +6,16 @@
 **Schedule:** 20-day compressed build  
 **Version:** 1.0
 
+## Task tracker
+
+Status is marked DONE in the same PR as the work, so `main` shows DONE only after merge.
+
+| Task | Title | Owner | Status |
+|---|---|---|---|
+| 20 | Backend platform scaffold | Mulualem | DONE |
+
+Other tasks are not started.
+
 This document adapts the attached team-assignment format to HULUM. Each engineering
 vertical has one accountable owner; shared contracts, research, integration, testing,
 and final demo work are done together.
