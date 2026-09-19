@@ -55,6 +55,16 @@ export type RequirementMatch = {
   evidence: string | null;
   reason: string;
 };
+
+export type DecisionResult = {
+  decision: Decision;
+  fitScore: number;
+  matchedRequirements: RequirementMatch[];
+  missingRequirements: RequirementMatch[];
+  uncertainRequirements: RequirementMatch[];
+  reasons: string[];
+  nextAction: string;
+};
 export type Requirement = {
   id: string;
   analysisId: string;
