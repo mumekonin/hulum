@@ -26,4 +26,6 @@ Do not use `SHOW_GAPS`. That action is `SHOW_MISSING_REQUIREMENTS`.
 
 `Requirement` is an analysis outcome (`requirement_results`). Opportunity source facts stay on `Opportunity`.
 
+Profile API types: `CreateProfileRequest`, `PatchProfileRequest`, `ProfileView`. Completeness uses `profileCompleteness()`.
+
 Tell both teammates before changing these names.
