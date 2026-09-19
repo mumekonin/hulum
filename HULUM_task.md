@@ -1132,7 +1132,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Final Git history review.
 - [x] Final task status.
 - [x] Final changelog.
-- [ ] Final demo rehearsal.
+- [x] Final demo rehearsal.
 - [ ] Final STARK submission package.
 
 ---
@@ -1306,7 +1306,7 @@ However, STARK-required research and ideation documentation must be maintained t
 ## Gate 6 — Demo Ready
 
 - [ ] Production deployment works.
-- [ ] Demo scenario is stable.
+- [x] Demo scenario is stable.
 - [ ] Voice works.
 - [x] Backup mode exists.
 - [ ] Documentation is complete.
