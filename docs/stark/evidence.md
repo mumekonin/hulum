@@ -29,7 +29,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Testing | `npm test` in `apps/server` | Engine, API, voice-text, failures |
 | Iteration | `CHANGELOG.md` | Present; do not rewrite history |
 | Deployment | README production table | **Not deployed** |
-| Demo | `docs/demo/script.md` | Abeba Tesfaye walkthrough |
+| Demo | `docs/demo/script.md`, `docs/demo/backup.md` | Abeba Tesfaye; text/API backup; **no video** |
 | Changelog | `CHANGELOG.md`, `docs/stark/changelog-review.md` | Present; reviewed 2026-09-19 |
 | Git history | this GitHub repo | Real commits; no Cursor co-author on Kidist pushes |
 | Team | `team_assignments.md`, `git-workflow.md` | Present |
@@ -49,6 +49,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 ## Demo pointer
 
 Walkthrough: `docs/demo/script.md`.  
+Backup if speech, Analyze, or the UI fails: `docs/demo/backup.md`.  
 Persona: Abeba Tesfaye — A2SV APPLY, UCT MAYBE, Chevening SKIP.
 
 ---
