@@ -59,7 +59,7 @@ cp apps/server/.env.example apps/server/.env
 npm run dev:server
 ```
 
-`GET http://localhost:3001/api/health` should return `{ "data": { "status": "ok" }, "error": null }`.
+`GET http://localhost:4000/api/health` should return `{ "data": { "status": "ok" }, "error": null }`.
 
 Do not put real API keys in chat or in committed files. Local `.env` only.
 
@@ -99,6 +99,23 @@ npm run dev
 The decision engine runs without Claude or Voxide keys. Add `CLAUDE_API_KEY` (or `ANTHROPIC_API_KEY`) and `CLAUDE_MODEL` (or `ANTHROPIC_MODEL`) only if you want LLM wording on top of the structured decision. Voice currently uses text + quick actions until Voxide is configured.
 
 `npm test` runs requirement-matching and APPLY / MAYBE / SKIP cases.
+
+## Production configuration
+
+v0.1 is not deployed yet. When a host is ready, set variable **names** in the host env (never commit values):
+
+| Variable | Required in production | Role |
+|---|---|---|
+| `NODE_ENV` | yes (`production`) | Disables localhost CORS fallback |
+| `CLIENT_URL` | yes (web origin, no path) | CORS allowlist |
+| `PORT` | no (default `4000`) | API listen port |
+| `NEXT_PUBLIC_API_URL` | web build | Browser → API origin |
+| `STORE_PATH` | no | File-store path (gitignored) |
+| `CLAUDE_API_KEY` + `CLAUDE_MODEL` | no | Optional explanation wording |
+| `VOXIDE_API_KEY` | no | Not wired; text fallback remains |
+| `DATABASE_URL` / `SUPABASE_*` | no | Unused until the store switches |
+
+The API refuses to start in production without `CLIENT_URL`. Claude and Voxide stay optional so a missing key cannot kill the demo.
 
 ## Project status
 

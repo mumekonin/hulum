@@ -13,11 +13,15 @@ export type AppEnv = {
   VOXIDE_API_KEY: string | undefined;
 };
 
+export type LoadEnvOptions = {
+  fromFile?: boolean;
+};
+
 function optionalString(value: string | undefined): string | undefined {
   if (value === undefined || value.trim() === "") {
     return undefined;
   }
-  return value;
+  return value.trim();
 }
 
 function parseNodeEnv(value: string | undefined): AppEnv["NODE_ENV"] {
@@ -31,7 +35,7 @@ function parseNodeEnv(value: string | undefined): AppEnv["NODE_ENV"] {
 }
 
 function parsePort(value: string | undefined): number {
-  const raw = value ?? "3001";
+  const raw = value ?? "4000";
   const port = Number(raw);
   if (!Number.isInteger(port) || port < 1 || port > 65535) {
     throw new Error("PORT must be an integer between 1 and 65535");
@@ -39,13 +43,40 @@ function parsePort(value: string | undefined): number {
   return port;
 }
 
-export function loadEnv(): AppEnv {
-  loadDotenv();
+function parseClientUrl(nodeEnv: AppEnv["NODE_ENV"], value: string | undefined): string | undefined {
+  const url = optionalString(value);
+  if (nodeEnv !== "production") {
+    return url;
+  }
+  if (!url) {
+    throw new Error("CLIENT_URL is required in production");
+  }
+  let parsed: URL;
+  try {
+    parsed = new URL(url);
+  } catch {
+    throw new Error("CLIENT_URL must be an http(s) origin");
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new Error("CLIENT_URL must be an http(s) origin");
+  }
+  if (parsed.pathname !== "/" || parsed.search || parsed.hash) {
+    throw new Error("CLIENT_URL must be an origin only (no path or query)");
+  }
+  return `${parsed.protocol}//${parsed.host}`;
+}
+
+export function loadEnv(options: LoadEnvOptions = {}): AppEnv {
+  if (options.fromFile !== false) {
+    loadDotenv();
+  }
+
+  const NODE_ENV = parseNodeEnv(process.env.NODE_ENV);
 
   return {
-    NODE_ENV: parseNodeEnv(process.env.NODE_ENV),
+    NODE_ENV,
     PORT: parsePort(process.env.PORT),
-    CLIENT_URL: optionalString(process.env.CLIENT_URL),
+    CLIENT_URL: parseClientUrl(NODE_ENV, process.env.CLIENT_URL),
     DATABASE_URL: optionalString(process.env.DATABASE_URL),
     SUPABASE_URL: optionalString(process.env.SUPABASE_URL),
     SUPABASE_ANON_KEY: optionalString(process.env.SUPABASE_ANON_KEY),

@@ -2,14 +2,13 @@ import { createApp } from "./app.js";
 import { loadEnv } from "./config/env.js";
 import { loadStore } from "./store/fileStore.js";
 
-loadEnv();
-const port = Number(process.env.PORT ?? 4000);
+const env = loadEnv();
 
 try {
   await loadStore();
   const app = createApp();
-  app.listen(port, () => {
-    console.log(`HULUM API listening on http://localhost:${port}`);
+  app.listen(env.PORT, () => {
+    console.log(`HULUM API listening on port ${env.PORT}`);
   });
 } catch (error) {
   const message = error instanceof Error ? error.message : "Failed to start server";
