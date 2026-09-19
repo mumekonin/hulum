@@ -2,6 +2,20 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Mulualem
+
+### Changed
+Added PostgreSQL v1 schema, migration runner, and rollback smoke insert/select.
+
+### Why
+Task 21 needs durable tables for profiles, opportunities, analyses, and readiness before API services.
+
+### Evidence
+Branch: `feat/database-schema`
+
+### Decision
+Locked Build Spec §20 table names. Assignments `requirements` is `requirement_results`. Auth RLS policies wait for Task 35.
+
 ## 2026-09-19 — Backup demo path without a fake video
 
 ### Added
