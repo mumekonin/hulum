@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
+import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { LanguageCode, Profile, VoiceActionResponse } from "@hulum/shared";
@@ -47,7 +47,9 @@ function AssistantInner() {
   const [sessionOpportunityId, setSessionOpportunityId] = useState<string | undefined>();
   const [sessionAnalysisId, setSessionAnalysisId] = useState<string | undefined>();
   const [voiceSession, setVoiceSession] = useState<{ id: string; provider: string } | null>(null);
+  const [backupMode, setBackupMode] = useState(true);
   const [language, setLanguageState] = useState<LanguageCode>(getLanguage);
+  const requestInput = useRef<HTMLInputElement>(null);
   const opportunityId = sessionOpportunityId ?? search.get("opportunityId") ?? undefined;
   const analysisId = sessionAnalysisId ?? search.get("analysisId") ?? undefined;
   const needsProfile = Boolean(error?.toLowerCase().includes("profile"));
@@ -77,10 +79,14 @@ function AssistantInner() {
       body: JSON.stringify({ userId, language }),
     })
       .then((session) => {
-        if (!cancelled) setVoiceSession(session);
+        if (cancelled) return;
+        setVoiceSession(session);
+        setBackupMode(session.provider !== "voxide");
       })
       .catch(() => {
-        // Text actions still work if session create fails.
+        if (cancelled) return;
+        setVoiceSession(null);
+        setBackupMode(true);
       });
     return () => {
       cancelled = true;
@@ -179,6 +185,18 @@ function AssistantInner() {
           English is the stable v0.1 path. Amharic and Afaan Oromo are stored for Voxide; they do not enable live speech yet.
         </p>
       </fieldset>
+      {backupMode ? (
+        <div id="voice-unavailable">
+          <StatusPanel
+            variant="empty"
+            title="Voice unavailable"
+            primary={{ label: "Type a request", onClick: () => requestInput.current?.focus() }}
+            secondary={{ label: "Browse opportunities", href: "/opportunities" }}
+          >
+            Voxide is not connected. Type a request or use a quick action. You are not stuck waiting for a microphone.
+          </StatusPanel>
+        </div>
+      ) : null}
       {error ? (
         <StatusPanel
           variant="error"
@@ -213,19 +231,16 @@ function AssistantInner() {
             type="button"
             disabled
             className="min-h-11 border border-dashed border-line px-3 py-2 text-sm text-muted"
-            aria-describedby="voice-unavailable"
+            aria-describedby={backupMode ? "voice-unavailable" : undefined}
           >
             Voice (not connected)
           </button>
         </div>
-        <p id="voice-unavailable" className="mt-2 text-sm text-muted">
-          Microphone input waits until Voxide is wired. Type a request or use a quick action.
-        </p>
       </fieldset>
       <div className="mt-6 min-h-48 space-y-3" aria-live="polite" aria-relevant="additions">
         {messages.length === 0 && !pending && !error ? (
           <StatusPanel variant="empty" title="No question yet" primary={{ label: "Show internships", onClick: () => void send("Show me internships") }}>
-            Type a request or use a quick action. Microphone input waits until Voxide is wired.
+            Type a request or use a quick action.
           </StatusPanel>
         ) : null}
         {messages.map((message, index) => (
@@ -251,6 +266,7 @@ function AssistantInner() {
         <label className="min-w-[12rem] flex-1 text-sm">
           Your request
           <input
+            ref={requestInput}
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Should I apply for this?"
