@@ -3,6 +3,20 @@
 ## 2026-09-19 — Mulualem
 
 ### Changed
+Added POST analyze and GET analysis/readiness endpoints that persist the deterministic decision.
+
+### Why
+Task 28 needs one request to produce a stored HULUM analysis before Claude or readiness generation.
+
+### Evidence
+Branch: `feat/analysis-api`
+
+### Decision
+Analyze body is `{ userId }`. nextAction is derived from the stored decision. GET readiness returns stored items and stays empty until Task 29. Claude does not run on analyze.
+
+## 2026-09-19 — Mulualem
+
+### Changed
 Added the APPLY/MAYBE/SKIP engine and automated cases for critical mismatch, complete match, and uncertainty.
 
 ### Why
