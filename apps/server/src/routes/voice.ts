@@ -1,9 +1,10 @@
 import { Router } from "express";
 import { voiceActionSchema } from "@hulum/shared";
-import { runAnalysis } from "../analysis/runAnalysis.js";
+import { runAnalysis, toAnalysisDetail } from "../analysis/runAnalysis.js";
 import { fail, ok } from "../lib/http.js";
 import { createId, nowIso } from "../lib/id.js";
 import { formatOpportunityList, parseVoiceIntent } from "../voice/intents.js";
+import { findLatestAnalysis } from "../voice/findAnalysis.js";
 import { loadStore } from "../store/fileStore.js";
 
 export const voiceRouter = Router();
@@ -31,7 +32,7 @@ voiceRouter.post("/action", async (req, res) => {
   const { text, language = "en", userId, opportunityId, analysisId } = parsed.data;
   const intent = parseVoiceIntent(text, language);
   const opportunities = store.opportunities;
-  const analysis = analysisId ? store.analyses.find((item) => item.id === analysisId) : undefined;
+  const analysis = findLatestAnalysis(store, { analysisId, userId, opportunityId });
   const opportunity = opportunityId
     ? opportunities.find((item) => item.id === opportunityId)
     : analysis
@@ -115,9 +116,17 @@ voiceRouter.post("/action", async (req, res) => {
       .map((item) => `${item.requirementText} (${item.status})`);
 
     if (intent.intent === "EXPLAIN_DECISION") {
+      const relatedOpportunity =
+        opportunity ?? store.opportunities.find((item) => item.id === analysis.opportunityId);
+      const relatedProfile = store.profiles.find((item) => item.userId === analysis.userId);
       ok(res, {
         intent: intent.intent,
-        reply: analysis.explanation,
+        reply: `${analysis.decision}. ${analysis.explanation}`,
+        analysis:
+          relatedOpportunity && relatedProfile
+            ? toAnalysisDetail(analysis, relatedOpportunity, relatedProfile, requirements, readiness)
+            : undefined,
+        opportunity: relatedOpportunity,
       });
       return;
     }

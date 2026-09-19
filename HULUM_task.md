@@ -572,7 +572,7 @@ It must perform meaningful HULUM actions and must not be decorative.
 - [ ] **P0** Connect voice to HULUM actions.
 - [ ] **P0** Produce voice response.
 - [x] **P0** Analyze an opportunity by voice.
-- [ ] **P0** Ask "Why?"
+- [x] **P0** Ask "Why?"
 - [ ] **P0** Ask "What am I missing?"
 - [ ] **P0** Ask "What should I prepare?"
 - [ ] **P0** Filter/show opportunities by decision.
@@ -790,7 +790,7 @@ Verify the official deadline and apply.
 
 The assistant should remain grounded in the current HULUM context.
 
-- [ ] **P0** Ask why a decision was made.
+- [x] **P0** Ask why a decision was made.
 - [ ] **P0** Ask what is missing.
 - [ ] **P0** Ask what to prepare.
 - [ ] **P0** Ask about the current opportunity.
@@ -1081,7 +1081,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [ ] Voice session.
 - [ ] Voice intent mapping.
 - [x] Voice → analysis.
-- [ ] Voice → explanation.
+- [x] Voice → explanation.
 - [ ] Voice → readiness.
 - [x] Voice fallback.
 - [ ] First stable language end-to-end.
@@ -1297,7 +1297,7 @@ However, STARK-required research and ideation documentation must be maintained t
 - [ ] Profile → opportunity → analysis works.
 - [ ] Analysis → readiness works.
 - [ ] Voice → analysis works.
-- [ ] Voice → explanation works.
+- [x] Voice → explanation works.
 - [ ] Official source link works.
 - [ ] Responsible-AI notice works.
 

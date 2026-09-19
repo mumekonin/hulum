@@ -26,7 +26,7 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
   if (/ለዚህ እድል ማመልከት|should i apply|analyze|analyse|fit\b/i.test(value)) {
     return { intent: "ANALYZE_OPPORTUNITY" };
   }
-  if (/ለምን|why (apply|maybe|skip|did you)|explain/i.test(value)) {
+  if (/ለምን|why (apply|maybe|skip|did you)|explain|^why\b/i.test(value)) {
     return { intent: "EXPLAIN_DECISION" };
   }
   if (/ምን ጎድሎኛል|what am i missing|gaps?|missing/i.test(value)) {
