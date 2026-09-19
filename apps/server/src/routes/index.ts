@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { analysisRouter } from "../analysis/index.js";
+import { analysisRouter, analyzeRouter } from "../analysis/index.js";
 import { opportunityRouter } from "../opportunities/index.js";
 import { profileRouter } from "../profiles/index.js";
 import { readinessRouter } from "../readiness/index.js";
@@ -10,6 +10,7 @@ export function createApiRouter(): Router {
   const router = Router();
   router.use("/health", healthRouter);
   router.use("/profile", profileRouter);
+  router.use("/opportunities", analyzeRouter);
   router.use("/opportunities", opportunityRouter);
   router.use("/analyses", analysisRouter);
   router.use("/readiness", readinessRouter);

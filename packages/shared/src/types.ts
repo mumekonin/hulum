@@ -47,7 +47,7 @@ export type Opportunity = {
   updatedAt: string;
 };
 
-/** Matcher output before an analysis id exists. Persist as Requirement in Task 28. */
+/** Matcher output before an analysis id exists. Persist as Requirement. */
 export type RequirementMatch = {
   key: RequirementKey;
   text: string;
@@ -102,6 +102,10 @@ export type Analysis = {
   readiness: ReadinessItem[];
   createdAt: string;
   updatedAt: string;
+};
+
+export type AnalyzeOpportunityRequest = {
+  userId: string;
 };
 
 export type VoiceResponse = {
