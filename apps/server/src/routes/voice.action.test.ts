@@ -73,4 +73,42 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     expect(body.data.reply).toMatch(/APPLY|MAYBE|SKIP/);
     expect(body.data.reply).not.toMatch(/Use Analyze on the opportunity page/);
   });
+
+  it("explains the stored decision after analyze without changing APPLY/MAYBE/SKIP", async () => {
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+
+    const analyzed = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Should I apply for this?",
+        opportunityId: "opp-a2sv",
+      }),
+    });
+    const analyzedBody = (await analyzed.json()) as {
+      data: { analysis?: { id: string; decision: string; explanation: string } };
+    };
+    const decision = analyzedBody.data.analysis?.decision;
+    expect(decision).toBeDefined();
+
+    const explained = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Why did you say that?",
+        opportunityId: "opp-a2sv",
+      }),
+    });
+    const explainedBody = (await explained.json()) as {
+      data: { intent: string; reply: string; analysis?: { decision: string } };
+    };
+
+    expect(explained.status).toBe(200);
+    expect(explainedBody.data.intent).toBe("EXPLAIN_DECISION");
+    expect(explainedBody.data.analysis?.decision).toBe(decision);
+    expect(explainedBody.data.reply.startsWith(`${decision}.`)).toBe(true);
+  });
 });

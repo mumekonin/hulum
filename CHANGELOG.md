@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Voice explanation uses stored engine result
+
+### Added
+- `EXPLAIN_DECISION` loads the latest analysis for the user/opportunity if no analysis id is sent.
+- Reply starts with APPLY/MAYBE/SKIP, then the stored explanation. The engine decision is not changed.
+- Test: analyze A2SV, then “Why did you say that?” returns the same decision.
+
+### Why
+Days 10–12 required voice → explanation after voice → analysis. Voxide is still not live.
+
 ## 2026-09-18 — Voice analyze uses the decision engine
 
 ### Added
