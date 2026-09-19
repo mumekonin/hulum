@@ -849,7 +849,7 @@ Never commit:
 - [ ] Decision → explanation.
 - [x] Decision → readiness.
 - [x] Voice → intent.
-- [ ] Voice intent → HULUM action.
+- [x] Voice intent → HULUM action.
 - [ ] Frontend → backend.
 - [ ] Backend → database.
 
@@ -1100,7 +1100,7 @@ Never manufacture commits, dates, research activity, or progress.
 
 - [x] Full profile → opportunity → analysis flow.
 - [x] Full analysis → readiness flow.
-- [ ] Full voice flow.
+- [x] Full voice flow.
 - [ ] Error handling.
 - [ ] Security review.
 - [ ] Production configuration.
@@ -1298,7 +1298,7 @@ However, STARK-required research and ideation documentation must be maintained t
 
 - [x] Profile → opportunity → analysis works.
 - [x] Analysis → readiness works.
-- [ ] Voice → analysis works.
+- [x] Voice → analysis works.
 - [x] Voice → explanation works.
 - [ ] Official source link works.
 - [ ] Responsible-AI notice works.

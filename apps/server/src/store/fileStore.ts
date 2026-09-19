@@ -29,9 +29,11 @@ export type StoreShape = {
   voiceSessions: VoiceSessionRecord[];
 };
 
-const storePath = path.resolve(process.env.STORE_PATH ?? "./data/store.json");
-
 let memory: StoreShape | null = null;
+
+function getStorePath() {
+  return path.resolve(process.env.STORE_PATH ?? "./data/store.json");
+}
 
 function emptyStore(): StoreShape {
   return {
@@ -48,7 +50,7 @@ function emptyStore(): StoreShape {
 export async function loadStore(): Promise<StoreShape> {
   if (memory) return memory;
   try {
-    const raw = await readFile(storePath, "utf8");
+    const raw = await readFile(getStorePath(), "utf8");
     const parsed = JSON.parse(raw) as StoreShape;
     parsed.opportunities = seedOpportunities;
     parsed.voiceSessions = Array.isArray(parsed.voiceSessions) ? parsed.voiceSessions : [];
@@ -62,8 +64,9 @@ export async function loadStore(): Promise<StoreShape> {
 
 export async function persistStore(): Promise<void> {
   if (!memory) return;
-  await mkdir(path.dirname(storePath), { recursive: true });
-  await writeFile(storePath, JSON.stringify(memory, null, 2), "utf8");
+  const filePath = getStorePath();
+  await mkdir(path.dirname(filePath), { recursive: true });
+  await writeFile(filePath, JSON.stringify(memory, null, 2), "utf8");
 }
 
 export async function mutateStore<T>(mutator: (store: StoreShape) => T | Promise<T>): Promise<T> {

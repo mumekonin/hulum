@@ -5,9 +5,9 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createApp } from "../app.js";
-import { resetStoreForTests } from "../store/fileStore.js";
+import { loadStore, resetStoreForTests } from "../store/fileStore.js";
 
-describe("profile → opportunity → analysis", () => {
+describe("API integration", () => {
   let closeServer: (() => Promise<void>) | undefined;
   let baseUrl = "";
   let tmpDir = "";
@@ -138,5 +138,74 @@ describe("profile → opportunity → analysis", () => {
     const storedBody = (await stored.json()) as { data: Array<{ id: string; status: string }> };
     expect(stored.status).toBe(200);
     expect(storedBody.data.find((item) => item.id === target.id)?.status).toBe("DONE");
+  });
+
+  it("runs the full text-fallback voice loop without persisting extra analyses", async () => {
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+    const userId = demoBody.data.userId;
+    expect(demo.status).toBe(201);
+
+    const session = await fetch(`${baseUrl}/api/voice/session`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ userId, language: "en" }),
+    });
+    const sessionBody = (await session.json()) as { data: { language: string; provider: string } };
+    expect(session.status).toBe(201);
+    expect(sessionBody.data.language).toBe("en");
+    expect(sessionBody.data.provider).toBe("text-fallback");
+
+    async function speak(text: string, extra?: Record<string, string>) {
+      const response = await fetch(`${baseUrl}/api/voice/action`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ userId, text, language: "en", ...extra }),
+      });
+      const body = (await response.json()) as {
+        data: {
+          intent: string;
+          reply: string;
+          analysis?: { decision: string };
+          opportunities?: Array<{ id: string; type?: string }>;
+        };
+      };
+      expect(response.status).toBe(200);
+      return body.data;
+    }
+
+    const internships = await speak("Show me internships");
+    expect(internships.intent).toBe("FILTER_OPPORTUNITIES");
+    expect(internships.opportunities?.length).toBeGreaterThan(0);
+    expect(internships.opportunities?.every((item) => item.type === "internship")).toBe(true);
+
+    const about = await speak("Tell me about this opportunity", { opportunityId: "opp-a2sv" });
+    expect(about.intent).toBe("OPEN_OPPORTUNITY");
+    expect(about.reply).toMatch(/https:\/\//);
+    expect(about.reply).toContain("Official source:");
+
+    const analyzed = await speak("Should I apply for this?", { opportunityId: "opp-a2sv" });
+    expect(analyzed.intent).toBe("ANALYZE_OPPORTUNITY");
+    expect(analyzed.analysis?.decision).toMatch(/^(APPLY|MAYBE|SKIP)$/);
+    const decision = analyzed.analysis?.decision;
+
+    const explained = await speak("Why did you say that?", { opportunityId: "opp-a2sv" });
+    expect(explained.intent).toBe("EXPLAIN_DECISION");
+    expect(explained.reply.startsWith(`${decision}.`)).toBe(true);
+
+    const gaps = await speak("What am I missing?", { opportunityId: "opp-a2sv" });
+    expect(gaps.intent).toBe("SHOW_GAPS");
+
+    const readiness = await speak("What should I prepare?", { opportunityId: "opp-a2sv" });
+    expect(readiness.intent).toBe("SHOW_READINESS");
+
+    const applyList = await speak("Show me opportunities I should apply for");
+    expect(applyList.intent).toBe("FILTER_BY_DECISION");
+    expect(applyList.reply).toContain("APPLY");
+
+    resetStoreForTests();
+    const store = await loadStore();
+    expect(store.analyses).toHaveLength(1);
+    expect(store.analyses[0]?.opportunityId).toBe("opp-a2sv");
   });
 });
