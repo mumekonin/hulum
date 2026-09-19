@@ -29,7 +29,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Testing | `npm test` in `apps/server` | Engine, API, voice-text, failures |
 | Iteration | `CHANGELOG.md` | Present; Day 20 final pass; do not rewrite history |
 | Deployment | README production table | **Not deployed** |
-| Demo | `docs/demo/script.md`, `docs/demo/backup.md` | Abeba Tesfaye; text/API backup; **no video** |
+| Demo | `docs/demo/script.md`, `docs/demo/backup.md`, `docs/demo/rehearsal.md` | Abeba Tesfaye; text/API backup; rehearsal 2026-09-19 via tests, **no video** |
 | Changelog | `CHANGELOG.md`, `docs/stark/changelog-review.md`, `docs/stark/changelog-final.md` | Present; Day 20 freeze pass 2026-09-19 |
 | Git history | this GitHub repo, `docs/stark/git-history.md` | Real commits; Kidist pushes without Cursor co-author; **most Kidist `feat/*` not on `main`** |
 | Team | `team_assignments.md`, `git-workflow.md` | Present |
@@ -50,6 +50,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 
 Walkthrough: `docs/demo/script.md`.  
 Backup if speech, Analyze, or the UI fails: `docs/demo/backup.md`.  
+Rehearsal (tests + copy, not a live browser pass): `docs/demo/rehearsal.md`.  
 Persona: Abeba Tesfaye — A2SV APPLY, UCT MAYBE, Chevening SKIP.
 
 ---

@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Demo script rehearsed against tests (no fake live run)
+
+### Added
+- `docs/demo/rehearsal.md`: Day 20 check of the Abeba walkthrough against UI copy and `npm test` (APPLY / MAYBE / SKIP / text-fallback). No browser click-through or video is claimed.
+
+### Why
+Day 20 required a final demo rehearsal. The script must still match the file-store product.
+
 ## 2026-09-19 — Day 20 final changelog (no rewrite)
 
 ### Added

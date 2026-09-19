@@ -7,7 +7,7 @@
 
 Target length: about 6 minutes. One story, not a feature tour.
 
-If Analyze fails, stay on the opportunity and use Ask HULUM text. Do not improvise eligibility facts. Full backup paths (3-minute cut, Analyze failure, API-only): `docs/demo/backup.md`.
+If Analyze fails, stay on the opportunity and use Ask HULUM text. Do not improvise eligibility facts. Full backup paths (3-minute cut, Analyze failure, API-only): `docs/demo/backup.md`. Day 20 rehearsal notes: `docs/demo/rehearsal.md`.
 
 ---
 
