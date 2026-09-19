@@ -523,7 +523,7 @@ AI is an assistant, not the eligibility authority.
 - [x] **P0** Implement output validation.
 - [x] **P0** Implement decision-aware explanation.
 - [ ] **P0** Implement readiness-plan generation.
-- [ ] **P0** Implement contextual Q&A.
+- [x] **P0** Implement contextual Q&A.
 - [ ] **P1** Add retry/fallback behavior.
 - [ ] **P1** Track latency/errors.
 - [ ] **P1** Create evaluation examples.
@@ -791,9 +791,9 @@ Verify the official deadline and apply.
 The assistant should remain grounded in the current HULUM context.
 
 - [x] **P0** Ask why a decision was made.
-- [ ] **P0** Ask what is missing.
-- [ ] **P0** Ask what to prepare.
-- [ ] **P0** Ask about the current opportunity.
+- [x] **P0** Ask what is missing.
+- [x] **P0** Ask what to prepare.
+- [x] **P0** Ask about the current opportunity.
 - [ ] **P1** Ask about profile gaps.
 - [ ] **P1** Ask to filter opportunities.
 - [ ] **P1** Ask for clarification of requirements.
@@ -1092,7 +1092,7 @@ Never manufacture commits, dates, research activity, or progress.
 
 - [x] Claude explanation.
 - [x] Structured AI output validation.
-- [ ] Contextual assistant.
+- [x] Contextual assistant.
 - [ ] Amharic voice/UX if stable.
 - [ ] Afaan Oromo if stable and quality is acceptable.
 

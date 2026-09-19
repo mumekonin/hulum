@@ -61,7 +61,7 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
   if (/show|list|opportunities|እድሎች/i.test(value)) {
     return { intent: "SHOW_OPPORTUNITIES" };
   }
-  if (/open|details/i.test(value)) {
+  if (/open|details|tell me about this|about this opportunity|current opportunity/i.test(value)) {
     return { intent: "OPEN_OPPORTUNITY" };
   }
 
@@ -74,4 +74,9 @@ export function formatOpportunityList(opportunities: Opportunity[]): string {
     .slice(0, 5)
     .map((item) => `${item.title} — ${item.organization}`)
     .join("; ");
+}
+
+export function formatOpportunityContext(item: Opportunity, decision?: string): string {
+  const stored = decision ? ` Stored HULUM decision: ${decision}.` : "";
+  return `${item.title} — ${item.organization}. Type ${item.type}. Deadline ${item.deadline}. Official source: ${item.sourceUrl}.${stored} Confirm details on the official page.`;
 }

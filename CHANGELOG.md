@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Assistant describes the current opportunity from stored facts
+
+### Added
+- “Tell me about this opportunity” uses the selected stored record: title, type, deadline, official source, and the saved APPLY/MAYBE/SKIP if one exists.
+- Without a selected opportunity, HULUM asks the user to choose one instead of opening the first catalog item.
+
+### Why
+Days 13–14 required a contextual assistant grounded in HULUM, not a free chatbot.
+
 ## 2026-09-19 — Claude JSON is validated before it reaches the user
 
 ### Added

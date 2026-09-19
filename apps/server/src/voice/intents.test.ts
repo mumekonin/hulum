@@ -25,6 +25,7 @@ describe("parseVoiceIntent", () => {
       { text: "Show me opportunities", intent: "SHOW_OPPORTUNITIES" },
       { text: "እድሎች", intent: "SHOW_OPPORTUNITIES" },
       { text: "Open this opportunity", intent: "OPEN_OPPORTUNITY" },
+      { text: "Tell me about this opportunity", intent: "OPEN_OPPORTUNITY" },
       { text: "Update profile", intent: "UPDATE_PROFILE" },
       { text: "What's the weather in Addis?", intent: "UNSUPPORTED" },
     ];
