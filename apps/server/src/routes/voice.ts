@@ -4,7 +4,7 @@ import { runAnalysis, toAnalysisDetail } from "../analysis/runAnalysis.js";
 import { analyzeOpportunity } from "../decision/engine.js";
 import { fail, ok } from "../lib/http.js";
 import { createId, nowIso } from "../lib/id.js";
-import { formatOpportunityList, parseVoiceIntent } from "../voice/intents.js";
+import { formatOpportunityContext, formatOpportunityList, parseVoiceIntent } from "../voice/intents.js";
 import { findLatestAnalysis } from "../voice/findAnalysis.js";
 import { loadStore, mutateStore } from "../store/fileStore.js";
 
@@ -98,11 +98,18 @@ voiceRouter.post("/action", async (req, res) => {
   }
 
   if (intent.intent === "OPEN_OPPORTUNITY") {
-    const target = opportunity ?? opportunities[0];
+    if (!opportunity) {
+      ok(res, {
+        intent: intent.intent,
+        reply: "Choose an opportunity first, then I can tell you about it from the stored record.",
+      });
+      return;
+    }
+    const storedDecision = analysis && analysis.opportunityId === opportunity.id ? analysis.decision : undefined;
     ok(res, {
       intent: intent.intent,
-      reply: target ? `Opening ${target.title}.` : "I need an opportunity to open.",
-      opportunity: target,
+      reply: formatOpportunityContext(opportunity, storedDecision),
+      opportunity,
     });
     return;
   }

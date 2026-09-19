@@ -15,6 +15,7 @@ const quickActions = [
   "Show me opportunities I should apply for",
   "Show me maybe opportunities",
   "Should I apply for this?",
+  "Tell me about this opportunity",
   "Why did you say that?",
   "What am I missing?",
   "ምን ጎድሎኛል?",

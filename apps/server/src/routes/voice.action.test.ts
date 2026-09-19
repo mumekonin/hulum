@@ -335,4 +335,68 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     const readiness = await speak("What should I prepare?", { opportunityId: "opp-a2sv" });
     expect(readiness.intent).toBe("SHOW_READINESS");
   });
+
+  it("describes the current opportunity from stored facts, not the first catalog item", async () => {
+    const fresh = await fetch(`${baseUrl}/api/profile`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: "user_context_fresh",
+        name: "Abeba Tesfaye",
+        educationLevel: "bachelor_in_progress",
+        fieldOfStudy: "Computer Science",
+        graduationYear: 2027,
+        country: "Ethiopia",
+        languages: ["English"],
+        preferredLanguage: "en",
+      }),
+    });
+    expect(fresh.ok).toBe(true);
+
+    const missing = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: "user_context_fresh",
+        text: "Tell me about this opportunity",
+      }),
+    });
+    const missingBody = (await missing.json()) as { data: { intent: string; reply: string } };
+    expect(missing.status).toBe(200);
+    expect(missingBody.data.intent).toBe("OPEN_OPPORTUNITY");
+    expect(missingBody.data.reply).toContain("Choose an opportunity first");
+
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+
+    await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Should I apply for this?",
+        opportunityId: "opp-a2sv",
+      }),
+    });
+
+    const about = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Tell me about this opportunity",
+      }),
+    });
+    const aboutBody = (await about.json()) as {
+      data: { intent: string; reply: string; opportunity?: { id: string; sourceUrl: string } };
+    };
+
+    expect(about.status).toBe(200);
+    expect(aboutBody.data.intent).toBe("OPEN_OPPORTUNITY");
+    expect(aboutBody.data.opportunity?.id).toBe("opp-a2sv");
+    expect(aboutBody.data.reply).toContain("A2SV");
+    expect(aboutBody.data.reply).toContain(aboutBody.data.opportunity?.sourceUrl ?? "__missing__");
+    expect(aboutBody.data.reply).toMatch(/Stored HULUM decision: (APPLY|MAYBE|SKIP)/);
+    expect(aboutBody.data.reply).not.toContain("Chevening");
+  });
 });
