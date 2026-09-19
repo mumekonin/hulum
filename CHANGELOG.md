@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Honest development narrative for STARK
+
+### Added
+- `docs/stark/narrative.md`: how Kidist and Mulualem actually built v0.1, including two runtimes and empty ScholarXIV.
+
+### Why
+Phase 27 required a final development narrative. It must match git, not the original pitch stack.
+
 ## 2026-09-19 — Voice gaps uses SHOW_MISSING_REQUIREMENTS
 
 ### Changed
