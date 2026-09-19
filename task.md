@@ -18,6 +18,8 @@ Status is marked DONE in the same PR as the work, so `main` shows DONE only afte
 | 23 | Opportunity service | Mulualem | DONE |
 | 24 | Profile service | Mulualem | DONE |
 | 25 | Requirement matching engine | Mulualem | DONE |
+| 26 | APPLY/MAYBE/SKIP decision engine | Mulualem | DONE |
+| 27 | Decision-engine tests | Mulualem | DONE |
 
 Other tasks are not started.
 
