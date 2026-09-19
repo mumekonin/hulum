@@ -1119,7 +1119,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Demo script.
 - [x] STARK documentation.
 - [ ] Research evidence.
-- [ ] Changelog review.
+- [x] Changelog review.
 - [x] README review.
 - [x] Architecture review.
 - [ ] Backup demo.

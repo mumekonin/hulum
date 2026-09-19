@@ -30,7 +30,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Iteration | `CHANGELOG.md` | Present; do not rewrite history |
 | Deployment | README production table | **Not deployed** |
 | Demo | `docs/demo/script.md` | Abeba Tesfaye walkthrough |
-| Changelog | `CHANGELOG.md` | Present |
+| Changelog | `CHANGELOG.md`, `docs/stark/changelog-review.md` | Present; reviewed 2026-09-19 |
 | Git history | this GitHub repo | Real commits; no Cursor co-author on Kidist pushes |
 | Team | `team_assignments.md`, `git-workflow.md` | Present |
 

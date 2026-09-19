@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Changelog reviewed against git (no rewrite)
+
+### Added
+- `docs/stark/changelog-review.md`: Day 19 pass of `CHANGELOG.md` against `git log`. Historical entries were not rewritten. Missing PR numbers and screenshots were not invented.
+
+### Why
+Day 19 required a changelog review. STARK tracking must match the repository.
+
 ## 2026-09-19 — Architecture overview matches the running API
 
 ### Changed
