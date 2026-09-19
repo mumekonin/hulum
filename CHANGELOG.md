@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Production env refuses to start without a CORS origin
+
+### Added
+- `loadEnv` requires `CLIENT_URL` as an http(s) origin when `NODE_ENV=production`. Default API port is 4000.
+- README lists required vs optional host variables. Claude, Voxide, and Supabase stay optional; the file store is still the default.
+
+### Why
+Days 15–16 required production configuration. This is not a live deploy.
+
 ## 2026-09-19 — API security pass: keys stay off the wire
 
 ### Added

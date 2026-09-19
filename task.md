@@ -929,9 +929,9 @@ Do not log unnecessary personal profile data or raw voice/conversation content.
 
 - [ ] **P0** Deploy frontend.
 - [ ] **P0** Deploy backend.
-- [ ] **P0** Configure production environment.
+- [x] **P0** Configure production environment.
 - [ ] **P0** Configure database.
-- [ ] **P0** Configure CORS.
+- [x] **P0** Configure CORS.
 - [ ] **P0** Configure production secrets.
 - [ ] **P0** Verify production analysis flow.
 - [ ] **P0** Verify production voice flow.
@@ -1103,7 +1103,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Full voice flow.
 - [x] Error handling.
 - [x] Security review.
-- [ ] Production configuration.
+- [x] Production configuration.
 
 ## Days 17–18 — Deployment + Testing
 

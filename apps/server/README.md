@@ -12,9 +12,11 @@ cp apps/server/.env.example apps/server/.env
 npm run dev:server
 ```
 
-Health check: `GET http://localhost:3001/api/health`
+Health check: `GET http://localhost:4000/api/health`
 
 Optional keys in `.env` stay empty until later tasks. Never commit `.env`.
+
+Production hosts must set `NODE_ENV=production`, `CLIENT_URL` (web origin for CORS), and `PORT` if not using 4000. Claude, Voxide, and Supabase keys stay optional; the file store is still the v0.1 default.
 
 ## Test
 
