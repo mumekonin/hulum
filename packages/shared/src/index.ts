@@ -5,13 +5,14 @@ export {
   Language,
   OpportunityType,
   ReadinessStatus,
+  RequirementKey,
   RequirementStatus,
   VerificationStatus,
   VoiceIntent,
   isDecision,
   isVoiceIntent,
 } from "./enums.js";
-export type { Analysis, Opportunity, Profile, ReadinessItem, Requirement, VoiceResponse } from "./types.js";
+export type { Analysis, Opportunity, Profile, ReadinessItem, Requirement, RequirementMatch, VoiceResponse } from "./types.js";
 export { PROFILE_COMPLETENESS_FIELDS, profileCompleteness } from "./profile.js";
 export type {
   CreateProfileRequest,

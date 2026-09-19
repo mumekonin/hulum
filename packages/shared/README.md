@@ -28,4 +28,6 @@ Do not use `SHOW_GAPS`. That action is `SHOW_MISSING_REQUIREMENTS`.
 
 Profile API types: `CreateProfileRequest`, `PatchProfileRequest`, `ProfileView`. Completeness uses `profileCompleteness()`.
 
+Matcher keys: `RequirementKey`. Matcher rows: `RequirementMatch`.
+
 Tell both teammates before changing these names.

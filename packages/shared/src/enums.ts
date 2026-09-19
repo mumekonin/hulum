@@ -15,6 +15,19 @@ export const RequirementStatus = {
 
 export type RequirementStatus = (typeof RequirementStatus)[keyof typeof RequirementStatus];
 
+export const RequirementKey = {
+  COUNTRY: "country",
+  EDUCATION: "education",
+  FIELD: "field",
+  LANGUAGE: "language",
+  EXPERIENCE: "experience",
+  DOCUMENTS: "documents",
+  DEADLINE: "deadline",
+  OTHER: "other",
+} as const;
+
+export type RequirementKey = (typeof RequirementKey)[keyof typeof RequirementKey];
+
 export const ReadinessStatus = {
   TODO: "TODO",
   IN_PROGRESS: "IN_PROGRESS",
