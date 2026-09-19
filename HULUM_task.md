@@ -574,7 +574,7 @@ It must perform meaningful HULUM actions and must not be decorative.
 - [x] **P0** Analyze an opportunity by voice.
 - [x] **P0** Ask "Why?"
 - [ ] **P0** Ask "What am I missing?"
-- [ ] **P0** Ask "What should I prepare?"
+- [x] **P0** Ask "What should I prepare?"
 - [ ] **P0** Filter/show opportunities by decision.
 - [ ] **P1** Create/update profile by voice.
 - [ ] **P1** Handle recognition failure.
@@ -1082,7 +1082,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [ ] Voice intent mapping.
 - [x] Voice → analysis.
 - [x] Voice → explanation.
-- [ ] Voice → readiness.
+- [x] Voice → readiness.
 - [x] Voice fallback.
 - [ ] First stable language end-to-end.
 

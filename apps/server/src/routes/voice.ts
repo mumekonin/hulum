@@ -138,11 +138,20 @@ voiceRouter.post("/action", async (req, res) => {
       return;
     }
     if (intent.intent === "SHOW_READINESS") {
+      const relatedOpportunity =
+        opportunity ?? store.opportunities.find((item) => item.id === analysis.opportunityId);
+      const relatedProfile = store.profiles.find((item) => item.userId === analysis.userId);
+      const list = readiness.length
+        ? readiness.map((item) => `${item.title} (${item.status.replace("_", " ")})`).join("; ")
+        : "No readiness checklist is stored yet.";
       ok(res, {
         intent: intent.intent,
-        reply: readiness.length
-          ? `Prepare: ${readiness.map((item) => item.title).join("; ")}`
-          : "No readiness checklist is stored yet.",
+        reply: readiness.length ? `${analysis.nextAction} Prepare: ${list}` : `${analysis.nextAction} ${list}`,
+        analysis:
+          relatedOpportunity && relatedProfile
+            ? toAnalysisDetail(analysis, relatedOpportunity, relatedProfile, requirements, readiness)
+            : undefined,
+        opportunity: relatedOpportunity,
       });
       return;
     }

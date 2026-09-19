@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Voice readiness uses stored checklist
+
+### Added
+- `SHOW_READINESS` loads the latest analysis for the user/opportunity and replies with next action plus checklist titles and status.
+- Test: analyze A2SV, then “What should I prepare?” returns stored readiness items.
+
+### Why
+Days 10–12 required voice → readiness after explanation. Voxide is still not live.
+
 ## 2026-09-18 — Voice explanation uses stored engine result
 
 ### Added
