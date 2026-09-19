@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { voiceActionSchema } from "@hulum/shared";
+import { runAnalysis } from "../analysis/runAnalysis.js";
 import { fail, ok } from "../lib/http.js";
 import { createId, nowIso } from "../lib/id.js";
 import { formatOpportunityList, parseVoiceIntent } from "../voice/intents.js";
@@ -77,12 +78,31 @@ voiceRouter.post("/action", async (req, res) => {
   }
 
   if (intent.intent === "ANALYZE_OPPORTUNITY") {
+    if (!opportunity) {
+      ok(res, {
+        intent: intent.intent,
+        reply: "Choose an opportunity first, then ask whether you should apply.",
+      });
+      return;
+    }
+    const result = await runAnalysis(userId, opportunity.id);
+    if (!result.ok) {
+      if (result.code === "PROFILE_NOT_FOUND") {
+        fail(res, result.message, result.status, result.code);
+        return;
+      }
+      ok(res, {
+        intent: intent.intent,
+        reply: result.message,
+        opportunity,
+      });
+      return;
+    }
     ok(res, {
       intent: intent.intent,
-      reply: opportunity
-        ? `I can analyze ${opportunity.title}. Use Analyze on the opportunity page to run the decision engine.`
-        : "Choose an opportunity first, then ask whether you should apply.",
-      opportunity,
+      reply: `${result.detail.decision} for ${result.detail.opportunity.title}. Fit ${result.detail.fitScore}%. ${result.detail.nextAction}`,
+      analysis: result.detail,
+      opportunity: result.detail.opportunity,
     });
     return;
   }

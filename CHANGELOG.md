@@ -2,6 +2,19 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Voice analyze uses the decision engine
+
+### Added
+- Text/quick-action `ANALYZE_OPPORTUNITY` now calls the same `runAnalysis` path as the Analyze button.
+- Assistant keeps the new analysis id so Why / missing / readiness can follow in the same session.
+- Vitest coverage that the reply is APPLY/MAYBE/SKIP, not “click Analyze”.
+
+### Why
+Task 11/33: voice must trigger real HULUM actions. Voxide is still not connected.
+
+### Decision
+The deterministic engine remains the source of truth. No new voice intents.
+
 ## 2026-09-18 — Phase 4 accessibility
 
 ### Added

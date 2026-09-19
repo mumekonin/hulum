@@ -60,3 +60,8 @@ export async function mutateStore<T>(mutator: (store: StoreShape) => T | Promise
   await persistStore();
   return result;
 }
+
+/** Test-only: drop the in-memory store so STORE_PATH can be swapped. */
+export function resetStoreForTests(): void {
+  memory = null;
+}

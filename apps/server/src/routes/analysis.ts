@@ -1,10 +1,8 @@
 import { Router } from "express";
-import { analyzeRequestSchema, analysisContractSchema, type Analysis, type RequirementResult } from "@hulum/shared";
-import { explainDecision } from "../ai/explain.js";
-import { analyzeOpportunity } from "../decision/engine.js";
+import { analyzeRequestSchema } from "@hulum/shared";
 import { fail, ok } from "../lib/http.js";
-import { createId, nowIso } from "../lib/id.js";
-import { loadStore, mutateStore } from "../store/fileStore.js";
+import { loadStore } from "../store/fileStore.js";
+import { runAnalysis, toAnalysisDetail } from "../analysis/runAnalysis.js";
 
 export const analysisRouter = Router();
 
@@ -15,81 +13,12 @@ analysisRouter.post("/opportunities/:id/analyze", async (req, res) => {
     return;
   }
 
-  const store = await loadStore();
-  const opportunity = store.opportunities.find((item) => item.id === req.params.id);
-  if (!opportunity) {
-    fail(res, "Opportunity not found.", 404, "OPPORTUNITY_NOT_FOUND");
+  const result = await runAnalysis(parsed.data.userId, req.params.id);
+  if (!result.ok) {
+    fail(res, result.message, result.status, result.code);
     return;
   }
-
-  const profile = store.profiles.find((item) => item.userId === parsed.data.userId);
-  if (!profile) {
-    fail(res, "Create a profile before asking HULUM to analyze.", 404, "PROFILE_NOT_FOUND");
-    return;
-  }
-
-  const contract = analyzeOpportunity(profile, opportunity);
-  const valid = analysisContractSchema.safeParse(contract);
-  if (!valid.success) {
-    fail(res, "We couldn't analyze this opportunity right now.", 500, "INVALID_ANALYSIS");
-    return;
-  }
-
-  const explanation = await explainDecision(profile, contract);
-  const timestamp = nowIso();
-  const analysisId = createId("analysis");
-
-  const analysis: Analysis = {
-    id: analysisId,
-    userId: profile.userId,
-    opportunityId: opportunity.id,
-    decision: contract.decision,
-    fitScore: contract.fitScore,
-    summary: contract.summary,
-    nextAction: contract.nextAction,
-    explanation,
-    disclaimer: contract.disclaimer,
-    createdAt: timestamp,
-    updatedAt: timestamp,
-  };
-
-  const requirementRows: RequirementResult[] = contract.requirements.map((item) => ({
-    id: createId("req"),
-    analysisId,
-    key: item.key,
-    requirementText: item.requirementText,
-    status: item.status,
-    evidence: item.evidence,
-    reason: item.reason,
-    critical: item.critical,
-    category: item.key,
-  }));
-
-  const readiness = contract.readiness.map((item) => ({
-    id: createId("ready"),
-    analysisId,
-    title: item.title,
-    description: item.description,
-    status: item.status,
-    priority: item.priority,
-    createdAt: timestamp,
-    updatedAt: timestamp,
-  }));
-
-  await mutateStore((current) => {
-    current.analyses.push(analysis);
-    current.requirementResults.push(...requirementRows);
-    current.readinessItems.push(...readiness);
-  });
-
-  ok(res, {
-    ...analysis,
-    opportunity,
-    profile,
-    requirements: requirementRows,
-    readiness,
-    gaps: contract.gaps,
-  }, 201);
+  ok(res, result.detail, 201);
 });
 
 analysisRouter.get("/analyses/:id", async (req, res) => {
@@ -106,20 +35,16 @@ analysisRouter.get("/analyses/:id", async (req, res) => {
     return;
   }
 
-  ok(res, {
-    ...analysis,
-    opportunity,
-    profile,
-    requirements: store.requirementResults.filter((item) => item.analysisId === analysis.id),
-    readiness: store.readinessItems.filter((item) => item.analysisId === analysis.id),
-    gaps: store.requirementResults
-      .filter((item) => item.analysisId === analysis.id && (item.status === "NOT_MET" || item.status === "UNCERTAIN"))
-      .map((item) => ({
-        requirement: item.requirementText,
-        status: item.status,
-        remediation: item.reason,
-      })),
-  });
+  ok(
+    res,
+    toAnalysisDetail(
+      analysis,
+      opportunity,
+      profile,
+      store.requirementResults.filter((item) => item.analysisId === analysis.id),
+      store.readinessItems.filter((item) => item.analysisId === analysis.id),
+    ),
+  );
 });
 
 analysisRouter.get("/analyses/:id/readiness", async (req, res) => {
