@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — English is the stable v0.1 language end-to-end
+
+### Added
+- Language selector on profile and assistant using existing `en` / `am` / `om` codes. Changing language restarts the voice session.
+- English integration test: session → internships → analyze A2SV → why → missing → prepare.
+- ADR 004: English is the stable path; Amharic/Oromo are stored for Voxide and are not claimed as live speech.
+
+### Why
+Days 10–12 required one stable language end-to-end. Voxide is still not live.
+
 ## 2026-09-18 — Voice intent mapping covers documented utterances
 
 ### Added

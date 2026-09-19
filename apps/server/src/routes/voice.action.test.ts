@@ -288,4 +288,51 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     expect(saved?.language).toBe("am");
     expect(JSON.stringify(saved)).not.toContain("secret transcript");
   });
+
+  it("runs the English core loop: session, analyze, why, gaps, readiness", async () => {
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+    const userId = demoBody.data.userId;
+
+    const session = await fetch(`${baseUrl}/api/voice/session`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ userId, language: "en" }),
+    });
+    const sessionBody = (await session.json()) as { data: { language: string; provider: string } };
+    expect(session.status).toBe(201);
+    expect(sessionBody.data.language).toBe("en");
+    expect(sessionBody.data.provider).toBe("text-fallback");
+
+    async function speak(text: string, extra?: Record<string, string>) {
+      const response = await fetch(`${baseUrl}/api/voice/action`, {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ userId, text, language: "en", ...extra }),
+      });
+      const body = (await response.json()) as {
+        data: { intent: string; reply: string; analysis?: { decision: string } };
+      };
+      expect(response.status).toBe(200);
+      return body.data;
+    }
+
+    const listed = await speak("Show me internships");
+    expect(listed.intent).toBe("FILTER_OPPORTUNITIES");
+
+    const analyzed = await speak("Should I apply for this?", { opportunityId: "opp-a2sv" });
+    expect(analyzed.intent).toBe("ANALYZE_OPPORTUNITY");
+    expect(analyzed.analysis?.decision).toMatch(/APPLY|MAYBE|SKIP/);
+    const decision = analyzed.analysis?.decision;
+
+    const explained = await speak("Why did you say that?", { opportunityId: "opp-a2sv" });
+    expect(explained.intent).toBe("EXPLAIN_DECISION");
+    expect(explained.reply.startsWith(`${decision}.`)).toBe(true);
+
+    const gaps = await speak("What am I missing?", { opportunityId: "opp-a2sv" });
+    expect(gaps.intent).toBe("SHOW_GAPS");
+
+    const readiness = await speak("What should I prepare?", { opportunityId: "opp-a2sv" });
+    expect(readiness.intent).toBe("SHOW_READINESS");
+  });
 });
