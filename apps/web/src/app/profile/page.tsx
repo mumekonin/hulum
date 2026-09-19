@@ -158,20 +158,21 @@ export default function ProfilePage() {
             </StatusPanel>
           ) : null}
           {saved ? <p className="mt-4 text-apply">Profile saved.</p> : null}
-          <button type="button" onClick={() => void loadDemo()} disabled={saving} className="mt-6 border border-ink px-4 py-2 text-sm disabled:opacity-60">
+          <button type="button" onClick={() => void loadDemo()} disabled={saving} className="mt-6 min-h-11 border border-ink px-4 py-2 text-sm disabled:opacity-60">
             {saving ? "Working…" : "Use demo profile (Abeba Tesfaye)"}
           </button>
-          <form onSubmit={(event) => void submit(event)} className="mt-8 grid gap-4">
+          <form onSubmit={(event) => void submit(event)} className="mt-8 grid gap-4" aria-describedby={error ? "profile-save-error" : undefined}>
+            {error ? <p id="profile-save-error" className="sr-only">{error}</p> : null}
             <label className="grid gap-1 text-sm">
               Name
-              <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} className="border border-line bg-white px-3 py-2" />
+              <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} autoComplete="name" className="min-h-11 border border-line bg-white px-3 py-2" />
             </label>
             <label className="grid gap-1 text-sm">
               Education
               <select
                 value={form.educationLevel}
                 onChange={(e) => setForm({ ...form, educationLevel: e.target.value as EducationLevel })}
-                className="border border-line bg-white px-3 py-2"
+                className="min-h-11 border border-line bg-white px-3 py-2"
               >
                 {EDUCATION_LEVELS.map((level) => (
                   <option key={level} value={level}>
@@ -182,35 +183,35 @@ export default function ProfilePage() {
             </label>
             <label className="grid gap-1 text-sm">
               Field of study
-              <input required value={form.fieldOfStudy} onChange={(e) => setForm({ ...form, fieldOfStudy: e.target.value })} className="border border-line bg-white px-3 py-2" />
+              <input required value={form.fieldOfStudy} onChange={(e) => setForm({ ...form, fieldOfStudy: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
             </label>
             <div className="grid gap-4 md:grid-cols-2">
               <label className="grid gap-1 text-sm">
                 Graduation year
-                <input type="number" value={form.graduationYear} onChange={(e) => setForm({ ...form, graduationYear: Number(e.target.value) })} className="border border-line bg-white px-3 py-2" />
+                <input type="number" value={form.graduationYear} onChange={(e) => setForm({ ...form, graduationYear: Number(e.target.value) })} className="min-h-11 border border-line bg-white px-3 py-2" />
               </label>
               <label className="grid gap-1 text-sm">
                 Years of experience
-                <input type="number" min={0} step={0.5} value={form.yearsExperience} onChange={(e) => setForm({ ...form, yearsExperience: Number(e.target.value) })} className="border border-line bg-white px-3 py-2" />
+                <input type="number" min={0} step={0.5} value={form.yearsExperience} onChange={(e) => setForm({ ...form, yearsExperience: Number(e.target.value) })} className="min-h-11 border border-line bg-white px-3 py-2" />
               </label>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <label className="grid gap-1 text-sm">
                 Country
-                <input required value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} className="border border-line bg-white px-3 py-2" />
+                <input required value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
               </label>
               <label className="grid gap-1 text-sm">
                 City
-                <input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="border border-line bg-white px-3 py-2" />
+                <input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
               </label>
             </div>
             <label className="grid gap-1 text-sm">
               Languages (comma separated)
-              <input required value={form.languages} onChange={(e) => setForm({ ...form, languages: e.target.value })} className="border border-line bg-white px-3 py-2" />
+              <input required value={form.languages} onChange={(e) => setForm({ ...form, languages: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
             </label>
             <label className="grid gap-1 text-sm">
               Skills
-              <input value={form.skills} onChange={(e) => setForm({ ...form, skills: e.target.value })} className="border border-line bg-white px-3 py-2" />
+              <input value={form.skills} onChange={(e) => setForm({ ...form, skills: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
             </label>
             <label className="grid gap-1 text-sm">
               Experience
@@ -218,13 +219,13 @@ export default function ProfilePage() {
             </label>
             <label className="grid gap-1 text-sm">
               Interests
-              <input value={form.interests} onChange={(e) => setForm({ ...form, interests: e.target.value })} className="border border-line bg-white px-3 py-2" />
+              <input value={form.interests} onChange={(e) => setForm({ ...form, interests: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
             </label>
             <label className="grid gap-1 text-sm">
               Documents you already have
-              <input value={form.documentsHeld} onChange={(e) => setForm({ ...form, documentsHeld: e.target.value })} placeholder="CV, Transcript" className="border border-line bg-white px-3 py-2" />
+              <input value={form.documentsHeld} onChange={(e) => setForm({ ...form, documentsHeld: e.target.value })} placeholder="CV, Transcript" className="min-h-11 border border-line bg-white px-3 py-2" />
             </label>
-            <button disabled={saving} className="bg-ink px-5 py-3 text-paper disabled:opacity-60">
+            <button disabled={saving} className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
               {saving ? "Saving…" : "Save profile"}
             </button>
           </form>

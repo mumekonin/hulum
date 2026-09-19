@@ -49,10 +49,12 @@ export function ReadinessList({
               type="button"
               onClick={() => void cycle(item)}
               disabled={pendingId === item.id}
-              className="mt-1 h-5 w-5 shrink-0 border border-ink disabled:opacity-60"
-              aria-label={`Mark ${item.title} ${item.status}`}
+              className="mt-0.5 inline-flex h-11 w-11 shrink-0 items-center justify-center border border-ink disabled:opacity-60"
+              aria-label={`${item.title}, currently ${item.status.replace("_", " ")}. Activate to change status.`}
             >
-              <span className="block text-center text-xs">{item.status === "DONE" ? "✓" : item.status === "IN_PROGRESS" ? "•" : ""}</span>
+              <span aria-hidden="true" className="text-center text-sm">
+                {item.status === "DONE" ? "✓" : item.status === "IN_PROGRESS" ? "•" : ""}
+              </span>
             </button>
             <div>
               <p className="font-medium">{item.title}</p>

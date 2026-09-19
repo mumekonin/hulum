@@ -22,25 +22,25 @@ export default function HomePage() {
         APPLY, MAYBE, or SKIP — then shows why, what is missing, and what to prepare.
       </p>
       <div className="mt-8 flex flex-wrap gap-3">
-        <Link href="/profile" className="bg-ink px-5 py-3 text-paper">
+        <Link href="/profile" className="inline-flex min-h-11 items-center bg-ink px-5 py-3 text-paper">
           Create your profile
         </Link>
-        <Link href="/opportunities" className="border border-ink px-5 py-3">
+        <Link href="/opportunities" className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
           Browse opportunities
         </Link>
       </div>
 
       <div className="mt-14 grid gap-3 md:grid-cols-3" role="list" aria-label="Decision meanings">
-        <div className="border border-line bg-white/70 p-4" role="listitem">
-          <p className="font-display text-2xl text-apply">APPLY</p>
+        <div className="border border-line border-l-4 border-l-apply bg-white/70 p-4" role="listitem">
+          <p className="font-display text-2xl text-ink">APPLY</p>
           <p className="mt-2 text-sm text-muted">Key known requirements are met. Prepare materials and confirm the official source.</p>
         </div>
-        <div className="border border-line bg-white/70 p-4" role="listitem">
-          <p className="font-display text-2xl text-maybe">MAYBE</p>
+        <div className="border border-line border-l-4 border-l-maybe bg-white/70 p-4" role="listitem">
+          <p className="font-display text-2xl text-ink">MAYBE</p>
           <p className="mt-2 text-sm text-muted">Something important is uncertain or needs verification. Do not treat this as a yes.</p>
         </div>
-        <div className="border border-line bg-white/70 p-4" role="listitem">
-          <p className="font-display text-2xl text-skip">SKIP</p>
+        <div className="border border-line border-l-4 border-l-skip bg-white/70 p-4" role="listitem">
+          <p className="font-display text-2xl text-ink">SKIP</p>
           <p className="mt-2 text-sm text-muted">A critical requirement is not met. Spend time on a closer match.</p>
         </div>
       </div>

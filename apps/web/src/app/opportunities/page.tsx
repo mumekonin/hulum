@@ -72,20 +72,26 @@ export default function OpportunitiesPage() {
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
-          <label className="text-sm">
+          <label className="grid gap-1 text-sm" htmlFor="opportunity-search">
             Search
             <input
+              id="opportunity-search"
               type="search"
               value={queryInput}
               onChange={(e) => setQueryInput(e.target.value)}
               placeholder="A2SV, Chevening, internship…"
-              className="mt-1 block w-56 border border-line bg-white px-3 py-2"
-              aria-label="Search opportunities"
+              className="block min-h-11 w-56 border border-line bg-white px-3 py-2"
+              aria-controls="opportunity-results"
             />
           </label>
-          <label className="text-sm">
+          <label className="grid gap-1 text-sm" htmlFor="opportunity-type">
             Filter
-            <select value={type} onChange={(e) => setType(e.target.value as OpportunityType | "")} className="ml-2 border border-line bg-white px-3 py-2">
+            <select
+              id="opportunity-type"
+              value={type}
+              onChange={(e) => setType(e.target.value as OpportunityType | "")}
+              className="min-h-11 border border-line bg-white px-3 py-2"
+            >
               <option value="">All types</option>
               {OPPORTUNITY_TYPES.map((value) => (
                 <option key={value} value={value}>
@@ -128,12 +134,18 @@ export default function OpportunitiesPage() {
         </StatusPanel>
       ) : null}
       {!loading && !error && items.length > 0 ? (
-        <div className="mt-8 grid gap-4 md:grid-cols-2">
+        <ul id="opportunity-results" className="mt-8 grid gap-4 md:grid-cols-2">
           {items.map((opportunity) => (
-            <OpportunityCard key={opportunity.id} opportunity={opportunity} />
+            <li key={opportunity.id}>
+              <OpportunityCard opportunity={opportunity} />
+            </li>
           ))}
+        </ul>
+      ) : (
+        <div id="opportunity-results" className="sr-only" aria-live="polite">
+          {loading ? "Loading opportunities" : error ? "Could not load opportunities" : emptyTitle}
         </div>
-      ) : null}
+      )}
     </section>
   );
 }

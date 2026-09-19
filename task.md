@@ -326,7 +326,7 @@ Official opportunity source
 - [x] **P1** Search.
 - [x] **P1** Error/failure states.
 - [x] **P1** Loading/empty states.
-- [ ] **P1** Accessibility improvements.
+- [x] **P1** Accessibility improvements.
 
 ## Decision UI
 

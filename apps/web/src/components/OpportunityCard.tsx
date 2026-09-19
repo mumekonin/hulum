@@ -12,6 +12,9 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
       href={`/opportunities/${opportunity.id}`}
       className="block border border-line bg-white/70 p-5 transition hover:border-ink"
     >
+      <span className="sr-only">
+        {expired ? "Deadline closed in stored data. " : remaining != null && remaining >= 0 ? `${remaining} days left. ` : ""}
+      </span>
       <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-muted">
         <span>{TYPE_LABELS[opportunity.type]}</span>
         <span aria-hidden="true">·</span>

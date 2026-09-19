@@ -40,8 +40,8 @@ export function StatusPanel({
 function ActionControl({ action, kind }: { action: Action; kind: "primary" | "secondary" }) {
   const className =
     kind === "primary"
-      ? "bg-ink px-4 py-2 text-sm text-paper"
-      : "border border-ink px-4 py-2 text-sm";
+      ? "inline-flex min-h-11 items-center bg-ink px-4 py-2 text-sm text-paper"
+      : "inline-flex min-h-11 items-center border border-ink px-4 py-2 text-sm";
 
   if ("href" in action) {
     return (
