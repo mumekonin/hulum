@@ -9,6 +9,7 @@ export type AppEnv = {
   SUPABASE_ANON_KEY: string | undefined;
   SUPABASE_SERVICE_ROLE_KEY: string | undefined;
   CLAUDE_API_KEY: string | undefined;
+  CLAUDE_MODEL: string | undefined;
   VOXIDE_API_KEY: string | undefined;
 };
 
@@ -49,7 +50,8 @@ export function loadEnv(): AppEnv {
     SUPABASE_URL: optionalString(process.env.SUPABASE_URL),
     SUPABASE_ANON_KEY: optionalString(process.env.SUPABASE_ANON_KEY),
     SUPABASE_SERVICE_ROLE_KEY: optionalString(process.env.SUPABASE_SERVICE_ROLE_KEY),
-    CLAUDE_API_KEY: optionalString(process.env.CLAUDE_API_KEY),
+    CLAUDE_API_KEY: optionalString(process.env.CLAUDE_API_KEY) ?? optionalString(process.env.ANTHROPIC_API_KEY),
+    CLAUDE_MODEL: optionalString(process.env.CLAUDE_MODEL) ?? optionalString(process.env.ANTHROPIC_MODEL),
     VOXIDE_API_KEY: optionalString(process.env.VOXIDE_API_KEY),
   };
 }

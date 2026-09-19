@@ -1,6 +1,8 @@
 import { createApp } from "./app.js";
+import { loadEnv } from "./config/env.js";
 import { loadStore } from "./store/fileStore.js";
 
+loadEnv();
 const port = Number(process.env.PORT ?? 4000);
 
 try {

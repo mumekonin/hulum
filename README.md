@@ -96,7 +96,7 @@ npm run dev
 - Web: http://localhost:3000
 - API health: http://localhost:4000/api/health
 
-The decision engine runs without Claude or Voxide keys. Add `ANTHROPIC_API_KEY` only if you want LLM wording on top of the structured decision. Voice currently uses text + quick actions until Voxide is configured.
+The decision engine runs without Claude or Voxide keys. Add `CLAUDE_API_KEY` (or `ANTHROPIC_API_KEY`) and `CLAUDE_MODEL` (or `ANTHROPIC_MODEL`) only if you want LLM wording on top of the structured decision. Voice currently uses text + quick actions until Voxide is configured.
 
 `npm test` runs requirement-matching and APPLY / MAYBE / SKIP cases.
 

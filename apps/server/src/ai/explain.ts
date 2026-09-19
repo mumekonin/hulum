@@ -1,9 +1,28 @@
-import type { AnalysisContract, Profile } from "@hulum/shared";
+import type { AnalysisContract, Decision, Profile } from "@hulum/shared";
+
+function claudeKey(): string | undefined {
+  return process.env.CLAUDE_API_KEY?.trim() || process.env.ANTHROPIC_API_KEY?.trim() || undefined;
+}
+
+function claudeModel(): string | undefined {
+  return process.env.CLAUDE_MODEL?.trim() || process.env.ANTHROPIC_MODEL?.trim() || undefined;
+}
+
+/** Drop Claude wording that contradicts the engine decision. */
+export function sanitizeExplanation(text: string, decision: Decision, fallback: string): string {
+  const cleaned = text.trim();
+  if (!cleaned) return fallback;
+  const mentioned = (["APPLY", "MAYBE", "SKIP"] as const).filter((item) => new RegExp(`\\b${item}\\b`).test(cleaned));
+  if (mentioned.some((item) => item !== decision)) return fallback;
+  return cleaned;
+}
 
 export async function explainDecision(profile: Profile, contract: AnalysisContract): Promise<string> {
-  const apiKey = process.env.ANTHROPIC_API_KEY;
-  if (!apiKey) {
-    return contract.summary;
+  const fallback = contract.summary;
+  const apiKey = claudeKey();
+  const model = claudeModel();
+  if (!apiKey || !model) {
+    return fallback;
   }
 
   try {
@@ -15,22 +34,21 @@ export async function explainDecision(profile: Profile, contract: AnalysisContra
         "anthropic-version": "2023-06-01",
       },
       body: JSON.stringify({
-        model: process.env.ANTHROPIC_MODEL || "claude-sonnet-4-6",
+        model,
         max_tokens: 400,
         messages: [
           {
             role: "user",
-            content: `Explain this HULUM decision in plain language for ${profile.name}. Do not change the decision. Do not invent eligibility facts. Decision=${contract.decision}, fit=${contract.fitScore}. Summary=${contract.summary}. Requirements=${JSON.stringify(contract.requirements)}`,
+            content: `Explain this HULUM decision in plain language for ${profile.name}. Do not change the decision. Do not invent eligibility facts or deadlines. The deterministic engine already decided ${contract.decision}. Fit=${contract.fitScore}. Summary=${contract.summary}. Requirements=${JSON.stringify(contract.requirements)}`,
           },
         ],
       }),
     });
 
-    if (!response.ok) return contract.summary;
+    if (!response.ok) return fallback;
     const payload = (await response.json()) as { content?: Array<{ text?: string }> };
-    const text = payload.content?.[0]?.text?.trim();
-    return text || contract.summary;
+    return sanitizeExplanation(payload.content?.[0]?.text ?? "", contract.decision, fallback);
   } catch {
-    return contract.summary;
+    return fallback;
   }
 }
