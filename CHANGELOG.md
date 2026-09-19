@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Claude may only rephrase the engine decision
+
+### Added
+- Explanation service uses `CLAUDE_API_KEY` / `CLAUDE_MODEL` (or the Anthropic aliases). Missing key or model keeps the engine summary.
+- Claude text that names a different APPLY / MAYBE / SKIP is discarded.
+- Tests cover no-key fallback and contradictory wording.
+
+### Why
+Days 13–14 required Claude explanation. The deterministic engine remains the source of truth.
+
 ## 2026-09-19 — English is the stable v0.1 language end-to-end
 
 ### Added
