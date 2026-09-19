@@ -86,6 +86,8 @@ The engine runs with empty Claude/Voxide keys. Set `CLAUDE_API_KEY` (or `ANTHROP
 
 API-only: `cp apps/server/.env.example apps/server/.env` then `npm run dev:server`.
 
+Postgres schema exists (`npm run db:migrate` / `npm run db:smoke` when `DATABASE_URL` is set). The API still uses the file store until that switch is wired. See `database/README.md`.
+
 ---
 
 ## API
