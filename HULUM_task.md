@@ -974,14 +974,14 @@ Interest: AI
 
 ## Demo flow
 
-- [ ] **P0** Create demo profile.
-- [ ] **P0** Show opportunity.
-- [ ] **P0** Ask HULUM to analyze.
-- [ ] **P0** Show APPLY/MAYBE/SKIP.
-- [ ] **P0** Explain why.
-- [ ] **P0** Show matched requirements.
-- [ ] **P0** Show missing/uncertain requirements.
-- [ ] **P0** Show readiness checklist.
+- [x] **P0** Create demo profile.
+- [x] **P0** Show opportunity.
+- [x] **P0** Ask HULUM to analyze.
+- [x] **P0** Show APPLY/MAYBE/SKIP.
+- [x] **P0** Explain why.
+- [x] **P0** Show matched requirements.
+- [x] **P0** Show missing/uncertain requirements.
+- [x] **P0** Show readiness checklist.
 - [ ] **P0** Demonstrate voice.
 - [x] **P0** Demonstrate English.
 - [ ] **P1** Demonstrate Amharic if stable.
@@ -1012,7 +1012,7 @@ Interest: AI
 - [x] **P0** Research/competitive analysis.
 - [x] **P0** ScholarXIV ideation evidence.
 - [x] **P1** Architecture decision records.
-- [ ] **P1** Demo instructions.
+- [x] **P1** Demo instructions.
 - [ ] **P1** Deployment guide.
 - [ ] **P1** STARK evidence checklist.
 
@@ -1116,7 +1116,7 @@ Never manufacture commits, dates, research activity, or progress.
 
 ## Day 19 — Demo + Documentation
 
-- [ ] Demo script.
+- [x] Demo script.
 - [ ] STARK documentation.
 - [ ] Research evidence.
 - [ ] Changelog review.

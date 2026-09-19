@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — STARK demo script for Abeba Tesfaye
+
+### Added
+- `docs/demo/script.md`: timed walkthrough (Abeba → A2SV APPLY, optional UCT MAYBE / Chevening SKIP), text backup instead of live voice, and what not to claim.
+
+### Why
+Day 19 required a demo script that matches the running product.
+
 ## 2026-09-19 — Assistant backup mode when Voxide is missing
 
 ### Added
