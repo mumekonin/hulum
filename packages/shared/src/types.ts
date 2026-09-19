@@ -3,6 +3,7 @@ import type {
   Language,
   OpportunityType,
   ReadinessStatus,
+  RequirementKey,
   RequirementStatus,
   VerificationStatus,
   VoiceIntent,
@@ -46,7 +47,14 @@ export type Opportunity = {
   updatedAt: string;
 };
 
-/** One requirement outcome on an analysis. Stored as requirement_results. */
+/** Matcher output before an analysis id exists. Persist as Requirement in Task 28. */
+export type RequirementMatch = {
+  key: RequirementKey;
+  text: string;
+  status: RequirementStatus;
+  evidence: string | null;
+  reason: string;
+};
 export type Requirement = {
   id: string;
   analysisId: string;
