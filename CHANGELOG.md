@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Voice filters opportunities by APPLY / MAYBE / SKIP
+
+### Added
+- `FILTER_BY_DECISION` scores the catalog with the same engine as Analyze and lists matching opportunities. Those scores are not stored, so a later Why / missing / prepare still uses the last saved analysis.
+- Test: “Show me opportunities I should apply for” is a catalog filter, not analyze-this. Chevening stays in SKIP, not APPLY.
+
+### Why
+Days 10–12 required voice filter/show by decision. Voxide is still not live.
+
 ## 2026-09-18 — Voice gaps uses stored NOT_MET / UNCERTAIN requirements
 
 ### Added

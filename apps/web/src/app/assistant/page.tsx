@@ -11,6 +11,8 @@ import { getUserId } from "@/lib/storage";
 
 const quickActions = [
   "Show me internships",
+  "Show me opportunities I should apply for",
+  "Show me maybe opportunities",
   "Should I apply for this?",
   "Why did you say that?",
   "What am I missing?",

@@ -575,7 +575,7 @@ It must perform meaningful HULUM actions and must not be decorative.
 - [x] **P0** Ask "Why?"
 - [x] **P0** Ask "What am I missing?"
 - [x] **P0** Ask "What should I prepare?"
-- [ ] **P0** Filter/show opportunities by decision.
+- [x] **P0** Filter/show opportunities by decision.
 - [ ] **P1** Create/update profile by voice.
 - [ ] **P1** Handle recognition failure.
 - [ ] **P1** Handle silence/timeouts.
@@ -1084,6 +1084,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Voice → explanation.
 - [x] Voice → readiness.
 - [x] Voice → gaps.
+- [x] Voice → filter by decision.
 - [x] Voice fallback.
 - [ ] First stable language end-to-end.
 
