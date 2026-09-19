@@ -182,7 +182,7 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     };
 
     expect(gaps.status).toBe(200);
-    expect(gapsBody.data.intent).toBe("SHOW_GAPS");
+    expect(gapsBody.data.intent).toBe("SHOW_MISSING_REQUIREMENTS");
     expect(gapsBody.data.analysis?.gaps?.length).toBeGreaterThan(0);
     expect(gapsBody.data.analysis?.gaps?.some((item) => item.status === "NOT_MET" || item.status === "UNCERTAIN")).toBe(
       true,
@@ -330,7 +330,7 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     expect(explained.reply.startsWith(`${decision}.`)).toBe(true);
 
     const gaps = await speak("What am I missing?", { opportunityId: "opp-a2sv" });
-    expect(gaps.intent).toBe("SHOW_GAPS");
+    expect(gaps.intent).toBe("SHOW_MISSING_REQUIREMENTS");
 
     const readiness = await speak("What should I prepare?", { opportunityId: "opp-a2sv" });
     expect(readiness.intent).toBe("SHOW_READINESS");

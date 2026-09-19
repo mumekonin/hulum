@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Voice gaps uses SHOW_MISSING_REQUIREMENTS
+
+### Changed
+- Parser and Ask HULUM emit Task 22 `SHOW_MISSING_REQUIREMENTS` instead of `SHOW_GAPS`. `UNSUPPORTED` stays a runtime fallback.
+
+### Why
+Day 20 freeze: final bug fixes only. The lock on `main` and the running demo must use the same intent name.
+
 ## 2026-09-19 — STARK submission cover for judges
 
 ### Added

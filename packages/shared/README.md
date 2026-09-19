@@ -10,7 +10,7 @@ import type { Analysis, Decision } from "@hulum/shared";
 
 Those come from `src/constants.ts`, `src/types.ts`, and `src/schemas.ts` (Zod).
 
-Task 22 lock objects (`Decision`, `VoiceIntent`, envelope `ok`/`fail`) also live in `src/enums.ts` and `src/api.ts`. The running voice parser still emits `SHOW_GAPS`; the lock name for that action is `SHOW_MISSING_REQUIREMENTS`. Align those in a dedicated pass — do not copy types into `apps/web` or `apps/server`.
+Task 22 lock objects (`Decision`, `VoiceIntent`, envelope `ok`/`fail`) also live in `src/enums.ts` and `src/api.ts`. Gaps use `SHOW_MISSING_REQUIREMENTS` (not `SHOW_GAPS`). Runtime still allows `UNSUPPORTED` as a parser fallback. Do not copy types into `apps/web` or `apps/server`.
 
 ## Voice intents (locked, Task 22)
 

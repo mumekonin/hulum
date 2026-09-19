@@ -45,7 +45,7 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
     return { intent: "EXPLAIN_DECISION" };
   }
   if (/ምን ጎድሎኛል|what am i missing|gaps?|missing/i.test(value)) {
-    return { intent: "SHOW_GAPS" };
+    return { intent: "SHOW_MISSING_REQUIREMENTS" };
   }
   if (/ምን ላዘጋጅ|what should i prepare|readiness|checklist|prepare/i.test(value)) {
     return { intent: "SHOW_READINESS" };

@@ -204,7 +204,7 @@ describe("API integration", () => {
     expect(explained.reply.startsWith(`${decision}.`)).toBe(true);
 
     const gaps = await speak("What am I missing?", { opportunityId: "opp-a2sv" });
-    expect(gaps.intent).toBe("SHOW_GAPS");
+    expect(gaps.intent).toBe("SHOW_MISSING_REQUIREMENTS");
 
     const readiness = await speak("What should I prepare?", { opportunityId: "opp-a2sv" });
     expect(readiness.intent).toBe("SHOW_READINESS");
