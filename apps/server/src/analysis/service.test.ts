@@ -81,7 +81,16 @@ function storedFrom(input: StoreInput): Analysis {
       reason: match.reason,
     })),
     nextAction: "Prepare your application materials and verify the official source.",
-    readiness: [],
+    readiness: input.readiness.map((draft, index) => ({
+      id: `66666666-6666-4666-8666-66666666666${String(index)}`,
+      analysisId: "44444444-4444-4444-8444-444444444444",
+      title: draft.title,
+      description: draft.description,
+      status: draft.status,
+      priority: draft.priority,
+      createdAt: "2026-09-19T00:00:00.000Z",
+      updatedAt: "2026-09-19T00:00:00.000Z",
+    })),
     createdAt: "2026-09-19T00:00:00.000Z",
     updatedAt: "2026-09-19T00:00:00.000Z",
   };
@@ -113,7 +122,8 @@ describe("analysis service", () => {
     expect(result.fitScore).toBeGreaterThanOrEqual(90);
     expect(result.summary).toBe(ANALYSIS_SUMMARY[Decision.APPLY]);
     expect(result.requirements.length).toBeGreaterThan(0);
-    expect(result.readiness).toEqual([]);
+    expect(result.readiness.length).toBeGreaterThan(0);
+    expect(result.readiness[0]?.title).toBe("No extra documents listed");
     expect(persisted?.userId).toBe(profile.userId);
     expect(persisted?.opportunityId).toBe(opportunity.id);
   });
@@ -130,6 +140,7 @@ describe("analysis service", () => {
           fitScore: 0,
           summary: "",
           matches: [],
+          readiness: [],
         }),
         getById: async () => undefined,
       },

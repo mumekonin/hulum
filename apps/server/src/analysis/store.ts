@@ -1,5 +1,6 @@
 import type { Analysis, RequirementMatch } from "@hulum/shared";
 import { getPool } from "../db/pool.js";
+import type { DraftReadinessItem } from "../readiness/build.js";
 import {
   mapAnalysis,
   mapReadinessRow,
@@ -16,6 +17,7 @@ export type PersistAnalysisInput = {
   fitScore: number;
   summary: string;
   matches: RequirementMatch[];
+  readiness: DraftReadinessItem[];
 };
 
 export type AnalysisStore = {
@@ -85,8 +87,27 @@ export function createPgAnalysisStore(): AnalysisStore {
           requirementRows.push(row);
         }
 
+        const readinessRows: ReadinessRow[] = [];
+        for (const item of input.readiness) {
+          const inserted = await client.query<ReadinessRow>(
+            `insert into readiness_items (analysis_id, title, description, status, priority)
+             values ($1, $2, $3, $4, $5)
+             returning ${READINESS_COLUMNS}`,
+            [analysisRow.id, item.title, item.description, item.status, item.priority],
+          );
+          const row = inserted.rows[0];
+          if (row === undefined) {
+            throw new Error("Failed to persist readiness item");
+          }
+          readinessRows.push(row);
+        }
+
         await client.query("commit");
-        return mapAnalysis(analysisRow, requirementRows.map(mapRequirementRow), []);
+        return mapAnalysis(
+          analysisRow,
+          requirementRows.map(mapRequirementRow),
+          readinessRows.map(mapReadinessRow),
+        );
       } catch (error) {
         await client.query("rollback");
         throw error;

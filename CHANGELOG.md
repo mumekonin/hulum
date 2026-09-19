@@ -3,6 +3,20 @@
 ## 2026-09-19 — Mulualem
 
 ### Changed
+Added a deterministic readiness checklist from missing and document requirements, plus PATCH status.
+
+### Why
+Task 29 needs a stored checklist after analysis, before Claude explanation.
+
+### Evidence
+Branch: `feat/readiness-engine`
+
+### Decision
+Generation writes TODO and NOT_REQUIRED only. IN_PROGRESS and DONE come from PATCH. Claude does not create checklist items.
+
+## 2026-09-19 — Mulualem
+
+### Changed
 Added POST analyze and GET analysis/readiness endpoints that persist the deterministic decision.
 
 ### Why
