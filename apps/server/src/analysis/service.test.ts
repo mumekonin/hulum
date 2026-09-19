@@ -1,0 +1,141 @@
+import {
+  Decision,
+  OpportunityType,
+  VerificationStatus,
+  type Analysis,
+  type Opportunity,
+  type Profile,
+  type ProfileView,
+} from "@hulum/shared";
+import { describe, expect, it } from "vitest";
+import { HttpError } from "../http/errors.js";
+import type { Clock } from "../services/common/clock.js";
+import { createAnalysisService } from "./service.js";
+import type { AnalysisStore, PersistAnalysisInput as StoreInput } from "./store.js";
+import { ANALYSIS_SUMMARY } from "./summary.js";
+
+const clock: Clock = {
+  now: () => new Date("2026-09-19T12:00:00.000Z"),
+};
+
+const profile: Profile = {
+  id: "22222222-2222-4222-8222-222222222222",
+  userId: "11111111-1111-4111-8111-111111111111",
+  educationLevel: "university_student",
+  fieldOfStudy: "computer_science",
+  graduationYear: 2027,
+  country: "ET",
+  city: "Addis Ababa",
+  languages: ["en", "am"],
+  skills: ["python"],
+  experience: "1 internship",
+  interests: ["ai"],
+  createdAt: "2026-09-19T00:00:00.000Z",
+  updatedAt: "2026-09-19T00:00:00.000Z",
+};
+
+const view: ProfileView = {
+  name: "Test User",
+  email: "test@example.invalid",
+  profile,
+  completeness: { complete: true, missing: [] },
+};
+
+const opportunity: Opportunity = {
+  id: "33333333-3333-4333-8333-333333333333",
+  title: "Analysis fixture",
+  organization: "HULUM Test",
+  type: OpportunityType.FELLOWSHIP,
+  description: "Used only in unit tests. Not a catalog seed.",
+  deadline: "2026-12-31",
+  countryEligibility: ["ET", "KE"],
+  educationRequirements: ["university_student"],
+  fieldRequirements: ["computer_science"],
+  experienceRequirements: [],
+  languageRequirements: ["en"],
+  documentRequirements: [],
+  otherRequirements: [],
+  applicationUrl: "https://example.invalid/apply",
+  sourceUrl: "https://example.invalid/source",
+  verificationStatus: VerificationStatus.NEEDS_REVIEW,
+  lastVerifiedAt: null,
+  createdAt: "2026-09-19T00:00:00.000Z",
+  updatedAt: "2026-09-19T00:00:00.000Z",
+};
+
+function storedFrom(input: StoreInput): Analysis {
+  return {
+    id: "44444444-4444-4444-8444-444444444444",
+    userId: input.userId,
+    opportunityId: input.opportunityId,
+    decision: input.decision,
+    fitScore: input.fitScore,
+    summary: input.summary,
+    requirements: input.matches.map((match, index) => ({
+      id: `55555555-5555-4555-8555-55555555555${String(index)}`,
+      analysisId: "44444444-4444-4444-8444-444444444444",
+      key: match.key,
+      text: match.text,
+      status: match.status,
+      evidence: match.evidence,
+      reason: match.reason,
+    })),
+    nextAction: "Prepare your application materials and verify the official source.",
+    readiness: [],
+    createdAt: "2026-09-19T00:00:00.000Z",
+    updatedAt: "2026-09-19T00:00:00.000Z",
+  };
+}
+
+describe("analysis service", () => {
+  it("persists a complete structured analysis from decide()", async () => {
+    let persisted: StoreInput | undefined;
+    const store: AnalysisStore = {
+      async create(input) {
+        persisted = input;
+        return storedFrom(input);
+      },
+      async getById() {
+        return undefined;
+      },
+    };
+
+    const service = createAnalysisService({
+      profiles: { getByUserId: async () => view },
+      opportunities: { getById: async () => opportunity },
+      store,
+      clock,
+    });
+
+    const result = await service.analyze(opportunity.id, profile.userId);
+    expect(persisted).toBeDefined();
+    expect(result.decision).toBe(Decision.APPLY);
+    expect(result.fitScore).toBeGreaterThanOrEqual(90);
+    expect(result.summary).toBe(ANALYSIS_SUMMARY[Decision.APPLY]);
+    expect(result.requirements.length).toBeGreaterThan(0);
+    expect(result.readiness).toEqual([]);
+    expect(persisted?.userId).toBe(profile.userId);
+    expect(persisted?.opportunityId).toBe(opportunity.id);
+  });
+
+  it("returns 404 when the profile is missing", async () => {
+    const service = createAnalysisService({
+      profiles: { getByUserId: async () => undefined },
+      opportunities: { getById: async () => opportunity },
+      store: {
+        create: async () => storedFrom({
+          userId: profile.userId,
+          opportunityId: opportunity.id,
+          decision: Decision.MAYBE,
+          fitScore: 0,
+          summary: "",
+          matches: [],
+        }),
+        getById: async () => undefined,
+      },
+      clock,
+    });
+
+    await expect(service.analyze(opportunity.id, profile.userId)).rejects.toBeInstanceOf(HttpError);
+  });
+});

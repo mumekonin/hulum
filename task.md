@@ -20,6 +20,7 @@ Status is marked DONE in the same PR as the work, so `main` shows DONE only afte
 | 25 | Requirement matching engine | Mulualem | DONE |
 | 26 | APPLY/MAYBE/SKIP decision engine | Mulualem | DONE |
 | 27 | Decision-engine tests | Mulualem | DONE |
+| 28 | Analysis API | Mulualem | DONE |
 
 Other tasks are not started.
 
