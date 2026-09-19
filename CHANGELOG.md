@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — API failures stay in the `{ data, error }` envelope
+
+### Added
+- Express error handler for invalid JSON and oversized bodies, without leaking parser internals.
+- Tests: unknown route/opportunity/analysis, analyze without userId or profile, invalid voice body, unsupported utterance.
+
+### Why
+Days 15–16 required error handling against the real API.
+
 ## 2026-09-19 — Full voice flow is covered through the text-fallback API
 
 ### Added

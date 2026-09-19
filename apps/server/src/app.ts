@@ -6,7 +6,7 @@ import { opportunitiesRouter } from "./routes/opportunities.js";
 import { profileRouter } from "./routes/profile.js";
 import { readinessRouter } from "./routes/readiness.js";
 import { voiceRouter } from "./routes/voice.js";
-import { fail } from "./lib/http.js";
+import { fail, errorHandler } from "./lib/http.js";
 
 export function createApp() {
   const app = express();
@@ -24,6 +24,7 @@ export function createApp() {
   app.use((_req, res) => {
     fail(res, "Route not found.", 404, "NOT_FOUND");
   });
+  app.use(errorHandler);
 
   return app;
 }
