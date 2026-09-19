@@ -97,4 +97,46 @@ describe("profile → opportunity → analysis", () => {
     expect(stored.status).toBe(200);
     expect(storedBody.data.decision).toBe(analyzedBody.data.decision);
   });
+
+  it("stores a readiness checklist after analysis and persists status updates", async () => {
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+    expect(demo.status).toBe(201);
+
+    const analyzed = await fetch(`${baseUrl}/api/opportunities/opp-a2sv/analyze`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ userId: demoBody.data.userId }),
+    });
+    const analyzedBody = (await analyzed.json()) as {
+      data: { id: string; readiness: Array<{ id: string; status: string; title: string }> };
+    };
+    expect(analyzed.status).toBe(201);
+    expect(analyzedBody.data.readiness.length).toBeGreaterThan(0);
+    expect(
+      analyzedBody.data.readiness.every((item) =>
+        ["TODO", "IN_PROGRESS", "DONE", "NOT_REQUIRED"].includes(item.status),
+      ),
+    ).toBe(true);
+
+    const listed = await fetch(`${baseUrl}/api/analyses/${analyzedBody.data.id}/readiness`);
+    const listedBody = (await listed.json()) as { data: Array<{ id: string; status: string }> };
+    expect(listed.status).toBe(200);
+    expect(listedBody.data.length).toBe(analyzedBody.data.readiness.length);
+
+    const target = listedBody.data[0];
+    const patched = await fetch(`${baseUrl}/api/readiness/${target.id}`, {
+      method: "PATCH",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ status: "DONE" }),
+    });
+    const patchedBody = (await patched.json()) as { data: { id: string; status: string } };
+    expect(patched.status).toBe(200);
+    expect(patchedBody.data.status).toBe("DONE");
+
+    const stored = await fetch(`${baseUrl}/api/analyses/${analyzedBody.data.id}/readiness`);
+    const storedBody = (await stored.json()) as { data: Array<{ id: string; status: string }> };
+    expect(stored.status).toBe(200);
+    expect(storedBody.data.find((item) => item.id === target.id)?.status).toBe("DONE");
+  });
 });

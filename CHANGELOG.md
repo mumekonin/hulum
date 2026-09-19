@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Analysis → readiness is covered through the API
+
+### Added
+- Integration test: Analyze A2SV, GET the stored checklist, PATCH an item to DONE, then confirm the status persists.
+
+### Why
+Days 15–16 required the full analysis → readiness flow against the real API.
+
 ## 2026-09-19 — Profile → opportunity → analysis is covered through the API
 
 ### Added
