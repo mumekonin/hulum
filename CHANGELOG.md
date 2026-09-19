@@ -3,6 +3,20 @@
 ## 2026-09-19 — Mulualem
 
 ### Changed
+Added `GET /api/opportunities` and `GET /api/opportunities/:id` with structured requirements and official source fields.
+
+### Why
+Task 23 needs a real opportunity API before the browse UI and analysis can use catalog data.
+
+### Evidence
+Branch: `feat/opportunity-service`
+
+### Decision
+No invented seed opportunities. The list may be empty until official rows are inserted.
+
+## 2026-09-19 — Mulualem
+
+### Changed
 Added `@hulum/shared` contracts and switched the server envelope to import them.
 
 ### Why
