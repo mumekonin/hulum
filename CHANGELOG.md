@@ -2,6 +2,17 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Full voice flow is covered through the text-fallback API
+
+### Added
+- Integration test: session, internships, current opportunity, analyze A2SV, why, gaps, readiness, then APPLY filter without extra stored analyses.
+
+### Changed
+- File store reads `STORE_PATH` when loading or saving, so tests can isolate `store.json`.
+
+### Why
+Days 15–16 required the full voice flow against the real API. Voxide is still unwired (ADR 003).
+
 ## 2026-09-19 — Analysis → readiness is covered through the API
 
 ### Added
