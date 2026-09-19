@@ -2,6 +2,7 @@ import { mkdir, readFile, writeFile } from "node:fs/promises";
 import path from "node:path";
 import type {
   Analysis,
+  LanguageCode,
   Opportunity,
   Profile,
   ReadinessItem,
@@ -10,6 +11,14 @@ import type {
 } from "@hulum/shared";
 import { seedOpportunities } from "../data/seedOpportunities.js";
 
+export type VoiceSessionRecord = {
+  id: string;
+  userId: string;
+  language: LanguageCode;
+  startedAt: string;
+  endedAt: string | null;
+};
+
 export type StoreShape = {
   users: User[];
   profiles: Profile[];
@@ -17,6 +26,7 @@ export type StoreShape = {
   analyses: Analysis[];
   requirementResults: RequirementResult[];
   readinessItems: ReadinessItem[];
+  voiceSessions: VoiceSessionRecord[];
 };
 
 const storePath = path.resolve(process.env.STORE_PATH ?? "./data/store.json");
@@ -31,6 +41,7 @@ function emptyStore(): StoreShape {
     analyses: [],
     requirementResults: [],
     readinessItems: [],
+    voiceSessions: [],
   };
 }
 
@@ -40,6 +51,7 @@ export async function loadStore(): Promise<StoreShape> {
     const raw = await readFile(storePath, "utf8");
     const parsed = JSON.parse(raw) as StoreShape;
     parsed.opportunities = seedOpportunities;
+    parsed.voiceSessions = Array.isArray(parsed.voiceSessions) ? parsed.voiceSessions : [];
     memory = parsed;
   } catch {
     memory = emptyStore();

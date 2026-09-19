@@ -1,6 +1,6 @@
 "use client";
 
-import { FormEvent, Suspense, useMemo, useState } from "react";
+import { FormEvent, Suspense, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { VoiceActionResponse } from "@hulum/shared";
@@ -44,15 +44,40 @@ function AssistantInner() {
   const [lastFailed, setLastFailed] = useState<string | null>(null);
   const [sessionOpportunityId, setSessionOpportunityId] = useState<string | undefined>();
   const [sessionAnalysisId, setSessionAnalysisId] = useState<string | undefined>();
+  const [voiceSession, setVoiceSession] = useState<{ id: string; provider: string } | null>(null);
   const opportunityId = sessionOpportunityId ?? search.get("opportunityId") ?? undefined;
   const analysisId = sessionAnalysisId ?? search.get("analysisId") ?? undefined;
   const needsProfile = Boolean(error?.toLowerCase().includes("profile"));
 
+  useEffect(() => {
+    const userId = getUserId();
+    if (!userId) return;
+    let cancelled = false;
+    void api<{ id: string; provider: string }>("/api/voice/session", {
+      method: "POST",
+      body: JSON.stringify({ userId, language: "en" }),
+    })
+      .then((session) => {
+        if (!cancelled) setVoiceSession(session);
+      })
+      .catch(() => {
+        // Text actions still work if session create fails.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
   const contextLabel = useMemo(() => {
-    if (analysisId) return "This conversation is attached to your latest analysis.";
-    if (opportunityId) return "This conversation is attached to a selected opportunity.";
-    return "No analysis selected yet. You can still browse or filter opportunities by voice/text.";
-  }, [analysisId, opportunityId]);
+    const sessionNote = voiceSession
+      ? voiceSession.provider === "voxide"
+        ? " Voice session is live."
+        : " Text fallback session is active until Voxide is connected."
+      : "";
+    if (analysisId) return `This conversation is attached to your latest analysis.${sessionNote}`;
+    if (opportunityId) return `This conversation is attached to a selected opportunity.${sessionNote}`;
+    return `No analysis selected yet. You can still browse or filter opportunities by voice/text.${sessionNote}`;
+  }, [analysisId, opportunityId, voiceSession]);
 
   async function send(value: string, echo = true) {
     const userId = getUserId();

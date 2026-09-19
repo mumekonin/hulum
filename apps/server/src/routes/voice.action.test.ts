@@ -5,7 +5,7 @@ import os from "node:os";
 import path from "node:path";
 import { afterEach, beforeEach, describe, expect, it } from "vitest";
 import { createApp } from "../app.js";
-import { resetStoreForTests } from "../store/fileStore.js";
+import { loadStore, resetStoreForTests } from "../store/fileStore.js";
 
 describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
   let closeServer: (() => Promise<void>) | undefined;
@@ -255,5 +255,37 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     expect(skipBody.data.reply).toContain("SKIP opportunities:");
     expect(skipBody.data.opportunities?.some((item) => item.id === "opp-chevening")).toBe(true);
     expect(skipBody.data.opportunities?.some((item) => item.id === "opp-a2sv")).toBe(false);
+  });
+
+  it("persists a voice session without storing utterance text", async () => {
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+
+    const response = await fetch(`${baseUrl}/api/voice/session`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        language: "am",
+        text: "secret transcript that must not be stored",
+      }),
+    });
+    const body = (await response.json()) as {
+      data: { id: string; userId: string; language: string; startedAt: string; endedAt: string | null; provider: string };
+    };
+
+    expect(response.status).toBe(201);
+    expect(body.data.userId).toBe(demoBody.data.userId);
+    expect(body.data.language).toBe("am");
+    expect(body.data.endedAt).toBeNull();
+    expect(body.data.provider).toBe("text-fallback");
+    expect(body.data.id).toMatch(/^voice_/);
+
+    resetStoreForTests();
+    const store = await loadStore();
+    const saved = store.voiceSessions.find((item) => item.id === body.data.id);
+    expect(saved).toBeDefined();
+    expect(saved?.language).toBe("am");
+    expect(JSON.stringify(saved)).not.toContain("secret transcript");
   });
 });
