@@ -63,6 +63,17 @@ npm run dev:server
 
 Do not put real API keys in chat or in committed files. Local `.env` only.
 
+## Getting started (database)
+
+Set `DATABASE_URL` in `apps/server/.env`, then:
+
+```bash
+npm run db:migrate
+npm run db:smoke
+```
+
+Schema details: `database/README.md`.
+
 ## API overview
 
 ```http
