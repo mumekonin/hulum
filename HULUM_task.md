@@ -804,12 +804,12 @@ The assistant must not become an unrestricted chatbot.
 
 # 23. Phase 19 — Security
 
-- [ ] **P0** Protect API keys.
-- [ ] **P0** Never commit `.env`.
-- [ ] **P0** Validate incoming data.
-- [ ] **P0** Sanitize logs.
-- [ ] **P0** Protect database access.
-- [ ] **P0** Protect admin/debug routes if any.
+- [x] **P0** Protect API keys.
+- [x] **P0** Never commit `.env`.
+- [x] **P0** Validate incoming data.
+- [x] **P0** Sanitize logs.
+- [x] **P0** Protect database access.
+- [x] **P0** Protect admin/debug routes if any.
 - [ ] **P1** Add authentication if required.
 - [ ] **P1** Add authorization if required.
 - [ ] **P1** Review data exposure.
@@ -1102,7 +1102,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Full analysis → readiness flow.
 - [x] Full voice flow.
 - [x] Error handling.
-- [ ] Security review.
+- [x] Security review.
 - [ ] Production configuration.
 
 ## Days 17–18 — Deployment + Testing
