@@ -50,6 +50,7 @@ Official opportunity source
 | Voice interaction | `/assistant` | Text and quick actions until Voxide is wired |
 | Official source/application | links on detail + analysis | Never invented; opens the organization URL |
 | Loading / empty / error | `StatusPanel` on core screens | Retry, clear filter, open profile, or return to the list |
+| Accessibility | layout + core screens | Skip link, focus ring, touch size, labeled decisions, new-tab announcement |
 
 ## Decision UI rule
 

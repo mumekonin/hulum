@@ -108,28 +108,35 @@ function AssistantInner() {
           {error}
         </StatusPanel>
       ) : null}
-      <div className="mt-6 flex flex-wrap gap-2">
-        {quickActions.map((action) => (
+      <fieldset className="mt-6 border-0 p-0">
+        <legend className="text-sm font-medium">Quick actions</legend>
+        <div className="mt-2 flex flex-wrap gap-2">
+          {quickActions.map((action) => (
+            <button
+              key={action}
+              type="button"
+              disabled={pending}
+              onClick={() => void send(action)}
+              lang={action === "ምን ላዘጋጅ?" ? "am" : undefined}
+              className="min-h-11 border border-line px-3 py-2 text-sm disabled:opacity-60"
+            >
+              {action}
+            </button>
+          ))}
           <button
-            key={action}
             type="button"
-            disabled={pending}
-            onClick={() => void send(action)}
-            className="border border-line px-3 py-2 text-sm disabled:opacity-60"
+            disabled
+            className="min-h-11 border border-dashed border-line px-3 py-2 text-sm text-muted"
+            aria-describedby="voice-unavailable"
           >
-            {action}
+            Voice (not connected)
           </button>
-        ))}
-        <button
-          type="button"
-          disabled
-          className="border border-dashed border-line px-3 py-2 text-sm text-muted"
-          title="Voxide is not connected in v0.1"
-        >
-          Voice (not connected)
-        </button>
-      </div>
-      <div className="mt-6 min-h-48 space-y-3">
+        </div>
+        <p id="voice-unavailable" className="mt-2 text-sm text-muted">
+          Microphone input waits until Voxide is wired. Type a request or use a quick action.
+        </p>
+      </fieldset>
+      <div className="mt-6 min-h-48 space-y-3" aria-live="polite" aria-relevant="additions">
         {messages.length === 0 && !pending && !error ? (
           <StatusPanel variant="empty" title="No question yet" primary={{ label: "Show internships", onClick: () => void send("Show me internships") }}>
             Type a request or use a quick action. Microphone input waits until Voxide is wired.
@@ -147,15 +154,18 @@ function AssistantInner() {
           </StatusPanel>
         ) : null}
       </div>
-      <form onSubmit={submit} className="mt-6 flex gap-2">
-        <input
-          value={text}
-          onChange={(e) => setText(e.target.value)}
-          placeholder="Should I apply for this?"
-          className="flex-1 border border-line bg-white px-3 py-3"
-          disabled={pending}
-        />
-        <button disabled={pending} className="bg-ink px-5 py-3 text-paper disabled:opacity-60">
+      <form onSubmit={submit} className="mt-6 flex flex-wrap gap-2">
+        <label className="min-w-[12rem] flex-1 text-sm">
+          Your request
+          <input
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Should I apply for this?"
+            className="mt-1 min-h-11 w-full border border-line bg-white px-3 py-3"
+            disabled={pending}
+          />
+        </label>
+        <button disabled={pending} className="mt-auto min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
           {pending ? "Sending…" : "Send"}
         </button>
       </form>

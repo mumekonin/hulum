@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Phase 4 accessibility
+
+### Added
+- Skip-to-content link, visible keyboard focus, and 44px touch targets on core controls.
+- Decision labels, requirement status text plus edge marks, and official links announced as new tabs.
+- Darker APPLY / MAYBE / SKIP and muted colors so meaning does not depend on color alone.
+
+### Why
+Phase 4 P1 required the main journey to stay usable with keyboard, contrast, and non-color cues.
+
 ## 2026-09-18 — Mulualem
 
 ### Changed

@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { TYPE_LABELS, type AnalysisDetail, type Opportunity } from "@hulum/shared";
 import { Notice } from "@/components/Notice";
+import { ExternalLink } from "@/components/ExternalLink";
 import { StatusPanel } from "@/components/StatusPanel";
 import { api, isNotFound, userFacingError } from "@/lib/api";
 import { formatDeadline } from "@/lib/format";
@@ -135,15 +136,15 @@ export default function OpportunityDetailPage() {
         ))}
       </ul>
       <div className="mt-8 flex flex-wrap gap-3">
-        <button onClick={() => void analyze()} disabled={analyzing} className="bg-ink px-5 py-3 text-paper disabled:opacity-60">
+        <button onClick={() => void analyze()} disabled={analyzing} className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
           {analyzing ? "Analyzing…" : "Analyze for me"}
         </button>
-        <a href={opportunity.applicationUrl} target="_blank" rel="noreferrer" className="border border-ink px-5 py-3">
+        <ExternalLink href={opportunity.applicationUrl} className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
           Official application
-        </a>
-        <a href={opportunity.sourceUrl} target="_blank" rel="noreferrer" className="px-5 py-3 text-muted">
+        </ExternalLink>
+        <ExternalLink href={opportunity.sourceUrl} className="inline-flex min-h-11 items-center px-5 py-3 text-muted">
           Official source
-        </a>
+        </ExternalLink>
       </div>
       {error ? (
         <StatusPanel

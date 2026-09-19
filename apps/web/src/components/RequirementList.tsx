@@ -14,6 +14,13 @@ const marks: Record<RequirementStatus, string> = {
   NOT_APPLICABLE: "–",
 };
 
+const borders: Record<RequirementStatus, string> = {
+  MET: "border-l-apply",
+  NOT_MET: "border-l-skip",
+  UNCERTAIN: "border-l-maybe",
+  NOT_APPLICABLE: "border-l-line",
+};
+
 export function RequirementList({
   items,
 }: {
@@ -28,7 +35,7 @@ export function RequirementList({
   return (
     <ul className="space-y-3">
       {items.map((item) => (
-        <li key={item.key} className="border border-line bg-white/60 p-4">
+        <li key={item.key} className={`border border-line border-l-4 bg-white/60 p-4 ${borders[item.status]}`}>
           <p className="flex items-start gap-3">
             <span aria-hidden="true" className="font-display text-xl">
               {marks[item.status]}

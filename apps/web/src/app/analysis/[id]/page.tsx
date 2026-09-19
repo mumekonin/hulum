@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import type { AnalysisDetail, ReadinessItem } from "@hulum/shared";
 import { DecisionBadge } from "@/components/DecisionBadge";
+import { ExternalLink } from "@/components/ExternalLink";
 import { Notice } from "@/components/Notice";
 import { ReadinessList } from "@/components/ReadinessList";
 import { RequirementList } from "@/components/RequirementList";
@@ -89,8 +90,15 @@ export default function AnalysisPage() {
     <article className="max-w-3xl">
       <p className="text-sm uppercase tracking-wide text-muted">{analysis.opportunity.title}</p>
       <div className="mt-4 flex flex-wrap items-end gap-6">
-        <DecisionBadge decision={analysis.decision} size="lg" />
-        <p className="font-display text-4xl">{analysis.fitScore}% FIT</p>
+        <div>
+          <p className="text-sm font-medium text-muted">Decision</p>
+          <div className="mt-2">
+            <DecisionBadge decision={analysis.decision} size="lg" />
+          </div>
+        </div>
+        <p className="font-display text-4xl" aria-label={`Fit score ${analysis.fitScore} percent. Fit is a signal only and does not replace the decision.`}>
+          {analysis.fitScore}% FIT
+        </p>
       </div>
       <p className="mt-6 text-lg leading-8">{analysis.explanation}</p>
       <p className="mt-4 border-l-4 border-forest pl-4 text-sm">
@@ -131,13 +139,13 @@ export default function AnalysisPage() {
       </div>
 
       <div className="mt-10 flex flex-wrap gap-3">
-        <a href={analysis.opportunity.applicationUrl} target="_blank" rel="noreferrer" className="bg-ink px-5 py-3 text-paper">
+        <ExternalLink href={analysis.opportunity.applicationUrl} className="inline-flex min-h-11 items-center bg-ink px-5 py-3 text-paper">
           Apply officially
-        </a>
-        <Link href={`/assistant?analysisId=${analysis.id}&opportunityId=${analysis.opportunityId}`} className="border border-ink px-5 py-3">
+        </ExternalLink>
+        <Link href={`/assistant?analysisId=${analysis.id}&opportunityId=${analysis.opportunityId}`} className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
           Ask HULUM
         </Link>
-        <Link href="/opportunities" className="px-5 py-3 text-muted">
+        <Link href="/opportunities" className="inline-flex min-h-11 items-center px-5 py-3 text-muted">
           Back to opportunities
         </Link>
       </div>
