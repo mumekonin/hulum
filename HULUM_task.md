@@ -573,7 +573,7 @@ It must perform meaningful HULUM actions and must not be decorative.
 - [ ] **P0** Produce voice response.
 - [x] **P0** Analyze an opportunity by voice.
 - [x] **P0** Ask "Why?"
-- [ ] **P0** Ask "What am I missing?"
+- [x] **P0** Ask "What am I missing?"
 - [x] **P0** Ask "What should I prepare?"
 - [ ] **P0** Filter/show opportunities by decision.
 - [ ] **P1** Create/update profile by voice.
@@ -1083,6 +1083,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Voice → analysis.
 - [x] Voice → explanation.
 - [x] Voice → readiness.
+- [x] Voice → gaps.
 - [x] Voice fallback.
 - [ ] First stable language end-to-end.
 

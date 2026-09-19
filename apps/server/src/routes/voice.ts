@@ -131,9 +131,19 @@ voiceRouter.post("/action", async (req, res) => {
       return;
     }
     if (intent.intent === "SHOW_GAPS") {
+      const relatedOpportunity =
+        opportunity ?? store.opportunities.find((item) => item.id === analysis.opportunityId);
+      const relatedProfile = store.profiles.find((item) => item.userId === analysis.userId);
       ok(res, {
         intent: intent.intent,
-        reply: gaps.length ? `What needs attention: ${gaps.join("; ")}` : "No missing or uncertain requirements are stored for this analysis.",
+        reply: gaps.length
+          ? `Missing or uncertain: ${gaps.join("; ")}`
+          : "No missing or uncertain requirements are stored for this analysis.",
+        analysis:
+          relatedOpportunity && relatedProfile
+            ? toAnalysisDetail(analysis, relatedOpportunity, relatedProfile, requirements, readiness)
+            : undefined,
+        opportunity: relatedOpportunity,
       });
       return;
     }

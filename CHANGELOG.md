@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Voice gaps uses stored NOT_MET / UNCERTAIN requirements
+
+### Added
+- `SHOW_GAPS` loads the latest analysis for the user/opportunity and replies with stored missing or uncertain requirements.
+- Test: analyze Chevening, then “What am I missing?” returns those requirement texts and statuses.
+
+### Why
+Days 10–12 required voice → gaps after readiness. Voxide is still not live.
+
 ## 2026-09-18 — Voice readiness uses stored checklist
 
 ### Added
