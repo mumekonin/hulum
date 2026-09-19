@@ -13,6 +13,7 @@ Status is marked DONE in the same PR as the work, so `main` shows DONE only afte
 | Task | Title | Owner | Status |
 |---|---|---|---|
 | 20 | Backend platform scaffold | Mulualem | DONE |
+| 21 | Database schema v1 | Mulualem | DONE |
 
 Other tasks are not started.
 
