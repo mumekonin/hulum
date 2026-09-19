@@ -571,7 +571,7 @@ It must perform meaningful HULUM actions and must not be decorative.
 - [ ] **P0** Receive/process voice input.
 - [ ] **P0** Connect voice to HULUM actions.
 - [ ] **P0** Produce voice response.
-- [ ] **P0** Analyze an opportunity by voice.
+- [x] **P0** Analyze an opportunity by voice.
 - [ ] **P0** Ask "Why?"
 - [ ] **P0** Ask "What am I missing?"
 - [ ] **P0** Ask "What should I prepare?"
@@ -1080,10 +1080,10 @@ Never manufacture commits, dates, research activity, or progress.
 - [ ] Voxide integration.
 - [ ] Voice session.
 - [ ] Voice intent mapping.
-- [ ] Voice → analysis.
+- [x] Voice → analysis.
 - [ ] Voice → explanation.
 - [ ] Voice → readiness.
-- [ ] Voice fallback.
+- [x] Voice fallback.
 - [ ] First stable language end-to-end.
 
 ## Days 13–14 — AI + Multilingual
@@ -1288,9 +1288,9 @@ However, STARK-required research and ideation documentation must be maintained t
 
 - [ ] Voxide input works.
 - [ ] Voice intent works.
-- [ ] HULUM action executes.
+- [x] HULUM action executes.
 - [ ] Voice response works.
-- [ ] Failure fallback works.
+- [x] Failure fallback works.
 
 ## Gate 5 — Integrated MVP
 

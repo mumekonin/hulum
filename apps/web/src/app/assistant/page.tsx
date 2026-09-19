@@ -1,6 +1,7 @@
 "use client";
 
 import { FormEvent, Suspense, useMemo, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { VoiceActionResponse } from "@hulum/shared";
 import { Notice } from "@/components/Notice";
@@ -38,8 +39,10 @@ function AssistantInner() {
   const [error, setError] = useState<string | null>(null);
   const [pending, setPending] = useState(false);
   const [lastFailed, setLastFailed] = useState<string | null>(null);
-  const opportunityId = search.get("opportunityId") ?? undefined;
-  const analysisId = search.get("analysisId") ?? undefined;
+  const [sessionOpportunityId, setSessionOpportunityId] = useState<string | undefined>();
+  const [sessionAnalysisId, setSessionAnalysisId] = useState<string | undefined>();
+  const opportunityId = sessionOpportunityId ?? search.get("opportunityId") ?? undefined;
+  const analysisId = sessionAnalysisId ?? search.get("analysisId") ?? undefined;
   const needsProfile = Boolean(error?.toLowerCase().includes("profile"));
 
   const contextLabel = useMemo(() => {
@@ -66,6 +69,8 @@ function AssistantInner() {
         method: "POST",
         body: JSON.stringify({ userId, text: value, opportunityId, analysisId, language: "en" }),
       });
+      if (response.opportunity?.id) setSessionOpportunityId(response.opportunity.id);
+      if (response.analysis?.id) setSessionAnalysisId(response.analysis.id);
       setMessages((current) => [...current, { role: "hulum", text: response.reply }]);
     } catch (err) {
       setLastFailed(value);
@@ -154,6 +159,13 @@ function AssistantInner() {
           </StatusPanel>
         ) : null}
       </div>
+      {analysisId ? (
+        <p className="mt-4 text-sm">
+          <Link href={`/analysis/${analysisId}`} className="underline">
+            Open the APPLY / MAYBE / SKIP result
+          </Link>
+        </p>
+      ) : null}
       <form onSubmit={submit} className="mt-6 flex flex-wrap gap-2">
         <label className="min-w-[12rem] flex-1 text-sm">
           Your request
