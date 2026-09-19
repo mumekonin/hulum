@@ -6,6 +6,8 @@
 
 This is an index, not a new research study. Empty ScholarXIV rows stay empty.
 
+**Submission cover:** `docs/stark/README.md`.
+
 Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches until they are reviewed into `main`. Look at GitHub branches, not only `main`.
 
 ---

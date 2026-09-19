@@ -1133,7 +1133,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Final task status.
 - [x] Final changelog.
 - [x] Final demo rehearsal.
-- [ ] Final STARK submission package.
+- [x] Final STARK submission package.
 
 ---
 
@@ -1311,7 +1311,7 @@ However, STARK-required research and ideation documentation must be maintained t
 - [x] Backup mode exists.
 - [ ] Documentation is complete.
 - [x] Git history is truthful.
-- [ ] STARK evidence is ready.
+- [x] STARK evidence is ready.
 
 ---
 

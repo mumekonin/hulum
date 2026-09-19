@@ -63,7 +63,7 @@ hulum/
 └── CHANGELOG.md
 ```
 
-Judges: start at `docs/stark/evidence.md` and `docs/demo/script.md`.
+Judges: start at `docs/stark/README.md` (submission package), then `docs/demo/script.md`.
 
 ---
 

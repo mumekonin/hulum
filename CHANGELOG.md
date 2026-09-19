@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — STARK submission cover for judges
+
+### Added
+- `docs/stark/README.md`: reading order, how to run, and an explicit list of what is not claimed (papers, deploy, live voice, `main` as the full product).
+
+### Why
+Day 20 required a final STARK submission package a judge can open without invented evidence.
+
 ## 2026-09-19 — Demo script rehearsed against tests (no fake live run)
 
 ### Added
