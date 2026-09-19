@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Claude JSON is validated before it reaches the user
+
+### Added
+- Claude must return `{ decision, explanation }`. Invalid JSON, a different APPLY/MAYBE/SKIP, official-eligibility claims, or erased uncertainty are replaced with the engine summary.
+
+### Why
+Task 31 / Days 13–14 required structured AI output validation. The engine decision is not changed.
+
 ## 2026-09-19 — Claude may only rephrase the engine decision
 
 ### Added

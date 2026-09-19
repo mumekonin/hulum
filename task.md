@@ -519,8 +519,8 @@ AI is an assistant, not the eligibility authority.
 
 - [x] **P0** Select/configure Claude provider.
 - [x] **P0** Define AI service.
-- [ ] **P0** Define structured output schema.
-- [ ] **P0** Implement output validation.
+- [x] **P0** Define structured output schema.
+- [x] **P0** Implement output validation.
 - [x] **P0** Implement decision-aware explanation.
 - [ ] **P0** Implement readiness-plan generation.
 - [ ] **P0** Implement contextual Q&A.
@@ -837,7 +837,7 @@ Never commit:
 - [ ] SKIP decision.
 - [ ] Edge cases.
 - [ ] Readiness generation.
-- [ ] AI output validation.
+- [x] AI output validation.
 - [x] Voice intent mapping.
 
 ## Integration tests
@@ -1091,7 +1091,7 @@ Never manufacture commits, dates, research activity, or progress.
 ## Days 13–14 — AI + Multilingual
 
 - [x] Claude explanation.
-- [ ] Structured AI output validation.
+- [x] Structured AI output validation.
 - [ ] Contextual assistant.
 - [ ] Amharic voice/UX if stable.
 - [ ] Afaan Oromo if stable and quality is acceptable.
