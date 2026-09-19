@@ -15,6 +15,19 @@ export const RequirementStatus = {
 
 export type RequirementStatus = (typeof RequirementStatus)[keyof typeof RequirementStatus];
 
+export const RequirementKey = {
+  COUNTRY: "country",
+  EDUCATION: "education",
+  FIELD: "field",
+  LANGUAGE: "language",
+  EXPERIENCE: "experience",
+  DOCUMENTS: "documents",
+  DEADLINE: "deadline",
+  OTHER: "other",
+} as const;
+
+export type RequirementKey = (typeof RequirementKey)[keyof typeof RequirementKey];
+
 export const ReadinessStatus = {
   TODO: "TODO",
   IN_PROGRESS: "IN_PROGRESS",
@@ -73,4 +86,8 @@ export function isVoiceIntent(value: string): value is VoiceIntent {
 
 export function isDecision(value: string): value is Decision {
   return value === Decision.APPLY || value === Decision.MAYBE || value === Decision.SKIP;
+}
+
+export function isReadinessStatus(value: string): value is ReadinessStatus {
+  return Object.values(ReadinessStatus).some((status) => status === value);
 }

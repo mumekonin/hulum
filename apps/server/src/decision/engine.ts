@@ -28,7 +28,7 @@ import { matchRequirement } from "./match.js";
  * NOT_APPLICABLE is excluded from the denominator.
  */
 export function analyzeOpportunity(profile: Profile, opportunity: Opportunity): AnalysisContract {
-  const requirements = opportunity.requirements.map((requirement) => {
+  const requirements = (opportunity.requirements ?? []).map((requirement) => {
     const outcome = matchRequirement(profile, requirement, opportunity.deadline);
     return {
       key: requirement.key,

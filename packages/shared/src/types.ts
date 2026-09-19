@@ -1,25 +1,25 @@
 import type {
-  DECISIONS,
   EDUCATION_LEVELS,
   FitCategory,
   LANGUAGES,
-  OPPORTUNITY_TYPES,
   READINESS_PRIORITIES,
-  READINESS_STATUSES,
-  REQUIREMENT_STATUSES,
-  VERIFICATION_STATUSES,
   VOICE_INTENTS,
 } from "./constants";
+import type {
+  Decision,
+  OpportunityType,
+  ReadinessStatus,
+  RequirementKey,
+  RequirementStatus,
+  VerificationStatus,
+  VoiceIntent as LockedVoiceIntent,
+} from "./enums.js";
 
 export type LanguageCode = (typeof LANGUAGES)[number];
 export type EducationLevel = (typeof EDUCATION_LEVELS)[number];
-export type OpportunityType = (typeof OPPORTUNITY_TYPES)[number];
-export type Decision = (typeof DECISIONS)[number];
-export type RequirementStatus = (typeof REQUIREMENT_STATUSES)[number];
-export type VerificationStatus = (typeof VERIFICATION_STATUSES)[number];
-export type ReadinessStatus = (typeof READINESS_STATUSES)[number];
+export type { Decision, OpportunityType, ReadinessStatus, RequirementStatus, VerificationStatus };
 export type ReadinessPriority = (typeof READINESS_PRIORITIES)[number];
-export type VoiceIntent = (typeof VOICE_INTENTS)[number];
+export type VoiceIntent = (typeof VOICE_INTENTS)[number] | LockedVoiceIntent;
 
 export type ApiError = {
   message: string;
@@ -43,19 +43,19 @@ export type User = {
 export type Profile = {
   id: string;
   userId: string;
-  name: string;
-  educationLevel: EducationLevel;
-  fieldOfStudy: string;
-  graduationYear: number;
-  country: string;
-  city?: string;
+  name?: string;
+  educationLevel: EducationLevel | string | null;
+  fieldOfStudy: string | null;
+  graduationYear: number | null;
+  country: string | null;
+  city?: string | null;
   languages: string[];
   skills: string[];
-  experience: string;
-  yearsExperience: number;
+  experience: string | null;
+  yearsExperience?: number;
   interests: string[];
-  documentsHeld: string[];
-  preferredLanguage: LanguageCode;
+  documentsHeld?: string[];
+  preferredLanguage?: LanguageCode;
   createdAt: string;
   updatedAt: string;
 };
@@ -92,18 +92,18 @@ export type Opportunity = {
   description: string;
   deadline: string;
   countryEligibility: string[];
-  educationRequirements: string;
-  fieldRequirements: string;
-  experienceRequirements: string;
-  languageRequirements: string;
+  educationRequirements: string | string[];
+  fieldRequirements: string | string[];
+  experienceRequirements: string | string[];
+  languageRequirements: string | string[];
   documentRequirements: string[];
   otherRequirements: string[];
-  applicationUrl: string;
+  applicationUrl: string | null;
   sourceUrl: string;
-  sourceType: string;
+  sourceType?: string;
   verificationStatus: VerificationStatus;
-  lastVerifiedAt: string;
-  requirements: OpportunityRequirement[];
+  lastVerifiedAt: string | null;
+  requirements?: OpportunityRequirement[];
   createdAt: string;
   updatedAt: string;
 };
@@ -120,13 +120,42 @@ export type RequirementResult = {
   category: string;
 };
 
+/** Matcher output before an analysis id exists. Persist as Requirement. */
+export type RequirementMatch = {
+  key: RequirementKey;
+  text: string;
+  status: RequirementStatus;
+  evidence: string | null;
+  reason: string;
+};
+
+export type DecisionResult = {
+  decision: Decision;
+  fitScore: number;
+  matchedRequirements: RequirementMatch[];
+  missingRequirements: RequirementMatch[];
+  uncertainRequirements: RequirementMatch[];
+  reasons: string[];
+  nextAction: string;
+};
+
+export type Requirement = {
+  id: string;
+  analysisId: string;
+  key: string;
+  text: string;
+  status: RequirementStatus;
+  evidence: string | null;
+  reason: string | null;
+};
+
 export type ReadinessItem = {
   id: string;
   analysisId: string;
   title: string;
-  description: string;
+  description: string | null;
   status: ReadinessStatus;
-  priority: ReadinessPriority;
+  priority: ReadinessPriority | number;
   reason?: string;
   source?: string;
   createdAt: string;
@@ -141,8 +170,10 @@ export type Analysis = {
   fitScore: number;
   summary: string;
   nextAction: string;
-  explanation: string;
-  disclaimer: string;
+  explanation?: string;
+  disclaimer?: string;
+  requirements?: Requirement[];
+  readiness?: ReadinessItem[];
   createdAt: string;
   updatedAt: string;
 };
@@ -183,6 +214,14 @@ export type AnalysisDetail = Analysis & {
   gaps: AnalysisContract["gaps"];
 };
 
+export type AnalyzeOpportunityRequest = {
+  userId: string;
+};
+
+export type PatchReadinessRequest = {
+  status: ReadinessStatus;
+};
+
 export type VoiceActionRequest = {
   userId: string;
   text: string;
@@ -197,4 +236,11 @@ export type VoiceActionResponse = {
   analysis?: AnalysisDetail;
   opportunities?: Opportunity[];
   opportunity?: Opportunity;
+};
+
+export type VoiceResponse = {
+  intent: LockedVoiceIntent;
+  spokenText: string;
+  text: string;
+  language: import("./enums.js").Language;
 };
