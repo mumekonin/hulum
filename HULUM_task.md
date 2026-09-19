@@ -1122,7 +1122,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Changelog review.
 - [x] README review.
 - [x] Architecture review.
-- [ ] Backup demo.
+- [x] Backup demo.
 
 ## Day 20 — Freeze
 

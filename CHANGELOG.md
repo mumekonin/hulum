@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Backup demo path without a fake video
+
+### Added
+- `docs/demo/backup.md`: 3-minute text path, Analyze-failure path, and API-only path for Abeba Tesfaye. No screenshot pack or recorded video is claimed.
+
+### Why
+Day 19 required a backup demo. Voxide and a production host are still missing.
+
 ## 2026-09-19 — Changelog reviewed against git (no rewrite)
 
 ### Added

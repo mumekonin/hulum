@@ -7,7 +7,7 @@
 
 Target length: about 6 minutes. One story, not a feature tour.
 
-If Analyze fails, stay on the opportunity and use Ask HULUM text. Do not improvise eligibility facts.
+If Analyze fails, stay on the opportunity and use Ask HULUM text. Do not improvise eligibility facts. Full backup paths (3-minute cut, Analyze failure, API-only): `docs/demo/backup.md`.
 
 ---
 
@@ -107,13 +107,17 @@ Open Chevening. Analyze.
 
 ## Backup if something breaks
 
+Use `docs/demo/backup.md`. Short version:
+
 | Failure | Recovery |
 |---|---|
+| Time or no speech | 3-minute text path in the backup doc. |
 | API down | Show `/api/health`. Restart `npm run dev`. |
 | Analyze error | Ask HULUM → Should I apply for this? |
 | Voice/session error | Stay on text and quick actions. |
 | Wrong decision | Do not override the engine. Open Official source. |
 | No profile | Create profile → demo Abeba. |
+| Browser UI dead | API Path C in the backup doc, or `npm test`. |
 
 ---
 
