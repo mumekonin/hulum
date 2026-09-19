@@ -875,11 +875,11 @@ Never commit:
 - [ ] Malformed AI response.
 - [ ] Database failure.
 - [ ] Network interruption.
-- [ ] Missing profile information.
+- [x] Missing profile information.
 - [ ] Contradictory profile information.
 - [ ] Uncertain requirement.
 - [ ] Expired opportunity.
-- [ ] Unsupported voice request.
+- [x] Unsupported voice request.
 
 ---
 
@@ -1101,7 +1101,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Full profile → opportunity → analysis flow.
 - [x] Full analysis → readiness flow.
 - [x] Full voice flow.
-- [ ] Error handling.
+- [x] Error handling.
 - [ ] Security review.
 - [ ] Production configuration.
 
