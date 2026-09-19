@@ -1,5 +1,2 @@
-/**
- * APPLY/MAYBE/SKIP rules land in Task 26. This module exists so the
- * decision engine stays pure: no network, no Claude, no hidden Date.now().
- */
-export {};
+export { decide } from "./decide.js";
+export { CRITICAL_REQUIREMENT_KEYS, FIT_SCORE_WEIGHTS, KEY_REQUIREMENT_KEYS, NEXT_ACTION } from "./rules.js";
