@@ -2,6 +2,7 @@ import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import {
   Decision,
+  ReadinessStatus,
   RequirementKey,
   RequirementStatus,
   type Analysis,
@@ -164,18 +165,30 @@ describe("analysis routes", () => {
     expect(body).toEqual({ data: analysis, error: null });
   });
 
-  it("returns stored readiness items, empty until the readiness engine runs", async () => {
+  it("returns stored readiness items", async () => {
+    const items = [
+      {
+        id: "66666666-6666-4666-8666-666666666666",
+        analysisId: analysis.id,
+        title: "No extra documents listed",
+        description: "The opportunity does not list document requirements.",
+        status: ReadinessStatus.NOT_REQUIRED,
+        priority: 1,
+        createdAt: "2026-09-19T00:00:00.000Z",
+        updatedAt: "2026-09-19T00:00:00.000Z",
+      },
+    ];
     const port = await listen(
       createTestApp({
         analyze: async () => analysis,
         getById: async () => analysis,
-        getReadiness: async () => [],
+        getReadiness: async () => items,
       }),
     );
     const response = await fetch(`http://127.0.0.1:${port}/api/analyses/${analysis.id}/readiness`);
     const body: unknown = await response.json();
     expect(response.status).toBe(200);
-    expect(body).toEqual({ data: [], error: null });
+    expect(body).toEqual({ data: items, error: null });
   });
 
   it("returns 404 when the analysis does not exist", async () => {

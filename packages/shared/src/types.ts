@@ -108,6 +108,10 @@ export type AnalyzeOpportunityRequest = {
   userId: string;
 };
 
+export type PatchReadinessRequest = {
+  status: ReadinessStatus;
+};
+
 export type VoiceResponse = {
   intent: VoiceIntent;
   spokenText: string;
