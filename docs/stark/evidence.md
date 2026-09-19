@@ -19,9 +19,9 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | ScholarXIV | `docs/research/scholarxiv.md` | Space only — **no papers retrieved** |
 | Ideation + rejected ideas | `docs/research/ideation.md` | Present |
 | Competitors | `docs/research/competitive-analysis.md` | Live-checked 2026-09-18; do not invent extra claims |
-| Product requirements | `task.md`, `docs/product/hulum-flow.md`, `docs/product/personas.md` | Present |
+| Product requirements | `task.md`, `docs/stark/task-status.md` | Present; Day 20 status pass 2026-09-19 |
 | Architecture | `docs/architecture/overview.md` | Present (as built) |
-| Database | `database/migrations/001_init.sql`, ADR 001 | Schema present; **file store in v0.1** |
+| Database | `database/migrations/001_init.sql`, ADR 001 | Schema + migrate/smoke on `main`; **file store in the running API** |
 | Decision engine | `apps/server/src/decision/`, ADR 002 | Present + tests |
 | AI responsibility | ADR 002, Claude validation in `apps/server/src/ai/` | Engine decides; Claude explains only |
 | Voice UX | ADR 003, ADR 004, `docs/demo/script.md` | Text/quick-action fallback; Voxide unwired |

@@ -130,11 +130,11 @@ Primary ownership:
 - [x] **P0** Add `.env.example`.
 - [x] **P0** Configure package manager and scripts.
 - [x] **P0** Initialize frontend.
-- [-] **P0** Initialize backend.
+- [x] **P0** Initialize backend.
 - [x] **P0** Establish shared types/constants.
 - [ ] **P1** Configure linting.
 - [ ] **P1** Configure formatting.
-- [ ] **P1** Configure testing.
+- [x] **P1** Configure testing.
 - [ ] **P1** Configure CI checks.
 
 ## Recommended structure
@@ -348,25 +348,25 @@ Avoid making the interface look like a generic AI chat product.
 
 ## Profile fields
 
-- [ ] **P0** Name.
-- [ ] **P0** Education level.
-- [ ] **P0** Field of study.
-- [ ] **P0** Graduation year.
-- [ ] **P0** Country.
-- [ ] **P0** Location.
-- [ ] **P0** Skills.
-- [ ] **P0** Experience.
-- [ ] **P0** Languages.
-- [ ] **P0** Interests.
-- [ ] **P1** Optional profile fields as defined by MVP scope.
+- [x] **P0** Name.
+- [x] **P0** Education level.
+- [x] **P0** Field of study.
+- [x] **P0** Graduation year.
+- [x] **P0** Country.
+- [x] **P0** Location.
+- [x] **P0** Skills.
+- [x] **P0** Experience.
+- [x] **P0** Languages.
+- [x] **P0** Interests.
+- [x] **P1** Optional profile fields as defined by MVP scope.
 
 ## Profile behavior
 
-- [ ] **P0** Create profile.
-- [ ] **P0** Edit profile.
-- [ ] **P0** Persist profile.
-- [ ] **P0** Validate profile fields.
-- [ ] **P0** Use profile in requirement matching.
+- [x] **P0** Create profile.
+- [x] **P0** Edit profile.
+- [x] **P0** Persist profile.
+- [x] **P0** Validate profile fields.
+- [x] **P0** Use profile in requirement matching.
 - [ ] **P1** Extract profile information from voice/text using AI.
 - [ ] **P1** Allow user confirmation before saving AI-extracted facts.
 
@@ -400,13 +400,13 @@ Opportunity
 └── updatedAt
 ```
 
-- [ ] **P0** Define opportunity schema.
-- [ ] **P0** Create database model.
-- [ ] **P0** Create seed/demo opportunities.
-- [ ] **P0** Store official source URL.
-- [ ] **P0** Store application URL where available.
-- [ ] **P0** Store verification status.
-- [ ] **P0** Store last verified date.
+- [x] **P0** Define opportunity schema.
+- [x] **P0** Create database model.
+- [x] **P0** Create seed/demo opportunities.
+- [x] **P0** Store official source URL.
+- [x] **P0** Store application URL where available.
+- [x] **P0** Store verification status.
+- [x] **P0** Store last verified date.
 - [x] **P1** Add opportunity search/filtering.
 - [ ] **P1** Add opportunity import workflow if required.
 
@@ -416,10 +416,10 @@ Opportunity
 
 HULUM should not treat generated AI content as authoritative opportunity requirements.
 
-- [ ] **P0** Define verification status model.
-- [ ] **P0** Store source URL.
-- [ ] **P0** Store official application URL.
-- [ ] **P0** Store last verification date.
+- [x] **P0** Define verification status model.
+- [x] **P0** Store source URL.
+- [x] **P0** Store official application URL.
+- [x] **P0** Store last verification date.
 - [x] **P0** Display source/verification information.
 - [x] **P0** Add responsible-AI notice.
 - [ ] **P1** Define manual verification workflow.
@@ -442,15 +442,15 @@ UNCERTAIN
 NOT_APPLICABLE
 ```
 
-- [ ] **P0** Define requirement schema.
-- [ ] **P0** Define requirement categories.
-- [ ] **P0** Match profile facts to requirements.
-- [ ] **P0** Produce requirement statuses.
-- [ ] **P0** Preserve uncertainty.
-- [ ] **P0** Handle missing profile information.
+- [x] **P0** Define requirement schema.
+- [x] **P0** Define requirement categories.
+- [x] **P0** Match profile facts to requirements.
+- [x] **P0** Produce requirement statuses.
+- [x] **P0** Preserve uncertainty.
+- [x] **P0** Handle missing profile information.
 - [ ] **P0** Handle conflicting information.
 - [ ] **P1** Add requirement explanations.
-- [ ] **P1** Add unit tests for matching.
+- [x] **P1** Add unit tests for matching.
 
 ---
 
@@ -475,14 +475,14 @@ Otherwise
 MAYBE
 ```
 
-- [ ] **P0** Define decision schema.
-- [ ] **P0** Define critical requirements.
-- [ ] **P0** Implement decision rules.
-- [ ] **P0** Implement decision explanation data.
-- [ ] **P0** Implement fit score if included in MVP.
-- [ ] **P0** Ensure fit score never replaces the decision rules.
-- [ ] **P0** Add unit tests.
-- [ ] **P0** Add edge-case tests.
+- [x] **P0** Define decision schema.
+- [x] **P0** Define critical requirements.
+- [x] **P0** Implement decision rules.
+- [x] **P0** Implement decision explanation data.
+- [x] **P0** Implement fit score if included in MVP.
+- [x] **P0** Ensure fit score never replaces the decision rules.
+- [x] **P0** Add unit tests.
+- [x] **P0** Add edge-case tests.
 - [ ] **P1** Add decision audit/debug information.
 
 ## Important
@@ -547,15 +547,15 @@ Deadline verification  TODO
 
 ## Tasks
 
-- [ ] **P0** Define readiness item schema.
-- [ ] **P0** Generate requirements from opportunity data.
-- [ ] **P0** Generate readiness checklist.
-- [ ] **P0** Support TODO.
-- [ ] **P0** Support IN_PROGRESS.
-- [ ] **P0** Support DONE.
-- [ ] **P0** Support NOT_REQUIRED.
-- [ ] **P0** Display next action.
-- [ ] **P1** Allow manual checklist updates.
+- [x] **P0** Define readiness item schema.
+- [x] **P0** Generate requirements from opportunity data.
+- [x] **P0** Generate readiness checklist.
+- [x] **P0** Support TODO.
+- [x] **P0** Support IN_PROGRESS.
+- [x] **P0** Support DONE.
+- [x] **P0** Support NOT_REQUIRED.
+- [x] **P0** Display next action.
+- [x] **P1** Allow manual checklist updates.
 - [ ] **P1** Generate personalized readiness plan with AI.
 
 ---
@@ -569,7 +569,7 @@ It must perform meaningful HULUM actions and must not be decorative.
 - [ ] **P0** Study Voxide integration requirements.
 - [ ] **P0** Create development integration.
 - [ ] **P0** Receive/process voice input.
-- [ ] **P0** Connect voice to HULUM actions.
+- [x] **P0** Connect voice to HULUM actions.
 - [ ] **P0** Produce voice response.
 - [x] **P0** Analyze an opportunity by voice.
 - [x] **P0** Ask "Why?"
@@ -633,17 +633,17 @@ Do not trade reliability for language count.
 
 # 18. Phase 14 — Backend
 
-- [ ] **P0** Server foundation.
-- [ ] **P0** Environment configuration.
-- [ ] **P0** Database connection.
-- [ ] **P0** Profile service.
-- [ ] **P0** Opportunity service.
-- [ ] **P0** Requirement matching service.
-- [ ] **P0** Decision service.
-- [ ] **P0** Readiness service.
-- [ ] **P0** AI orchestration service.
-- [ ] **P0** Voice integration service.
-- [ ] **P1** Search/filter service.
+- [x] **P0** Server foundation.
+- [x] **P0** Environment configuration.
+- [-] **P0** Database connection.
+- [x] **P0** Profile service.
+- [x] **P0** Opportunity service.
+- [x] **P0** Requirement matching service.
+- [x] **P0** Decision service.
+- [x] **P0** Readiness service.
+- [x] **P0** AI orchestration service.
+- [-] **P0** Voice integration service.
+- [x] **P1** Search/filter service.
 - [ ] **P1** Audit/debug service.
 
 ## Suggested endpoints
@@ -668,12 +668,12 @@ POST   /api/voice/intent
 GET    /api/health
 ```
 
-- [ ] **P0** Define API contracts before integration.
-- [ ] **P0** Implement profile endpoints.
-- [ ] **P0** Implement opportunity endpoints.
-- [ ] **P0** Implement analysis endpoint.
-- [ ] **P0** Implement readiness endpoint.
-- [ ] **P0** Implement health endpoint.
+- [x] **P0** Define API contracts before integration.
+- [x] **P0** Implement profile endpoints.
+- [x] **P0** Implement opportunity endpoints.
+- [x] **P0** Implement analysis endpoint.
+- [x] **P0** Implement readiness endpoint.
+- [x] **P0** Implement health endpoint.
 - [ ] **P1** Add validation/rate limiting/documentation.
 
 ---
@@ -699,14 +699,14 @@ users
 audit_logs
 ```
 
-- [ ] **P0** Design schema.
-- [ ] **P0** Create migrations.
-- [ ] **P0** Persist profiles.
-- [ ] **P0** Persist opportunities.
-- [ ] **P0** Persist requirements.
-- [ ] **P0** Persist analyses.
-- [ ] **P0** Persist readiness state.
-- [ ] **P1** Add indexes.
+- [x] **P0** Design schema.
+- [x] **P0** Create migrations.
+- [x] **P0** Persist profiles.
+- [x] **P0** Persist opportunities.
+- [x] **P0** Persist requirements.
+- [x] **P0** Persist analyses.
+- [x] **P0** Persist readiness state.
+- [x] **P1** Add indexes.
 - [ ] **P1** Add security policies/RLS where applicable.
 - [ ] **P1** Define retention strategy.
 
@@ -716,15 +716,15 @@ audit_logs
 
 Frontend and backend must use shared contracts.
 
-- [ ] **P0** Define profile type.
-- [ ] **P0** Define opportunity type.
-- [ ] **P0** Define requirement type.
-- [ ] **P0** Define requirement status enum.
-- [ ] **P0** Define decision enum.
-- [ ] **P0** Define analysis response.
-- [ ] **P0** Define readiness item.
-- [ ] **P0** Define voice intent/result.
-- [ ] **P1** Add runtime validation.
+- [x] **P0** Define profile type.
+- [x] **P0** Define opportunity type.
+- [x] **P0** Define requirement type.
+- [x] **P0** Define requirement status enum.
+- [x] **P0** Define decision enum.
+- [x] **P0** Define analysis response.
+- [x] **P0** Define readiness item.
+- [x] **P0** Define voice intent/result.
+- [x] **P1** Add runtime validation.
 
 ## Core analysis contract
 
@@ -757,10 +757,10 @@ Analysis
 - [x] **P0** Readiness checklist.
 - [-] **P0** Voice interaction.
 - [x] **P0** Official source/application action.
-- [ ] **P1** Search/filter.
-- [ ] **P1** Error states.
-- [ ] **P1** Network fallback.
-- [ ] **P1** Accessibility polish.
+- [x] **P1** Search/filter.
+- [x] **P1** Error states.
+- [x] **P1** Network fallback.
+- [x] **P1** Accessibility polish.
 
 ## UI principle
 
@@ -795,7 +795,7 @@ The assistant should remain grounded in the current HULUM context.
 - [x] **P0** Ask what to prepare.
 - [x] **P0** Ask about the current opportunity.
 - [ ] **P1** Ask about profile gaps.
-- [ ] **P1** Ask to filter opportunities.
+- [x] **P1** Ask to filter opportunities.
 - [ ] **P1** Ask for clarification of requirements.
 
 The assistant must not become an unrestricted chatbot.
@@ -829,14 +829,14 @@ Never commit:
 
 ## Unit tests
 
-- [ ] Profile validation.
-- [ ] Requirement matching.
-- [ ] Requirement status calculation.
-- [ ] APPLY decision.
-- [ ] MAYBE decision.
-- [ ] SKIP decision.
-- [ ] Edge cases.
-- [ ] Readiness generation.
+- [x] Profile validation.
+- [x] Requirement matching.
+- [x] Requirement status calculation.
+- [x] APPLY decision.
+- [x] MAYBE decision.
+- [x] SKIP decision.
+- [x] Edge cases.
+- [x] Readiness generation.
 - [x] AI output validation.
 - [x] Voice intent mapping.
 
@@ -846,12 +846,12 @@ Never commit:
 - [x] Opportunity → backend.
 - [x] Profile + opportunity → analysis.
 - [x] Analysis → decision.
-- [ ] Decision → explanation.
+- [x] Decision → explanation.
 - [x] Decision → readiness.
 - [x] Voice → intent.
 - [x] Voice intent → HULUM action.
-- [ ] Frontend → backend.
-- [ ] Backend → database.
+- [x] Frontend → backend.
+- [x] Backend → database.
 
 ## End-to-end
 
@@ -1073,7 +1073,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Checklist generation.
 - [x] Readiness UI.
 - [x] Next-action behavior.
-- [ ] Integration tests.
+- [x] Integration tests.
 
 ## Days 10–12 — Voice
 
@@ -1126,11 +1126,11 @@ Never manufacture commits, dates, research activity, or progress.
 
 ## Day 20 — Freeze
 
-- [ ] No unnecessary new features.
+- [x] No unnecessary new features.
 - [ ] Final bug fixes only.
 - [ ] Final production test.
 - [ ] Final Git history review.
-- [ ] Final task status.
+- [x] Final task status.
 - [ ] Final changelog.
 - [ ] Final demo rehearsal.
 - [ ] Final STARK submission package.
@@ -1141,13 +1141,13 @@ Never manufacture commits, dates, research activity, or progress.
 
 The HULUM MVP requires these capabilities to work together:
 
-- [ ] **P0** User profile.
-- [ ] **P0** Opportunity data.
-- [ ] **P0** Requirement matching.
-- [ ] **P0** APPLY/MAYBE/SKIP decision.
-- [ ] **P0** Decision explanation.
-- [ ] **P0** Missing/uncertain requirements.
-- [ ] **P0** Readiness checklist.
+- [x] **P0** User profile.
+- [x] **P0** Opportunity data.
+- [x] **P0** Requirement matching.
+- [x] **P0** APPLY/MAYBE/SKIP decision.
+- [x] **P0** Decision explanation.
+- [x] **P0** Missing/uncertain requirements.
+- [x] **P0** Readiness checklist.
 - [ ] **P0** Voxide voice interaction.
 - [x] **P0** At least one stable language end-to-end.
 - [x] **P0** English support.
