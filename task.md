@@ -15,6 +15,7 @@ Status is marked DONE in the same PR as the work, so `main` shows DONE only afte
 | 20 | Backend platform scaffold | Mulualem | DONE |
 | 21 | Database schema v1 | Mulualem | DONE |
 | 22 | Shared TypeScript contracts | Mulualem + Kidist | DONE |
+| 23 | Opportunity service | Mulualem | DONE |
 
 Other tasks are not started.
 
