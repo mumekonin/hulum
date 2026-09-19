@@ -7,11 +7,13 @@ import { profileRouter } from "./routes/profile.js";
 import { readinessRouter } from "./routes/readiness.js";
 import { voiceRouter } from "./routes/voice.js";
 import { fail, errorHandler } from "./lib/http.js";
+import { allowedCorsOrigin, securityHeaders } from "./lib/security.js";
 
 export function createApp() {
   const app = express();
   app.disable("x-powered-by");
-  app.use(cors({ origin: process.env.CLIENT_URL ?? "http://localhost:3000" }));
+  app.use(securityHeaders);
+  app.use(cors({ origin: allowedCorsOrigin() }));
   app.use(express.json({ limit: "1mb" }));
 
   app.get("/api/health", health);

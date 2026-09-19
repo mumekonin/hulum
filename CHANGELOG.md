@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — API security pass: keys stay off the wire
+
+### Added
+- Security headers (`nosniff`, `DENY` framing, `no-store`) and production CORS that does not default to localhost.
+- Tests: Claude/Voxide keys and voice transcripts must not appear in health, session, or 404 bodies.
+
+### Why
+Days 15–16 required a security review of the running API. Full login is still P1; v0.1 uses a local `userId`.
+
 ## 2026-09-19 — API failures stay in the `{ data, error }` envelope
 
 ### Added
