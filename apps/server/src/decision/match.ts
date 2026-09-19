@@ -127,42 +127,45 @@ function matchLanguage(profile: Profile, values: string[]): MatchOutcome {
 }
 
 function matchExperience(profile: Profile, years: number): MatchOutcome {
-  if (profile.yearsExperience >= years) {
+  const yearsExperience = profile.yearsExperience ?? 0;
+  const experience = profile.experience ?? "";
+  if (yearsExperience >= years) {
     return {
       status: "MET",
-      evidence: `${profile.yearsExperience} year(s) of experience. ${profile.experience}`.trim(),
+      evidence: `${yearsExperience} year(s) of experience. ${experience}`.trim(),
       reason: "Stated experience meets the minimum.",
     };
   }
 
-  if (profile.yearsExperience === 0 && profile.experience.trim().length > 0) {
+  if (yearsExperience === 0 && experience.trim().length > 0) {
     return {
       status: "UNCERTAIN",
-      evidence: profile.experience,
+      evidence: experience,
       reason: `Experience is described but not quantified against the ${years}-year minimum.`,
     };
   }
 
   return {
     status: "NOT_MET",
-    evidence: `${profile.yearsExperience} year(s) of experience. ${profile.experience}`.trim(),
+    evidence: `${yearsExperience} year(s) of experience. ${experience}`.trim(),
     reason: `Opportunity asks for about ${years} year(s) of experience.`,
   };
 }
 
 function matchDocuments(profile: Profile, values: string[]): MatchOutcome {
-  const missing = values.filter((doc) => !includesAny(profile.documentsHeld, [doc]));
+  const held = profile.documentsHeld ?? [];
+  const missing = values.filter((doc) => !includesAny(held, [doc]));
   if (missing.length === 0) {
     return {
       status: "MET",
-      evidence: `Documents held: ${profile.documentsHeld.join(", ")}.`,
+      evidence: `Documents held: ${held.join(", ")}.`,
       reason: "Required documents are already listed in the profile.",
     };
   }
 
   return {
     status: "UNCERTAIN",
-    evidence: `Documents held: ${profile.documentsHeld.join(", ") || "none listed"}.`,
+    evidence: `Documents held: ${held.join(", ") || "none listed"}.`,
     reason: `Still needed: ${missing.join(", ")}. Documents can usually be prepared before applying.`,
   };
 }

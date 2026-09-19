@@ -29,6 +29,8 @@ npm run db:smoke
 
 `db:smoke` inserts sample rows in a transaction and rolls them back. It does not seed the catalog.
 
+`GET /api/opportunities` reads this table. Do not insert invented postings. Add only official-source rows.
+
 You can also paste `migrations/001_init.sql` into the Supabase SQL editor.
 
 ## Rules

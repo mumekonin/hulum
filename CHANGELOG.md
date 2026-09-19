@@ -5,7 +5,7 @@ HULUM records actual work. Do not invent history.
 ## 2026-09-19 — Git history reviewed (branches, not a rewrite)
 
 ### Added
-- `docs/stark/git-history.md`: `main` has Mulualem PRs #1–#4; Kidist product work is still on stacked `feat/*`. No Cursor co-author on recent Kidist commits. History was not rewritten.
+- `docs/stark/git-history.md`: `main` has Mulualem PRs #1–#10; Kidist product work is still on stacked `feat/*`. No Cursor co-author on recent Kidist commits. History was not rewritten.
 
 ### Why
 Day 20 required a final Git history review. Judges should not treat `main` as the full product.
@@ -18,6 +18,90 @@ Day 20 required a final Git history review. Judges should not treat `main` as th
 
 ### Why
 Day 20 required a final task status. Stale empty boxes were more misleading than the code.
+
+## 2026-09-19 — Mulualem
+
+### Changed
+Added a deterministic readiness checklist from missing and document requirements, plus PATCH status.
+
+### Why
+Task 29 needs a stored checklist after analysis, before Claude explanation.
+
+### Evidence
+Branch: `feat/readiness-engine`
+
+### Decision
+Generation writes TODO and NOT_REQUIRED only. IN_PROGRESS and DONE come from PATCH. Claude does not create checklist items.
+
+## 2026-09-19 — Mulualem
+
+### Changed
+Added POST analyze and GET analysis/readiness endpoints that persist the deterministic decision.
+
+### Why
+Task 28 needs one request to produce a stored HULUM analysis before Claude or readiness generation.
+
+### Evidence
+Branch: `feat/analysis-api`
+
+### Decision
+Analyze body is `{ userId }`. nextAction is derived from the stored decision. GET readiness returns stored items and stays empty until Task 29. Claude does not run on analyze.
+
+## 2026-09-19 — Mulualem
+
+### Changed
+Added the APPLY/MAYBE/SKIP engine and automated cases for critical mismatch, complete match, and uncertainty.
+
+### Why
+Tasks 26–27 need a deterministic decision and score before the analysis API.
+
+### Evidence
+Branch: `feat/decision-engine`
+
+### Decision
+Critical keys are country, education, and deadline. Key keys add field and language. Fit-score weights are named constants. Claude does not set the decision.
+
+## 2026-09-19 — Mulualem
+
+### Changed
+Added deterministic requirement matching with MET, NOT_MET, UNCERTAIN, and NOT_APPLICABLE.
+
+### Why
+Task 25 needs auditable profile-vs-opportunity statuses before APPLY/MAYBE/SKIP.
+
+### Evidence
+Branch: `feat/requirement-matching`
+
+### Decision
+Exact normalized list membership only. Unstructured experience/documents stay UNCERTAIN. Deadline uses an injected clock. Never guess MET.
+
+## 2026-09-19 — Mulualem
+
+### Changed
+Added profile create, read, and update APIs with completeness handling.
+
+### Why
+Task 24 needs a persisted profile the decision engine can read.
+
+### Evidence
+Branch: `feat/profile-service`
+
+### Decision
+Full auth waits. POST /api/profile creates a users row plus a profiles row. Completeness lists empty analysis fields.
+
+## 2026-09-19 — Mulualem
+
+### Changed
+Added `GET /api/opportunities` and `GET /api/opportunities/:id` with structured requirements and official source fields.
+
+### Why
+Task 23 needs a real opportunity API before the browse UI and analysis can use catalog data.
+
+### Evidence
+Branch: `feat/opportunity-service`
+
+### Decision
+No invented seed opportunities. The list may be empty until official rows are inserted.
 
 ## 2026-09-19 — Mulualem
 

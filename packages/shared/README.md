@@ -28,4 +28,8 @@ UPDATE_PROFILE
 
 `Requirement` is an analysis outcome (`requirement_results`). Opportunity source facts stay on `Opportunity`.
 
+Profile API types: `CreateProfileRequest`, `PatchProfileRequest`, `ProfileView`. Completeness uses `profileCompleteness()`.
+
+Matcher keys: `RequirementKey`. Matcher rows: `RequirementMatch`. Decision payload: `DecisionResult`. Analyze body: `AnalyzeOpportunityRequest` (`{ userId }`). Readiness patch: `PatchReadinessRequest` (`{ status }`).
+
 Tell both teammates before changing these names.

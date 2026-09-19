@@ -25,7 +25,15 @@ Merged PRs:
 | #1 | Team assignments + git workflow docs |
 | #2 | Express backend scaffold + health |
 | #3 | PostgreSQL v1 schema, `db:migrate`, `db:smoke` |
-| #4 | `@hulum/shared` Task 22 lock (`enums` / envelope builders). Running app still uses `constants.ts` + Zod; voice parser still emits `SHOW_GAPS` |
+| #4 | `@hulum/shared` Task 22 lock |
+| #5 | Opportunity read API (Postgres) |
+| #6 | Profile create/read/update API (Postgres) |
+| #7 | Requirement matching engine |
+| #8 | APPLY/MAYBE/SKIP decision engine |
+| #9 | Analysis persist API |
+| #10 | Readiness checklist engine |
+
+The stacked Kidist branch still serves the demo from the JSON file store (`createApp` in `apps/server/src/app.ts`). Mulualem’s Postgres routers live beside that and are not the default `npm run dev` path until they are wired.
 
 Early files on `main` also include README, `task.md` rename, and `rule.md`. The running Next.js app, decision engine, Ask HULUM, and Day 19 docs are **not** all on `main` yet.
 
