@@ -149,4 +149,48 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     expect(readinessBody.data.reply).toContain("Prepare:");
     expect(readinessBody.data.reply).toContain(readinessBody.data.analysis?.nextAction ?? "__missing__");
   });
+
+  it("returns stored NOT_MET and UNCERTAIN requirements after analyze", async () => {
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+
+    await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Should I apply for this?",
+        opportunityId: "opp-chevening",
+      }),
+    });
+
+    const gaps = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "What am I missing?",
+        opportunityId: "opp-chevening",
+      }),
+    });
+    const gapsBody = (await gaps.json()) as {
+      data: {
+        intent: string;
+        reply: string;
+        analysis?: { gaps: Array<{ requirement: string; status: string }> };
+      };
+    };
+
+    expect(gaps.status).toBe(200);
+    expect(gapsBody.data.intent).toBe("SHOW_GAPS");
+    expect(gapsBody.data.analysis?.gaps?.length).toBeGreaterThan(0);
+    expect(gapsBody.data.analysis?.gaps?.some((item) => item.status === "NOT_MET" || item.status === "UNCERTAIN")).toBe(
+      true,
+    );
+    expect(gapsBody.data.reply).toContain("Missing or uncertain:");
+    const firstGap = gapsBody.data.analysis?.gaps?.[0];
+    expect(firstGap).toBeDefined();
+    expect(gapsBody.data.reply).toContain(firstGap?.requirement ?? "__missing__");
+    expect(gapsBody.data.reply).toMatch(/NOT_MET|UNCERTAIN/);
+  });
 });

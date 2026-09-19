@@ -14,6 +14,7 @@ const quickActions = [
   "Should I apply for this?",
   "Why did you say that?",
   "What am I missing?",
+  "ምን ጎድሎኛል?",
   "What should I prepare?",
   "ምን ላዘጋጅ?",
 ];
@@ -122,7 +123,7 @@ function AssistantInner() {
               type="button"
               disabled={pending}
               onClick={() => void send(action)}
-              lang={action === "ምን ላዘጋጅ?" ? "am" : undefined}
+              lang={action === "ምን ላዘጋጅ?" || action === "ምን ጎድሎኛል?" ? "am" : undefined}
               className="min-h-11 border border-line px-3 py-2 text-sm disabled:opacity-60"
             >
               {action}
