@@ -12,8 +12,11 @@
     "dev": "concurrently -n web,api -c cyan,green \"npm run dev -w @hulum/web\" \"npm run dev -w @hulum/server\"",
     "dev:web": "npm run dev -w @hulum/web",
     "dev:server": "npm run dev -w @hulum/server",
+    "build": "npm run build -w @hulum/web",
+    "build:server": "npm run build -w @hulum/server",
+    "typecheck:server": "npm run typecheck -w @hulum/server",
     "test": "npm run test -w @hulum/server",
-    "build": "npm run build -w @hulum/web"
+    "test:server": "npm run test -w @hulum/server"
   },
   "devDependencies": {
     "concurrently": "^9.2.1"

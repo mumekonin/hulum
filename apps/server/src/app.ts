@@ -10,6 +10,7 @@ import { fail } from "./lib/http.js";
 
 export function createApp() {
   const app = express();
+  app.disable("x-powered-by");
   app.use(cors({ origin: process.env.CLIENT_URL ?? "http://localhost:3000" }));
   app.use(express.json({ limit: "1mb" }));
 
