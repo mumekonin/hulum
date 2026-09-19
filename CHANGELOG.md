@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-18 — Voice session is persisted without transcripts
+
+### Added
+- `POST /api/voice/session` stores id, user, language, and start time in the file store. Utterance text is not saved.
+- The assistant starts that session on load and shows whether Voxide or text-fallback is active.
+
+### Why
+Days 10–12 required a voice session. Voxide is still not live; the session is the same text-fallback path as ADR 003.
+
 ## 2026-09-18 — Voice filters opportunities by APPLY / MAYBE / SKIP
 
 ### Added

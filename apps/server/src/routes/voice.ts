@@ -6,20 +6,31 @@ import { fail, ok } from "../lib/http.js";
 import { createId, nowIso } from "../lib/id.js";
 import { formatOpportunityList, parseVoiceIntent } from "../voice/intents.js";
 import { findLatestAnalysis } from "../voice/findAnalysis.js";
-import { loadStore } from "../store/fileStore.js";
+import { loadStore, mutateStore } from "../store/fileStore.js";
 
 export const voiceRouter = Router();
 
 voiceRouter.post("/session", async (req, res) => {
-  const userId = typeof req.body?.userId === "string" ? req.body.userId : "anonymous";
+  const userId = typeof req.body?.userId === "string" && req.body.userId.trim() ? req.body.userId.trim() : "anonymous";
   const language = req.body?.language === "am" || req.body?.language === "om" ? req.body.language : "en";
-  ok(res, {
+  const session = {
     id: createId("voice"),
     userId,
     language,
     startedAt: nowIso(),
-    provider: process.env.VOXIDE_API_KEY ? "voxide" : "text-fallback",
-  }, 201);
+    endedAt: null as string | null,
+  };
+  await mutateStore((store) => {
+    store.voiceSessions.push(session);
+  });
+  ok(
+    res,
+    {
+      ...session,
+      provider: process.env.VOXIDE_API_KEY ? "voxide" : "text-fallback",
+    },
+    201,
+  );
 });
 
 voiceRouter.post("/action", async (req, res) => {

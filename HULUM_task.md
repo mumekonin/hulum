@@ -1078,7 +1078,7 @@ Never manufacture commits, dates, research activity, or progress.
 ## Days 10–12 — Voice
 
 - [ ] Voxide integration.
-- [ ] Voice session.
+- [x] Voice session.
 - [ ] Voice intent mapping.
 - [x] Voice → analysis.
 - [x] Voice → explanation.
