@@ -25,6 +25,7 @@ Merged PRs:
 | #1 | Team assignments + git workflow docs |
 | #2 | Express backend scaffold + health |
 | #3 | PostgreSQL v1 schema, `db:migrate`, `db:smoke` |
+| #4 | `@hulum/shared` Task 22 lock (`enums` / envelope builders). Running app still uses `constants.ts` + Zod; voice parser still emits `SHOW_GAPS` |
 
 Early files on `main` also include README, `task.md` rename, and `rule.md`. The running Next.js app, decision engine, Ask HULUM, and Day 19 docs are **not** all on `main` yet.
 
