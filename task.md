@@ -17,6 +17,7 @@ Status is marked DONE in the same PR as the work, so `main` shows DONE only afte
 | 22 | Shared TypeScript contracts | Mulualem + Kidist | DONE |
 | 23 | Opportunity service | Mulualem | DONE |
 | 24 | Profile service | Mulualem | DONE |
+| 25 | Requirement matching engine | Mulualem | DONE |
 
 Other tasks are not started.
 
