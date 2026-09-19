@@ -1129,7 +1129,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] No unnecessary new features.
 - [ ] Final bug fixes only.
 - [ ] Final production test.
-- [ ] Final Git history review.
+- [x] Final Git history review.
 - [x] Final task status.
 - [ ] Final changelog.
 - [ ] Final demo rehearsal.
@@ -1310,7 +1310,7 @@ However, STARK-required research and ideation documentation must be maintained t
 - [ ] Voice works.
 - [x] Backup mode exists.
 - [ ] Documentation is complete.
-- [ ] Git history is truthful.
+- [x] Git history is truthful.
 - [ ] STARK evidence is ready.
 
 ---

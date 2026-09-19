@@ -50,4 +50,5 @@ Voice interaction on the frontend stays `[-]` (text/quick actions, not a microph
 
 - No new product features in this commit.
 - Final task status is this file plus the checkbox updates.
-- Git history review, final changelog, demo rehearsal, and STARK package remain separate.
+- Git history review: `docs/stark/git-history.md`.
+- Final changelog, demo rehearsal, and STARK package remain separate.

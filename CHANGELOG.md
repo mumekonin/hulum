@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Git history reviewed (branches, not a rewrite)
+
+### Added
+- `docs/stark/git-history.md`: `main` has Mulualem PRs #1–#3; Kidist product work is still on stacked `feat/*`. No Cursor co-author on recent Kidist commits. History was not rewritten.
+
+### Why
+Day 20 required a final Git history review. Judges should not treat `main` as the full product.
+
 ## 2026-09-19 — Day 20 task status (no new features)
 
 ### Changed
