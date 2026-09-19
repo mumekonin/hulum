@@ -3,6 +3,20 @@
 ## 2026-09-19 — Mulualem
 
 ### Changed
+Added the APPLY/MAYBE/SKIP engine and automated cases for critical mismatch, complete match, and uncertainty.
+
+### Why
+Tasks 26–27 need a deterministic decision and score before the analysis API.
+
+### Evidence
+Branch: `feat/decision-engine`
+
+### Decision
+Critical keys are country, education, and deadline. Key keys add field and language. Fit-score weights are named constants. Claude does not set the decision.
+
+## 2026-09-19 — Mulualem
+
+### Changed
 Added deterministic requirement matching with MET, NOT_MET, UNCERTAIN, and NOT_APPLICABLE.
 
 ### Why
