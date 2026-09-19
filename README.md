@@ -51,6 +51,18 @@ hulum/
 └── scripts/
 ```
 
+## Getting started (server)
+
+```bash
+npm install
+cp apps/server/.env.example apps/server/.env
+npm run dev:server
+```
+
+`GET http://localhost:3001/api/health` should return `{ "data": { "status": "ok" }, "error": null }`.
+
+Do not put real API keys in chat or in committed files. Local `.env` only.
+
 ## API overview
 
 ```http
