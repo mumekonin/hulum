@@ -193,4 +193,67 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     expect(gapsBody.data.reply).toContain(firstGap?.requirement ?? "__missing__");
     expect(gapsBody.data.reply).toMatch(/NOT_MET|UNCERTAIN/);
   });
+
+  it("filters the catalog by APPLY without treating the request as analyze-this", async () => {
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+
+    const response = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Show me opportunities I should apply for.",
+      }),
+    });
+    const body = (await response.json()) as {
+      data: { intent: string; reply: string; opportunities?: Array<{ id: string }> };
+    };
+
+    expect(response.status).toBe(200);
+    expect(body.data.intent).toBe("FILTER_BY_DECISION");
+    expect(body.data.reply).toContain("APPLY opportunities:");
+    expect(body.data.opportunities?.some((item) => item.id === "opp-a2sv")).toBe(true);
+    expect(body.data.opportunities?.some((item) => item.id === "opp-chevening")).toBe(false);
+  });
+
+  it("filters MAYBE and SKIP from the engine without persisting those analyses", async () => {
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+
+    const maybe = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Show me maybe opportunities.",
+      }),
+    });
+    const maybeBody = (await maybe.json()) as {
+      data: { intent: string; reply: string; opportunities?: Array<{ id: string }> };
+    };
+
+    expect(maybe.status).toBe(200);
+    expect(maybeBody.data.intent).toBe("FILTER_BY_DECISION");
+    expect(maybeBody.data.reply).toMatch(/^MAYBE |^No MAYBE /);
+    expect(maybeBody.data.opportunities?.some((item) => item.id === "opp-chevening")).toBe(false);
+
+    const skip = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Show me skip opportunities.",
+      }),
+    });
+    const skipBody = (await skip.json()) as {
+      data: { intent: string; reply: string; opportunities?: Array<{ id: string }> };
+    };
+
+    expect(skip.status).toBe(200);
+    expect(skipBody.data.intent).toBe("FILTER_BY_DECISION");
+    expect(skipBody.data.reply).toContain("SKIP opportunities:");
+    expect(skipBody.data.opportunities?.some((item) => item.id === "opp-chevening")).toBe(true);
+    expect(skipBody.data.opportunities?.some((item) => item.id === "opp-a2sv")).toBe(false);
+  });
 });

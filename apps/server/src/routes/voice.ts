@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { voiceActionSchema } from "@hulum/shared";
 import { runAnalysis, toAnalysisDetail } from "../analysis/runAnalysis.js";
+import { analyzeOpportunity } from "../decision/engine.js";
 import { fail, ok } from "../lib/http.js";
 import { createId, nowIso } from "../lib/id.js";
 import { formatOpportunityList, parseVoiceIntent } from "../voice/intents.js";
@@ -55,6 +56,31 @@ voiceRouter.post("/action", async (req, res) => {
       reply: filtered.length
         ? `Filtered to ${intent.type}: ${formatOpportunityList(filtered)}`
         : "No opportunities matched that filter.",
+      opportunities: filtered,
+    });
+    return;
+  }
+
+  if (intent.intent === "FILTER_BY_DECISION") {
+    const decision = intent.decision;
+    if (!decision) {
+      ok(res, {
+        intent: intent.intent,
+        reply: "Say APPLY, MAYBE, or SKIP when filtering opportunities by decision.",
+      });
+      return;
+    }
+    const profile = store.profiles.find((item) => item.userId === userId);
+    if (!profile) {
+      fail(res, "Create a profile before asking HULUM to analyze.", 404, "PROFILE_NOT_FOUND");
+      return;
+    }
+    const filtered = opportunities.filter((item) => analyzeOpportunity(profile, item).decision === decision);
+    ok(res, {
+      intent: intent.intent,
+      reply: filtered.length
+        ? `${decision} opportunities: ${formatOpportunityList(filtered)}`
+        : `No ${decision} opportunities for your profile.`,
       opportunities: filtered,
     });
     return;
@@ -177,6 +203,6 @@ voiceRouter.post("/action", async (req, res) => {
 
   ok(res, {
     intent: "UNSUPPORTED",
-    reply: "I can show opportunities, filter internships or scholarships, analyze a selected opportunity, explain a decision, or list what to prepare. You can also type instead of speaking.",
+    reply: "I can show opportunities, filter internships or scholarships, filter APPLY MAYBE or SKIP, analyze a selected opportunity, explain a decision, or list what to prepare. You can also type instead of speaking.",
   });
 });

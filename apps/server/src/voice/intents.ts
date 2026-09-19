@@ -1,4 +1,5 @@
 import {
+  type Decision,
   type LanguageCode,
   type Opportunity,
   type OpportunityType,
@@ -8,6 +9,7 @@ import {
 export type ParsedIntent = {
   intent: VoiceIntent;
   type?: OpportunityType;
+  decision?: Decision;
   replyHint?: string;
 };
 
@@ -20,9 +22,22 @@ const TYPE_WORDS: Array<[RegExp, OpportunityType]> = [
   [/\bcompetition/i, "competition"],
 ];
 
+function decisionFromUtterance(value: string): Decision | undefined {
+  if (/\bmaybe\b/i.test(value)) return "MAYBE";
+  if (/\bskip\b/i.test(value)) return "SKIP";
+  if (/\bapply\b/i.test(value)) return "APPLY";
+  return undefined;
+}
+
 export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): ParsedIntent {
   const value = text.trim();
 
+  if (/(show|list|filter)/i.test(value)) {
+    const decision = decisionFromUtterance(value);
+    if (decision) {
+      return { intent: "FILTER_BY_DECISION", decision };
+    }
+  }
   if (/ለዚህ እድል ማመልከት|should i apply|analyze|analyse|fit\b/i.test(value)) {
     return { intent: "ANALYZE_OPPORTUNITY" };
   }
@@ -37,9 +52,6 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
   }
   if (/update profile|change profile|edit profile/i.test(value)) {
     return { intent: "UPDATE_PROFILE" };
-  }
-  if (/show me maybe|filter by decision|APPLY|MAYBE|SKIP/i.test(value) && /show|filter/i.test(value)) {
-    return { intent: "FILTER_BY_DECISION" };
   }
 
   const typeHit = TYPE_WORDS.find(([pattern]) => pattern.test(value));
