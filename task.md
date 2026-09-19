@@ -838,7 +838,7 @@ Never commit:
 - [ ] Edge cases.
 - [ ] Readiness generation.
 - [ ] AI output validation.
-- [ ] Voice intent mapping.
+- [x] Voice intent mapping.
 
 ## Integration tests
 
@@ -848,7 +848,7 @@ Never commit:
 - [ ] Analysis → decision.
 - [ ] Decision → explanation.
 - [ ] Decision → readiness.
-- [ ] Voice → intent.
+- [x] Voice → intent.
 - [ ] Voice intent → HULUM action.
 - [ ] Frontend → backend.
 - [ ] Backend → database.
@@ -1079,7 +1079,7 @@ Never manufacture commits, dates, research activity, or progress.
 
 - [ ] Voxide integration.
 - [x] Voice session.
-- [ ] Voice intent mapping.
+- [x] Voice intent mapping.
 - [x] Voice → analysis.
 - [x] Voice → explanation.
 - [x] Voice → readiness.
@@ -1289,7 +1289,7 @@ However, STARK-required research and ideation documentation must be maintained t
 ## Gate 4 — Voice Slice
 
 - [ ] Voxide input works.
-- [ ] Voice intent works.
+- [x] Voice intent works.
 - [x] HULUM action executes.
 - [ ] Voice response works.
 - [x] Failure fallback works.
