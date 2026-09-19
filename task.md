@@ -847,7 +847,7 @@ Never commit:
 - [x] Profile + opportunity → analysis.
 - [x] Analysis → decision.
 - [ ] Decision → explanation.
-- [ ] Decision → readiness.
+- [x] Decision → readiness.
 - [x] Voice → intent.
 - [ ] Voice intent → HULUM action.
 - [ ] Frontend → backend.
@@ -1099,7 +1099,7 @@ Never manufacture commits, dates, research activity, or progress.
 ## Days 15–16 — Integration
 
 - [x] Full profile → opportunity → analysis flow.
-- [ ] Full analysis → readiness flow.
+- [x] Full analysis → readiness flow.
 - [ ] Full voice flow.
 - [ ] Error handling.
 - [ ] Security review.
@@ -1297,7 +1297,7 @@ However, STARK-required research and ideation documentation must be maintained t
 ## Gate 5 — Integrated MVP
 
 - [x] Profile → opportunity → analysis works.
-- [ ] Analysis → readiness works.
+- [x] Analysis → readiness works.
 - [ ] Voice → analysis works.
 - [x] Voice → explanation works.
 - [ ] Official source link works.
