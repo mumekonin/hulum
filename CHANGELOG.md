@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Day 20 task status (no new features)
+
+### Changed
+- `task.md` / `HULUM_task.md` checkboxes match the running product and tests. Voxide, deploy, ScholarXIV papers, and an un-run browser pass stay open.
+- `docs/stark/task-status.md` records what was marked and what was left open.
+
+### Why
+Day 20 required a final task status. Stale empty boxes were more misleading than the code.
+
 ## 2026-09-19 — Mulualem
 
 ### Changed
