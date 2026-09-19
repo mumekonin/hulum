@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Architecture overview matches the running API
+
+### Changed
+- `docs/architecture/overview.md`: Analyze and voice share `runAnalysis`, production CORS, validated Claude, ADR 004. ADR 003 no longer says Analyze is UI-only.
+
+### Why
+Day 19 required an architecture review against the code.
+
 ## 2026-09-19 — README matches the running v0.1 product
 
 ### Changed

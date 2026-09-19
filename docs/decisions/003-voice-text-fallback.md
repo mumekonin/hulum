@@ -14,7 +14,8 @@ Ship `/assistant` and `POST /api/voice/action` as **the same intents** as the pr
 
 ## Consequences
 
-- Demo cannot die if Voxide is down.  
-- `ANALYZE_OPPORTUNITY` still needs to call the decision engine instead of only telling the user to click Analyze (open follow-up, Mulualem Task 33).  
-- Amharic keywords exist; live Amharic STT is not claimed.  
+- Demo cannot die if Voxide is down. Ask HULUM shows Voice unavailable and keeps text + quick actions.
+- `ANALYZE_OPPORTUNITY` calls `runAnalysis` (same engine as the Analyze button).
+- `FILTER_BY_DECISION` evaluates the catalog in memory and does not persist those analyses.
+- Amharic keywords exist; live Amharic STT is not claimed.
 - Wiring Voxide later should map audio → the same intent parser → the same services.
