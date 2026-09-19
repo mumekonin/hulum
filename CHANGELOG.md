@@ -3,6 +3,20 @@
 ## 2026-09-19 — Mulualem
 
 ### Changed
+Added deterministic requirement matching with MET, NOT_MET, UNCERTAIN, and NOT_APPLICABLE.
+
+### Why
+Task 25 needs auditable profile-vs-opportunity statuses before APPLY/MAYBE/SKIP.
+
+### Evidence
+Branch: `feat/requirement-matching`
+
+### Decision
+Exact normalized list membership only. Unstructured experience/documents stay UNCERTAIN. Deadline uses an injected clock. Never guess MET.
+
+## 2026-09-19 — Mulualem
+
+### Changed
 Added profile create, read, and update APIs with completeness handling.
 
 ### Why
