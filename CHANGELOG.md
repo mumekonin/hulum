@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Analysis keeps an official source link and the responsible-AI notice
+
+### Added
+- Analysis screen: Apply officially, Official source, disclaimer notice. External links use `noopener noreferrer`.
+- Integration test: stored analysis includes `sourceUrl`, `applicationUrl`, and the official-organization disclaimer.
+
+### Why
+Days 17–18 required E2E coverage of the official source path. Deploy is still blocked without a host. Voice E2E is the text-fallback loop (ADR 003).
+
 ## 2026-09-19 — Production env refuses to start without a CORS origin
 
 ### Added

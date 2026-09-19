@@ -93,9 +93,19 @@ describe("API integration", () => {
     expect(analyzedBody.data.disclaimer).toContain("official organization");
 
     const stored = await fetch(`${baseUrl}/api/analyses/${analyzedBody.data.id}`);
-    const storedBody = (await stored.json()) as { data: { id: string; decision: string } };
+    const storedBody = (await stored.json()) as {
+      data: {
+        id: string;
+        decision: string;
+        disclaimer: string;
+        opportunity: { sourceUrl: string; applicationUrl: string };
+      };
+    };
     expect(stored.status).toBe(200);
     expect(storedBody.data.decision).toBe(analyzedBody.data.decision);
+    expect(storedBody.data.disclaimer).toContain("official organization");
+    expect(storedBody.data.opportunity.sourceUrl).toMatch(/^https:\/\//);
+    expect(storedBody.data.opportunity.applicationUrl).toMatch(/^https:\/\//);
   });
 
   it("stores a readiness checklist after analysis and persists status updates", async () => {
