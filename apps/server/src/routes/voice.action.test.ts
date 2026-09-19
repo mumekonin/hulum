@@ -111,4 +111,42 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     expect(explainedBody.data.analysis?.decision).toBe(decision);
     expect(explainedBody.data.reply.startsWith(`${decision}.`)).toBe(true);
   });
+
+  it("returns the stored readiness checklist after analyze", async () => {
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+
+    await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Should I apply for this?",
+        opportunityId: "opp-a2sv",
+      }),
+    });
+
+    const readiness = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "What should I prepare?",
+        opportunityId: "opp-a2sv",
+      }),
+    });
+    const readinessBody = (await readiness.json()) as {
+      data: {
+        intent: string;
+        reply: string;
+        analysis?: { decision: string; nextAction: string; readiness: Array<{ title: string }> };
+      };
+    };
+
+    expect(readiness.status).toBe(200);
+    expect(readinessBody.data.intent).toBe("SHOW_READINESS");
+    expect(readinessBody.data.analysis?.readiness?.length).toBeGreaterThan(0);
+    expect(readinessBody.data.reply).toContain("Prepare:");
+    expect(readinessBody.data.reply).toContain(readinessBody.data.analysis?.nextAction ?? "__missing__");
+  });
 });
