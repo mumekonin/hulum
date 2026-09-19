@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-19 — Assistant backup mode when Voxide is missing
+
+### Added
+- Ask HULUM shows Voice unavailable from the session provider (or a failed session create), keeps text + quick actions, and offers Type a request or Browse opportunities.
+
+### Why
+Phase 21 required a usable product when voice fails. Microphone STT is still unwired.
+
 ## 2026-09-19 — Failure paths keep APPLY/MAYBE/SKIP from the engine
 
 ### Added

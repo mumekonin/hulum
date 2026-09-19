@@ -887,12 +887,12 @@ Never commit:
 
 The product must remain usable when voice fails.
 
-- [ ] **P0** Detect voice failure.
-- [ ] **P0** Show text-input fallback.
-- [ ] **P0** Keep quick actions available.
-- [ ] **P1** Show retry action.
-- [ ] **P1** Explain failure clearly.
-- [ ] **P1** Avoid trapping the user in voice mode.
+- [x] **P0** Detect voice failure.
+- [x] **P0** Show text-input fallback.
+- [x] **P0** Keep quick actions available.
+- [x] **P1** Show retry action.
+- [x] **P1** Explain failure clearly.
+- [x] **P1** Avoid trapping the user in voice mode.
 
 Fallback:
 
@@ -989,7 +989,7 @@ Interest: AI
 - [x] **P0** Show responsible-AI notice.
 - [x] **P1** Demonstrate a MAYBE case.
 - [x] **P1** Demonstrate a SKIP case.
-- [ ] **P0** Prepare backup mode for external-service failure.
+- [x] **P0** Prepare backup mode for external-service failure.
 - [ ] **P0** Test clean browser/device.
 - [ ] **P0** Test microphone.
 - [ ] **P0** Test production deployment.
@@ -1155,7 +1155,7 @@ The HULUM MVP requires these capabilities to work together:
 - [x] **P0** Official source/application link.
 - [x] **P0** Responsible-AI notice.
 - [ ] **P0** Working deployed prototype.
-- [ ] **P0** Failure fallback.
+- [x] **P0** Failure fallback.
 - [ ] **P0** Documented research/ideation basis.
 
 ---
@@ -1308,7 +1308,7 @@ However, STARK-required research and ideation documentation must be maintained t
 - [ ] Production deployment works.
 - [ ] Demo scenario is stable.
 - [ ] Voice works.
-- [ ] Backup mode exists.
+- [x] Backup mode exists.
 - [ ] Documentation is complete.
 - [ ] Git history is truthful.
 - [ ] STARK evidence is ready.
