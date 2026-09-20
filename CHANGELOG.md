@@ -3,6 +3,20 @@
 ## 2026-09-20 — Mulualem
 
 ### Changed
+Added API CORS, secret redaction in errors, invalid-JSON handling, and a rate limit on explain.
+
+### Why
+Task 35 must reject bad requests and keep keys out of responses and Git.
+
+### Evidence
+Branch: `feat/api-security`
+
+### Decision
+CORS uses CLIENT_URL (local web origin if unset, none in production). Full auth waits. Explain is limited to 10 requests per IP per minute.
+
+## 2026-09-20 — Mulualem
+
+### Changed
 Added official-source priority, effective VERIFIED / NEEDS_REVIEW / EXPIRED status, and the locked HULUM-is-not-the-organization notice on new analyses.
 
 ### Why
