@@ -26,6 +26,7 @@ Status is marked DONE in the same PR as the work, so `main` shows DONE only afte
 | 31 | AI output validation | Mulualem | DONE |
 | 34 | Opportunity verification | Mulualem | DONE |
 | 35 | API security and validation | Mulualem | DONE |
+| 42 | Architecture decision record | Mulualem + Kidist | DONE |
 
 Other tasks are not started.
 
