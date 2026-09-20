@@ -3,6 +3,7 @@ import {
   type Analysis,
   type AnalysisExplanation,
 } from "@hulum/shared";
+import { sanitizeExplanation } from "./guard.js";
 
 const LANGUAGE_LABEL: Record<Language, string> = {
   [Language.ENGLISH]: "English",
@@ -53,7 +54,7 @@ export function explanationFrom(
     decision: analysis.decision,
     fitScore: analysis.fitScore,
     nextAction: analysis.nextAction,
-    explanation: text.trim(),
+    explanation: sanitizeExplanation(analysis, text),
     language,
   };
 }
