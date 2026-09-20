@@ -3,6 +3,20 @@
 ## 2026-09-20 — Mulualem
 
 ### Changed
+Recorded the v0.1 stack ADR: Next.js, Express, Postgres, deterministic decisions, Groq explain, Voxide in the browser.
+
+### Why
+Task 42 must make tech choices traceable and correct the SRS where Claude/Voxide-as-server-STT were wrong.
+
+### Evidence
+Branch: `docs/architecture-decisions`
+
+### Decision
+Groq explains; `decide()` owns APPLY/MAYBE/SKIP. Voxide is a frontend widget. ScholarXIV is research only. React Native waits.
+
+## 2026-09-20 — Mulualem
+
+### Changed
 Added API CORS, secret redaction in errors, invalid-JSON handling, and a rate limit on explain.
 
 ### Why

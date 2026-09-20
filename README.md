@@ -31,11 +31,14 @@ Profile  →  Opportunity  →  Fit Analysis  →  APPLY / MAYBE / SKIP
 |---|---|
 | Frontend | Next.js, TypeScript, Tailwind CSS |
 | Backend | Node.js, Express, TypeScript |
-| Database | Supabase (PostgreSQL + Row-Level Security) |
-| Reasoning | Claude API |
-| Voice | Voxide (STT / TTS) |
-| Research | ScholarXIV Papers API + MCP |
-| Deployment | EthioDeploy |
+| Database | Supabase (PostgreSQL). Auth/RLS are P1. |
+| Decision | Deterministic `decide()` in `apps/server` — never an LLM |
+| Explanation | Groq (`GROQ_API_KEY`, `GROQ_MODEL`) |
+| Voice | Voxide browser widget (`vox_pub_…`); tools call HULUM APIs |
+| Research | ScholarXIV (ideation trail, not a runtime catalog) |
+| Deployment | EthioDeploy (Task 37) |
+
+Architecture decisions: `docs/decisions/001-stack-and-providers.md`.
 
 ## Repository structure
 
@@ -47,7 +50,7 @@ hulum/
 ├── packages/
 │   └── shared/       # Shared types, schemas, constants
 ├── database/         # Migrations, seeds
-├── docs/             # Product, research, architecture, decisions, demo
+├── docs/             # Architecture, ADRs, research, product, demo
 └── scripts/
 ```
 
