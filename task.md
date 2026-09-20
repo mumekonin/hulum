@@ -25,6 +25,7 @@ Status is marked DONE in the same PR as the work, so `main` shows DONE only afte
 | 30 | Groq AI orchestration | Mulualem | DONE |
 | 31 | AI output validation | Mulualem | DONE |
 | 34 | Opportunity verification | Mulualem | DONE |
+| 35 | API security and validation | Mulualem | DONE |
 
 Other tasks are not started.
 
