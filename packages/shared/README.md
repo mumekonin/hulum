@@ -28,6 +28,6 @@ Do not use `SHOW_GAPS`. That action is `SHOW_MISSING_REQUIREMENTS`.
 
 Profile API types: `CreateProfileRequest`, `PatchProfileRequest`, `ProfileView`. Completeness uses `profileCompleteness()`.
 
-Matcher keys: `RequirementKey`. Matcher rows: `RequirementMatch`. Decision payload: `DecisionResult`. Analyze body: `AnalyzeOpportunityRequest` (`{ userId }`). Readiness patch: `PatchReadinessRequest` (`{ status }`).
+Matcher keys: `RequirementKey`. Matcher rows: `RequirementMatch`. Decision payload: `DecisionResult`. Analyze body: `AnalyzeOpportunityRequest` (`{ userId }`). Readiness patch: `PatchReadinessRequest` (`{ status }`). Explain body: `ExplainAnalysisRequest` (`{ language?: "en" | "am" | "om" }`). Explain result: `AnalysisExplanation` (decision copied from the stored analysis).
 
 Tell both teammates before changing these names.

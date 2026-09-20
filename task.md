@@ -22,6 +22,7 @@ Status is marked DONE in the same PR as the work, so `main` shows DONE only afte
 | 27 | Decision-engine tests | Mulualem | DONE |
 | 28 | Analysis API | Mulualem | DONE |
 | 29 | Readiness engine | Mulualem | DONE |
+| 30 | Groq AI orchestration | Mulualem | DONE |
 
 Other tasks are not started.
 
@@ -363,6 +364,8 @@ GET  /api/analyses/:id/readiness
 
 ### Task 30 — Claude AI orchestration (Days 9–12)
 **Depends on:** stable analysis contract.
+
+> Team lock (2026-09-20, Kidist + Mulualem): Groq explains stored analysis. Claude is not used. The engine still owns APPLY/MAYBE/SKIP.
 
 Claude handles natural-language profile extraction, explanation, requirement
 explanation, readiness-plan language, contextual Q&A, and multilingual explanation.
