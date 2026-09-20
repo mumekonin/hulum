@@ -2,10 +2,12 @@ import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import {
   Decision,
+  Language,
   ReadinessStatus,
   RequirementKey,
   RequirementStatus,
   type Analysis,
+  type AnalysisExplanation,
 } from "@hulum/shared";
 import express from "express";
 import { afterEach, describe, expect, it } from "vitest";
@@ -37,6 +39,25 @@ const analysis: Analysis = {
   createdAt: "2026-09-19T00:00:00.000Z",
   updatedAt: "2026-09-19T00:00:00.000Z",
 };
+
+const explanation: AnalysisExplanation = {
+  analysisId: analysis.id,
+  decision: analysis.decision,
+  fitScore: analysis.fitScore,
+  nextAction: analysis.nextAction,
+  explanation: "You meet the known requirements. The model cannot change APPLY.",
+  language: Language.ENGLISH,
+};
+
+function fakeService(overrides: Partial<AnalysisService> = {}): AnalysisService {
+  return {
+    analyze: async () => analysis,
+    getById: async () => analysis,
+    getReadiness: async () => [],
+    explain: async () => explanation,
+    ...overrides,
+  };
+}
 
 function createTestApp(service: AnalysisService): express.Express {
   const app = express();
@@ -81,13 +102,7 @@ describe("analysis routes", () => {
   }
 
   it("analyzes an opportunity and returns a complete analysis", async () => {
-    const port = await listen(
-      createTestApp({
-        analyze: async () => analysis,
-        getById: async () => analysis,
-        getReadiness: async () => [],
-      }),
-    );
+    const port = await listen(createTestApp(fakeService()));
     const response = await fetch(
       `http://127.0.0.1:${port}/api/opportunities/${analysis.opportunityId}/analyze`,
       {
@@ -107,13 +122,7 @@ describe("analysis routes", () => {
   });
 
   it("rejects analyze when userId is missing", async () => {
-    const port = await listen(
-      createTestApp({
-        analyze: async () => analysis,
-        getById: async () => analysis,
-        getReadiness: async () => [],
-      }),
-    );
+    const port = await listen(createTestApp(fakeService()));
     const response = await fetch(
       `http://127.0.0.1:${port}/api/opportunities/${analysis.opportunityId}/analyze`,
       {
@@ -127,13 +136,13 @@ describe("analysis routes", () => {
 
   it("returns 404 when the profile or opportunity is missing", async () => {
     const port = await listen(
-      createTestApp({
-        analyze: async () => {
-          throw new HttpError(404, "NOT_FOUND", "Profile not found.");
-        },
-        getById: async () => undefined,
-        getReadiness: async () => undefined,
-      }),
+      createTestApp(
+        fakeService({
+          analyze: async () => {
+            throw new HttpError(404, "NOT_FOUND", "Profile not found.");
+          },
+        }),
+      ),
     );
     const response = await fetch(
       `http://127.0.0.1:${port}/api/opportunities/${analysis.opportunityId}/analyze`,
@@ -152,13 +161,7 @@ describe("analysis routes", () => {
   });
 
   it("reads a stored analysis", async () => {
-    const port = await listen(
-      createTestApp({
-        analyze: async () => analysis,
-        getById: async () => analysis,
-        getReadiness: async () => [],
-      }),
-    );
+    const port = await listen(createTestApp(fakeService()));
     const response = await fetch(`http://127.0.0.1:${port}/api/analyses/${analysis.id}`);
     const body: unknown = await response.json();
     expect(response.status).toBe(200);
@@ -178,26 +181,40 @@ describe("analysis routes", () => {
         updatedAt: "2026-09-19T00:00:00.000Z",
       },
     ];
-    const port = await listen(
-      createTestApp({
-        analyze: async () => analysis,
-        getById: async () => analysis,
-        getReadiness: async () => items,
-      }),
-    );
+    const port = await listen(createTestApp(fakeService({ getReadiness: async () => items })));
     const response = await fetch(`http://127.0.0.1:${port}/api/analyses/${analysis.id}/readiness`);
     const body: unknown = await response.json();
     expect(response.status).toBe(200);
     expect(body).toEqual({ data: items, error: null });
   });
 
+  it("explains a stored analysis without changing the decision", async () => {
+    const port = await listen(
+      createTestApp(
+        fakeService({
+          explain: async () => ({
+            ...explanation,
+            explanation: "This should be SKIP instead of APPLY.",
+            decision: analysis.decision,
+          }),
+        }),
+      ),
+    );
+    const response = await fetch(`http://127.0.0.1:${port}/api/analyses/${analysis.id}/explain`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ language: Language.ENGLISH }),
+    });
+    const body: unknown = await response.json();
+    expect(response.status).toBe(200);
+    const payload = body as { data: AnalysisExplanation };
+    expect(payload.data.decision).toBe(Decision.APPLY);
+    expect(payload.data.analysisId).toBe(analysis.id);
+  });
+
   it("returns 404 when the analysis does not exist", async () => {
     const port = await listen(
-      createTestApp({
-        analyze: async () => analysis,
-        getById: async () => undefined,
-        getReadiness: async () => undefined,
-      }),
+      createTestApp(fakeService({ getById: async () => undefined, getReadiness: async () => undefined })),
     );
     const response = await fetch(`http://127.0.0.1:${port}/api/analyses/${analysis.id}`);
     expect(response.status).toBe(404);

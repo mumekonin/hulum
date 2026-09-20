@@ -1,5 +1,7 @@
 import { Router } from "express";
 import { ok } from "@hulum/shared";
+import { createGroqChatClient, parseExplainRequest, type ChatClient } from "../ai/index.js";
+import { loadEnv } from "../config/env.js";
 import { HttpError } from "../http/errors.js";
 import { isUuid } from "../http/ids.js";
 import { createOpportunityService } from "../opportunities/service.js";
@@ -11,12 +13,22 @@ import { createAnalysisService, type AnalysisService } from "./service.js";
 import { createPgAnalysisStore } from "./store.js";
 import { parseAnalyzeRequest } from "./validate.js";
 
+function optionalChat(): ChatClient | undefined {
+  const env = loadEnv();
+  if (env.GROQ_API_KEY === undefined || env.GROQ_MODEL === undefined) {
+    return undefined;
+  }
+  return createGroqChatClient({ apiKey: env.GROQ_API_KEY, model: env.GROQ_MODEL });
+}
+
 function defaultService(): AnalysisService {
+  const chat = optionalChat();
   return createAnalysisService({
     profiles: createProfileService(createPgProfileStore()),
     opportunities: createOpportunityService(createPgOpportunityStore()),
     store: createPgAnalysisStore(),
     clock: systemClock,
+    ...(chat === undefined ? {} : { chat }),
   });
 }
 
@@ -44,6 +56,20 @@ export function createAnalyzeRouter(service?: AnalysisService): Router {
 export function createAnalysisRouter(service?: AnalysisService): Router {
   const router = Router();
   const getService = (): AnalysisService => service ?? defaultService();
+
+  router.post("/:id/explain", async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      if (id === undefined || !isUuid(id)) {
+        throw new HttpError(400, "INVALID_ID", "Analysis id must be a UUID.");
+      }
+      const input = parseExplainRequest(req.body);
+      const explanation = await getService().explain(id, input.language);
+      res.status(200).json(ok(explanation));
+    } catch (error) {
+      next(error);
+    }
+  });
 
   router.get("/:id/readiness", async (req, res, next) => {
     try {

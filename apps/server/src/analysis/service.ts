@@ -1,4 +1,5 @@
-import type { Analysis, ProfileView, ReadinessItem } from "@hulum/shared";
+import type { Analysis, AnalysisExplanation, Language, ProfileView, ReadinessItem } from "@hulum/shared";
+import { buildExplainMessages, explanationFrom, type ChatClient } from "../ai/index.js";
 import { decide } from "../decision/decide.js";
 import { HttpError } from "../http/errors.js";
 import type { OpportunityService } from "../opportunities/service.js";
@@ -13,6 +14,7 @@ export type AnalysisService = {
   analyze(opportunityId: string, userId: string): Promise<Analysis>;
   getById(id: string): Promise<Analysis | undefined>;
   getReadiness(id: string): Promise<ReadinessItem[] | undefined>;
+  explain(id: string, language: Language): Promise<AnalysisExplanation>;
 };
 
 export function createAnalysisService(deps: {
@@ -20,6 +22,7 @@ export function createAnalysisService(deps: {
   opportunities: Pick<OpportunityService, "getById">;
   store: AnalysisStore;
   clock: Clock;
+  chat?: ChatClient;
 }): AnalysisService {
   return {
     async analyze(opportunityId: string, userId: string): Promise<Analysis> {
@@ -55,6 +58,22 @@ export function createAnalysisService(deps: {
         return undefined;
       }
       return analysis.readiness;
+    },
+
+    async explain(id: string, language: Language): Promise<AnalysisExplanation> {
+      const analysis = await deps.store.getById(id);
+      if (analysis === undefined) {
+        throw new HttpError(404, "NOT_FOUND", "Analysis not found.");
+      }
+      if (deps.chat === undefined) {
+        throw new HttpError(
+          503,
+          "AI_UNAVAILABLE",
+          "GROQ_API_KEY and GROQ_MODEL must be set in the server environment.",
+        );
+      }
+      const text = await deps.chat.complete(buildExplainMessages(analysis, language));
+      return explanationFrom(analysis, language, text);
     },
   };
 }

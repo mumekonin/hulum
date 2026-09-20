@@ -1,5 +1,4 @@
-/**
- * Claude orchestration lands in Task 30. This module exists so model
- * calls never sit in routes and never own APPLY/MAYBE/SKIP.
- */
-export {};
+export { createGroqChatClient } from "./groq.js";
+export type { ChatClient, ChatMessage } from "./groq.js";
+export { buildExplainMessages, explanationFrom, EXPLAIN_SYSTEM_PROMPT } from "./explain.js";
+export { parseExplainRequest } from "./validate.js";
