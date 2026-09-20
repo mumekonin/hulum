@@ -3,6 +3,20 @@
 ## 2026-09-20 — Mulualem
 
 ### Changed
+Wrote the team problem lock: HULUM is decision and readiness, not another opportunity feed.
+
+### Why
+Task 39 needs one page both teammates can use with judges, without claiming we are the official organization.
+
+### Evidence
+Branch: `docs/problem-definition`
+
+### Decision
+Discovery already exists. HULUM answers eligible / worth it / missing / next step, then points at the official source.
+
+## 2026-09-20 — Mulualem
+
+### Changed
 Recorded the v0.1 stack ADR: Next.js, Express, Postgres, deterministic decisions, Groq explain, Voxide in the browser.
 
 ### Why

@@ -4,6 +4,8 @@
 
 HULUM evaluates scholarships, fellowships, internships, jobs, grants, and competitions against your personal profile and tells you whether to **APPLY**, **MAYBE**, or **SKIP** — then explains why, shows what you're missing, and tells you what to do next.
 
+The problem we are solving: [docs/product/problem.md](docs/product/problem.md).
+
 Built voice-first for Ethiopian students and young professionals, with Amharic, English, and Afaan Oromo support.
 
 ---
