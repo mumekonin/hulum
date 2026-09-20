@@ -90,6 +90,7 @@ GET    /api/opportunities/:id
 
 POST   /api/opportunities/:id/analyze
 GET    /api/analyses/:id
+POST   /api/analyses/:id/explain
 
 GET    /api/analyses/:id/readiness
 PATCH  /api/readiness/:id

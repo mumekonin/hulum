@@ -88,7 +88,7 @@ export type ReadinessItem = {
 
 /**
  * Structured HULUM analysis. `decision` comes only from the deterministic engine.
- * Claude may explain this object; it must not change `decision`.
+ * Groq may explain this object; it must not change `decision`.
  */
 export type Analysis = {
   id: string;
@@ -110,6 +110,19 @@ export type AnalyzeOpportunityRequest = {
 
 export type PatchReadinessRequest = {
   status: ReadinessStatus;
+};
+
+export type ExplainAnalysisRequest = {
+  language?: Language;
+};
+
+export type AnalysisExplanation = {
+  analysisId: string;
+  decision: Decision;
+  fitScore: number;
+  nextAction: string;
+  explanation: string;
+  language: Language;
 };
 
 export type VoiceResponse = {
