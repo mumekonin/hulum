@@ -1,4 +1,4 @@
-import { Decision, VoiceIntent, fail, isVoiceIntent, ok } from "@hulum/shared";
+import { Decision, OFFICIAL_SOURCE_NOTICE, VoiceIntent, fail, isVoiceIntent, ok } from "@hulum/shared";
 import { describe, expect, it } from "vitest";
 
 describe("@hulum/shared contract", () => {
@@ -32,5 +32,10 @@ describe("@hulum/shared contract", () => {
       data: null,
       error: { code: "NOT_FOUND", message: "The requested resource was not found." },
     });
+  });
+
+  it("locks the official-source notice so HULUM is never the organization", () => {
+    expect(OFFICIAL_SOURCE_NOTICE).toContain("Always verify final eligibility and deadlines");
+    expect(OFFICIAL_SOURCE_NOTICE.includes("official organization")).toBe(true);
   });
 });
