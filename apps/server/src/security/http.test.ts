@@ -14,6 +14,7 @@ const env: AppEnv = {
   SUPABASE_ANON_KEY: undefined,
   SUPABASE_SERVICE_ROLE_KEY: undefined,
   CLAUDE_API_KEY: undefined,
+  CLAUDE_MODEL: undefined,
   GROQ_API_KEY: undefined,
   GROQ_MODEL: undefined,
   VOXIDE_API_KEY: undefined,
@@ -29,7 +30,7 @@ describe("API security middleware", () => {
     }
   });
 
-  async function listen(app = createApp({ env })): Promise<number> {
+  async function listen(app = createApp({ env, store: "postgres" })): Promise<number> {
     const server = createServer(app);
     await new Promise<void>((resolve) => {
       server.listen(0, "127.0.0.1", resolve);
@@ -98,6 +99,7 @@ describe("API security middleware", () => {
     const port = await listen(
       createApp({
         env,
+        store: "postgres",
         explainLimiter: createRateLimiter({ windowMs: 60_000, max: 1 }),
       }),
     );

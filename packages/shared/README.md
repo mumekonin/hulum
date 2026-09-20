@@ -2,11 +2,15 @@
 
 Canonical TypeScript contracts for web, mobile, and server.
 
-Import from here. Do not copy these types into `apps/web` or `apps/server`.
+Runtime imports used by the running API and web app:
 
 ```ts
-import { Decision, VoiceIntent, type Analysis } from "@hulum/shared";
+import type { Analysis, Decision } from "@hulum/shared";
 ```
+
+Those come from `src/constants.ts`, `src/types.ts`, and `src/schemas.ts` (Zod).
+
+Task 22 lock objects (`Decision`, `VoiceIntent`, envelope `ok`/`fail`) also live in `src/enums.ts` and `src/api.ts`. Gaps use `SHOW_MISSING_REQUIREMENTS` (not `SHOW_GAPS`). Runtime still allows `UNSUPPORTED` as a parser fallback. Do not copy types into `apps/web` or `apps/server`.
 
 ## Voice intents (locked, Task 22)
 
@@ -21,8 +25,6 @@ SHOW_MISSING_REQUIREMENTS
 SHOW_READINESS
 UPDATE_PROFILE
 ```
-
-Do not use `SHOW_GAPS`. That action is `SHOW_MISSING_REQUIREMENTS`.
 
 `Requirement` is an analysis outcome (`requirement_results`). Opportunity source facts stay on `Opportunity`.
 
