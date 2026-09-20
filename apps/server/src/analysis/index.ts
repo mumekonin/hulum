@@ -25,7 +25,7 @@ function defaultService(): AnalysisService {
   const chat = optionalChat();
   return createAnalysisService({
     profiles: createProfileService(createPgProfileStore()),
-    opportunities: createOpportunityService(createPgOpportunityStore()),
+    opportunities: createOpportunityService(createPgOpportunityStore(), systemClock),
     store: createPgAnalysisStore(),
     clock: systemClock,
     ...(chat === undefined ? {} : { chat }),

@@ -1,6 +1,7 @@
 import { Router } from "express";
 import { ok } from "@hulum/shared";
 import { HttpError } from "../http/errors.js";
+import { systemClock } from "../services/common/clock.js";
 import { createOpportunityService, type OpportunityService } from "./service.js";
 import { createPgOpportunityStore } from "./store.js";
 
@@ -8,7 +9,7 @@ const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
 function defaultService(): OpportunityService {
-  return createOpportunityService(createPgOpportunityStore());
+  return createOpportunityService(createPgOpportunityStore(), systemClock);
 }
 
 export function createOpportunityRouter(service?: OpportunityService): Router {
