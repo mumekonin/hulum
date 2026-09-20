@@ -23,6 +23,7 @@ Status is marked DONE in the same PR as the work, so `main` shows DONE only afte
 | 28 | Analysis API | Mulualem | DONE |
 | 29 | Readiness engine | Mulualem | DONE |
 | 30 | Groq AI orchestration | Mulualem | DONE |
+| 31 | AI output validation | Mulualem | DONE |
 
 Other tasks are not started.
 

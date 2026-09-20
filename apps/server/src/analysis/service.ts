@@ -72,7 +72,14 @@ export function createAnalysisService(deps: {
           "GROQ_API_KEY and GROQ_MODEL must be set in the server environment.",
         );
       }
-      const text = await deps.chat.complete(buildExplainMessages(analysis, language));
+      let text = "";
+      try {
+        text = await deps.chat.complete(buildExplainMessages(analysis, language));
+      } catch (error) {
+        if (!(error instanceof HttpError) || error.code !== "AI_ERROR") {
+          throw error;
+        }
+      }
       return explanationFrom(analysis, language, text);
     },
   };
