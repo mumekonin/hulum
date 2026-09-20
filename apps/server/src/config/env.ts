@@ -40,13 +40,40 @@ function parsePort(value: string | undefined): number {
   return port;
 }
 
+/** Origin only, no path or credentials. Used for API CORS. */
+export function parseClientUrl(value: string | undefined): string | undefined {
+  const raw = optionalString(value);
+  if (raw === undefined) {
+    return undefined;
+  }
+  let parsed: URL;
+  try {
+    parsed = new URL(raw);
+  } catch {
+    throw new Error("CLIENT_URL must be an absolute http or https origin");
+  }
+  if (parsed.protocol !== "http:" && parsed.protocol !== "https:") {
+    throw new Error("CLIENT_URL must be an absolute http or https origin");
+  }
+  if (parsed.username !== "" || parsed.password !== "") {
+    throw new Error("CLIENT_URL must not include credentials");
+  }
+  if (parsed.search !== "" || parsed.hash !== "") {
+    throw new Error("CLIENT_URL must be an origin only (no path, query, or hash)");
+  }
+  if (parsed.pathname !== "/" && parsed.pathname !== "") {
+    throw new Error("CLIENT_URL must be an origin only (no path, query, or hash)");
+  }
+  return parsed.origin;
+}
+
 export function loadEnv(): AppEnv {
   loadDotenv();
 
   return {
     NODE_ENV: parseNodeEnv(process.env.NODE_ENV),
     PORT: parsePort(process.env.PORT),
-    CLIENT_URL: optionalString(process.env.CLIENT_URL),
+    CLIENT_URL: parseClientUrl(process.env.CLIENT_URL),
     DATABASE_URL: optionalString(process.env.DATABASE_URL),
     SUPABASE_URL: optionalString(process.env.SUPABASE_URL),
     SUPABASE_ANON_KEY: optionalString(process.env.SUPABASE_ANON_KEY),

@@ -101,6 +101,8 @@ POST   /api/voice/action
 
 All responses use a consistent `{ data, error }` envelope. The shared analysis contract lives in `packages/shared/types`.
 
+Set `CLIENT_URL` in `apps/server/.env` to the web origin (`http://localhost:3000`). The API does not send CORS `*` and does not put secrets in error bodies. Full login is not required for v0.1; `userId` on analyze is the current caller identity.
+
 ## Project status
 
 **v0.1 — MVP in progress.** Built for the STARK Official Hackathon 2026 (September 9 – October 2, 2026).
