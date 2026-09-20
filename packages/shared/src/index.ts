@@ -1,3 +1,6 @@
+export * from "./constants";
+export * from "./types";
+export * from "./schemas";
 export { fail, ok } from "./api.js";
 export type { APIError, ApiEnvelope, ApiFailure, ApiSuccess } from "./api.js";
 export {
@@ -14,20 +17,6 @@ export {
   isReadinessStatus,
   isVoiceIntent,
 } from "./enums.js";
-export type {
-  Analysis,
-  AnalysisExplanation,
-  AnalyzeOpportunityRequest,
-  DecisionResult,
-  ExplainAnalysisRequest,
-  Opportunity,
-  Profile,
-  PatchReadinessRequest,
-  ReadinessItem,
-  Requirement,
-  RequirementMatch,
-  VoiceResponse,
-} from "./types.js";
 export { OFFICIAL_SOURCE_NOTICE } from "./notices.js";
 export { PROFILE_COMPLETENESS_FIELDS, profileCompleteness } from "./profile.js";
 export type {

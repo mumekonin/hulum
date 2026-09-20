@@ -1,17 +1,33 @@
 {
   "name": "hulum",
   "private": true,
+  "version": "0.1.0",
+  "description": "HULUM — AI opportunity decision and readiness agent",
   "workspaces": [
-    "apps/*",
-    "packages/*"
+    "apps/web",
+    "apps/server",
+    "packages/shared"
   ],
   "scripts": {
+    "dev": "concurrently -n web,api -c cyan,green \"npm run dev -w @hulum/web\" \"npm run dev -w @hulum/server\"",
+    "dev:web": "npm run dev -w @hulum/web",
     "dev:server": "npm run dev -w @hulum/server",
+    "build": "npm run build -w @hulum/web",
     "build:server": "npm run build -w @hulum/server",
     "typecheck:shared": "npm run typecheck -w @hulum/shared",
     "typecheck:server": "npm run typecheck -w @hulum/server",
+    "test": "npm run test -w @hulum/server",
     "test:server": "npm run test -w @hulum/server",
     "db:migrate": "npm run db:migrate -w @hulum/server",
     "db:smoke": "npm run db:smoke -w @hulum/server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.2.1"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "@swc/helpers": "^0.5.23"
   }
 }

@@ -1,7 +1,16 @@
+import cors from "cors";
 import express from "express";
 import { loadEnv, type AppEnv } from "./config/env.js";
-import { errorHandler, notFoundHandler } from "./http/error-handler.js";
+import { errorHandler as postgresErrorHandler, notFoundHandler } from "./http/error-handler.js";
+import { analysisRouter } from "./routes/analysis.js";
+import { health } from "./routes/health.js";
+import { opportunitiesRouter } from "./routes/opportunities.js";
+import { profileRouter } from "./routes/profile.js";
+import { readinessRouter } from "./routes/readiness.js";
+import { voiceRouter } from "./routes/voice.js";
 import { createApiRouter } from "./routes/index.js";
+import { fail, errorHandler as fileStoreErrorHandler } from "./lib/http.js";
+import { allowedCorsOrigin, securityHeaders } from "./lib/security.js";
 import {
   EXPLAIN_RATE_LIMIT_MAX,
   EXPLAIN_RATE_LIMIT_WINDOW_MS,
@@ -14,28 +23,52 @@ import {
 export type CreateAppOptions = {
   env?: AppEnv;
   explainLimiter?: RateLimiter;
+  /** Default `file` is the `npm run dev` demo. `postgres` is Mulualem’s service routers. */
+  store?: "file" | "postgres";
 };
 
 export function createApp(options: CreateAppOptions = {}): express.Express {
-  const env = options.env ?? loadEnv();
-  const limiter =
-    options.explainLimiter ??
-    createRateLimiter({
-      windowMs: EXPLAIN_RATE_LIMIT_WINDOW_MS,
-      max: EXPLAIN_RATE_LIMIT_MAX,
-    });
-
+  const store = options.store ?? "file";
   const app = express();
   app.disable("x-powered-by");
-  app.use((_req, res, next) => {
-    res.setHeader("X-Content-Type-Options", "nosniff");
-    next();
+
+  if (store === "postgres") {
+    const env = options.env ?? loadEnv({ fromFile: false });
+    const limiter =
+      options.explainLimiter ??
+      createRateLimiter({
+        windowMs: EXPLAIN_RATE_LIMIT_WINDOW_MS,
+        max: EXPLAIN_RATE_LIMIT_MAX,
+      });
+
+    app.use((_req, res, next) => {
+      res.setHeader("X-Content-Type-Options", "nosniff");
+      next();
+    });
+    app.use(corsMiddleware(env));
+    app.use(express.json({ limit: "100kb" }));
+    app.use(explainRateLimitMiddleware(limiter));
+    app.use("/api", createApiRouter());
+    app.use(notFoundHandler);
+    app.use(postgresErrorHandler);
+    return app;
+  }
+
+  app.use(securityHeaders);
+  app.use(cors({ origin: allowedCorsOrigin() }));
+  app.use(express.json({ limit: "1mb" }));
+
+  app.get("/api/health", health);
+  app.use("/api/profile", profileRouter);
+  app.use("/api/opportunities", opportunitiesRouter);
+  app.use("/api", analysisRouter);
+  app.use("/api/readiness", readinessRouter);
+  app.use("/api/voice", voiceRouter);
+
+  app.use((_req, res) => {
+    fail(res, "Route not found.", 404, "NOT_FOUND");
   });
-  app.use(corsMiddleware(env));
-  app.use(express.json({ limit: "100kb" }));
-  app.use(explainRateLimitMiddleware(limiter));
-  app.use("/api", createApiRouter());
-  app.use(notFoundHandler);
-  app.use(errorHandler);
+  app.use(fileStoreErrorHandler);
+
   return app;
 }

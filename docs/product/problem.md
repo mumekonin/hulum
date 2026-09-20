@@ -33,7 +33,7 @@ Profile → Opportunity → Match → APPLY / MAYBE / SKIP
         → Why → Missing / Uncertain → Readiness → Official source
 ```
 
-Voice (Voxide in the browser) is a shortcut to the same loop. Buttons still work if the mic fails.
+Voice (text/quick actions now; Voxide in the browser when wired) is a shortcut to the same loop. Buttons still work if the mic fails.
 
 ## What we will not claim
 
@@ -45,8 +45,37 @@ Voice (Voxide in the browser) is a shortcut to the same loop. Buttons still work
 
 ## How this shows up in the product
 
-- `decide()` (not Groq, not Voxide) sets APPLY / MAYBE / SKIP
-- Groq may explain a stored analysis only
+- `decide()` / the file-store engine (not Groq, not Claude, not Voxide) sets APPLY / MAYBE / SKIP
+- Groq may explain a stored Postgres analysis; optional Claude may word the file-store summary
 - Every analysis reminds the user to verify the official source
 
 Related: [architecture overview](../architecture/overview.md), [ADR 001](../decisions/001-stack-and-providers.md).
+
+---
+
+## Longer product definition (Kidist, 2026-09-18)
+
+This is not ScholarXIV evidence. Paper-backed answers belong in `docs/research/` once papers are actually collected.
+
+### Opportunity-discovery problem
+
+Ethiopian students and young professionals already see many scholarships, fellowships, internships, jobs, grants, and competitions. Discovery is noisy, not absent. HULUM does **not** try to become another feed. v0.1 seed data is a small curated set with official source URLs.
+
+### Opportunity-decision problem
+
+The harder problem is deciding, for one specific opportunity: am I eligible, is this worth my time, what am I missing, what should I prepare, should I apply or skip. The locked thesis: **the barrier is decision, not discovery.**
+
+### Uncertainty
+
+HULUM must not convert incomplete facts into false certainty. Statuses are MET / NOT_MET / UNCERTAIN / NOT_APPLICABLE. Critical `NOT_MET` → SKIP. Key requirements met and no significant uncertainty → APPLY. Otherwise → MAYBE.
+
+### Readiness
+
+Even after APPLY or MAYBE, “you look eligible” is not a plan. The checklist uses TODO / IN_PROGRESS / DONE / NOT_REQUIRED and a single next action.
+
+### What this file is not
+
+- Not ScholarXIV evidence
+- Not a user interview dataset
+- Not permission to scrape unofficial Telegram posts
+- Not a guarantee of eligibility or acceptance

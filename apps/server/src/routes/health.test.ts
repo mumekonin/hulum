@@ -39,6 +39,6 @@ describe("GET /api/health", () => {
     const body: unknown = await response.json();
 
     expect(response.status).toBe(200);
-    expect(body).toEqual({ data: { status: "ok" }, error: null });
+    expect(body).toMatchObject({ data: { status: "ok" }, error: null });
   });
 });

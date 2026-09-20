@@ -1,14 +1,17 @@
-# HULUM — Individual Team Assignments
+# HULUM — Task Management & Implementation Plan
 
 **Project:** HULUM — AI Opportunity Decision & Readiness Agent  
-**Team:** Kidist + Mulualem  
 **Hackathon:** STARK Hackathon 2026  
-**Schedule:** 20-day compressed build  
-**Version:** 1.0
+**Team:** Kidist + Mulualem  
+**Build Window:** Maximum 20 days  
+**Version:** 1.0  
+**Status:** Active Engineering Plan
 
-## Task tracker
+---
 
-Status is marked DONE in the same PR as the work, so `main` shows DONE only after merge.
+# 1. Purpose
+
+This is the master implementation checklist for HULUM.
 
 | Task | Title | Owner | Status |
 |---|---|---|---|
@@ -29,280 +32,427 @@ Status is marked DONE in the same PR as the work, so `main` shows DONE only afte
 | 39 | Problem definition | Kidist + Mulualem | DONE |
 | 42 | Architecture decision record | Mulualem + Kidist | DONE |
 
-Other tasks are not started.
+HULUM helps Ethiopian students and young professionals decide which opportunities are worth their time and understand exactly what they need to do next.
 
-This document adapts the attached team-assignment format to HULUM. Each engineering
-vertical has one accountable owner; shared contracts, research, integration, testing,
-and final demo work are done together.
+Supported opportunity types may include:
 
-## HULUM Product Boundary
+- Scholarships
+- Fellowships
+- Internships
+- Jobs
+- Grants
+- Competitions
+
+HULUM is **not** intended to be a generic chatbot or simply another opportunity listing website.
+
+## Core product principle
+
+> HULUM does not just find opportunities. It tells you which ones are worth your time — and exactly what to do next.
+
+## Core engineering principle
 
 ```text
 User Profile
-     ↓
-Opportunity
-     ↓
-Requirement Matching
-     ↓
+    ↓
+Opportunity Requirements
+    ↓
+Deterministic Requirement Matching
+    ↓
 APPLY / MAYBE / SKIP
-     ↓
-Why?
-     ↓
-Matched / Missing / Uncertain
-     ↓
+    ↓
+Explanation
+    ↓
+Missing Requirements
+    ↓
 Readiness Checklist
-     ↓
+    ↓
 Next Action
-     ↓
-Official Source
 ```
 
-Voice is a real product capability:
-
-```text
-Voice → Voxide → Intent → HULUM Action → Structured Result → Voice/Text Response
-```
-
-Claude assists with natural-language understanding, explanations, profile extraction,
-and readiness language. The deterministic requirement and decision engine remains the
-source of truth for APPLY/MAYBE/SKIP.
+AI explains and assists the decision. Structured data and deterministic rules remain the source of truth.
 
 ---
 
-# Kidist — Product / Frontend / Mobile / Voice UX
+# 2. Status & Priority
 
-Kidist owns the user-facing product experience, web application, mobile application,
-voice interaction UX, product documentation, research evidence, and demo presentation.
+### Status
 
-### Task 1 — Product flow & UX map (Days 1–2)
-**Depends on:** problem definition and initial research.
+- `[ ]` Not started
+- `[-]` In progress
+- `[x]` Completed
+- `[!]` Blocked
+- `[?]` Needs decision
 
-> Map the complete HULUM journey from profile creation through opportunity discovery,
-> analysis, APPLY/MAYBE/SKIP, explanation, missing requirements, readiness, and the
-> official application source.
+### Priority
 
-**Verify:** both teammates can walk through the complete flow before main implementation.
-
-### Task 2 — Research & ScholarXIV evidence (Days 1–4)
-**Shared with:** Mulualem — done together, one canonical research record.
-
-> Document evidence about opportunity-access barriers, eligibility uncertainty,
-> responsible AI, multilingual access, voice interaction, and application readiness.
-
-**Verify:** major product assumptions are traceable to research, an engineering decision,
-or a clearly labeled hypothesis.
-
-### Task 3 — Ideation & rejected ideas (Days 1–3)
-**Shared with:** Mulualem.
-
-> Record the original problem, alternatives considered, rejected ideas, reasons for
-> rejection, and the evolution toward HULUM's APPLY/MAYBE/SKIP model.
-
-**Verify:** a judge can understand why HULUM was selected and how the idea evolved.
-
-### Task 4 — Web application scaffold (Days 2–4)
-**Depends on:** Task 1.
-
-> Set up Next.js + TypeScript + Tailwind with routes and reusable components for
-> profile, opportunities, analysis, readiness, and voice.
-
-**Verify:** the app builds and primary routes render without crashing.
-
-### Task 5 — HULUM design system (Days 2–4)
-**Depends on:** Task 1.
-
-> Define typography, spacing, cards, buttons, requirement indicators, decision states,
-> checklist components, responsive behavior, and accessible interaction patterns.
-
-**Verify:** core screens use consistent components rather than arbitrary styling.
-
-### Task 6 — Profile UI (Days 3–5)
-**Depends on:** Task 4 and shared profile contract.
-
-> Build profile creation/editing for education, field, graduation year, location,
-> skills, experience, languages, and interests.
-
-**Verify:** a profile can be created and updated through the real API.
-
-### Task 7 — Opportunity browsing UI (Days 4–6)
-**Depends on:** Task 4 and Mulualem's opportunity API.
-
-> Build opportunity list, cards, filters, deadline display, verification indicator,
-> and detail view.
-
-**Verify:** users can browse real structured opportunities and open details.
-
-### Task 8 — Analysis result UI (Days 6–9)
-**Depends on:** Task 7 and decision-engine contract.
-
-> Make APPLY/MAYBE/SKIP visually dominant. Show fit signal, reasons, matched,
-> missing, uncertain requirements, and next action.
-
-**Verify:** a user understands the decision without reading raw AI output.
-
-### Task 9 — Readiness checklist UI (Days 8–10)
-**Depends on:** analysis contract.
-
-> Display preparation items such as CV, portfolio, motivation statement,
-> recommendation letter, transcript, and deadline verification.
-
-**Verify:** users can see what is done, missing, in progress, or not required.
-
-### Task 10 — Official source/application flow (Days 8–10)
-**Depends on:** opportunity model.
-
-> Add official source/application links and the HULUM verification/uncertainty notice.
-
-**Verify:** the demo can move directly from HULUM analysis to the official source.
-
-### Task 11 — Voice interaction UX (Days 9–13)
-**Depends on:** Voxide integration contract.
-
-> Implement listening, processing, responding, retry, timeout, unsupported-request,
-> and text/quick-action fallback states.
-
-Core intents:
-
-```text
-ANALYZE_OPPORTUNITY
-EXPLAIN_DECISION
-SHOW_MISSING_REQUIREMENTS
-SHOW_READINESS
-FILTER_OPPORTUNITIES
-OPEN_OPPORTUNITY
-UPDATE_PROFILE
-```
-
-**Verify:** voice triggers real HULUM actions, not a decorative chatbot.
-
-### Task 12 — Amharic voice UX (Days 11–14)
-**Depends on:** Task 11 and Voxide capability verification.
-
-> Test meaningful Amharic interaction, terminology, response clarity, and fallback.
-
-**Verify:** at least one important HULUM action works through tested Amharic voice
-when the provider integration is stable.
-
-### Task 13 — Afaan Oromo validation (Days 12–15)
-**Depends on:** Voxide capability and stable voice flow.
-
-> Validate Afaan Oromo where technically available; do not add unreliable translation
-> simply to increase language count.
-
-**Verify:** supported interactions preserve meaning and do not break the UI.
-
-### Task 14 — Mobile application core (Days 10–16)
-**Depends on:** stable API contracts.
-
-> Build React Native profile, opportunity, analysis, decision, readiness, and voice
-> flows using the same backend contracts.
-
-**Verify:** the core HULUM journey works on the target mobile demo device.
-
-### Task 15 — Frontend failure handling (Days 14–16)
-**Depends on:** integrated frontend.
-
-> Handle API failure, incomplete profile, empty data, AI failure, voice timeout,
-> microphone failure, network interruption, and stale data.
-
-**Verify:** each major failure has a recovery path or clear next action.
-
-### Task 16 — Responsive/accessibility review (Days 16–17)
-**Depends on:** integrated UI.
-
-> Review mobile/desktop layouts, contrast, touch targets, keyboard use, and decision
-> clarity. Essential information must not depend only on color.
-
-**Verify:** the main flow remains usable on target demo devices.
-
-### Task 17 — Demo/presentation design (Days 17–19)
-**Depends on:** integrated MVP.
-
-> Prepare screenshots, architecture visuals, user-flow visuals, demo script, and
-> STARK presentation assets.
-
-**Verify:** the HULUM story can be understood without reading source code.
-
-### Task 18 — Final frontend/demo build (Day 19)
-**Depends on:** final integration.
-
-> Remove development-only UI and prepare the stable production/demo build.
-
-**Verify:** clean-browser/device demo works without manual database intervention.
-
-### Task 19 — Final UX sign-off (Day 20)
-**Coordinates:** whole team.
-
-> Review HULUM as a first-time opportunity seeker and identify only high-value final
-> changes affecting clarity, reliability, or the demo.
-
-**Verify:** no critical UX confusion remains.
+- **P0** — Critical MVP/demo requirement
+- **P1** — High priority
+- **P2** — Medium priority
+- **P3** — Future / explicitly outside the 20-day MVP
 
 ---
 
-# Mulualem — Backend / Database / Decision Engine / AI / Voice
+# 3. Team Ownership
 
-Mulualem owns the Express backend, PostgreSQL/Supabase layer, requirement matching,
-APPLY/MAYBE/SKIP engine, Claude integration, Voxide backend integration, API contracts,
-testing, and deployment.
+## Kidist
 
-### Task 20 — Backend platform scaffold (Days 1–2)
-**Depends on:** nothing.
+Primary ownership:
 
-> Set up Express + TypeScript modules for profiles, opportunities, requirements,
-> analysis, readiness, AI, voice, security, and common services. Add `/api/health`.
+- Frontend
+- UX/UI
+- Responsive/mobile experience
+- Voice UX
+- Language UX
+- Amharic UX
+- Demo experience
+- Product documentation
+- Research/ideation documentation
 
-**Verify:** server starts, health check responds, and secrets are excluded from Git.
+## Mulualem
 
-### Task 21 — Database schema v1 (Days 1–3)
-**Depends on:** Task 20 and shared model.
+Primary ownership:
 
-> Define PostgreSQL/Supabase models for `profiles`, `opportunities`, `requirements`,
-> `analyses`, and `readiness_items`; optionally voice sessions/events.
+- Backend
+- API
+- Database/Supabase/PostgreSQL
+- Requirement matching
+- APPLY/MAYBE/SKIP decision engine
+- Readiness engine
+- Claude integration
+- Voxide backend integration
+- Security
+- Deployment/backend infrastructure
 
-**Verify:** migrations run cleanly and records can be persisted/retrieved.
+## Shared
 
-### Task 22 — Shared TypeScript contracts (Days 1–3)
-**Shared with:** Kidist — live, done together.
+- ScholarXIV research
+- Product ideation
+- Architecture decisions
+- Shared contracts/types
+- Integration
+- Testing
+- Demo rehearsal
+- STARK documentation/evidence
+- Final deployment verification
 
-Define:
+---
+
+# 4. Phase 0 — Project Foundation
+
+- [x] **P0** Confirm repository and GitHub workflow.
+- [x] **P0** Add/verify `README.md`.
+- [x] **P0** Add/verify `task.md`.
+- [x] **P0** Add/verify `team_assignments.md`.
+- [x] **P0** Add/verify `git-workflow.md`.
+- [x] **P0** Add/verify `CHANGELOG.md`.
+- [x] **P0** Add `.gitignore`.
+- [x] **P0** Add `.env.example`.
+- [x] **P0** Configure package manager and scripts.
+- [x] **P0** Initialize frontend.
+- [x] **P0** Initialize backend.
+- [x] **P0** Establish shared types/constants.
+- [ ] **P1** Configure linting.
+- [ ] **P1** Configure formatting.
+- [x] **P1** Configure testing.
+- [ ] **P1** Configure CI checks.
+
+## Recommended structure
 
 ```text
-Profile
+hulum/
+├── apps/
+│   ├── web/
+│   └── server/
+├── packages/
+│   └── shared/
+├── database/
+│   ├── migrations/
+│   └── seeds/
+├── docs/
+│   ├── research/
+│   ├── product/
+│   ├── architecture/
+│   ├── decisions/
+│   └── demo/
+├── scripts/
+├── .github/
+│   ├── workflows/
+│   └── pull_request_template.md
+├── .cursor/
+│   └── rules/
+├── README.md
+├── task.md
+├── team_assignments.md
+├── git-workflow.md
+├── CHANGELOG.md
+├── .gitignore
+├── .env.example
+└── package.json
+```
+
+---
+
+# 5. Phase 1 — Research & Product Definition
+
+## Problem validation
+
+- [x] **P0** Document the opportunity-discovery problem.
+- [x] **P0** Document the opportunity-decision problem.
+- [x] **P0** Document why users waste time applying to opportunities they are unlikely to qualify for.
+- [x] **P0** Document uncertainty around eligibility requirements.
+- [x] **P0** Document readiness gaps after a user finds an opportunity.
+- [x] **P0** Document relevant Ethiopian user context.
+- [x] **P1** Define target user personas.
+- [x] **P1** Define the exact product gap HULUM addresses.
+
+## Research questions
+
+- [-] Barriers to applying for eligible opportunities among Ethiopian students.
+- [-] Causes of opportunity application failure among African youth.
+- [-] Responsible AI eligibility uncertainty.
+- [-] Opportunity matching and decision-support systems.
+- [-] Voice-first design for non-English speakers.
+- [-] Multilingual interaction for English/Amharic/Afaan Oromo users.
+- [-] Readiness support for scholarship/internship/job applications.
+- [-] Trust and verification of opportunity requirements.
+- [-] Human oversight when AI assists eligibility decisions.
+
+---
+
+# 6. Phase 2 — ScholarXIV Ideation Evidence
+
+ScholarXIV is part of the STARK ideation requirement.
+
+- [x] **P0** Create ScholarXIV ideation/research space.
+- [x] **P0** Document the original problem.
+- [!] **P0** Add relevant research papers.
+- [!] **P0** Record research findings.
+- [x] **P0** Document how the HULUM idea developed.
+- [x] **P0** Document alternative ideas considered.
+- [x] **P0** Document rejected ideas.
+- [x] **P0** Explain why HULUM was selected.
+- [ ] **P1** Explore ScholarXIV MCP integration.
+- [ ] **P1** Explore ScholarXIV Papers API.
+- [-] **P1** Link research findings to product decisions.
+- [x] **P1** Preserve research evidence in repository documentation.
+
+## Required ideation narrative
+
+```text
+Problem
+  ↓
+Research
+  ↓
+Observed user pain
+  ↓
+Alternative ideas
+  ↓
+Rejected approaches + reasons
+  ↓
+HULUM concept
+  ↓
+Prototype
+  ↓
+User/product learning
+  ↓
+Iteration
+  ↓
+Final MVP
+```
+
+---
+
+# 7. Phase 3 — Competitive Research
+
+- [x] **P0** Research Ethiopian opportunity platforms.
+- [x] **P0** Research global scholarship/opportunity platforms.
+- [x] **P1** Research AI opportunity-matching products.
+- [-] **P1** Research voice-enabled opportunity systems.
+- [x] **P1** Research African opportunity platforms.
+- [x] **P1** Record competitor capabilities.
+- [x] **P1** Record relevant gaps/differences.
+- [x] **P1** Record features explicitly excluded from HULUM.
+- [x] **P1** Save findings to `docs/research/competitive-analysis.md`.
+
+## Positioning to preserve
+
+Do not claim that "AI matching" itself is unique.
+
+The differentiation to investigate and demonstrate is the combination of:
+
+```text
 Opportunity
-Requirement
-RequirementStatus
-Decision
-Analysis
-ReadinessItem
-VoiceIntent
-VoiceResponse
-APIError
++
+Eligibility decision
++
+Explanation
++
+Readiness
++
+Voice interaction
++
+English / Amharic / Afaan Oromo support
++
+Ethiopian target users
 ```
 
-**Verify:** web, mobile, and backend use one agreed contract.
+Any external competitor claims used in the final presentation must be verified before submission.
 
-### Task 23 — Opportunity service (Days 3–5)
-**Depends on:** Tasks 21–22.
+---
 
-> Implement opportunity retrieval, structured requirements, verification status,
-> source metadata, last-verified timestamp, and official application URL.
+# 8. Phase 4 — Product & UX
 
-**Verify:** frontend can retrieve real structured opportunities.
+## Core journey
 
-### Task 24 — Profile service (Days 3–5)
-**Depends on:** Tasks 21–22.
+```text
+User creates profile
+        ↓
+HULUM shows opportunities
+        ↓
+User opens opportunity
+        ↓
+User asks "Should I apply?"
+        ↓
+Requirement matching
+        ↓
+APPLY / MAYBE / SKIP
+        ↓
+Why?
+        ↓
+Matched + missing requirements
+        ↓
+Readiness checklist
+        ↓
+Next action
+        ↓
+Official opportunity source
+```
 
-> Implement profile create/read/update/validation and completeness handling.
+## Core screens
 
-**Verify:** profile data can be created through the API and used by analysis.
+- [x] **P0** Landing/home.
+- [x] **P0** Profile creation/edit.
+- [x] **P0** Opportunity list.
+- [x] **P0** Opportunity details.
+- [x] **P0** Analyze opportunity.
+- [x] **P0** APPLY/MAYBE/SKIP result.
+- [x] **P0** Explanation view.
+- [x] **P0** Requirement status view.
+- [x] **P0** Readiness checklist.
+- [-] **P0** Voice interaction.
+- [x] **P0** Official source/application link.
+- [x] **P1** Filters.
+- [x] **P1** Search.
+- [x] **P1** Error/failure states.
+- [x] **P1** Loading/empty states.
+- [x] **P1** Accessibility improvements.
 
-### Task 25 — Requirement matching engine (Days 4–7)
-**Depends on:** Tasks 23–24.
+## Decision UI
 
-> Compare structured profile facts with structured opportunity requirements.
+The decision should be visually dominant.
 
-Statuses:
+Use:
+
+```text
+APPLY
+MAYBE
+SKIP
+```
+
+Avoid making the interface look like a generic AI chat product.
+
+---
+
+# 9. Phase 5 — User Profile
+
+## Profile fields
+
+- [x] **P0** Name.
+- [x] **P0** Education level.
+- [x] **P0** Field of study.
+- [x] **P0** Graduation year.
+- [x] **P0** Country.
+- [x] **P0** Location.
+- [x] **P0** Skills.
+- [x] **P0** Experience.
+- [x] **P0** Languages.
+- [x] **P0** Interests.
+- [x] **P1** Optional profile fields as defined by MVP scope.
+
+## Profile behavior
+
+- [x] **P0** Create profile.
+- [x] **P0** Edit profile.
+- [x] **P0** Persist profile.
+- [x] **P0** Validate profile fields.
+- [x] **P0** Use profile in requirement matching.
+- [ ] **P1** Extract profile information from voice/text using AI.
+- [ ] **P1** Allow user confirmation before saving AI-extracted facts.
+
+---
+
+# 10. Phase 6 — Opportunity Data Model
+
+## Opportunity fields
+
+```text
+Opportunity
+├── id
+├── title
+├── organization
+├── type
+├── description
+├── deadline
+├── countryEligibility
+├── educationRequirements
+├── fieldRequirements
+├── experienceRequirements
+├── languageRequirements
+├── documentRequirements
+├── otherRequirements
+├── applicationUrl
+├── sourceUrl
+├── sourceType
+├── verificationStatus
+├── lastVerifiedDate
+├── createdAt
+└── updatedAt
+```
+
+- [x] **P0** Define opportunity schema.
+- [x] **P0** Create database model.
+- [x] **P0** Create seed/demo opportunities.
+- [x] **P0** Store official source URL.
+- [x] **P0** Store application URL where available.
+- [x] **P0** Store verification status.
+- [x] **P0** Store last verified date.
+- [x] **P1** Add opportunity search/filtering.
+- [ ] **P1** Add opportunity import workflow if required.
+
+---
+
+# 11. Phase 7 — Opportunity Verification
+
+HULUM should not treat generated AI content as authoritative opportunity requirements.
+
+- [x] **P0** Define verification status model.
+- [x] **P0** Store source URL.
+- [x] **P0** Store official application URL.
+- [x] **P0** Store last verification date.
+- [x] **P0** Display source/verification information.
+- [x] **P0** Add responsible-AI notice.
+- [ ] **P1** Define manual verification workflow.
+- [ ] **P1** Define stale-opportunity behavior.
+
+## Responsible AI notice
+
+> HULUM's analysis is based on the information available from the opportunity source and your profile. Always verify final eligibility and deadlines with the official organization.
+
+---
+
+# 12. Phase 8 — Requirement Status Engine
+
+Each relevant requirement should be represented using:
 
 ```text
 MET
@@ -456,232 +606,934 @@ Profile → Opportunity → Analysis → Matching → Decision → Claude → Re
 
 **Verify:** final HULUM demo is reproducible from the deployed system.
 
----
-
-# Shared Team Tasks
-
-### Task 39 — Problem definition (Days 1–2)
-**Shared with:** Kidist + Mulualem.
-
-> Establish the exact problem HULUM solves: users need help deciding whether an
-> opportunity is worth pursuing, what they are missing, and what to prepare—not only
-> where opportunities exist.
-
-**Verify:** both teammates can explain the problem consistently.
-
-### Task 40 — ScholarXIV research trail (Days 1–5)
-**Shared with:** whole team.
-
-> Preserve research queries, findings, relevant papers, and the product decisions
-> influenced by the evidence.
-
-**Verify:** the ideation story is reproducible from repository evidence.
-
-### Task 41 — Competitive analysis (Days 2–5)
-**Shared with:** whole team.
-
-> Review Ethiopian and global opportunity platforms, scholarship matching products,
-> AI opportunity tools, and voice-first systems. Record capabilities, limitations,
-> evidence, and HULUM's intended distinction.
-
-**Verify:** the team can explain differentiation without claiming competitors do not exist.
-
-### Task 42 — Architecture decision record (Days 2–4)
-**Shared with:** whole team.
-
-> Document why HULUM uses Next.js, React Native, Express/TypeScript, PostgreSQL/Supabase,
-> Claude, and Voxide, plus important alternatives considered.
-
-**Verify:** technology decisions are intentional and traceable.
-
-### Task 43 — First vertical slice (Days 6–10)
-**Coordinates:** Kidist + Mulualem.
-
-> Complete one real flow:
-
-```text
-Profile → Opportunity → Analyze → Matching → APPLY/MAYBE/SKIP
-→ Why? → Missing/Uncertain → Readiness → Official Source
-```
-
-**Verify:** web/backend/database/decision logic work together with real data.
-
-### Task 44 — Voice vertical slice (Days 11–14)
-**Coordinates:** Kidist + Mulualem.
-
-> Complete:
-
-```text
-User voice → Voxide → Intent → HULUM action → Structured result → Voice/Text response
-```
-
-**Verify:** at least one meaningful voice command works repeatedly.
-
-### Task 45 — Failure review (Days 14–17)
-**Shared with:** whole team.
-
-Test incomplete profiles, ambiguous requirements, stale opportunities, missing sources,
-Claude timeout/malformed output, Voxide failure, recognition failure, network failure,
-and unsupported intents.
-
-**Verify:** failures have deterministic recovery behavior and do not invent eligibility facts.
-
-### Task 46 — Demo rehearsal (Days 18–20)
-**Shared with:** whole team.
-
-> Run the same production scenario repeatedly and record/fix only issues affecting
-> reliability, clarity, or the demo.
-
-**Verify:** no manual database or developer intervention is required.
-
-### Task 47 — Final STARK documentation package (Day 20)
-**Shared with:** whole team.
-
-Ensure evidence exists for:
-
-```text
-Problem
-Research
-ScholarXIV
-Ideation + rejected ideas
-Competitors
-Product requirements
-Architecture
-Database
-Decision engine
-AI responsibility
-Voice UX
-Implementation
-Testing
-Iteration
-Deployment
-Demo
-Changelog
-Git history
-```
-
-**Verify:** a judge can follow HULUM from problem → research → decisions → implementation → working product.
+- [x] **P0** Define requirement schema.
+- [x] **P0** Define requirement categories.
+- [x] **P0** Match profile facts to requirements.
+- [x] **P0** Produce requirement statuses.
+- [x] **P0** Preserve uncertainty.
+- [x] **P0** Handle missing profile information.
+- [ ] **P0** Handle conflicting information.
+- [ ] **P1** Add requirement explanations.
+- [x] **P1** Add unit tests for matching.
 
 ---
 
-# Dependency Order
+# 13. Phase 9 — APPLY / MAYBE / SKIP Decision Engine
+
+The decision engine is deterministic and is the source of truth.
+
+Initial logic:
 
 ```text
-Problem + Research
+Critical NOT_MET
+    ↓
+SKIP
+
+Key requirements met
++ no significant uncertainty
+    ↓
+APPLY
+
+Otherwise
+    ↓
+MAYBE
+```
+
+- [x] **P0** Define decision schema.
+- [x] **P0** Define critical requirements.
+- [x] **P0** Implement decision rules.
+- [x] **P0** Implement decision explanation data.
+- [x] **P0** Implement fit score if included in MVP.
+- [x] **P0** Ensure fit score never replaces the decision rules.
+- [x] **P0** Add unit tests.
+- [x] **P0** Add edge-case tests.
+- [ ] **P1** Add decision audit/debug information.
+
+## Important
+
+HULUM must not present the result as a guarantee of admission, employment, funding, or acceptance.
+
+---
+
+# 14. Phase 10 — AI / Claude Integration
+
+AI is an assistant, not the eligibility authority.
+
+## AI may
+
+- [ ] Understand natural language.
+- [ ] Extract structured profile information.
+- [ ] Explain an existing decision.
+- [ ] Explain requirement gaps.
+- [ ] Generate readiness plans.
+- [ ] Answer contextual product questions.
+- [ ] Assist multilingual interaction.
+- [ ] Rephrase explanations for the user's language.
+
+## AI must not
+
+- [ ] Invent official opportunity requirements.
+- [ ] Invent deadlines.
+- [ ] Override deterministic decision rules.
+- [ ] Convert uncertainty into false certainty.
+- [ ] Claim official eligibility confirmation.
+- [ ] Replace the official opportunity source.
+
+## Tasks
+
+- [x] **P0** Select/configure Claude provider.
+- [x] **P0** Define AI service.
+- [x] **P0** Define structured output schema.
+- [x] **P0** Implement output validation.
+- [x] **P0** Implement decision-aware explanation.
+- [ ] **P0** Implement readiness-plan generation.
+- [x] **P0** Implement contextual Q&A.
+- [ ] **P1** Add retry/fallback behavior.
+- [ ] **P1** Track latency/errors.
+- [ ] **P1** Create evaluation examples.
+
+---
+
+# 15. Phase 11 — Readiness Engine
+
+The readiness layer tells the user what to prepare after the decision.
+
+Example checklist:
+
+```text
+CV                    TODO
+Portfolio             TODO
+Motivation statement  TODO
+Recommendation letter TODO
+Transcript             TODO
+Deadline verification  TODO
+```
+
+## Tasks
+
+- [x] **P0** Define readiness item schema.
+- [x] **P0** Generate requirements from opportunity data.
+- [x] **P0** Generate readiness checklist.
+- [x] **P0** Support TODO.
+- [x] **P0** Support IN_PROGRESS.
+- [x] **P0** Support DONE.
+- [x] **P0** Support NOT_REQUIRED.
+- [x] **P0** Display next action.
+- [x] **P1** Allow manual checklist updates.
+- [ ] **P1** Generate personalized readiness plan with AI.
+
+---
+
+# 16. Phase 12 — Voxide Voice Integration
+
+Voice is a required product feature.
+
+It must perform meaningful HULUM actions and must not be decorative.
+
+- [ ] **P0** Study Voxide integration requirements.
+- [ ] **P0** Create development integration.
+- [ ] **P0** Receive/process voice input.
+- [x] **P0** Connect voice to HULUM actions.
+- [ ] **P0** Produce voice response.
+- [x] **P0** Analyze an opportunity by voice.
+- [x] **P0** Ask "Why?"
+- [x] **P0** Ask "What am I missing?"
+- [x] **P0** Ask "What should I prepare?"
+- [x] **P0** Filter/show opportunities by decision.
+- [ ] **P1** Create/update profile by voice.
+- [ ] **P1** Handle recognition failure.
+- [ ] **P1** Handle silence/timeouts.
+- [ ] **P1** Support repeat requests.
+- [ ] **P1** Measure latency.
+
+## Example voice intents
+
+```text
+"Should I apply for this?"
+→ analyze current opportunity
+
+"Why did you say apply?"
+→ explain decision
+
+"What am I missing?"
+→ show NOT_MET / UNCERTAIN requirements
+
+"What should I prepare?"
+→ show readiness checklist
+
+"Show me opportunities I should apply for."
+→ filter APPLY
+
+"Show me maybe opportunities."
+→ filter MAYBE
+```
+
+---
+
+# 17. Phase 13 — Multilingual Support
+
+Initial target:
+
+- English
+- Amharic
+- Afaan Oromo
+
+Actual support depends on Voxide capabilities and quality.
+
+- [ ] **P0** Verify Voxide supported languages.
+- [x] **P0** Define language architecture.
+- [x] **P0** Implement language selection.
+- [x] **P0** Test one language end-to-end.
+- [x] **P0** Ensure core voice interaction works.
+- [ ] **P1** Add second language.
+- [ ] **P1** Add third language if stable.
+- [ ] **P1** Test mixed-language input.
+- [ ] **P1** Test opportunity terminology.
+- [ ] **P1** Test decision explanations.
+
+Do not trade reliability for language count.
+
+---
+
+# 18. Phase 14 — Backend
+
+- [x] **P0** Server foundation.
+- [x] **P0** Environment configuration.
+- [-] **P0** Database connection.
+- [x] **P0** Profile service.
+- [x] **P0** Opportunity service.
+- [x] **P0** Requirement matching service.
+- [x] **P0** Decision service.
+- [x] **P0** Readiness service.
+- [x] **P0** AI orchestration service.
+- [-] **P0** Voice integration service.
+- [x] **P1** Search/filter service.
+- [ ] **P1** Audit/debug service.
+
+## Suggested endpoints
+
+```text
+POST   /api/profile
+GET    /api/profile
+PATCH  /api/profile
+
+GET    /api/opportunities
+GET    /api/opportunities/:id
+
+POST   /api/opportunities/:id/analyze
+GET    /api/opportunities/:id/readiness
+
+POST   /api/ai/explain
+POST   /api/ai/profile-extract
+
+POST   /api/voice/session
+POST   /api/voice/intent
+
+GET    /api/health
+```
+
+- [x] **P0** Define API contracts before integration.
+- [x] **P0** Implement profile endpoints.
+- [x] **P0** Implement opportunity endpoints.
+- [x] **P0** Implement analysis endpoint.
+- [x] **P0** Implement readiness endpoint.
+- [x] **P0** Implement health endpoint.
+- [ ] **P1** Add validation/rate limiting/documentation.
+
+---
+
+# 19. Phase 15 — Database
+
+Recommended MVP data:
+
+```text
+profiles
+opportunities
+opportunity_requirements
+analyses
+requirement_matches
+readiness_items
+voice_sessions
+```
+
+Optional if needed:
+
+```text
+users
+audit_logs
+```
+
+- [x] **P0** Design schema.
+- [x] **P0** Create migrations.
+- [x] **P0** Persist profiles.
+- [x] **P0** Persist opportunities.
+- [x] **P0** Persist requirements.
+- [x] **P0** Persist analyses.
+- [x] **P0** Persist readiness state.
+- [x] **P1** Add indexes.
+- [ ] **P1** Add security policies/RLS where applicable.
+- [ ] **P1** Define retention strategy.
+
+---
+
+# 20. Phase 16 — Shared Contracts
+
+Frontend and backend must use shared contracts.
+
+- [x] **P0** Define profile type.
+- [x] **P0** Define opportunity type.
+- [x] **P0** Define requirement type.
+- [x] **P0** Define requirement status enum.
+- [x] **P0** Define decision enum.
+- [x] **P0** Define analysis response.
+- [x] **P0** Define readiness item.
+- [x] **P0** Define voice intent/result.
+- [x] **P1** Add runtime validation.
+
+## Core analysis contract
+
+```text
+Analysis
+├── decision
+├── fitScore
+├── matchedRequirements
+├── missingRequirements
+├── uncertainRequirements
+├── explanation
+├── readinessItems
+├── nextAction
+└── officialSource
+```
+
+---
+
+# 21. Phase 17 — Frontend
+
+## User experience
+
+- [x] **P0** Landing/home.
+- [x] **P0** Profile setup.
+- [x] **P0** Opportunity list.
+- [x] **P0** Opportunity detail.
+- [x] **P0** Analyze action.
+- [x] **P0** Decision result.
+- [x] **P0** Requirement breakdown.
+- [x] **P0** Readiness checklist.
+- [-] **P0** Voice interaction.
+- [x] **P0** Official source/application action.
+- [x] **P1** Search/filter.
+- [x] **P1** Error states.
+- [x] **P1** Network fallback.
+- [x] **P1** Accessibility polish.
+
+## UI principle
+
+The user should understand the result quickly:
+
+```text
+APPLY
+You meet the key requirements.
+
+Why:
+✓ Ethiopian eligibility
+✓ Computer Science
+✓ Graduation year
+✓ Required experience
+
+Prepare:
+□ CV
+□ Motivation statement
+
+Next:
+Verify the official deadline and apply.
+```
+
+---
+
+# 22. Phase 18 — Contextual Assistant
+
+The assistant should remain grounded in the current HULUM context.
+
+- [x] **P0** Ask why a decision was made.
+- [x] **P0** Ask what is missing.
+- [x] **P0** Ask what to prepare.
+- [x] **P0** Ask about the current opportunity.
+- [ ] **P1** Ask about profile gaps.
+- [x] **P1** Ask to filter opportunities.
+- [ ] **P1** Ask for clarification of requirements.
+
+The assistant must not become an unrestricted chatbot.
+
+---
+
+# 23. Phase 19 — Security
+
+- [x] **P0** Protect API keys.
+- [x] **P0** Never commit `.env`.
+- [x] **P0** Validate incoming data.
+- [x] **P0** Sanitize logs.
+- [x] **P0** Protect database access.
+- [x] **P0** Protect admin/debug routes if any.
+- [ ] **P1** Add authentication if required.
+- [ ] **P1** Add authorization if required.
+- [ ] **P1** Review data exposure.
+- [ ] **P1** Review retention.
+
+Never commit:
+
+- Claude API keys
+- Voxide credentials
+- Supabase secrets
+- Database credentials
+- Access tokens
+
+---
+
+# 24. Phase 20 — Testing
+
+## Unit tests
+
+- [x] Profile validation.
+- [x] Requirement matching.
+- [x] Requirement status calculation.
+- [x] APPLY decision.
+- [x] MAYBE decision.
+- [x] SKIP decision.
+- [x] Edge cases.
+- [x] Readiness generation.
+- [x] AI output validation.
+- [x] Voice intent mapping.
+
+## Integration tests
+
+- [x] Profile → backend.
+- [x] Opportunity → backend.
+- [x] Profile + opportunity → analysis.
+- [x] Analysis → decision.
+- [x] Decision → explanation.
+- [x] Decision → readiness.
+- [x] Voice → intent.
+- [x] Voice intent → HULUM action.
+- [x] Frontend → backend.
+- [x] Backend → database.
+
+## End-to-end
+
+- [x] Create profile.
+- [x] Browse opportunity.
+- [x] Open opportunity.
+- [x] Analyze.
+- [x] Receive APPLY/MAYBE/SKIP.
+- [x] Ask why.
+- [x] View missing requirements.
+- [x] View readiness.
+- [x] Use voice.
+- [x] Open official application source.
+
+## Failure tests
+
+- [ ] Microphone unavailable.
+- [ ] Speech recognition failure.
+- [x] Voxide failure.
+- [x] Claude timeout.
+- [x] Malformed AI response.
+- [ ] Database failure.
+- [ ] Network interruption.
+- [x] Missing profile information.
+- [ ] Contradictory profile information.
+- [x] Uncertain requirement.
+- [x] Expired opportunity.
+- [x] Unsupported voice request.
+
+---
+
+# 25. Phase 21 — Voice Failure Fallback
+
+The product must remain usable when voice fails.
+
+- [x] **P0** Detect voice failure.
+- [x] **P0** Show text-input fallback.
+- [x] **P0** Keep quick actions available.
+- [x] **P1** Show retry action.
+- [x] **P1** Explain failure clearly.
+- [x] **P1** Avoid trapping the user in voice mode.
+
+Fallback:
+
+```text
+Voice unavailable
       ↓
-Product / UX map
-      ↓
-Repository + Architecture
-      ↓
-Shared contracts
-      ↓
-Database
-      ↓
-Profile + Opportunity
-      ↓
+Text input
+      +
+Quick actions
+      +
+Normal HULUM UI
+```
+
+---
+
+# 26. Phase 22 — Observability
+
+Track useful technical signals without unnecessarily storing sensitive content.
+
+- [ ] **P1** API latency.
+- [ ] **P1** AI latency.
+- [ ] **P1** Voice latency.
+- [ ] **P1** API error rates.
+- [ ] **P1** AI validation failures.
+- [ ] **P1** Voice recognition failures.
+- [ ] **P1** Decision-engine errors.
+- [ ] **P1** Session failures.
+
+Do not log unnecessary personal profile data or raw voice/conversation content.
+
+---
+
+# 27. Phase 23 — Deployment
+
+- [ ] **P0** Deploy frontend.
+- [ ] **P0** Deploy backend.
+- [x] **P0** Configure production environment.
+- [ ] **P0** Configure database.
+- [x] **P0** Configure CORS.
+- [ ] **P0** Configure production secrets.
+- [ ] **P0** Verify production analysis flow.
+- [ ] **P0** Verify production voice flow.
+- [ ] **P1** Deploy on EthioDeploy if practical.
+- [ ] **P1** Document deployment decision.
+
+EthioDeploy is optional, but if used, document it as part of the implementation/deployment story.
+
+---
+
+# 28. Phase 24 — CI/CD
+
+- [ ] **P1** Configure GitHub Actions.
+- [ ] **P1** Install dependencies.
+- [ ] **P1** Type check.
+- [ ] **P1** Lint.
+- [ ] **P1** Run tests.
+- [ ] **P1** Build frontend.
+- [ ] **P1** Build backend.
+- [ ] **P1** Block merges when checks fail.
+- [ ] **P1** Configure deployment workflow if appropriate.
+
+---
+
+# 29. Phase 25 — Demo Engineering
+
+Use one strong user story, not a feature dump.
+
+## Recommended demo persona
+
+```text
+Ethiopian university student
+Field: Computer Science
+Graduation: 2027
+Skills: Python, React
+Experience: 1 internship
+Languages: English + Amharic
+Interest: AI
+```
+
+## Demo flow
+
+- [x] **P0** Create demo profile.
+- [x] **P0** Show opportunity.
+- [x] **P0** Ask HULUM to analyze.
+- [x] **P0** Show APPLY/MAYBE/SKIP.
+- [x] **P0** Explain why.
+- [x] **P0** Show matched requirements.
+- [x] **P0** Show missing/uncertain requirements.
+- [x] **P0** Show readiness checklist.
+- [ ] **P0** Demonstrate voice.
+- [x] **P0** Demonstrate English.
+- [ ] **P1** Demonstrate Amharic if stable.
+- [x] **P0** Open official opportunity source.
+- [x] **P0** Show responsible-AI notice.
+- [x] **P1** Demonstrate a MAYBE case.
+- [x] **P1** Demonstrate a SKIP case.
+- [x] **P0** Prepare backup mode for external-service failure.
+- [ ] **P0** Test clean browser/device.
+- [ ] **P0** Test microphone.
+- [ ] **P0** Test production deployment.
+- [ ] **P1** Prepare backup video/screenshots.
+
+---
+
+# 30. Phase 26 — Documentation
+
+- [x] **P0** README.
+- [x] **P0** Product overview.
+- [x] **P0** Architecture overview.
+- [x] **P0** Setup guide.
+- [x] **P0** Environment variables.
+- [x] **P0** API contracts.
+- [x] **P0** Database model.
+- [x] **P0** Decision-engine documentation.
+- [x] **P0** AI architecture.
+- [x] **P0** Voice architecture.
+- [x] **P0** Research/competitive analysis.
+- [x] **P0** ScholarXIV ideation evidence.
+- [x] **P1** Architecture decision records.
+- [x] **P1** Demo instructions.
+- [ ] **P1** Deployment guide.
+- [x] **P1** STARK evidence checklist.
+
+---
+
+# 31. Phase 27 — STARK Evidence
+
+The build must leave truthful evidence of development.
+
+- [x] **P0** Preserve GitHub history.
+- [x] **P0** Use real commits.
+- [x] **P0** Keep meaningful changelog entries.
+- [x] **P0** Document major product decisions.
+- [x] **P0** Document rejected ideas.
+- [x] **P0** Document iteration.
+- [x] **P0** Keep research evidence.
+- [x] **P0** Keep implementation progress visible.
+- [x] **P0** Keep team contribution traceable.
+- [ ] **P1** Add milestone tags.
+- [x] **P1** Prepare final development narrative.
+
+Never manufacture commits, dates, research activity, or progress.
+
+---
+
+# 32. 20-Day Execution Plan
+
+## Days 1–2 — Foundation + Research
+
+- [x] Repository foundation.
+- [x] Team workflow.
+- [x] Product/problem documentation.
+- [x] ScholarXIV setup.
+- [x] Competitive research.
+- [x] Architecture confirmation.
+
+## Days 3–4 — Data + Profile
+
+- [x] Database schema.
+- [x] Shared contracts.
+- [x] Profile API.
+- [x] Profile UI.
+- [x] Opportunity schema.
+- [x] Demo opportunity seeds.
+
+## Days 5–7 — Decision Engine
+
+- [x] Requirement model.
+- [x] Requirement matching.
+- [x] APPLY/MAYBE/SKIP.
+- [x] Analysis API.
+- [x] Analysis UI.
+- [x] Unit tests.
+
+## Days 8–9 — Readiness
+
+- [x] Readiness schema.
+- [x] Checklist generation.
+- [x] Readiness UI.
+- [x] Next-action behavior.
+- [x] Integration tests.
+
+## Days 10–12 — Voice
+
+- [ ] Voxide integration.
+- [x] Voice session.
+- [x] Voice intent mapping.
+- [x] Voice → analysis.
+- [x] Voice → explanation.
+- [x] Voice → readiness.
+- [x] Voice → gaps.
+- [x] Voice → filter by decision.
+- [x] Voice fallback.
+- [x] First stable language end-to-end.
+
+## Days 13–14 — AI + Multilingual
+
+- [x] Claude explanation.
+- [x] Structured AI output validation.
+- [x] Contextual assistant.
+- [ ] Amharic voice/UX if stable.
+- [ ] Afaan Oromo if stable and quality is acceptable.
+
+## Days 15–16 — Integration
+
+- [x] Full profile → opportunity → analysis flow.
+- [x] Full analysis → readiness flow.
+- [x] Full voice flow.
+- [x] Error handling.
+- [x] Security review.
+- [x] Production configuration.
+
+## Days 17–18 — Deployment + Testing
+
+- [ ] Deploy.
+- [ ] Production voice test.
+- [x] E2E testing.
+- [x] Failure testing.
+- [ ] Browser/device testing.
+- [ ] Fix critical bugs.
+
+## Day 19 — Demo + Documentation
+
+- [x] Demo script.
+- [x] STARK documentation.
+- [ ] Research evidence.
+- [x] Changelog review.
+- [x] README review.
+- [x] Architecture review.
+- [x] Backup demo.
+
+## Day 20 — Freeze
+
+- [x] No unnecessary new features.
+- [x] Final bug fixes only.
+- [ ] Final production test.
+- [x] Final Git history review.
+- [x] Final task status.
+- [x] Final changelog.
+- [x] Final demo rehearsal.
+- [x] Final STARK submission package.
+
+---
+
+# 33. MVP Definition
+
+The HULUM MVP requires these capabilities to work together:
+
+- [x] **P0** User profile.
+- [x] **P0** Opportunity data.
+- [x] **P0** Requirement matching.
+- [x] **P0** APPLY/MAYBE/SKIP decision.
+- [x] **P0** Decision explanation.
+- [x] **P0** Missing/uncertain requirements.
+- [x] **P0** Readiness checklist.
+- [ ] **P0** Voxide voice interaction.
+- [x] **P0** At least one stable language end-to-end.
+- [x] **P0** English support.
+- [ ] **P0** Amharic support if Voxide quality is sufficient.
+- [x] **P0** Official source/application link.
+- [x] **P0** Responsible-AI notice.
+- [ ] **P0** Working deployed prototype.
+- [x] **P0** Failure fallback.
+- [x] **P0** Documented research/ideation basis.
+
+---
+
+# 34. Explicitly Out of MVP
+
+Do not allow scope creep into:
+
+- Full social network.
+- Large-scale opportunity marketplace.
+- Automated application submission.
+- Automatic document submission.
+- Guaranteed eligibility.
+- Guaranteed acceptance.
+- AI-only eligibility decisions.
+- Unrestricted AI career chatbot.
+- Complex recruitment platform.
+- Complex resume builder.
+- Full LMS.
+- Large enterprise integrations.
+- Payment system unless explicitly required.
+- Large-scale scraping infrastructure.
+- Features not needed to prove the core HULUM thesis.
+
+---
+
+# 35. Definition of Done
+
+A task is complete only when:
+
+1. The implementation matches the repository specification.
+2. Relevant tests pass.
+3. The feature works in the agreed environment.
+4. Another teammate can understand/use the implementation.
+5. No secrets are committed.
+6. Related documentation is updated.
+7. `task.md` status is updated when appropriate.
+8. `CHANGELOG.md` is updated.
+9. Git history truthfully represents the work.
+10. Required STARK evidence is preserved.
+
+---
+
+# 36. Daily Team Checklist
+
+## Yesterday
+
+- What did I complete?
+
+## Today
+
+- What am I implementing?
+
+## Blockers
+
+- What is preventing progress?
+
+## Integration
+
+- What does the other teammate need from me?
+
+## Evidence
+
+- What commit/PR demonstrates the work?
+
+## STARK
+
+- What research, decision, implementation, or iteration should be documented?
+
+---
+
+# 37. Priority Rule
+
+```text
+Core Decision Engine
+        ↓
+User Profile + Opportunity Data
+        ↓
 Requirement Matching
-      ↓
-APPLY/MAYBE/SKIP
-      ↓
-Analysis API
-      ↓
+        ↓
+APPLY / MAYBE / SKIP
+        ↓
 Readiness
-      ↓
-Claude explanation
-      ↓
-Web integration
-      ↓
-Voxide
-      ↓
-Voice actions
-      ↓
-Mobile core
-      ↓
-Integration testing
-      ↓
-Failure testing
-      ↓
+        ↓
+Voice
+        ↓
+AI Explanation
+        ↓
+Multilingual Expansion
+        ↓
 Deployment
-      ↓
-Final demo
+        ↓
+Polish
+        ↓
+Nice-to-have Features
 ```
 
----
-
-# Ownership Summary
-
-| Area | Owner | Backup / Contributor |
-|---|---|---|
-| Product definition | Kidist | Mulualem |
-| UX / design system | Kidist | Mulualem |
-| Web frontend | Kidist | Mulualem |
-| Mobile frontend | Kidist | Mulualem |
-| Voice UX | Kidist | Mulualem |
-| Research / ScholarXIV | Kidist + Mulualem | — |
-| Backend | Mulualem | Kidist |
-| Database | Mulualem | Kidist |
-| Opportunity API | Mulualem | Kidist |
-| Profile API | Mulualem | Kidist |
-| Requirement matching | Mulualem | Kidist |
-| APPLY/MAYBE/SKIP | Mulualem | Kidist |
-| Fit score | Mulualem | Kidist |
-| Readiness engine | Mulualem | Kidist |
-| Claude integration | Mulualem | Kidist |
-| AI validation | Mulualem | Kidist |
-| Voxide integration | Mulualem | Kidist |
-| Security | Mulualem | Kidist |
-| Testing | Kidist + Mulualem | — |
-| Deployment | Mulualem | Kidist |
-| Demo | Kidist + Mulualem | — |
-| STARK documentation | Kidist + Mulualem | — |
+However, STARK-required research and ideation documentation must be maintained throughout the build, not postponed until the end.
 
 ---
 
-# 20-Day Responsibility Schedule
+# 38. Decision Gates
 
-| Days | Kidist | Mulualem | Shared |
-|---|---|---|---|
-| 1–2 | UX map, product definition | Backend foundation | Problem + research |
-| 3–4 | Web scaffold, design system | DB + contracts | Ideation + architecture |
-| 5–6 | Profile + opportunity UI | Profile/opportunity API | Data validation |
-| 7–8 | Analysis UI | Matching + decision engine | Decision tests |
-| 9–10 | Readiness UI | Analysis API + readiness | First vertical slice |
-| 11–12 | Voice UX | Claude + Voxide | Voice contract |
-| 13–14 | Voice + Amharic UX | Voice intent/action | Voice vertical slice |
-| 15–16 | Mobile core | Security + verification | Integration testing |
-| 17 | Accessibility/responsive | Production hardening | Failure review |
-| 18 | Demo assets | Deployment verification | Demo rehearsal |
-| 19 | Final frontend/mobile | Final backend | Documentation freeze |
-| 20 | UX/demo sign-off | Technical sign-off | Final demo + STARK package |
+## Gate 1 — Concept
+
+- [x] Problem documented.
+- [-] Research documented.
+- [x] Alternatives documented.
+- [x] Rejected ideas documented.
+- [x] HULUM concept selected.
+- [x] MVP scope defined.
+
+## Gate 2 — Architecture
+
+- [x] Architecture documented.
+- [x] Database model documented.
+- [x] Decision engine documented.
+- [x] AI responsibility documented.
+- [x] Voice integration approach documented.
+- [x] Shared contracts documented.
+
+## Gate 3 — Vertical Slice
+
+- [x] Profile works.
+- [x] Opportunity works.
+- [x] Requirement matching works.
+- [x] APPLY/MAYBE/SKIP works.
+- [x] Explanation works.
+- [x] Readiness works.
+
+## Gate 4 — Voice Slice
+
+- [ ] Voxide input works.
+- [x] Voice intent works.
+- [x] HULUM action executes.
+- [ ] Voice response works.
+- [x] Failure fallback works.
+
+## Gate 5 — Integrated MVP
+
+- [x] Profile → opportunity → analysis works.
+- [x] Analysis → readiness works.
+- [x] Voice → analysis works.
+- [x] Voice → explanation works.
+- [x] Official source link works.
+- [x] Responsible-AI notice works.
+
+## Gate 6 — Demo Ready
+
+- [ ] Production deployment works.
+- [x] Demo scenario is stable.
+- [ ] Voice works.
+- [x] Backup mode exists.
+- [ ] Documentation is complete.
+- [x] Git history is truthful.
+- [x] STARK evidence is ready.
 
 ---
 
-# Working Rules
+# 39. Cursor Build Rule
 
-1. Owner means accountable, not isolated; either teammate may contribute.
-2. Shared contracts are agreed before dependent implementation.
-3. No silent API, database, decision, or voice-contract changes.
-4. The deterministic engine is the source of truth for APPLY/MAYBE/SKIP.
-5. Claude explains and assists; it does not silently override structured facts or official requirements.
-6. Voxide voice must trigger real HULUM functionality.
-7. Official opportunity sources remain the final authority for eligibility and deadlines.
-8. Integrate early; do not wait until the last days.
-9. Build one vertical slice before expanding scope.
-10. Document major product and architecture decisions.
-11. Git history and changelog must represent actual work.
-12. When time is limited, protect the core HULUM decision flow.
+Cursor must treat the repository documentation as the source of truth.
 
-# Definition of Done
+The correct execution loop is:
 
 ```text
-Implementation + Verification/Test + Documentation + Git Commit
-+ PR Review + Integration + STARK Evidence = DONE
+Repository MD
+    ↓
+Read task.md
+    ↓
+Inspect current code
+    ↓
+Find next dependency-safe task
+    ↓
+Check ownership
+    ↓
+Plan
+    ↓
+Implement ONE task
+    ↓
+Test
+    ↓
+Update docs
+    ↓
+Update CHANGELOG
+    ↓
+Review Git diff
+    ↓
+Commit
+    ↓
+Next task
 ```
 
-# Final Team Principle
+Cursor must not:
 
-> **Kidist owns the experience users see. Mulualem owns the systems and decision logic underneath it. Both own research, integration, evidence, and the final product.**
+- Invent a different architecture.
+- Skip dependencies.
+- Build unrelated features.
+- Rewrite project documentation without reason.
+- Manufacture Git history.
+- Commit secrets.
+- Assume a task is complete without checking the repository.
+- Start the next task before the current task is verified.
 
-# Final One-Line Rule
+---
 
-> **Build together at the contracts, build independently at ownership boundaries, integrate continuously, and make every commit, changelog entry, research note, and demo step tell the true story of how HULUM was built.**
+# 40. Final Product Principle
+
+> Build the smallest system that convincingly proves the core thesis: an Ethiopian student or young professional can use HULUM to evaluate an opportunity, understand whether it is worth pursuing, see what is missing, and know exactly what to prepare next — with meaningful voice interaction and a clear path to the official opportunity source.
+
+---
+
+# 41. Version History
+
+| Version | Date | Change |
+|---|---|---|
+| 1.0 | 2026-09-18 | Adapted master task-management structure for HULUM |

@@ -1,17 +1,15 @@
-import { loadEnv } from "./config/env.js";
 import { createApp } from "./app.js";
+import { loadEnv } from "./config/env.js";
+import { loadStore } from "./store/fileStore.js";
 
-function start(): void {
-  const env = loadEnv();
-  const app = createApp();
-
-  app.listen(env.PORT, () => {
-    console.log(`hulum-server listening on port ${env.PORT}`);
-  });
-}
+const env = loadEnv();
 
 try {
-  start();
+  await loadStore();
+  const app = createApp();
+  app.listen(env.PORT, () => {
+    console.log(`HULUM API listening on port ${env.PORT}`);
+  });
 } catch (error) {
   const message = error instanceof Error ? error.message : "Failed to start server";
   console.error(message);
