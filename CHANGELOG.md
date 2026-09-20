@@ -3,6 +3,20 @@
 ## 2026-09-20 — Mulualem
 
 ### Changed
+Added Groq explanation guards. Empty, JSON, invented URLs, or a contradictory APPLY/MAYBE/SKIP word are replaced with the stored summary.
+
+### Why
+Task 31 must not show a model reply that fights the engine decision.
+
+### Evidence
+Branch: `feat/ai-output-validation`
+
+### Decision
+Replace unsafe Groq text; do not 502 the user. Decision, fitScore, and nextAction still come only from the stored analysis.
+
+## 2026-09-20 — Mulualem
+
+### Changed
 Added Groq explanation for a stored analysis. The API always returns the engine decision.
 
 ### Why

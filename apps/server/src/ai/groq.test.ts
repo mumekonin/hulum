@@ -2,6 +2,7 @@ import { Decision, Language } from "@hulum/shared";
 import { describe, expect, it } from "vitest";
 import { HttpError } from "../http/errors.js";
 import { EXPLAIN_SYSTEM_PROMPT, explanationFrom } from "./explain.js";
+import { fallbackExplanation } from "./guard.js";
 import { GROQ_CHAT_COMPLETIONS_URL, createGroqChatClient } from "./groq.js";
 
 const analysis = {
@@ -23,6 +24,7 @@ describe("Groq explainer", () => {
     const result = explanationFrom(analysis, Language.ENGLISH, "You should SKIP this.");
     expect(result.decision).toBe(Decision.APPLY);
     expect(result.nextAction).toBe(analysis.nextAction);
+    expect(result.explanation).toBe(fallbackExplanation(analysis));
     expect(EXPLAIN_SYSTEM_PROMPT.includes("Never change APPLY")).toBe(true);
   });
 
