@@ -176,6 +176,37 @@ describe("analysis service", () => {
 
     const result = await service.explain(stored.id, Language.ENGLISH);
     expect(result.decision).toBe(Decision.APPLY);
-    expect(result.explanation).toContain("SKIP");
+    expect(result.explanation).toBe(`${stored.summary} ${stored.nextAction}`.trim());
+    expect(result.explanation.includes("This opportunity is a SKIP.")).toBe(false);
+  });
+
+  it("replaces an empty Groq reply with the stored fallback", async () => {
+    const stored = storedFrom({
+      userId: profile.userId,
+      opportunityId: opportunity.id,
+      decision: Decision.MAYBE,
+      fitScore: 40,
+      summary: ANALYSIS_SUMMARY[Decision.MAYBE],
+      matches: [],
+      readiness: [],
+    });
+    const service = createAnalysisService({
+      profiles: { getByUserId: async () => view },
+      opportunities: { getById: async () => opportunity },
+      store: {
+        create: async () => stored,
+        getById: async () => stored,
+      },
+      clock,
+      chat: {
+        complete: async () => {
+          throw new HttpError(502, "AI_ERROR", "The explanation service returned an empty reply.");
+        },
+      },
+    });
+
+    const result = await service.explain(stored.id, Language.ENGLISH);
+    expect(result.decision).toBe(Decision.MAYBE);
+    expect(result.explanation).toBe(`${stored.summary} ${stored.nextAction}`.trim());
   });
 });
