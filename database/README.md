@@ -38,3 +38,4 @@ You can also paste `migrations/001_init.sql` into the Supabase SQL editor.
 - Do not invent opportunities, deadlines, or application links in seeds.
 - `analyses.decision` is written by the deterministic engine only.
 - Default opportunity `verification_status` is `NEEDS_REVIEW`.
+- The API may return `EXPIRED` or `NEEDS_REVIEW` on read when the deadline has passed or verification is stale. That does not UPDATE the stored row.

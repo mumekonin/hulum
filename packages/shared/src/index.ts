@@ -28,6 +28,7 @@ export type {
   RequirementMatch,
   VoiceResponse,
 } from "./types.js";
+export { OFFICIAL_SOURCE_NOTICE } from "./notices.js";
 export { PROFILE_COMPLETENESS_FIELDS, profileCompleteness } from "./profile.js";
 export type {
   CreateProfileRequest,
