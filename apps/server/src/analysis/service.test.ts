@@ -1,5 +1,6 @@
 import {
   Decision,
+  Language,
   OpportunityType,
   VerificationStatus,
   type Analysis,
@@ -148,5 +149,33 @@ describe("analysis service", () => {
     });
 
     await expect(service.analyze(opportunity.id, profile.userId)).rejects.toBeInstanceOf(HttpError);
+  });
+
+  it("explains with Groq text but keeps the stored APPLY decision", async () => {
+    const stored = storedFrom({
+      userId: profile.userId,
+      opportunityId: opportunity.id,
+      decision: Decision.APPLY,
+      fitScore: 95,
+      summary: ANALYSIS_SUMMARY[Decision.APPLY],
+      matches: [],
+      readiness: [],
+    });
+    const service = createAnalysisService({
+      profiles: { getByUserId: async () => view },
+      opportunities: { getById: async () => opportunity },
+      store: {
+        create: async () => stored,
+        getById: async () => stored,
+      },
+      clock,
+      chat: {
+        complete: async () => "This opportunity is a SKIP.",
+      },
+    });
+
+    const result = await service.explain(stored.id, Language.ENGLISH);
+    expect(result.decision).toBe(Decision.APPLY);
+    expect(result.explanation).toContain("SKIP");
   });
 });

@@ -1,5 +1,19 @@
 # Changelog
 
+## 2026-09-20 — Mulualem
+
+### Changed
+Added Groq explanation for a stored analysis. The API always returns the engine decision.
+
+### Why
+Task 30 needs plain-language explanation without Claude. Groq is the team lock for cost.
+
+### Evidence
+Branch: `feat/claude-orchestration`
+
+### Decision
+GROQ_API_KEY and GROQ_MODEL live in env. Groq never writes APPLY/MAYBE/SKIP. Default example model is openai/gpt-oss-20b (Groq replacement after Llama 3.3 shutdown).
+
 ## 2026-09-19 — Mulualem
 
 ### Changed

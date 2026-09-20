@@ -9,6 +9,8 @@ export type AppEnv = {
   SUPABASE_ANON_KEY: string | undefined;
   SUPABASE_SERVICE_ROLE_KEY: string | undefined;
   CLAUDE_API_KEY: string | undefined;
+  GROQ_API_KEY: string | undefined;
+  GROQ_MODEL: string | undefined;
   VOXIDE_API_KEY: string | undefined;
 };
 
@@ -50,6 +52,8 @@ export function loadEnv(): AppEnv {
     SUPABASE_ANON_KEY: optionalString(process.env.SUPABASE_ANON_KEY),
     SUPABASE_SERVICE_ROLE_KEY: optionalString(process.env.SUPABASE_SERVICE_ROLE_KEY),
     CLAUDE_API_KEY: optionalString(process.env.CLAUDE_API_KEY),
+    GROQ_API_KEY: optionalString(process.env.GROQ_API_KEY),
+    GROQ_MODEL: optionalString(process.env.GROQ_MODEL),
     VOXIDE_API_KEY: optionalString(process.env.VOXIDE_API_KEY),
   };
 }
