@@ -8,7 +8,7 @@ import { matchRequirements } from "../requirements/match.js";
 import { buildReadinessItems } from "../readiness/build.js";
 import type { Clock } from "../services/common/clock.js";
 import type { AnalysisStore } from "./store.js";
-import { ANALYSIS_SUMMARY } from "./summary.js";
+import { analysisSummaryFor } from "./summary.js";
 
 export type AnalysisService = {
   analyze(opportunityId: string, userId: string): Promise<Analysis>;
@@ -42,7 +42,7 @@ export function createAnalysisService(deps: {
         opportunityId,
         decision: result.decision,
         fitScore: result.fitScore,
-        summary: ANALYSIS_SUMMARY[result.decision],
+        summary: analysisSummaryFor(result.decision),
         matches,
         readiness: buildReadinessItems(matches),
       });

@@ -3,6 +3,20 @@
 ## 2026-09-20 — Mulualem
 
 ### Changed
+Added official-source priority, effective VERIFIED / NEEDS_REVIEW / EXPIRED status, and the locked HULUM-is-not-the-organization notice on new analyses.
+
+### Why
+Task 34 must keep APPLY/MAYBE/SKIP as HULUM's reading, never the official eligibility or deadline.
+
+### Evidence
+Branch: `feat/opportunity-verification`
+
+### Decision
+Compute verification on read (30-day stale window). Do not rewrite stored rows. `sourceUrl` is fact authority; `applicationUrl` is apply-only. Expired listings cannot be APPLY.
+
+## 2026-09-20 — Mulualem
+
+### Changed
 Added Groq explanation guards. Empty, JSON, invented URLs, or a contradictory APPLY/MAYBE/SKIP word are replaced with the stored summary.
 
 ### Why

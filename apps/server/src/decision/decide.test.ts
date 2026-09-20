@@ -99,6 +99,22 @@ describe("decide", () => {
     expect(result.decision).toBe(Decision.MAYBE);
   });
 
+  it("returns SKIP when the listing is EXPIRED even if the printed deadline is open", () => {
+    const result = decide(
+      profile,
+      { ...opportunity, verificationStatus: VerificationStatus.EXPIRED },
+      clock,
+    );
+    expect(result.decision).toBe(Decision.SKIP);
+    expect(result.reasons[0]).toMatch(/expired/i);
+  });
+
+  it("still returns APPLY for NEEDS_REVIEW when key requirements match", () => {
+    const result = decide(profile, opportunity, clock);
+    expect(opportunity.verificationStatus).toBe(VerificationStatus.NEEDS_REVIEW);
+    expect(result.decision).toBe(Decision.APPLY);
+  });
+
   it("returns the same result for the same profile, opportunity, and clock", () => {
     expect(decide(profile, opportunity, clock)).toEqual(decide(profile, opportunity, clock));
   });

@@ -115,6 +115,16 @@ All responses use a consistent `{ data, error }` envelope. The shared analysis c
 
 Out of scope for v0.1: direct application submission, payments, native mobile apps, automated scraping of unverified sources.
 
+## Opportunity verification
+
+`GET /api/opportunities` returns an **effective** `verificationStatus` (the database row is not rewritten):
+
+- `EXPIRED` if the stored status is expired, or the deadline date is before today (UTC).
+- `NEEDS_REVIEW` if a `VERIFIED` row has no `lastVerifiedAt`, a last-verified time older than 30 days, or no `sourceUrl`.
+- `sourceUrl` is the eligibility/deadline authority. `applicationUrl` is only where to apply. HULUM analysis is never the official source.
+
+Every new analysis summary includes `OFFICIAL_SOURCE_NOTICE` from `@hulum/shared`.
+
 ## Disclaimer
 
 HULUM is a decision-support tool, not an official eligibility authority. It evaluates user-declared information and does not verify credentials or guarantee acceptance. Always confirm requirements with the official source.

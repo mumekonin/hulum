@@ -1,6 +1,7 @@
 import {
   Decision,
   RequirementStatus,
+  VerificationStatus,
   type DecisionResult,
   type Opportunity,
   type Profile,
@@ -8,6 +9,7 @@ import {
 } from "@hulum/shared";
 import { matchRequirements } from "../requirements/match.js";
 import type { Clock } from "../services/common/clock.js";
+import { effectiveVerificationStatus } from "../verification/index.js";
 import {
   CRITICAL_REQUIREMENT_KEYS,
   FIT_SCORE_WEIGHTS,
@@ -62,6 +64,14 @@ export function decide(profile: Profile, opportunity: Opportunity, clock: Clock)
   const reasons = matches
     .filter((item) => item.status !== RequirementStatus.NOT_APPLICABLE)
     .map((item) => item.reason);
+
+  // Stored or computed EXPIRED is never APPLY. HULUM is not the official listing.
+  if (effectiveVerificationStatus(opportunity, clock) === VerificationStatus.EXPIRED) {
+    decision = Decision.SKIP;
+    reasons.unshift(
+      "This opportunity is expired. Confirm the deadline on the official source; HULUM is not the organization.",
+    );
+  }
 
   const nextAction =
     decision === Decision.APPLY

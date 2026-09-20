@@ -13,7 +13,7 @@ import { HttpError } from "../http/errors.js";
 import type { Clock } from "../services/common/clock.js";
 import { createAnalysisService } from "./service.js";
 import type { AnalysisStore, PersistAnalysisInput as StoreInput } from "./store.js";
-import { ANALYSIS_SUMMARY } from "./summary.js";
+import { ANALYSIS_SUMMARY, analysisSummaryFor } from "./summary.js";
 
 const clock: Clock = {
   now: () => new Date("2026-09-19T12:00:00.000Z"),
@@ -121,12 +121,43 @@ describe("analysis service", () => {
     expect(persisted).toBeDefined();
     expect(result.decision).toBe(Decision.APPLY);
     expect(result.fitScore).toBeGreaterThanOrEqual(90);
-    expect(result.summary).toBe(ANALYSIS_SUMMARY[Decision.APPLY]);
+    expect(result.summary).toBe(analysisSummaryFor(Decision.APPLY));
+    expect(result.summary.startsWith(ANALYSIS_SUMMARY[Decision.APPLY])).toBe(true);
+    expect(result.summary.includes("Always verify final eligibility")).toBe(true);
     expect(result.requirements.length).toBeGreaterThan(0);
     expect(result.readiness.length).toBeGreaterThan(0);
     expect(result.readiness[0]?.title).toBe("No extra documents listed");
     expect(persisted?.userId).toBe(profile.userId);
     expect(persisted?.opportunityId).toBe(opportunity.id);
+    expect(persisted?.summary).toBe(analysisSummaryFor(Decision.APPLY));
+  });
+
+  it("persists SKIP when the opportunity is EXPIRED", async () => {
+    let persisted: StoreInput | undefined;
+    const service = createAnalysisService({
+      profiles: { getByUserId: async () => view },
+      opportunities: {
+        getById: async () => ({
+          ...opportunity,
+          verificationStatus: VerificationStatus.EXPIRED,
+        }),
+      },
+      store: {
+        async create(input) {
+          persisted = input;
+          return storedFrom(input);
+        },
+        async getById() {
+          return undefined;
+        },
+      },
+      clock,
+    });
+
+    const result = await service.analyze(opportunity.id, profile.userId);
+    expect(result.decision).toBe(Decision.SKIP);
+    expect(persisted?.decision).toBe(Decision.SKIP);
+    expect(result.summary).toBe(analysisSummaryFor(Decision.SKIP));
   });
 
   it("returns 404 when the profile is missing", async () => {
