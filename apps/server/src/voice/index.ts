@@ -28,11 +28,7 @@ import { createProfileService, type ProfileService } from "../profiles/service.j
 import { createPgProfileStore } from "../profiles/store.js";
 import type { Clock } from "../services/common/clock.js";
 import { systemClock } from "../services/common/clock.js";
-import {
-  formatOpportunityContext,
-  formatOpportunityList,
-  parseVoiceIntent,
-} from "./intents.js";
+import { formatOpportunityContext, formatOpportunityList, parseVoiceIntent } from "./intents.js";
 
 export type VoiceSessionView = {
   id: string;
@@ -76,7 +72,11 @@ function toRequirementResults(analysis: Analysis): RequirementResult[] {
   }));
 }
 
-function toAnalysisDetail(analysis: Analysis, opportunity: Opportunity, profile: Profile): AnalysisDetail {
+function toAnalysisDetail(
+  analysis: Analysis,
+  opportunity: Opportunity,
+  profile: Profile,
+): AnalysisDetail {
   const requirements = toRequirementResults(analysis);
   const readiness = analysis.readiness ?? [];
   return {
@@ -86,7 +86,10 @@ function toAnalysisDetail(analysis: Analysis, opportunity: Opportunity, profile:
     requirements,
     readiness,
     gaps: requirements
-      .filter((item) => item.status === RequirementStatus.NOT_MET || item.status === RequirementStatus.UNCERTAIN)
+      .filter(
+        (item) =>
+          item.status === RequirementStatus.NOT_MET || item.status === RequirementStatus.UNCERTAIN,
+      )
       .map((item) => ({
         requirement: item.requirementText,
         status: item.status,
@@ -130,9 +133,7 @@ export function createVoiceService(deps: {
       const language = input.language;
       const intent = parseVoiceIntent(input.text, language);
       const opportunities = await deps.opportunities.list();
-      const analysis = input.analysisId
-        ? await deps.analyses.getById(input.analysisId)
-        : undefined;
+      const analysis = input.analysisId ? await deps.analyses.getById(input.analysisId) : undefined;
       const opportunity = input.opportunityId
         ? await deps.opportunities.getById(input.opportunityId)
         : analysis
@@ -148,7 +149,9 @@ export function createVoiceService(deps: {
       }
 
       if (intent.intent === "FILTER_OPPORTUNITIES") {
-        const filtered = intent.type ? opportunities.filter((item) => item.type === intent.type) : opportunities;
+        const filtered = intent.type
+          ? opportunities.filter((item) => item.type === intent.type)
+          : opportunities;
         return {
           intent: intent.intent,
           reply: filtered.length
@@ -168,7 +171,11 @@ export function createVoiceService(deps: {
         }
         const profileView = await deps.profiles.getByUserId(input.userId);
         if (profileView === undefined) {
-          throw new HttpError(404, "PROFILE_NOT_FOUND", "Create a profile before asking HULUM to analyze.");
+          throw new HttpError(
+            404,
+            "PROFILE_NOT_FOUND",
+            "Create a profile before asking HULUM to analyze.",
+          );
         }
         const filtered = opportunities.filter(
           (item) => decide(profileView.profile, item, clock).decision === decision,
@@ -186,7 +193,8 @@ export function createVoiceService(deps: {
         if (!opportunity) {
           return {
             intent: intent.intent,
-            reply: "Choose an opportunity first, then I can tell you about it from the stored record.",
+            reply:
+              "Choose an opportunity first, then I can tell you about it from the stored record.",
           };
         }
         const storedDecision =
@@ -201,7 +209,8 @@ export function createVoiceService(deps: {
       if (intent.intent === "UPDATE_PROFILE") {
         return {
           intent: intent.intent,
-          reply: "Open your profile to update education, skills, or documents. Voice cannot silently change stored facts.",
+          reply:
+            "Open your profile to update education, skills, or documents. Voice cannot silently change stored facts.",
         };
       }
 
@@ -216,7 +225,11 @@ export function createVoiceService(deps: {
           const created = await deps.analyses.analyze(opportunity.id, input.userId);
           const profileView = await deps.profiles.getByUserId(input.userId);
           if (profileView === undefined) {
-            throw new HttpError(404, "PROFILE_NOT_FOUND", "Create a profile before asking HULUM to analyze.");
+            throw new HttpError(
+              404,
+              "PROFILE_NOT_FOUND",
+              "Create a profile before asking HULUM to analyze.",
+            );
           }
           const detail = toAnalysisDetail(created, opportunity, profileView.profile);
           return {
@@ -247,7 +260,11 @@ export function createVoiceService(deps: {
         const requirements = analysis.requirements ?? [];
         const readiness = analysis.readiness ?? [];
         const gaps = requirements
-          .filter((item) => item.status === RequirementStatus.NOT_MET || item.status === RequirementStatus.UNCERTAIN)
+          .filter(
+            (item) =>
+              item.status === RequirementStatus.NOT_MET ||
+              item.status === RequirementStatus.UNCERTAIN,
+          )
           .map((item) => `${item.text} (${item.status})`);
         const detail =
           relatedOpportunity && profileView
@@ -278,7 +295,9 @@ export function createVoiceService(deps: {
             : "No readiness checklist is stored yet.";
           return {
             intent: intent.intent,
-            reply: readiness.length ? `${analysis.nextAction} Prepare: ${list}` : `${analysis.nextAction} ${list}`,
+            reply: readiness.length
+              ? `${analysis.nextAction} Prepare: ${list}`
+              : `${analysis.nextAction} ${list}`,
             analysis: detail,
             opportunity: relatedOpportunity,
           };
@@ -292,7 +311,8 @@ export function createVoiceService(deps: {
       ) {
         return {
           intent: intent.intent,
-          reply: "Analyze an opportunity first, then I can explain the decision, gaps, or readiness plan.",
+          reply:
+            "Analyze an opportunity first, then I can explain the decision, gaps, or readiness plan.",
         };
       }
 
@@ -310,10 +330,11 @@ async function persistVoiceSession(input: {
   userId: string;
   language: LanguageCode;
 }): Promise<void> {
-  await getPool().query(
-    `insert into voice_sessions (id, user_id, language) values ($1, $2, $3)`,
-    [input.id, input.userId, input.language],
-  );
+  await getPool().query(`insert into voice_sessions (id, user_id, language) values ($1, $2, $3)`, [
+    input.id,
+    input.userId,
+    input.language,
+  ]);
 }
 
 function defaultVoiceService(): VoiceService {
@@ -346,7 +367,9 @@ export function createVoiceRouter(service?: VoiceService): Router {
   router.post("/session", async (req, res, next) => {
     try {
       const userId =
-        typeof req.body?.userId === "string" && req.body.userId.trim() ? req.body.userId.trim() : "anonymous";
+        typeof req.body?.userId === "string" && req.body.userId.trim()
+          ? req.body.userId.trim()
+          : "anonymous";
       const language: LanguageCode =
         req.body?.language === "am" || req.body?.language === "om" ? req.body.language : "en";
       const session = await getService().createSession(userId, language);

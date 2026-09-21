@@ -116,7 +116,8 @@ function AssistantInner() {
         ? " Text fallback session is active until a Voxide publishable key is set."
         : "";
     if (analysisId) return `This conversation is attached to your latest analysis.${sessionNote}`;
-    if (opportunityId) return `This conversation is attached to a selected opportunity.${sessionNote}`;
+    if (opportunityId)
+      return `This conversation is attached to a selected opportunity.${sessionNote}`;
     return `No analysis selected yet. You can still browse or filter opportunities by voice/text.${sessionNote}`;
   }, [analysisId, opportunityId, voiceSession]);
 
@@ -161,8 +162,8 @@ function AssistantInner() {
     <section className="max-w-2xl" lang={language}>
       <h1 className="font-display text-4xl">Ask HULUM</h1>
       <p className="mt-3 text-muted">
-        Voice must perform real product actions. v0.1 ships with text and quick actions so a missing Voxide
-        key cannot kill the demo.
+        Voice must perform real product actions. v0.1 ships with text and quick actions so a missing
+        Voxide key cannot kill the demo.
       </p>
       <div className="mt-6">
         <Notice>{contextLabel}</Notice>
@@ -171,7 +172,10 @@ function AssistantInner() {
         <legend className="text-sm font-medium">Language</legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {LANGUAGE_OPTIONS.map((option) => (
-            <label key={option.code} className="inline-flex min-h-11 items-center gap-2 border border-line px-3 py-2 text-sm">
+            <label
+              key={option.code}
+              className="inline-flex min-h-11 items-center gap-2 border border-line px-3 py-2 text-sm"
+            >
               <input
                 type="radio"
                 name="assistant-language"
@@ -184,7 +188,8 @@ function AssistantInner() {
           ))}
         </div>
         <p className="mt-2 text-sm text-muted">
-          English is the stable v0.1 path. Amharic and Afaan Oromo are stored for Voxide; they do not enable live speech yet.
+          English is the stable v0.1 path. Amharic and Afaan Oromo are stored for Voxide; they do
+          not enable live speech yet.
         </p>
       </fieldset>
       {backupMode ? (
@@ -195,7 +200,8 @@ function AssistantInner() {
             primary={{ label: "Type a request", onClick: () => requestInput.current?.focus() }}
             secondary={{ label: "Browse opportunities", href: "/opportunities" }}
           >
-            Voxide is not connected. Type a request or use a quick action. You are not stuck waiting for a microphone.
+            Voxide is not connected. Type a request or use a quick action. You are not stuck waiting
+            for a microphone.
           </StatusPanel>
         </div>
       ) : null}
@@ -256,13 +262,24 @@ function AssistantInner() {
       </fieldset>
       <div className="mt-6 min-h-48 space-y-3" aria-live="polite" aria-relevant="additions">
         {messages.length === 0 && !pending && !error ? (
-          <StatusPanel variant="empty" title="No question yet" primary={{ label: "Show internships", onClick: () => void send("Show me internships") }}>
+          <StatusPanel
+            variant="empty"
+            title="No question yet"
+            primary={{ label: "Show internships", onClick: () => void send("Show me internships") }}
+          >
             Type a request or use a quick action.
           </StatusPanel>
         ) : null}
         {messages.map((message, index) => (
-          <p key={`${message.role}-${index}`} className={message.role === "hulum" ? "border border-line bg-white/70 p-4" : "text-muted"}>
-            <span className="block text-xs uppercase tracking-wide">{message.role === "hulum" ? "HULUM" : "You"}</span>
+          <p
+            key={`${message.role}-${index}`}
+            className={
+              message.role === "hulum" ? "border border-line bg-white/70 p-4" : "text-muted"
+            }
+          >
+            <span className="block text-xs uppercase tracking-wide">
+              {message.role === "hulum" ? "HULUM" : "You"}
+            </span>
             {message.text}
           </p>
         ))}
@@ -291,7 +308,10 @@ function AssistantInner() {
             disabled={pending}
           />
         </label>
-        <button disabled={pending} className="mt-auto min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
+        <button
+          disabled={pending}
+          className="mt-auto min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60"
+        >
           {pending ? "Sending…" : "Send"}
         </button>
       </form>

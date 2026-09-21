@@ -19,7 +19,13 @@ const contract: AnalysisContract = {
       requirementText: "Field accepted by the programme",
     },
   ],
-  gaps: [{ requirement: "Field accepted by the programme", status: "UNCERTAIN", remediation: "Confirm on the official source." }],
+  gaps: [
+    {
+      requirement: "Field accepted by the programme",
+      status: "UNCERTAIN",
+      remediation: "Confirm on the official source.",
+    },
+  ],
   readiness: [],
 };
 
@@ -29,12 +35,16 @@ describe("validateClaudeOutput", () => {
       decision: "MAYBE",
       explanation: "Field fit is still uncertain, so HULUM stays MAYBE.",
     });
-    expect(validateClaudeOutput(raw, contract)).toBe("Field fit is still uncertain, so HULUM stays MAYBE.");
+    expect(validateClaudeOutput(raw, contract)).toBe(
+      "Field fit is still uncertain, so HULUM stays MAYBE.",
+    );
   });
 
   it("replaces malformed output with the engine summary", () => {
     expect(validateClaudeOutput("not json", contract)).toBe(contract.summary);
-    expect(validateClaudeOutput(JSON.stringify({ explanation: "missing decision" }), contract)).toBe(contract.summary);
+    expect(
+      validateClaudeOutput(JSON.stringify({ explanation: "missing decision" }), contract),
+    ).toBe(contract.summary);
   });
 
   it("replaces JSON that contradicts APPLY/MAYBE/SKIP", () => {
@@ -45,13 +55,19 @@ describe("validateClaudeOutput", () => {
   it("replaces wording that claims official eligibility or erases uncertainty", () => {
     expect(
       validateClaudeOutput(
-        JSON.stringify({ decision: "MAYBE", explanation: "You are officially eligible for this award." }),
+        JSON.stringify({
+          decision: "MAYBE",
+          explanation: "You are officially eligible for this award.",
+        }),
         contract,
       ),
     ).toBe(contract.summary);
     expect(
       validateClaudeOutput(
-        JSON.stringify({ decision: "MAYBE", explanation: "You definitely qualify with no uncertainty." }),
+        JSON.stringify({
+          decision: "MAYBE",
+          explanation: "You definitely qualify with no uncertainty.",
+        }),
         contract,
       ),
     ).toBe(contract.summary);

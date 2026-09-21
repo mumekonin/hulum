@@ -84,7 +84,8 @@ export default function OpportunityDetailPage() {
         title="This opportunity is not in the current list"
         primary={{ label: "Browse opportunities", href: "/opportunities" }}
       >
-        It may have been removed from the stored records. Open the list and pick another sourced opportunity.
+        It may have been removed from the stored records. Open the list and pick another sourced
+        opportunity.
       </StatusPanel>
     );
   }
@@ -136,13 +137,23 @@ export default function OpportunityDetailPage() {
         ))}
       </ul>
       <div className="mt-8 flex flex-wrap gap-3">
-        <button onClick={() => void analyze()} disabled={analyzing} className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
+        <button
+          onClick={() => void analyze()}
+          disabled={analyzing}
+          className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60"
+        >
           {analyzing ? "Analyzing…" : "Analyze for me"}
         </button>
-        <ExternalLink href={opportunity.applicationUrl} className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
+        <ExternalLink
+          href={opportunity.applicationUrl}
+          className="inline-flex min-h-11 items-center border border-ink px-5 py-3"
+        >
           Official application
         </ExternalLink>
-        <ExternalLink href={opportunity.sourceUrl} className="inline-flex min-h-11 items-center px-5 py-3 text-muted">
+        <ExternalLink
+          href={opportunity.sourceUrl}
+          className="inline-flex min-h-11 items-center px-5 py-3 text-muted"
+        >
           Official source
         </ExternalLink>
       </div>
@@ -156,7 +167,10 @@ export default function OpportunityDetailPage() {
               : { label: "Try again", onClick: () => void analyze() }
           }
         >
-          {error} {needsProfile ? "Create or save a profile first." : "The decision engine did not finish. Try again."}
+          {error}{" "}
+          {needsProfile
+            ? "Create or save a profile first."
+            : "The decision engine did not finish. Try again."}
         </StatusPanel>
       ) : null}
       <div className="mt-6">

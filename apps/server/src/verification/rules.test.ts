@@ -57,9 +57,9 @@ describe("effectiveVerificationStatus", () => {
   });
 
   it("marks a past deadline EXPIRED even when stored as VERIFIED", () => {
-    expect(
-      effectiveVerificationStatus({ ...opportunity, deadline: "2026-01-01" }, clock),
-    ).toBe(VerificationStatus.EXPIRED);
+    expect(effectiveVerificationStatus({ ...opportunity, deadline: "2026-01-01" }, clock)).toBe(
+      VerificationStatus.EXPIRED,
+    );
   });
 
   it("keeps stored EXPIRED when the printed deadline is still in the future", () => {
@@ -72,9 +72,9 @@ describe("effectiveVerificationStatus", () => {
   });
 
   it("treats VERIFIED with no lastVerifiedAt as NEEDS_REVIEW", () => {
-    expect(
-      effectiveVerificationStatus({ ...opportunity, lastVerifiedAt: null }, clock),
-    ).toBe(VerificationStatus.NEEDS_REVIEW);
+    expect(effectiveVerificationStatus({ ...opportunity, lastVerifiedAt: null }, clock)).toBe(
+      VerificationStatus.NEEDS_REVIEW,
+    );
   });
 
   it("treats VERIFIED older than the stale window as NEEDS_REVIEW", () => {
@@ -97,16 +97,13 @@ describe("effectiveVerificationStatus", () => {
   });
 
   it("does not invent a source URL; empty source is NEEDS_REVIEW", () => {
-    expect(
-      effectiveVerificationStatus({ ...opportunity, sourceUrl: "   " }, clock),
-    ).toBe(VerificationStatus.NEEDS_REVIEW);
+    expect(effectiveVerificationStatus({ ...opportunity, sourceUrl: "   " }, clock)).toBe(
+      VerificationStatus.NEEDS_REVIEW,
+    );
   });
 
   it("presents effective status without changing lastVerifiedAt", () => {
-    const presented = presentOpportunity(
-      { ...opportunity, deadline: "2026-01-01" },
-      clock,
-    );
+    const presented = presentOpportunity({ ...opportunity, deadline: "2026-01-01" }, clock);
     expect(presented.verificationStatus).toBe(VerificationStatus.EXPIRED);
     expect(presented.lastVerifiedAt).toBe("2026-09-19T00:00:00.000Z");
     expect(presented.sourceUrl).toBe("https://example.invalid/source");

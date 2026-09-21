@@ -4,15 +4,23 @@ import { runAnalysis, toAnalysisDetail } from "../analysis/runAnalysis.js";
 import { analyzeOpportunity } from "../decision/engine.js";
 import { fail, ok } from "../lib/http.js";
 import { createId, nowIso } from "../lib/id.js";
-import { formatOpportunityContext, formatOpportunityList, parseVoiceIntent } from "../voice/intents.js";
+import {
+  formatOpportunityContext,
+  formatOpportunityList,
+  parseVoiceIntent,
+} from "../voice/intents.js";
 import { findLatestAnalysis } from "../voice/findAnalysis.js";
 import { loadStore, mutateStore } from "../store/fileStore.js";
 
 export const voiceRouter = Router();
 
 voiceRouter.post("/session", async (req, res) => {
-  const userId = typeof req.body?.userId === "string" && req.body.userId.trim() ? req.body.userId.trim() : "anonymous";
-  const language = req.body?.language === "am" || req.body?.language === "om" ? req.body.language : "en";
+  const userId =
+    typeof req.body?.userId === "string" && req.body.userId.trim()
+      ? req.body.userId.trim()
+      : "anonymous";
+  const language =
+    req.body?.language === "am" || req.body?.language === "om" ? req.body.language : "en";
   const session = {
     id: createId("voice"),
     userId,
@@ -61,7 +69,9 @@ voiceRouter.post("/action", async (req, res) => {
   }
 
   if (intent.intent === "FILTER_OPPORTUNITIES") {
-    const filtered = intent.type ? opportunities.filter((item) => item.type === intent.type) : opportunities;
+    const filtered = intent.type
+      ? opportunities.filter((item) => item.type === intent.type)
+      : opportunities;
     ok(res, {
       intent: intent.intent,
       reply: filtered.length
@@ -86,7 +96,9 @@ voiceRouter.post("/action", async (req, res) => {
       fail(res, "Create a profile before asking HULUM to analyze.", 404, "PROFILE_NOT_FOUND");
       return;
     }
-    const filtered = opportunities.filter((item) => analyzeOpportunity(profile, item).decision === decision);
+    const filtered = opportunities.filter(
+      (item) => analyzeOpportunity(profile, item).decision === decision,
+    );
     ok(res, {
       intent: intent.intent,
       reply: filtered.length
@@ -105,7 +117,8 @@ voiceRouter.post("/action", async (req, res) => {
       });
       return;
     }
-    const storedDecision = analysis && analysis.opportunityId === opportunity.id ? analysis.decision : undefined;
+    const storedDecision =
+      analysis && analysis.opportunityId === opportunity.id ? analysis.decision : undefined;
     ok(res, {
       intent: intent.intent,
       reply: formatOpportunityContext(opportunity, storedDecision),
@@ -117,7 +130,8 @@ voiceRouter.post("/action", async (req, res) => {
   if (intent.intent === "UPDATE_PROFILE") {
     ok(res, {
       intent: intent.intent,
-      reply: "Open your profile to update education, skills, or documents. Voice cannot silently change stored facts.",
+      reply:
+        "Open your profile to update education, skills, or documents. Voice cannot silently change stored facts.",
     });
     return;
   }
@@ -168,7 +182,13 @@ voiceRouter.post("/action", async (req, res) => {
         reply: `${analysis.decision}. ${analysis.explanation}`,
         analysis:
           relatedOpportunity && relatedProfile
-            ? toAnalysisDetail(analysis, relatedOpportunity, relatedProfile, requirements, readiness)
+            ? toAnalysisDetail(
+                analysis,
+                relatedOpportunity,
+                relatedProfile,
+                requirements,
+                readiness,
+              )
             : undefined,
         opportunity: relatedOpportunity,
       });
@@ -185,7 +205,13 @@ voiceRouter.post("/action", async (req, res) => {
           : "No missing or uncertain requirements are stored for this analysis.",
         analysis:
           relatedOpportunity && relatedProfile
-            ? toAnalysisDetail(analysis, relatedOpportunity, relatedProfile, requirements, readiness)
+            ? toAnalysisDetail(
+                analysis,
+                relatedOpportunity,
+                relatedProfile,
+                requirements,
+                readiness,
+              )
             : undefined,
         opportunity: relatedOpportunity,
       });
@@ -200,10 +226,18 @@ voiceRouter.post("/action", async (req, res) => {
         : "No readiness checklist is stored yet.";
       ok(res, {
         intent: intent.intent,
-        reply: readiness.length ? `${analysis.nextAction} Prepare: ${list}` : `${analysis.nextAction} ${list}`,
+        reply: readiness.length
+          ? `${analysis.nextAction} Prepare: ${list}`
+          : `${analysis.nextAction} ${list}`,
         analysis:
           relatedOpportunity && relatedProfile
-            ? toAnalysisDetail(analysis, relatedOpportunity, relatedProfile, requirements, readiness)
+            ? toAnalysisDetail(
+                analysis,
+                relatedOpportunity,
+                relatedProfile,
+                requirements,
+                readiness,
+              )
             : undefined,
         opportunity: relatedOpportunity,
       });
@@ -214,13 +248,15 @@ voiceRouter.post("/action", async (req, res) => {
   if (["EXPLAIN_DECISION", "SHOW_MISSING_REQUIREMENTS", "SHOW_READINESS"].includes(intent.intent)) {
     ok(res, {
       intent: intent.intent,
-      reply: "Analyze an opportunity first, then I can explain the decision, gaps, or readiness plan.",
+      reply:
+        "Analyze an opportunity first, then I can explain the decision, gaps, or readiness plan.",
     });
     return;
   }
 
   ok(res, {
     intent: "UNSUPPORTED",
-    reply: "I can show opportunities, filter internships or scholarships, filter APPLY MAYBE or SKIP, analyze a selected opportunity, explain a decision, or list what to prepare. You can also type instead of speaking.",
+    reply:
+      "I can show opportunities, filter internships or scholarships, filter APPLY MAYBE or SKIP, analyze a selected opportunity, explain a decision, or list what to prepare. You can also type instead of speaking.",
   });
 });

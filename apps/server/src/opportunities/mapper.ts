@@ -1,8 +1,4 @@
-import {
-  OpportunityType,
-  VerificationStatus,
-  type Opportunity,
-} from "@hulum/shared";
+import { OpportunityType, VerificationStatus, type Opportunity } from "@hulum/shared";
 
 export type OpportunityRow = {
   id: string;
@@ -53,7 +49,9 @@ export function mapOpportunityRow(row: OpportunityRow): Opportunity {
     throw new Error("Opportunity type in the database is not a locked contract value");
   }
   if (!isVerificationStatus(row.verification_status)) {
-    throw new Error("Opportunity verification_status in the database is not a locked contract value");
+    throw new Error(
+      "Opportunity verification_status in the database is not a locked contract value",
+    );
   }
 
   return {

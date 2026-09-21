@@ -54,7 +54,10 @@ function memberStatus(
   };
 }
 
-function languageStatus(profile: Profile, required: string[]): Pick<RequirementMatch, "status" | "evidence" | "reason"> {
+function languageStatus(
+  profile: Profile,
+  required: string[],
+): Pick<RequirementMatch, "status" | "evidence" | "reason"> {
   if (required.length === 0) {
     return {
       status: RequirementStatus.NOT_APPLICABLE,
@@ -85,7 +88,10 @@ function languageStatus(profile: Profile, required: string[]): Pick<RequirementM
   };
 }
 
-function deadlineStatus(opportunity: Opportunity, clock: Clock): Pick<RequirementMatch, "status" | "evidence" | "reason"> {
+function deadlineStatus(
+  opportunity: Opportunity,
+  clock: Clock,
+): Pick<RequirementMatch, "status" | "evidence" | "reason"> {
   const deadline = opportunity.deadline.trim();
   if (!/^\d{4}-\d{2}-\d{2}/.test(deadline)) {
     return {
@@ -148,11 +154,16 @@ function fieldOverlaps(text: string, values: string[]): boolean {
   if (!text.trim()) {
     return false;
   }
-  return values.some((value) => normalize(text).includes(normalize(value)) || normalize(value).includes(normalize(text)));
+  return values.some(
+    (value) =>
+      normalize(text).includes(normalize(value)) || normalize(value).includes(normalize(text)),
+  );
 }
 
 function deniesListedExperience(text: string): boolean {
-  return /\bno (work |professional )?experience\b|\bno work history\b|\bzero years\b|\bhave not worked\b/i.test(text);
+  return /\bno (work |professional )?experience\b|\bno work history\b|\bzero years\b|\bhave not worked\b/i.test(
+    text,
+  );
 }
 
 function educationStatus(
@@ -228,7 +239,8 @@ function experienceStatus(
   }
   return unstructuredStatus(required, !hasText(profile.experience), {
     name: "experience",
-    whyUncertain: "The profile has no experience text, so experience requirements cannot be confirmed.",
+    whyUncertain:
+      "The profile has no experience text, so experience requirements cannot be confirmed.",
   });
 }
 
@@ -236,7 +248,11 @@ function experienceStatus(
  * Deterministic matcher. Same profile + opportunity + clock.now() date
  * always returns the same statuses. Never infers MET from similar wording.
  */
-export function matchRequirements(profile: Profile, opportunity: Opportunity, clock: Clock): RequirementMatch[] {
+export function matchRequirements(
+  profile: Profile,
+  opportunity: Opportunity,
+  clock: Clock,
+): RequirementMatch[] {
   const educationRequirements = asStringList(opportunity.educationRequirements);
   const fieldRequirements = asStringList(opportunity.fieldRequirements);
   const languageRequirements = asStringList(opportunity.languageRequirements);
@@ -252,7 +268,8 @@ export function matchRequirements(profile: Profile, opportunity: Opportunity, cl
   const experience = experienceStatus(profile, experienceRequirements);
   const documents = unstructuredStatus(opportunity.documentRequirements, true, {
     name: "document",
-    whyUncertain: "The profile has no document facts, so document requirements cannot be confirmed.",
+    whyUncertain:
+      "The profile has no document facts, so document requirements cannot be confirmed.",
   });
   const other = unstructuredStatus(opportunity.otherRequirements, true, {
     name: "other",
@@ -261,13 +278,41 @@ export function matchRequirements(profile: Profile, opportunity: Opportunity, cl
   const deadline = deadlineStatus(opportunity, clock);
 
   return [
-    { key: RequirementKey.COUNTRY, text: opportunity.countryEligibility.join(", ") || "Country eligibility", ...country },
-    { key: RequirementKey.EDUCATION, text: educationRequirements.join(", ") || "Education requirement", ...education },
-    { key: RequirementKey.FIELD, text: fieldRequirements.join(", ") || "Field requirement", ...field },
-    { key: RequirementKey.LANGUAGE, text: languageRequirements.join(", ") || "Language requirement", ...language },
-    { key: RequirementKey.EXPERIENCE, text: experienceRequirements.join(", ") || "Experience requirement", ...experience },
-    { key: RequirementKey.DOCUMENTS, text: opportunity.documentRequirements.join(", ") || "Document requirement", ...documents },
+    {
+      key: RequirementKey.COUNTRY,
+      text: opportunity.countryEligibility.join(", ") || "Country eligibility",
+      ...country,
+    },
+    {
+      key: RequirementKey.EDUCATION,
+      text: educationRequirements.join(", ") || "Education requirement",
+      ...education,
+    },
+    {
+      key: RequirementKey.FIELD,
+      text: fieldRequirements.join(", ") || "Field requirement",
+      ...field,
+    },
+    {
+      key: RequirementKey.LANGUAGE,
+      text: languageRequirements.join(", ") || "Language requirement",
+      ...language,
+    },
+    {
+      key: RequirementKey.EXPERIENCE,
+      text: experienceRequirements.join(", ") || "Experience requirement",
+      ...experience,
+    },
+    {
+      key: RequirementKey.DOCUMENTS,
+      text: opportunity.documentRequirements.join(", ") || "Document requirement",
+      ...documents,
+    },
     { key: RequirementKey.DEADLINE, text: `Deadline ${opportunity.deadline}`, ...deadline },
-    { key: RequirementKey.OTHER, text: opportunity.otherRequirements.join(", ") || "Other requirements", ...other },
+    {
+      key: RequirementKey.OTHER,
+      text: opportunity.otherRequirements.join(", ") || "Other requirements",
+      ...other,
+    },
   ];
 }

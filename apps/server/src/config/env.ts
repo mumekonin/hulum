@@ -90,8 +90,10 @@ export function loadEnv(options: LoadEnvOptions = {}): AppEnv {
     SUPABASE_URL: optionalString(process.env.SUPABASE_URL),
     SUPABASE_ANON_KEY: optionalString(process.env.SUPABASE_ANON_KEY),
     SUPABASE_SERVICE_ROLE_KEY: optionalString(process.env.SUPABASE_SERVICE_ROLE_KEY),
-    CLAUDE_API_KEY: optionalString(process.env.CLAUDE_API_KEY) ?? optionalString(process.env.ANTHROPIC_API_KEY),
-    CLAUDE_MODEL: optionalString(process.env.CLAUDE_MODEL) ?? optionalString(process.env.ANTHROPIC_MODEL),
+    CLAUDE_API_KEY:
+      optionalString(process.env.CLAUDE_API_KEY) ?? optionalString(process.env.ANTHROPIC_API_KEY),
+    CLAUDE_MODEL:
+      optionalString(process.env.CLAUDE_MODEL) ?? optionalString(process.env.ANTHROPIC_MODEL),
     GROQ_API_KEY: optionalString(process.env.GROQ_API_KEY),
     GROQ_MODEL: optionalString(process.env.GROQ_MODEL),
     VOXIDE_API_KEY: optionalString(process.env.VOXIDE_API_KEY),

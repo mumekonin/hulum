@@ -3,7 +3,13 @@ import { describe, expect, it } from "vitest";
 import { errorHandler } from "./error-handler.js";
 import { HttpError } from "./errors.js";
 
-function capture(): { req: Request; res: Response; next: NextFunction; statusCode: () => number; body: () => unknown } {
+function capture(): {
+  req: Request;
+  res: Response;
+  next: NextFunction;
+  statusCode: () => number;
+  body: () => unknown;
+} {
   let statusCode = 0;
   let body: unknown;
   const res = {

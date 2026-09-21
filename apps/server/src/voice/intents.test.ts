@@ -18,7 +18,11 @@ describe("parseVoiceIntent", () => {
       { text: "ምን ጎድሎኛል?", intent: "SHOW_MISSING_REQUIREMENTS" },
       { text: "What should I prepare?", intent: "SHOW_READINESS" },
       { text: "ምን ላዘጋጅ?", intent: "SHOW_READINESS" },
-      { text: "Show me opportunities I should apply for.", intent: "FILTER_BY_DECISION", decision: "APPLY" },
+      {
+        text: "Show me opportunities I should apply for.",
+        intent: "FILTER_BY_DECISION",
+        decision: "APPLY",
+      },
       { text: "Show me maybe opportunities.", intent: "FILTER_BY_DECISION", decision: "MAYBE" },
       { text: "Show me skip opportunities.", intent: "FILTER_BY_DECISION", decision: "SKIP" },
       { text: "Show me internships", intent: "FILTER_OPPORTUNITIES", type: "internship" },
@@ -38,6 +42,8 @@ describe("parseVoiceIntent", () => {
 
   it("does not treat analyze-this as a catalog APPLY filter", () => {
     expect(parseVoiceIntent("Should I apply for this?").intent).toBe("ANALYZE_OPPORTUNITY");
-    expect(parseVoiceIntent("Show me opportunities I should apply for.").intent).toBe("FILTER_BY_DECISION");
+    expect(parseVoiceIntent("Show me opportunities I should apply for.").intent).toBe(
+      "FILTER_BY_DECISION",
+    );
   });
 });

@@ -1,4 +1,10 @@
-import type { Analysis, AnalysisExplanation, Language, ProfileView, ReadinessItem } from "@hulum/shared";
+import type {
+  Analysis,
+  AnalysisExplanation,
+  Language,
+  ProfileView,
+  ReadinessItem,
+} from "@hulum/shared";
 import { buildExplainMessages, explanationFrom, type ChatClient } from "../ai/index.js";
 import { decide } from "../decision/decide.js";
 import { HttpError } from "../http/errors.js";

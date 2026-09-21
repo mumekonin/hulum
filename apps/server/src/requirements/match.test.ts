@@ -83,22 +83,38 @@ describe("matchRequirements", () => {
   });
 
   it("returns NOT_MET for an education mismatch", () => {
-    const result = matchRequirements({ ...profile, educationLevel: "high_school" }, opportunity, clock);
+    const result = matchRequirements(
+      { ...profile, educationLevel: "high_school" },
+      opportunity,
+      clock,
+    );
     expect(status(result, RequirementKey.EDUCATION)).toBe(RequirementStatus.NOT_MET);
   });
 
   it("returns NOT_MET when a required language is missing", () => {
-    const result = matchRequirements(profile, { ...opportunity, languageRequirements: ["en", "fr"] }, clock);
+    const result = matchRequirements(
+      profile,
+      { ...opportunity, languageRequirements: ["en", "fr"] },
+      clock,
+    );
     expect(status(result, RequirementKey.LANGUAGE)).toBe(RequirementStatus.NOT_MET);
   });
 
   it("returns UNCERTAIN for experience text instead of guessing MET", () => {
-    const result = matchRequirements(profile, { ...opportunity, experienceRequirements: ["2 years"] }, clock);
+    const result = matchRequirements(
+      profile,
+      { ...opportunity, experienceRequirements: ["2 years"] },
+      clock,
+    );
     expect(status(result, RequirementKey.EXPERIENCE)).toBe(RequirementStatus.UNCERTAIN);
   });
 
   it("returns UNCERTAIN for document requirements because the profile has no document facts", () => {
-    const result = matchRequirements(profile, { ...opportunity, documentRequirements: ["cv"] }, clock);
+    const result = matchRequirements(
+      profile,
+      { ...opportunity, documentRequirements: ["cv"] },
+      clock,
+    );
     expect(status(result, RequirementKey.DOCUMENTS)).toBe(RequirementStatus.UNCERTAIN);
   });
 

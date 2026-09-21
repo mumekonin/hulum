@@ -23,11 +23,19 @@ export type AnalysisSuccess = {
   detail: AnalysisDetail;
 };
 
-export async function runAnalysis(userId: string, opportunityId: string): Promise<AnalysisSuccess | AnalysisFailure> {
+export async function runAnalysis(
+  userId: string,
+  opportunityId: string,
+): Promise<AnalysisSuccess | AnalysisFailure> {
   const store = await loadStore();
   const opportunity = store.opportunities.find((item) => item.id === opportunityId);
   if (!opportunity) {
-    return { ok: false, status: 404, code: "OPPORTUNITY_NOT_FOUND", message: "Opportunity not found." };
+    return {
+      ok: false,
+      status: 404,
+      code: "OPPORTUNITY_NOT_FOUND",
+      message: "Opportunity not found.",
+    };
   }
 
   const profile = store.profiles.find((item) => item.userId === userId);

@@ -1,5 +1,11 @@
 import { z } from "zod";
-import { decisionSchema, isLanguage, Language, type AnalysisContract, type Decision } from "@hulum/shared";
+import {
+  decisionSchema,
+  isLanguage,
+  Language,
+  type AnalysisContract,
+  type Decision,
+} from "@hulum/shared";
 import { HttpError } from "../http/errors.js";
 
 export function parseExplainRequest(body: unknown): { language: Language } {
@@ -28,7 +34,9 @@ export const claudeExplanationSchema = z.object({
 export function sanitizeExplanation(text: string, decision: Decision, fallback: string): string {
   const cleaned = text.trim();
   if (!cleaned) return fallback;
-  const mentioned = (["APPLY", "MAYBE", "SKIP"] as const).filter((item) => new RegExp(`\\b${item}\\b`).test(cleaned));
+  const mentioned = (["APPLY", "MAYBE", "SKIP"] as const).filter((item) =>
+    new RegExp(`\\b${item}\\b`).test(cleaned),
+  );
   if (mentioned.some((item) => item !== decision)) return fallback;
   return cleaned;
 }
@@ -41,13 +49,20 @@ function parseJsonObject(text: string): unknown {
 }
 
 function failsSafety(text: string, contract: AnalysisContract): boolean {
-  if (/officially eligible|guaranteed (acceptance|admission|eligibility)|confirmed eligible/i.test(text)) {
+  if (
+    /officially eligible|guaranteed (acceptance|admission|eligibility)|confirmed eligible/i.test(
+      text,
+    )
+  ) {
     return true;
   }
   const uncertain =
     contract.requirements.some((item) => item.status === "UNCERTAIN") ||
     contract.gaps.some((item) => item.status === "UNCERTAIN");
-  if (uncertain && /no uncertainty|definitely (meet|qualify)|certainly (meet|qualify)/i.test(text)) {
+  if (
+    uncertain &&
+    /no uncertainty|definitely (meet|qualify)|certainly (meet|qualify)/i.test(text)
+  ) {
     return true;
   }
   return false;

@@ -20,7 +20,9 @@ function norm(value: string): string {
 
 function fieldOverlaps(text: string, values: string[]): boolean {
   if (!text.trim()) return false;
-  return values.some((value) => norm(text).includes(norm(value)) || norm(value).includes(norm(text)));
+  return values.some(
+    (value) => norm(text).includes(norm(value)) || norm(value).includes(norm(text)),
+  );
 }
 
 function deniesListedExperience(text: string): boolean {
@@ -31,7 +33,9 @@ function deniesListedExperience(text: string): boolean {
 
 function includesAny(haystack: string[], needles: string[]): boolean {
   const hay = haystack.map(norm);
-  return needles.some((needle) => hay.some((item) => item.includes(norm(needle)) || norm(needle).includes(item)));
+  return needles.some((needle) =>
+    hay.some((item) => item.includes(norm(needle)) || norm(needle).includes(item)),
+  );
 }
 
 function isAfrican(country: string): boolean {
@@ -54,7 +58,9 @@ function matchCountry(profile: Profile, values: string[]): MatchOutcome {
   }
   const allowed = values.map(norm);
   const country = norm(profile.country);
-  const africaOk = allowed.some((value) => value === "africa" || value === "african countries" || value === "african");
+  const africaOk = allowed.some(
+    (value) => value === "africa" || value === "african countries" || value === "african",
+  );
   const direct = allowed.includes(country);
   const continent = africaOk && isAfrican(profile.country);
 
@@ -73,7 +79,11 @@ function matchCountry(profile: Profile, values: string[]): MatchOutcome {
   };
 }
 
-function matchEducation(profile: Profile, level: EducationLevel, enrolledOk?: boolean): MatchOutcome {
+function matchEducation(
+  profile: Profile,
+  level: EducationLevel,
+  enrolledOk?: boolean,
+): MatchOutcome {
   if (!profile.educationLevel) {
     return {
       status: "UNCERTAIN",
@@ -92,7 +102,8 @@ function matchEducation(profile: Profile, level: EducationLevel, enrolledOk?: bo
     return {
       status: "UNCERTAIN",
       evidence: `Education level is ${educationLevel}, graduating ${graduationYear}.`,
-      reason: "Current enrollment conflicts with a graduation year that is already in the past. Confirm status on the official source.",
+      reason:
+        "Current enrollment conflicts with a graduation year that is already in the past. Confirm status on the official source.",
     };
   }
 
@@ -145,7 +156,8 @@ function matchField(profile: Profile, values: string[]): MatchOutcome {
     return {
       status: "UNCERTAIN",
       evidence: `Field of study is ${field}; skills/interests include ${extras.join(", ")}.`,
-      reason: "Declared field of study does not match, but skills or interests do. Confirm the official field requirement before treating this as a fit.",
+      reason:
+        "Declared field of study does not match, but skills or interests do. Confirm the official field requirement before treating this as a fit.",
     };
   }
 
@@ -160,7 +172,8 @@ function matchField(profile: Profile, values: string[]): MatchOutcome {
   return {
     status: "UNCERTAIN",
     evidence: `Field of study is ${field || "not listed"}.`,
-    reason: "Field fit is not explicit in the profile and needs verification against the official description.",
+    reason:
+      "Field fit is not explicit in the profile and needs verification against the official description.",
   };
 }
 
@@ -188,7 +201,8 @@ function matchExperience(profile: Profile, years: number): MatchOutcome {
       return {
         status: "UNCERTAIN",
         evidence: `${yearsExperience} year(s) listed, but experience text says: ${experience}`,
-        reason: "Years of experience conflict with the written experience description. Confirm before treating this as met.",
+        reason:
+          "Years of experience conflict with the written experience description. Confirm before treating this as met.",
       };
     }
     return {

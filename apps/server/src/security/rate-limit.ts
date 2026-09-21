@@ -50,7 +50,13 @@ export function explainRateLimitMiddleware(limiter: RateLimiter): RequestHandler
       return;
     }
     if (!limiter.allow(clientKey(req.socket.remoteAddress))) {
-      next(new HttpError(429, "RATE_LIMITED", "Too many explanation requests. Please try again shortly."));
+      next(
+        new HttpError(
+          429,
+          "RATE_LIMITED",
+          "Too many explanation requests. Please try again shortly.",
+        ),
+      );
       return;
     }
     next();

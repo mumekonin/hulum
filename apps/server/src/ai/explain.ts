@@ -72,7 +72,10 @@ function claudeModel(): string | undefined {
   return process.env.CLAUDE_MODEL?.trim() || process.env.ANTHROPIC_MODEL?.trim() || undefined;
 }
 
-export async function explainDecision(profile: Profile, contract: AnalysisContract): Promise<string> {
+export async function explainDecision(
+  profile: Profile,
+  contract: AnalysisContract,
+): Promise<string> {
   const fallback = contract.summary;
   const apiKey = claudeKey();
   const model = claudeModel();

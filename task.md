@@ -151,8 +151,8 @@ Primary ownership:
 - [x] **P0** Initialize frontend.
 - [x] **P0** Initialize backend.
 - [x] **P0** Establish shared types/constants.
-- [ ] **P1** Configure linting.
-- [ ] **P1** Configure formatting.
+- [x] **P1** Configure linting.
+- [x] **P1** Configure formatting.
 - [x] **P1** Configure testing.
 - [x] **P1** Configure CI checks.
 
@@ -1111,7 +1111,7 @@ EthioDeploy is optional, but if used, document it as part of the implementation/
 - [x] **P1** Configure GitHub Actions.
 - [x] **P1** Install dependencies.
 - [x] **P1** Type check.
-- [ ] **P1** Lint.
+- [x] **P1** Lint.
 - [x] **P1** Run tests.
 - [ ] **P1** Build frontend.
 - [ ] **P1** Build backend.

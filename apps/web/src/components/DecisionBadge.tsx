@@ -12,8 +12,19 @@ const meanings: Record<Decision, string> = {
   SKIP: "A critical requirement is not met.",
 };
 
-export function DecisionBadge({ decision, size = "md" }: { decision: Decision; size?: "sm" | "md" | "lg" }) {
-  const sizing = size === "lg" ? "px-6 py-3 text-3xl md:text-5xl" : size === "sm" ? "px-3 py-2 text-xs" : "px-4 py-2 text-xl";
+export function DecisionBadge({
+  decision,
+  size = "md",
+}: {
+  decision: Decision;
+  size?: "sm" | "md" | "lg";
+}) {
+  const sizing =
+    size === "lg"
+      ? "px-6 py-3 text-3xl md:text-5xl"
+      : size === "sm"
+        ? "px-3 py-2 text-xs"
+        : "px-4 py-2 text-xl";
   return (
     <span
       className={`inline-flex border-2 font-display tracking-wide ${sizing} ${styles[decision]}`}

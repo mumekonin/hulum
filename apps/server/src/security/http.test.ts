@@ -1,5 +1,4 @@
 import { createServer } from "node:http";
-import type { AddressInfo } from "node:net";
 import { afterEach, describe, expect, it } from "vitest";
 import { createApp } from "../app.js";
 import type { AppEnv } from "../config/env.js";
@@ -104,8 +103,16 @@ describe("API security middleware", () => {
       }),
     );
     const url = `http://127.0.0.1:${port}/api/analyses/11111111-1111-4111-8111-111111111111/explain`;
-    const first = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" });
-    const second = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" });
+    const first = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    });
+    const second = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    });
     const body: unknown = await second.json();
 
     expect(first.status).not.toBe(429);

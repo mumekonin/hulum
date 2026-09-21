@@ -214,7 +214,9 @@ describe("analysis routes", () => {
 
   it("returns 404 when the analysis does not exist", async () => {
     const port = await listen(
-      createTestApp(fakeService({ getById: async () => undefined, getReadiness: async () => undefined })),
+      createTestApp(
+        fakeService({ getById: async () => undefined, getReadiness: async () => undefined }),
+      ),
     );
     const response = await fetch(`http://127.0.0.1:${port}/api/analyses/${analysis.id}`);
     expect(response.status).toBe(404);

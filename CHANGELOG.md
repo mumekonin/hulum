@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-21 — ESLint and Prettier configured
+
+### Added
+- Flat `eslint.config.mjs` + `npm run lint` over server/web/shared TypeScript.
+- Prettier (`.prettierrc.json`) + `npm run format` / `format:check` for the same source trees.
+- CI runs `lint` and `format:check` after typecheck.
+
+### Why
+Phase 1 required lint and format tooling. Docs/markdown are not mass-reformatted.
+
 ## 2026-09-21 — Postgres Ask HULUM + optional Voxide widget
 
 ### Added

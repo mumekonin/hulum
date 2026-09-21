@@ -40,8 +40,6 @@ describe("mapOpportunityRow", () => {
   });
 
   it("rejects a type that is not in the locked contract", () => {
-    expect(() => mapOpportunityRow(sampleRow({ type: "scrape" }))).toThrow(
-      /locked contract value/,
-    );
+    expect(() => mapOpportunityRow(sampleRow({ type: "scrape" }))).toThrow(/locked contract value/);
   });
 });

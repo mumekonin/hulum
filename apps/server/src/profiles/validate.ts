@@ -42,7 +42,11 @@ function asGraduationYear(value: unknown): number | null | undefined {
     return null;
   }
   if (typeof value !== "number" || !Number.isInteger(value) || value < 1950 || value > 2100) {
-    throw new HttpError(400, "INVALID_INPUT", "graduationYear must be an integer between 1950 and 2100.");
+    throw new HttpError(
+      400,
+      "INVALID_INPUT",
+      "graduationYear must be an integer between 1950 and 2100.",
+    );
   }
   return value;
 }
@@ -59,7 +63,9 @@ const emptyWrite: ProfileWrite = {
   interests: [],
 };
 
-export function parseCreateProfileRequest(body: unknown): { name: string; email: string } & ProfileWrite {
+export function parseCreateProfileRequest(
+  body: unknown,
+): { name: string; email: string } & ProfileWrite {
   if (typeof body !== "object" || body === null || Array.isArray(body)) {
     throw new HttpError(400, "INVALID_INPUT", "Request body must be an object.");
   }
@@ -73,7 +79,8 @@ export function parseCreateProfileRequest(body: unknown): { name: string; email:
   return {
     name,
     email,
-    educationLevel: asOptionalText(input.educationLevel, "educationLevel") ?? emptyWrite.educationLevel,
+    educationLevel:
+      asOptionalText(input.educationLevel, "educationLevel") ?? emptyWrite.educationLevel,
     fieldOfStudy: asOptionalText(input.fieldOfStudy, "fieldOfStudy") ?? emptyWrite.fieldOfStudy,
     graduationYear: asGraduationYear(input.graduationYear) ?? emptyWrite.graduationYear,
     country: asOptionalText(input.country, "country") ?? emptyWrite.country,

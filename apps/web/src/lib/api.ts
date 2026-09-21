@@ -46,7 +46,7 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
     throw new ApiClientError(NETWORK_MESSAGE, 0, "NETWORK");
   }
 
-  let payload: Envelope<T> | null = null;
+  let payload: Envelope<T>;
   try {
     payload = (await response.json()) as Envelope<T>;
   } catch {

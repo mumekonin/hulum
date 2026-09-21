@@ -147,7 +147,9 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     expect(readinessBody.data.intent).toBe("SHOW_READINESS");
     expect(readinessBody.data.analysis?.readiness?.length).toBeGreaterThan(0);
     expect(readinessBody.data.reply).toContain("Prepare:");
-    expect(readinessBody.data.reply).toContain(readinessBody.data.analysis?.nextAction ?? "__missing__");
+    expect(readinessBody.data.reply).toContain(
+      readinessBody.data.analysis?.nextAction ?? "__missing__",
+    );
   });
 
   it("returns stored NOT_MET and UNCERTAIN requirements after analyze", async () => {
@@ -184,9 +186,11 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     expect(gaps.status).toBe(200);
     expect(gapsBody.data.intent).toBe("SHOW_MISSING_REQUIREMENTS");
     expect(gapsBody.data.analysis?.gaps?.length).toBeGreaterThan(0);
-    expect(gapsBody.data.analysis?.gaps?.some((item) => item.status === "NOT_MET" || item.status === "UNCERTAIN")).toBe(
-      true,
-    );
+    expect(
+      gapsBody.data.analysis?.gaps?.some(
+        (item) => item.status === "NOT_MET" || item.status === "UNCERTAIN",
+      ),
+    ).toBe(true);
     expect(gapsBody.data.reply).toContain("Missing or uncertain:");
     const firstGap = gapsBody.data.analysis?.gaps?.[0];
     expect(firstGap).toBeDefined();
@@ -271,7 +275,14 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
       }),
     });
     const body = (await response.json()) as {
-      data: { id: string; userId: string; language: string; startedAt: string; endedAt: string | null; provider: string };
+      data: {
+        id: string;
+        userId: string;
+        language: string;
+        startedAt: string;
+        endedAt: string | null;
+        provider: string;
+      };
     };
 
     expect(response.status).toBe(201);

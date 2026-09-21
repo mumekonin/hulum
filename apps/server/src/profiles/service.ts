@@ -1,4 +1,10 @@
-import { profileCompleteness, type Profile, type ProfileView, type PatchProfileRequest, type ProfileWrite } from "@hulum/shared";
+import {
+  profileCompleteness,
+  type Profile,
+  type ProfileView,
+  type PatchProfileRequest,
+  type ProfileWrite,
+} from "@hulum/shared";
 import type { ProfileStore } from "./store.js";
 
 export type ProfileService = {

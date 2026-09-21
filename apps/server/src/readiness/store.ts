@@ -25,7 +25,10 @@ export function createPgReadinessStore(): ReadinessStore {
       return mapReadinessRow(row);
     },
 
-    async updateStatus(id: string, status: ReadinessItem["status"]): Promise<ReadinessItem | undefined> {
+    async updateStatus(
+      id: string,
+      status: ReadinessItem["status"],
+    ): Promise<ReadinessItem | undefined> {
       if (!isReadinessStatus(status)) {
         return undefined;
       }

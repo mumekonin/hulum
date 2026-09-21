@@ -57,7 +57,9 @@ describe("sanitizeExplanation", () => {
   });
 
   it("replaces wording that names a different APPLY/MAYBE/SKIP", () => {
-    expect(sanitizeExplanation("You should SKIP this opportunity.", "APPLY", "engine summary")).toBe("engine summary");
+    expect(
+      sanitizeExplanation("You should SKIP this opportunity.", "APPLY", "engine summary"),
+    ).toBe("engine summary");
   });
 });
 
@@ -73,35 +75,43 @@ describe("explainDecision", () => {
   it("keeps Claude text that does not change APPLY/MAYBE/SKIP", async () => {
     process.env.CLAUDE_API_KEY = "test-key";
     process.env.CLAUDE_MODEL = "test-model";
-    globalThis.fetch = vi.fn(async () =>
-      new Response(
-        JSON.stringify({
-          content: [
-            {
-              text: JSON.stringify({
-                decision: "APPLY",
-                explanation: "Abeba meets the stored country and field facts.",
-              }),
-            },
-          ],
-        }),
-        { status: 200, headers: { "content-type": "application/json" } },
-      ),
+    globalThis.fetch = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            content: [
+              {
+                text: JSON.stringify({
+                  decision: "APPLY",
+                  explanation: "Abeba meets the stored country and field facts.",
+                }),
+              },
+            ],
+          }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        ),
     ) as typeof fetch;
 
-    await expect(explainDecision(profile, contract)).resolves.toBe("Abeba meets the stored country and field facts.");
+    await expect(explainDecision(profile, contract)).resolves.toBe(
+      "Abeba meets the stored country and field facts.",
+    );
   });
 
   it("falls back to the engine summary if Claude JSON names a different decision", async () => {
     process.env.ANTHROPIC_API_KEY = "test-key";
     process.env.ANTHROPIC_MODEL = "test-model";
-    globalThis.fetch = vi.fn(async () =>
-      new Response(
-        JSON.stringify({
-          content: [{ text: JSON.stringify({ decision: "SKIP", explanation: "This is not a good fit." }) }],
-        }),
-        { status: 200, headers: { "content-type": "application/json" } },
-      ),
+    globalThis.fetch = vi.fn(
+      async () =>
+        new Response(
+          JSON.stringify({
+            content: [
+              {
+                text: JSON.stringify({ decision: "SKIP", explanation: "This is not a good fit." }),
+              },
+            ],
+          }),
+          { status: 200, headers: { "content-type": "application/json" } },
+        ),
     ) as typeof fetch;
 
     await expect(explainDecision(profile, contract)).resolves.toBe(contract.summary);

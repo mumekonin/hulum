@@ -51,7 +51,10 @@ describe("API error envelope", () => {
 
   it("returns the error envelope for unknown routes, records, and invalid requests", async () => {
     const missingRoute = await fetch(`${baseUrl}/api/does-not-exist`);
-    const missingRouteBody = (await missingRoute.json()) as { data: null; error: { message: string; code: string } };
+    const missingRouteBody = (await missingRoute.json()) as {
+      data: null;
+      error: { message: string; code: string };
+    };
     expect(missingRoute.status).toBe(404);
     expect(missingRouteBody.data).toBeNull();
     expect(missingRouteBody.error.code).toBe("NOT_FOUND");
@@ -71,7 +74,10 @@ describe("API error envelope", () => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({}),
     });
-    const invalidAnalyzeBody = (await invalidAnalyze.json()) as { data: null; error: { code: string } };
+    const invalidAnalyzeBody = (await invalidAnalyze.json()) as {
+      data: null;
+      error: { code: string };
+    };
     expect(invalidAnalyze.status).toBe(422);
     expect(invalidAnalyzeBody.data).toBeNull();
     expect(invalidAnalyzeBody.error.code).toBe("INVALID_REQUEST");
@@ -90,7 +96,10 @@ describe("API error envelope", () => {
       headers: { "content-type": "application/json" },
       body: "{not-json",
     });
-    const invalidJsonBody = (await invalidJson.json()) as { data: null; error: { message: string; code: string } };
+    const invalidJsonBody = (await invalidJson.json()) as {
+      data: null;
+      error: { message: string; code: string };
+    };
     expect(invalidJson.status).toBe(400);
     expect(invalidJsonBody.data).toBeNull();
     expect(invalidJsonBody.error.code).toBe("INVALID_JSON");
@@ -103,7 +112,10 @@ describe("API error envelope", () => {
       headers: { "content-type": "application/json" },
       body: JSON.stringify({ userId: "user_nobody" }),
     });
-    const analyzedBody = (await analyzed.json()) as { data: null; error: { code: string; message: string } };
+    const analyzedBody = (await analyzed.json()) as {
+      data: null;
+      error: { code: string; message: string };
+    };
     expect(analyzed.status).toBe(404);
     expect(analyzedBody.data).toBeNull();
     expect(analyzedBody.error.code).toBe("PROFILE_NOT_FOUND");

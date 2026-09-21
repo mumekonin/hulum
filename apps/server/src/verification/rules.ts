@@ -32,8 +32,7 @@ function todayUtc(clock: Clock): string {
 export function sourcePriority(opportunity: Opportunity): SourcePriority {
   const officialSourceUrl = opportunity.sourceUrl.trim();
   const rawApply = opportunity.applicationUrl;
-  const applicationUrl =
-    rawApply === null || rawApply.trim() === "" ? null : rawApply.trim();
+  const applicationUrl = rawApply === null || rawApply.trim() === "" ? null : rawApply.trim();
 
   return {
     officialSourceUrl,

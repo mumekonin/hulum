@@ -1,4 +1,9 @@
-import { ReadinessStatus, RequirementKey, RequirementStatus, type RequirementMatch } from "@hulum/shared";
+import {
+  ReadinessStatus,
+  RequirementKey,
+  RequirementStatus,
+  type RequirementMatch,
+} from "@hulum/shared";
 
 export type DraftReadinessItem = {
   title: string;
@@ -53,7 +58,10 @@ export function buildReadinessItems(matches: RequirementMatch[]): DraftReadiness
     if (match.key === RequirementKey.DOCUMENTS) {
       continue;
     }
-    if (match.status === RequirementStatus.MET || match.status === RequirementStatus.NOT_APPLICABLE) {
+    if (
+      match.status === RequirementStatus.MET ||
+      match.status === RequirementStatus.NOT_APPLICABLE
+    ) {
       continue;
     }
     items.push({

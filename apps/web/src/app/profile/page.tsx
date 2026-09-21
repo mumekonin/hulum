@@ -2,7 +2,13 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { EDUCATION_LABELS, EDUCATION_LEVELS, type EducationLevel, type LanguageCode, type Profile } from "@hulum/shared";
+import {
+  EDUCATION_LABELS,
+  EDUCATION_LEVELS,
+  type EducationLevel,
+  type LanguageCode,
+  type Profile,
+} from "@hulum/shared";
 import { api, isNotFound, userFacingError } from "@/lib/api";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
 import { getUserId, setLanguage, setUserId } from "@/lib/storage";
@@ -133,11 +139,13 @@ export default function ProfilePage() {
   return (
     <section className="max-w-2xl">
       <h1 className="font-display text-4xl">Your profile</h1>
-      <p className="mt-3 text-muted">HULUM only compares what you declare here with structured opportunity requirements.</p>
+      <p className="mt-3 text-muted">
+        HULUM only compares what you declare here with structured opportunity requirements.
+      </p>
       <div className="mt-6">
         <Notice>
-          Authentication is intentionally light in v0.1 so the decision loop is not blocked. Use the demo
-          Computer Science student if you want the STARK walkthrough.
+          Authentication is intentionally light in v0.1 so the decision loop is not blocked. Use the
+          demo Computer Science student if you want the STARK walkthrough.
         </Notice>
       </div>
       {boot === "loading" ? (
@@ -163,20 +171,41 @@ export default function ProfilePage() {
             </StatusPanel>
           ) : null}
           {saved ? <p className="mt-4 text-apply">Profile saved.</p> : null}
-          <button type="button" onClick={() => void loadDemo()} disabled={saving} className="mt-6 min-h-11 border border-ink px-4 py-2 text-sm disabled:opacity-60">
+          <button
+            type="button"
+            onClick={() => void loadDemo()}
+            disabled={saving}
+            className="mt-6 min-h-11 border border-ink px-4 py-2 text-sm disabled:opacity-60"
+          >
             {saving ? "Working…" : "Use demo profile (Abeba Tesfaye)"}
           </button>
-          <form onSubmit={(event) => void submit(event)} className="mt-8 grid gap-4" aria-describedby={error ? "profile-save-error" : undefined}>
-            {error ? <p id="profile-save-error" className="sr-only">{error}</p> : null}
+          <form
+            onSubmit={(event) => void submit(event)}
+            className="mt-8 grid gap-4"
+            aria-describedby={error ? "profile-save-error" : undefined}
+          >
+            {error ? (
+              <p id="profile-save-error" className="sr-only">
+                {error}
+              </p>
+            ) : null}
             <label className="grid gap-1 text-sm">
               Name
-              <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} autoComplete="name" className="min-h-11 border border-line bg-white px-3 py-2" />
+              <input
+                required
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                autoComplete="name"
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              />
             </label>
             <label className="grid gap-1 text-sm">
               Education
               <select
                 value={form.educationLevel}
-                onChange={(e) => setForm({ ...form, educationLevel: e.target.value as EducationLevel })}
+                onChange={(e) =>
+                  setForm({ ...form, educationLevel: e.target.value as EducationLevel })
+                }
                 className="min-h-11 border border-line bg-white px-3 py-2"
               >
                 {EDUCATION_LEVELS.map((level) => (
@@ -188,37 +217,70 @@ export default function ProfilePage() {
             </label>
             <label className="grid gap-1 text-sm">
               Field of study
-              <input required value={form.fieldOfStudy} onChange={(e) => setForm({ ...form, fieldOfStudy: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+              <input
+                required
+                value={form.fieldOfStudy}
+                onChange={(e) => setForm({ ...form, fieldOfStudy: e.target.value })}
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              />
             </label>
             <div className="grid gap-4 md:grid-cols-2">
               <label className="grid gap-1 text-sm">
                 Graduation year
-                <input type="number" value={form.graduationYear} onChange={(e) => setForm({ ...form, graduationYear: Number(e.target.value) })} className="min-h-11 border border-line bg-white px-3 py-2" />
+                <input
+                  type="number"
+                  value={form.graduationYear}
+                  onChange={(e) => setForm({ ...form, graduationYear: Number(e.target.value) })}
+                  className="min-h-11 border border-line bg-white px-3 py-2"
+                />
               </label>
               <label className="grid gap-1 text-sm">
                 Years of experience
-                <input type="number" min={0} step={0.5} value={form.yearsExperience} onChange={(e) => setForm({ ...form, yearsExperience: Number(e.target.value) })} className="min-h-11 border border-line bg-white px-3 py-2" />
+                <input
+                  type="number"
+                  min={0}
+                  step={0.5}
+                  value={form.yearsExperience}
+                  onChange={(e) => setForm({ ...form, yearsExperience: Number(e.target.value) })}
+                  className="min-h-11 border border-line bg-white px-3 py-2"
+                />
               </label>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <label className="grid gap-1 text-sm">
                 Country
-                <input required value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+                <input
+                  required
+                  value={form.country}
+                  onChange={(e) => setForm({ ...form, country: e.target.value })}
+                  className="min-h-11 border border-line bg-white px-3 py-2"
+                />
               </label>
               <label className="grid gap-1 text-sm">
                 City
-                <input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+                <input
+                  value={form.city}
+                  onChange={(e) => setForm({ ...form, city: e.target.value })}
+                  className="min-h-11 border border-line bg-white px-3 py-2"
+                />
               </label>
             </div>
             <label className="grid gap-1 text-sm">
               Languages (comma separated)
-              <input required value={form.languages} onChange={(e) => setForm({ ...form, languages: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+              <input
+                required
+                value={form.languages}
+                onChange={(e) => setForm({ ...form, languages: e.target.value })}
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              />
             </label>
             <label className="grid gap-1 text-sm">
               HULUM language
               <select
                 value={form.preferredLanguage}
-                onChange={(e) => setForm({ ...form, preferredLanguage: e.target.value as LanguageCode })}
+                onChange={(e) =>
+                  setForm({ ...form, preferredLanguage: e.target.value as LanguageCode })
+                }
                 className="min-h-11 border border-line bg-white px-3 py-2"
               >
                 {LANGUAGE_OPTIONS.map((option) => (
@@ -230,21 +292,41 @@ export default function ProfilePage() {
             </label>
             <label className="grid gap-1 text-sm">
               Skills
-              <input value={form.skills} onChange={(e) => setForm({ ...form, skills: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+              <input
+                value={form.skills}
+                onChange={(e) => setForm({ ...form, skills: e.target.value })}
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              />
             </label>
             <label className="grid gap-1 text-sm">
               Experience
-              <textarea value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} className="min-h-24 border border-line bg-white px-3 py-2" />
+              <textarea
+                value={form.experience}
+                onChange={(e) => setForm({ ...form, experience: e.target.value })}
+                className="min-h-24 border border-line bg-white px-3 py-2"
+              />
             </label>
             <label className="grid gap-1 text-sm">
               Interests
-              <input value={form.interests} onChange={(e) => setForm({ ...form, interests: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+              <input
+                value={form.interests}
+                onChange={(e) => setForm({ ...form, interests: e.target.value })}
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              />
             </label>
             <label className="grid gap-1 text-sm">
               Documents you already have
-              <input value={form.documentsHeld} onChange={(e) => setForm({ ...form, documentsHeld: e.target.value })} placeholder="CV, Transcript" className="min-h-11 border border-line bg-white px-3 py-2" />
+              <input
+                value={form.documentsHeld}
+                onChange={(e) => setForm({ ...form, documentsHeld: e.target.value })}
+                placeholder="CV, Transcript"
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              />
             </label>
-            <button disabled={saving} className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
+            <button
+              disabled={saving}
+              className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60"
+            >
               {saving ? "Saving…" : "Save profile"}
             </button>
           </form>

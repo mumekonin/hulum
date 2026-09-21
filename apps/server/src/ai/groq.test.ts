@@ -52,6 +52,8 @@ describe("Groq explainer", () => {
       model: "openai/gpt-oss-20b",
       fetchImpl: async () => new Response("nope", { status: 429 }),
     });
-    await expect(client.complete([{ role: "user", content: "explain" }])).rejects.toBeInstanceOf(HttpError);
+    await expect(client.complete([{ role: "user", content: "explain" }])).rejects.toBeInstanceOf(
+      HttpError,
+    );
   });
 });

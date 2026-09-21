@@ -1,4 +1,11 @@
-import { Decision, OFFICIAL_SOURCE_NOTICE, VoiceIntent, fail, isVoiceIntent, ok } from "@hulum/shared";
+import {
+  Decision,
+  OFFICIAL_SOURCE_NOTICE,
+  VoiceIntent,
+  fail,
+  isVoiceIntent,
+  ok,
+} from "@hulum/shared";
 import { describe, expect, it } from "vitest";
 
 describe("@hulum/shared Task 22 lock (enums/api modules)", () => {

@@ -12,7 +12,9 @@ const profile: Profile = {
   ...demoProfileInput,
 };
 
-function opportunity(overrides: Partial<Opportunity> & Pick<Opportunity, "requirements" | "deadline">): Opportunity {
+function opportunity(
+  overrides: Partial<Opportunity> & Pick<Opportunity, "requirements" | "deadline">,
+): Opportunity {
   return {
     id: "opp-test",
     title: "Test Opportunity",
@@ -44,11 +46,41 @@ describe("decision engine", () => {
       opportunity({
         deadline: "2027-01-01",
         requirements: [
-          { key: "country", category: "country", text: "African student", critical: true, matcher: { type: "country", values: ["Africa"] } },
-          { key: "education", category: "education", text: "University student", critical: true, matcher: { type: "education_min", level: "bachelor_in_progress", enrolledOk: true } },
-          { key: "field", category: "field", text: "Computer science", critical: true, matcher: { type: "field", values: ["computer science"] } },
-          { key: "language", category: "language", text: "English", critical: false, matcher: { type: "language", values: ["English"] } },
-          { key: "deadline", category: "deadline", text: "Open", critical: true, matcher: { type: "deadline_open" } },
+          {
+            key: "country",
+            category: "country",
+            text: "African student",
+            critical: true,
+            matcher: { type: "country", values: ["Africa"] },
+          },
+          {
+            key: "education",
+            category: "education",
+            text: "University student",
+            critical: true,
+            matcher: { type: "education_min", level: "bachelor_in_progress", enrolledOk: true },
+          },
+          {
+            key: "field",
+            category: "field",
+            text: "Computer science",
+            critical: true,
+            matcher: { type: "field", values: ["computer science"] },
+          },
+          {
+            key: "language",
+            category: "language",
+            text: "English",
+            critical: false,
+            matcher: { type: "language", values: ["English"] },
+          },
+          {
+            key: "deadline",
+            category: "deadline",
+            text: "Open",
+            critical: true,
+            matcher: { type: "deadline_open" },
+          },
         ],
       }),
     );
@@ -62,10 +94,34 @@ describe("decision engine", () => {
       opportunity({
         deadline: "2027-01-01",
         requirements: [
-          { key: "education", category: "education", text: "Completed bachelor's", critical: true, matcher: { type: "education_min", level: "bachelor" } },
-          { key: "experience", category: "experience", text: "Two years of work", critical: true, matcher: { type: "experience_min", years: 2 } },
-          { key: "country", category: "country", text: "Ethiopia", critical: true, matcher: { type: "country", values: ["Ethiopia"] } },
-          { key: "deadline", category: "deadline", text: "Open", critical: true, matcher: { type: "deadline_open" } },
+          {
+            key: "education",
+            category: "education",
+            text: "Completed bachelor's",
+            critical: true,
+            matcher: { type: "education_min", level: "bachelor" },
+          },
+          {
+            key: "experience",
+            category: "experience",
+            text: "Two years of work",
+            critical: true,
+            matcher: { type: "experience_min", years: 2 },
+          },
+          {
+            key: "country",
+            category: "country",
+            text: "Ethiopia",
+            critical: true,
+            matcher: { type: "country", values: ["Ethiopia"] },
+          },
+          {
+            key: "deadline",
+            category: "deadline",
+            text: "Open",
+            critical: true,
+            matcher: { type: "deadline_open" },
+          },
         ],
       }),
     );
@@ -79,10 +135,34 @@ describe("decision engine", () => {
       opportunity({
         deadline: "2027-01-01",
         requirements: [
-          { key: "country", category: "country", text: "African", critical: true, matcher: { type: "country", values: ["Africa"] } },
-          { key: "education", category: "education", text: "Student", critical: true, matcher: { type: "education_min", level: "bachelor_in_progress", enrolledOk: true } },
-          { key: "field", category: "field", text: "Field matching official description", critical: true, matcher: { type: "always_uncertain" } },
-          { key: "deadline", category: "deadline", text: "Open", critical: true, matcher: { type: "deadline_open" } },
+          {
+            key: "country",
+            category: "country",
+            text: "African",
+            critical: true,
+            matcher: { type: "country", values: ["Africa"] },
+          },
+          {
+            key: "education",
+            category: "education",
+            text: "Student",
+            critical: true,
+            matcher: { type: "education_min", level: "bachelor_in_progress", enrolledOk: true },
+          },
+          {
+            key: "field",
+            category: "field",
+            text: "Field matching official description",
+            critical: true,
+            matcher: { type: "always_uncertain" },
+          },
+          {
+            key: "deadline",
+            category: "deadline",
+            text: "Open",
+            critical: true,
+            matcher: { type: "deadline_open" },
+          },
         ],
       }),
     );
@@ -95,8 +175,20 @@ describe("decision engine", () => {
       opportunity({
         deadline: "2020-01-01",
         requirements: [
-          { key: "deadline", category: "deadline", text: "Must be open", critical: true, matcher: { type: "deadline_open" } },
-          { key: "country", category: "country", text: "Ethiopia", critical: true, matcher: { type: "country", values: ["Ethiopia"] } },
+          {
+            key: "deadline",
+            category: "deadline",
+            text: "Must be open",
+            critical: true,
+            matcher: { type: "deadline_open" },
+          },
+          {
+            key: "country",
+            category: "country",
+            text: "Ethiopia",
+            critical: true,
+            matcher: { type: "country", values: ["Ethiopia"] },
+          },
         ],
       }),
     );
@@ -129,8 +221,20 @@ describe("decision engine", () => {
       opportunity({
         deadline: "2027-01-01",
         requirements: [
-          { key: "field", category: "field", text: "Computer science", critical: true, matcher: { type: "field", values: ["computer science", "software"] } },
-          { key: "deadline", category: "deadline", text: "Open", critical: true, matcher: { type: "deadline_open" } },
+          {
+            key: "field",
+            category: "field",
+            text: "Computer science",
+            critical: true,
+            matcher: { type: "field", values: ["computer science", "software"] },
+          },
+          {
+            key: "deadline",
+            category: "deadline",
+            text: "Open",
+            critical: true,
+            matcher: { type: "deadline_open" },
+          },
         ],
       }),
     );
@@ -149,8 +253,20 @@ describe("decision engine", () => {
       opportunity({
         deadline: "2027-01-01",
         requirements: [
-          { key: "experience", category: "experience", text: "Two years of work", critical: false, matcher: { type: "experience_min", years: 2 } },
-          { key: "deadline", category: "deadline", text: "Open", critical: true, matcher: { type: "deadline_open" } },
+          {
+            key: "experience",
+            category: "experience",
+            text: "Two years of work",
+            critical: false,
+            matcher: { type: "experience_min", years: 2 },
+          },
+          {
+            key: "deadline",
+            category: "deadline",
+            text: "Open",
+            critical: true,
+            matcher: { type: "deadline_open" },
+          },
         ],
       }),
     );
@@ -168,8 +284,20 @@ describe("decision engine", () => {
       opportunity({
         deadline: "2027-01-01",
         requirements: [
-          { key: "education", category: "education", text: "University student", critical: true, matcher: { type: "education_min", level: "bachelor_in_progress", enrolledOk: true } },
-          { key: "deadline", category: "deadline", text: "Open", critical: true, matcher: { type: "deadline_open" } },
+          {
+            key: "education",
+            category: "education",
+            text: "University student",
+            critical: true,
+            matcher: { type: "education_min", level: "bachelor_in_progress", enrolledOk: true },
+          },
+          {
+            key: "deadline",
+            category: "deadline",
+            text: "Open",
+            critical: true,
+            matcher: { type: "deadline_open" },
+          },
         ],
       }),
     );

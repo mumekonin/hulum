@@ -46,10 +46,15 @@ export function decide(profile: Profile, opportunity: Opportunity, clock: Clock)
 
   const matchedRequirements = matches.filter((item) => item.status === RequirementStatus.MET);
   const missingRequirements = matches.filter((item) => item.status === RequirementStatus.NOT_MET);
-  const uncertainRequirements = matches.filter((item) => item.status === RequirementStatus.UNCERTAIN);
+  const uncertainRequirements = matches.filter(
+    (item) => item.status === RequirementStatus.UNCERTAIN,
+  );
 
-  let decision: typeof Decision.APPLY | typeof Decision.MAYBE | typeof Decision.SKIP = Decision.MAYBE;
-  if (CRITICAL_REQUIREMENT_KEYS.some((key) => statusOf(matches, key) === RequirementStatus.NOT_MET)) {
+  let decision: typeof Decision.APPLY | typeof Decision.MAYBE | typeof Decision.SKIP =
+    Decision.MAYBE;
+  if (
+    CRITICAL_REQUIREMENT_KEYS.some((key) => statusOf(matches, key) === RequirementStatus.NOT_MET)
+  ) {
     decision = Decision.SKIP;
   } else if (
     KEY_REQUIREMENT_KEYS.every((key) => {

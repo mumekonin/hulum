@@ -16,7 +16,9 @@ type Props = {
 
 function publicKey(): string | null {
   const value =
-    process.env.NEXT_PUBLIC_VOXIDE_PUBLIC_KEY?.trim() || process.env.NEXT_PUBLIC_VOXIDE_KEY?.trim() || "";
+    process.env.NEXT_PUBLIC_VOXIDE_PUBLIC_KEY?.trim() ||
+    process.env.NEXT_PUBLIC_VOXIDE_KEY?.trim() ||
+    "";
   if (!value.startsWith("vox_pub_")) {
     return null;
   }
@@ -91,8 +93,8 @@ function VoxidePanelInner({ publicKey: key, ...props }: Props & { publicKey: str
   return (
     <div className="mt-6" data-testid="voxide-widget">
       <p className="mb-2 text-sm text-muted">
-        Voxide widget is mounted with a publishable key. APPLY / MAYBE / SKIP still come from HULUM’s engine via
-        registered capabilities.
+        Voxide widget is mounted with a publishable key. APPLY / MAYBE / SKIP still come from
+        HULUM’s engine via registered capabilities.
       </p>
       <VoxideWidget client={client} theme="auto" />
     </div>

@@ -1,7 +1,12 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { OPPORTUNITY_TYPES, TYPE_LABELS, type Opportunity, type OpportunityType } from "@hulum/shared";
+import {
+  OPPORTUNITY_TYPES,
+  TYPE_LABELS,
+  type Opportunity,
+  type OpportunityType,
+} from "@hulum/shared";
 import { OpportunityCard } from "@/components/OpportunityCard";
 import { StatusPanel } from "@/components/StatusPanel";
 import { api, userFacingError } from "@/lib/api";
@@ -68,7 +73,8 @@ export default function OpportunitiesPage() {
         <div>
           <h1 className="font-display text-4xl">Opportunities</h1>
           <p className="mt-2 max-w-2xl text-muted">
-            Curated records with official sources. HULUM does not scrape unverified Telegram posts in v0.1.
+            Curated records with official sources. HULUM does not scrape unverified Telegram posts
+            in v0.1.
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-3">
@@ -128,7 +134,9 @@ export default function OpportunitiesPage() {
                 ? { label: "Clear filter", onClick: () => setType("") }
                 : { label: "Create a profile", href: "/profile" }
           }
-          secondary={query && type ? { label: "Clear filter", onClick: () => setType("") } : undefined}
+          secondary={
+            query && type ? { label: "Clear filter", onClick: () => setType("") } : undefined
+          }
         >
           {emptyBody}
         </StatusPanel>

@@ -92,7 +92,7 @@ API-only: `cp apps/server/.env.example apps/server/.env` then `npm run db:migrat
 
 See `database/README.md` for migrate/smoke.
 
-GitHub Actions (`.github/workflows/ci.yml`) runs install, shared + server typecheck, and tests on push and pull request. Lint, full Next/server build, and deploy are not in the gate yet.
+GitHub Actions (`.github/workflows/ci.yml`) runs install, shared + server typecheck, lint, format check, and tests on push and pull request. Full Next/server build and deploy are not in the gate yet.
 
 Deployment decision (local only, no EthioDeploy): `docs/stark/deployment.md`.
 

@@ -137,9 +137,12 @@ describe("createVoiceService", () => {
     const service = createVoiceService({
       profiles: { getByUserId: async () => profileView },
       opportunities: { list: async () => [], getById: async () => undefined },
-      analyses: { analyze: async () => {
-        throw new Error("unused");
-      }, getById: async () => undefined },
+      analyses: {
+        analyze: async () => {
+          throw new Error("unused");
+        },
+        getById: async () => undefined,
+      },
       clock,
     });
     const session = await service.createSession(profile.userId, "en");

@@ -11,8 +11,12 @@ export function matchesOpportunityQuery(item: Opportunity, query: string): boole
     item.type,
     TYPE_LABELS[item.type],
     item.countryEligibility.join(" "),
-    Array.isArray(item.fieldRequirements) ? item.fieldRequirements.join(" ") : item.fieldRequirements,
-    Array.isArray(item.educationRequirements) ? item.educationRequirements.join(" ") : item.educationRequirements,
+    Array.isArray(item.fieldRequirements)
+      ? item.fieldRequirements.join(" ")
+      : item.fieldRequirements,
+    Array.isArray(item.educationRequirements)
+      ? item.educationRequirements.join(" ")
+      : item.educationRequirements,
   ]
     .join(" ")
     .toLowerCase();

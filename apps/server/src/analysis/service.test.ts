@@ -165,15 +165,16 @@ describe("analysis service", () => {
       profiles: { getByUserId: async () => undefined },
       opportunities: { getById: async () => opportunity },
       store: {
-        create: async () => storedFrom({
-          userId: profile.userId,
-          opportunityId: opportunity.id,
-          decision: Decision.MAYBE,
-          fitScore: 0,
-          summary: "",
-          matches: [],
-          readiness: [],
-        }),
+        create: async () =>
+          storedFrom({
+            userId: profile.userId,
+            opportunityId: opportunity.id,
+            decision: Decision.MAYBE,
+            fitScore: 0,
+            summary: "",
+            matches: [],
+            readiness: [],
+          }),
         getById: async () => undefined,
       },
       clock,

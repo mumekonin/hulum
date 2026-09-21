@@ -95,9 +95,13 @@ export function decide(requirements: Scored[], fitScore: number): Decision {
   const criticalMiss = requirements.some((item) => item.critical && item.status === "NOT_MET");
   if (criticalMiss) return "SKIP";
 
-  const key = requirements.filter((item) => ["country", "education", "field"].includes(item.category));
+  const key = requirements.filter((item) =>
+    ["country", "education", "field"].includes(item.category),
+  );
   const keyMet = key.length > 0 && key.every((item) => item.status === "MET");
-  const criticalUncertain = requirements.some((item) => item.critical && item.status === "UNCERTAIN");
+  const criticalUncertain = requirements.some(
+    (item) => item.critical && item.status === "UNCERTAIN",
+  );
   const keyUncertainCount = key.filter((item) => item.status === "UNCERTAIN").length;
   const significantUncertainty = criticalUncertain || keyUncertainCount > 1;
 
@@ -108,8 +112,13 @@ export function decide(requirements: Scored[], fitScore: number): Decision {
   return "MAYBE";
 }
 
-function buildSummary(decision: Decision, requirements: Array<{ status: RequirementStatus; requirementText: string; critical: boolean }>): string {
-  const met = requirements.filter((item) => item.status === "MET").map((item) => item.requirementText);
+function buildSummary(
+  decision: Decision,
+  requirements: Array<{ status: RequirementStatus; requirementText: string; critical: boolean }>,
+): string {
+  const met = requirements
+    .filter((item) => item.status === "MET")
+    .map((item) => item.requirementText);
   const missing = requirements.filter((item) => item.status === "NOT_MET");
   const uncertain = requirements.filter((item) => item.status === "UNCERTAIN");
 
@@ -122,15 +131,12 @@ function buildSummary(decision: Decision, requirements: Array<{ status: Requirem
     return `A critical requirement is not met${blocker ? `: ${blocker.requirementText}` : ""}. Look for opportunities that match your current profile.`;
   }
 
-  const unclear = uncertain[0]?.requirementText ?? missing[0]?.requirementText ?? "at least one requirement";
+  const unclear =
+    uncertain[0]?.requirementText ?? missing[0]?.requirementText ?? "at least one requirement";
   return `You appear eligible, but this needs verification: ${unclear}. Do not treat this as an official eligibility decision.`;
 }
 
-function buildNextAction(
-  decision: Decision,
-  opportunity: Opportunity,
-  firstTask?: string,
-): string {
+function buildNextAction(decision: Decision, opportunity: Opportunity, firstTask?: string): string {
   if (decision === "SKIP") {
     return "Find opportunities matching your current profile.";
   }
@@ -145,7 +151,12 @@ function buildReadiness(
 ): AnalysisContract["readiness"] {
   const items: AnalysisContract["readiness"] = [];
 
-  const push = (title: string, description: string, priority: ReadinessPriority, status: AnalysisContract["readiness"][number]["status"] = "TODO") => {
+  const push = (
+    title: string,
+    description: string,
+    priority: ReadinessPriority,
+    status: AnalysisContract["readiness"][number]["status"] = "TODO",
+  ) => {
     items.push({ title, status, description, priority });
   };
 
@@ -170,22 +181,34 @@ function buildReadiness(
     "high",
   );
 
-  for (const item of requirements.filter((row) => row.status === "UNCERTAIN" || row.status === "NOT_MET")) {
+  for (const item of requirements.filter(
+    (row) => row.status === "UNCERTAIN" || row.status === "NOT_MET",
+  )) {
     push(
       `Resolve: ${item.requirementText}`,
-      item.key === "documents" ? "Prepare or confirm this document before you apply." : "Check the official description and your records.",
+      item.key === "documents"
+        ? "Prepare or confirm this document before you apply."
+        : "Check the official description and your records.",
       item.status === "NOT_MET" ? "high" : "medium",
     );
   }
 
   for (const doc of opportunity.documentRequirements) {
     if (!items.some((item) => item.title.toLowerCase().includes(doc.toLowerCase()))) {
-      push(`Prepare ${doc}`, `Most applications for ${opportunity.title} expect this material.`, "medium");
+      push(
+        `Prepare ${doc}`,
+        `Most applications for ${opportunity.title} expect this material.`,
+        "medium",
+      );
     }
   }
 
   push("Prepare CV / resume", "Keep a current CV before starting the official form.", "high");
-  push("Write motivation statement", "Draft why this opportunity fits your profile and goals.", "medium");
+  push(
+    "Write motivation statement",
+    "Draft why this opportunity fits your profile and goals.",
+    "medium",
+  );
 
   return items.slice(0, 8);
 }
