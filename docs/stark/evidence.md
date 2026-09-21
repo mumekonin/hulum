@@ -23,14 +23,14 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Competitors | `docs/research/competitive-analysis.md` | Live-checked 2026-09-18; do not invent extra claims |
 | Product requirements | `task.md`, `docs/stark/task-status.md` | Present; Day 20 status pass 2026-09-19 |
 | Architecture | `docs/architecture/overview.md` | Present (as built) |
-| Database | `database/migrations/001_init.sql`, ADR 001 | Schema + migrate/smoke on `main`; **file store in the running API** |
+| Database | `database/migrations/001_init.sql`, ADR 001 | Schema + migrate/smoke; `npm run dev` uses Postgres |
 | Decision engine | `apps/server/src/decision/`, ADR 002 | Present + tests |
-| AI responsibility | ADR 002, Claude validation in `apps/server/src/ai/` | Engine decides; Claude explains only |
+| AI responsibility | ADR 002, Groq explain in `apps/server/src/ai/` | Engine decides; Groq explains only |
 | Voice UX | ADR 003, ADR 004, `docs/demo/script.md` | Text/quick-action fallback; Voxide unwired |
 | Implementation | `apps/web`, `apps/server`, `packages/shared` | Present |
-| Testing | `npm test` in `apps/server` | Engine, API, voice-text, failures |
+| Testing | `npm test` in `apps/server`, `.github/workflows/ci.yml` | Engine, API, voice-text, failures; CI: shared+server typecheck + tests (no lint/build/deploy) |
 | Iteration | `CHANGELOG.md`, `docs/stark/narrative.md` | Present; Day 20 narrative; do not rewrite history |
-| Deployment | README production table | **Not deployed** |
+| Deployment | `docs/stark/deployment.md`, README production table | **Not deployed**; decision documented 2026-09-21 |
 | Demo | `docs/demo/script.md`, `docs/demo/backup.md`, `docs/demo/rehearsal.md` | Abeba Tesfaye; text/API backup; rehearsal 2026-09-19 via tests, **no video** |
 | Changelog | `CHANGELOG.md`, `docs/stark/changelog-review.md`, `docs/stark/changelog-final.md` | Present; Day 20 freeze pass 2026-09-19 |
 | Git history | this GitHub repo, `docs/stark/git-history.md` | Real commits; Kidist pushes without Cursor co-author; **most Kidist `feat/*` not on `main`** |

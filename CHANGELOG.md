@@ -2,6 +2,19 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-21 — CI checks and local-only deployment decision
+
+### Added
+- `.github/workflows/ci.yml`: `npm ci`, `typecheck:shared`, `typecheck:server`, `npm test`. No lint, no web/server build gate, no deploy, no branch-protection claim.
+- `docs/stark/deployment.md`: v0.1 stays local; no EthioDeploy URL.
+
+### Changed
+- Task checkboxes: readiness-plan generation (deterministic `buildReadinessItems`), Postgres database connection, CI install/typecheck/tests, deployment decision/guide.
+- Next.js webpack maps shared `.js` imports to TypeScript sources.
+
+### Why
+Phase 10/14 checkboxes lagged the shipped readiness + Postgres path. Phase 23–24 and Phase 26 needed an honest CI gate and deployment decision without inventing a host.
+
 ## 2026-09-21 — Shared exports and Postgres dev runtime
 
 ### Changed

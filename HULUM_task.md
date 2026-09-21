@@ -135,7 +135,7 @@ Primary ownership:
 - [ ] **P1** Configure linting.
 - [ ] **P1** Configure formatting.
 - [x] **P1** Configure testing.
-- [ ] **P1** Configure CI checks.
+- [x] **P1** Configure CI checks.
 
 ## Recommended structure
 
@@ -522,7 +522,7 @@ AI is an assistant, not the eligibility authority.
 - [x] **P0** Define structured output schema.
 - [x] **P0** Implement output validation.
 - [x] **P0** Implement decision-aware explanation.
-- [ ] **P0** Implement readiness-plan generation.
+- [x] **P0** Implement readiness-plan generation.
 - [x] **P0** Implement contextual Q&A.
 - [ ] **P1** Add retry/fallback behavior.
 - [ ] **P1** Track latency/errors.
@@ -635,7 +635,7 @@ Do not trade reliability for language count.
 
 - [x] **P0** Server foundation.
 - [x] **P0** Environment configuration.
-- [-] **P0** Database connection.
+- [x] **P0** Database connection.
 - [x] **P0** Profile service.
 - [x] **P0** Opportunity service.
 - [x] **P0** Requirement matching service.
@@ -936,7 +936,7 @@ Do not log unnecessary personal profile data or raw voice/conversation content.
 - [ ] **P0** Verify production analysis flow.
 - [ ] **P0** Verify production voice flow.
 - [ ] **P1** Deploy on EthioDeploy if practical.
-- [ ] **P1** Document deployment decision.
+- [x] **P1** Document deployment decision.
 
 EthioDeploy is optional, but if used, document it as part of the implementation/deployment story.
 
@@ -944,11 +944,11 @@ EthioDeploy is optional, but if used, document it as part of the implementation/
 
 # 28. Phase 24 — CI/CD
 
-- [ ] **P1** Configure GitHub Actions.
-- [ ] **P1** Install dependencies.
-- [ ] **P1** Type check.
+- [x] **P1** Configure GitHub Actions.
+- [x] **P1** Install dependencies.
+- [x] **P1** Type check.
 - [ ] **P1** Lint.
-- [ ] **P1** Run tests.
+- [x] **P1** Run tests.
 - [ ] **P1** Build frontend.
 - [ ] **P1** Build backend.
 - [ ] **P1** Block merges when checks fail.
@@ -1013,7 +1013,7 @@ Interest: AI
 - [x] **P0** ScholarXIV ideation evidence.
 - [x] **P1** Architecture decision records.
 - [x] **P1** Demo instructions.
-- [ ] **P1** Deployment guide.
+- [x] **P1** Deployment guide.
 - [x] **P1** STARK evidence checklist.
 
 ---
