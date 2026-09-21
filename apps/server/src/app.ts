@@ -23,12 +23,12 @@ import {
 export type CreateAppOptions = {
   env?: AppEnv;
   explainLimiter?: RateLimiter;
-  /** Default `file` is the `npm run dev` demo. `postgres` is Mulualem’s service routers. */
+  /** Default `postgres` is `npm run dev` (ADR 001). Pass `file` for the JSON demo/tests. */
   store?: "file" | "postgres";
 };
 
 export function createApp(options: CreateAppOptions = {}): express.Express {
-  const store = options.store ?? "file";
+  const store = options.store ?? "postgres";
   const app = express();
   app.disable("x-powered-by");
 

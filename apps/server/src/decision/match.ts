@@ -34,6 +34,13 @@ function educationValue(level: EducationLevel): number {
 }
 
 function matchCountry(profile: Profile, values: string[]): MatchOutcome {
+  if (!profile.country) {
+    return {
+      status: "UNCERTAIN",
+      evidence: "Profile country is not set.",
+      reason: "Country eligibility cannot be confirmed without a profile country.",
+    };
+  }
   const allowed = values.map(norm);
   const country = norm(profile.country);
   const africaOk = allowed.some((value) => value === "africa" || value === "african countries" || value === "african");
@@ -56,14 +63,22 @@ function matchCountry(profile: Profile, values: string[]): MatchOutcome {
 }
 
 function matchEducation(profile: Profile, level: EducationLevel, enrolledOk?: boolean): MatchOutcome {
-  const have = educationValue(profile.educationLevel);
+  if (!profile.educationLevel) {
+    return {
+      status: "UNCERTAIN",
+      evidence: "Education level is not set.",
+      reason: "Education requirements cannot be confirmed without a profile education level.",
+    };
+  }
+  const have = educationValue(profile.educationLevel as EducationLevel);
   const need = educationValue(level);
-  const inProgress = profile.educationLevel.endsWith("_in_progress");
+  const educationLevel = String(profile.educationLevel);
+  const inProgress = educationLevel.endsWith("_in_progress");
 
   if (enrolledOk && have >= educationValue("bachelor_in_progress")) {
     return {
       status: "MET",
-      evidence: `Education level is ${profile.educationLevel}.`,
+      evidence: `Education level is ${educationLevel}.`,
       reason: "The opportunity accepts currently enrolled university students.",
     };
   }
@@ -71,7 +86,7 @@ function matchEducation(profile: Profile, level: EducationLevel, enrolledOk?: bo
   if (have >= need && !inProgress) {
     return {
       status: "MET",
-      evidence: `Education level is ${profile.educationLevel}.`,
+      evidence: `Education level is ${educationLevel}.`,
       reason: "Completed education meets or exceeds the stated minimum.",
     };
   }
@@ -79,33 +94,34 @@ function matchEducation(profile: Profile, level: EducationLevel, enrolledOk?: bo
   if (inProgress && have >= need - 1) {
     return {
       status: "UNCERTAIN",
-      evidence: `Education level is ${profile.educationLevel}, graduating ${profile.graduationYear}.`,
+      evidence: `Education level is ${educationLevel}, graduating ${profile.graduationYear}.`,
       reason: "The opportunity may require a completed credential rather than current enrollment.",
     };
   }
 
   return {
     status: "NOT_MET",
-    evidence: `Education level is ${profile.educationLevel}.`,
+    evidence: `Education level is ${educationLevel}.`,
     reason: `Minimum stated education is ${level}.`,
   };
 }
 
 function matchField(profile: Profile, values: string[]): MatchOutcome {
-  const blob = [profile.fieldOfStudy, ...profile.skills, ...profile.interests].join(" ");
-  const hit = values.some((value) => norm(blob).includes(norm(value)) || norm(value).includes(norm(profile.fieldOfStudy)));
+  const field = profile.fieldOfStudy ?? "";
+  const blob = [field, ...profile.skills, ...profile.interests].join(" ");
+  const hit = values.some((value) => norm(blob).includes(norm(value)) || (field !== "" && norm(value).includes(norm(field))));
 
   if (hit) {
     return {
       status: "MET",
-      evidence: `Field of study is ${profile.fieldOfStudy}.`,
+      evidence: `Field of study is ${field || "not listed"}.`,
       reason: "Field, skills, or interests overlap the stated requirement.",
     };
   }
 
   return {
     status: "UNCERTAIN",
-    evidence: `Field of study is ${profile.fieldOfStudy}.`,
+    evidence: `Field of study is ${field || "not listed"}.`,
     reason: "Field fit is not explicit in the profile and needs verification against the official description.",
   };
 }
