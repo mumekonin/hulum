@@ -255,6 +255,17 @@ export type AnalysisExplanation = {
   language: Language;
 };
 
+/** Groq wording over the stored checklist. Must not invent new readiness items. */
+export type ReadinessPlan = {
+  analysisId: string;
+  decision: Decision;
+  fitScore: number;
+  nextAction: string;
+  plan: string;
+  language: Language;
+  items: Array<{ title: string; status: ReadinessStatus }>;
+};
+
 export type VoiceActionRequest = {
   userId: string;
   text: string;

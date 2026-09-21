@@ -22,6 +22,7 @@ Auth is a client-supplied `userId` (UUID). Full login is P1 and not implemented.
 | `POST` | `/api/opportunities/:id/analyze` | `{ "userId" }` | `decide()` + readiness items |
 | `GET` | `/api/analyses/:id` | — | Stored analysis |
 | `POST` | `/api/analyses/:id/explain` | `{ "language"? }` | Groq wording only; **rate-limited** |
+| `POST` | `/api/analyses/:id/readiness/plan` | `{ "language"? }` | Groq personalized plan over stored checklist; **rate-limited** |
 | `GET` | `/api/analyses/:id/readiness` | — | Checklist for analysis |
 | `PATCH` | `/api/readiness/:id` | `{ "status" }` | `TODO` / `IN_PROGRESS` / `DONE` / `NOT_REQUIRED` |
 | `POST` | `/api/voice/session` | `{ "userId", "language"? }` | Metadata only; provider `text-fallback` |

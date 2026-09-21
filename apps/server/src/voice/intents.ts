@@ -12,7 +12,7 @@ export type ParsedIntent = {
   type?: OpportunityType;
   decision?: Decision;
   /** Narrower handler hint without expanding the Task 22 lock set. */
-  replyHint?: "profile_gaps" | "clarify_uncertain";
+  replyHint?: "profile_gaps" | "clarify_uncertain" | "personalized_plan" | "repeat";
 };
 
 const TYPE_WORDS: Array<[RegExp, OpportunityType]> = [
@@ -46,6 +46,9 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
   if (/ለምን|why (apply|maybe|skip|did you)|explain|^why\b/i.test(value)) {
     return { intent: "EXPLAIN_DECISION" };
   }
+  if (/repeat|say (that|it) again|again please|ድገም/i.test(value)) {
+    return { intent: "UNSUPPORTED", replyHint: "repeat" };
+  }
   // Profile gaps before generic "what am I missing" (opportunity requirements).
   if (
     /profile\s*(gap|gaps|incomplete|missing)|missing from my profile|what.*(incomplete|missing).*profile|profile.*(incomplete|missing)/i.test(
@@ -63,6 +66,9 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
   }
   if (/ምን ጎድሎኛል|what am i missing|gaps?|missing/i.test(value)) {
     return { intent: "SHOW_MISSING_REQUIREMENTS" };
+  }
+  if (/personalized readiness|personalize.*(plan|readiness|checklist)|readiness plan/i.test(value)) {
+    return { intent: "SHOW_READINESS", replyHint: "personalized_plan" };
   }
   if (/ምን ላዘጋጅ|what should i prepare|readiness|checklist|prepare/i.test(value)) {
     return { intent: "SHOW_READINESS" };

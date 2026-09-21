@@ -4,9 +4,17 @@ import type {
   Language,
   ProfileView,
   ReadinessItem,
+  ReadinessPlan,
 } from "@hulum/shared";
-import { buildExplainMessages, explanationFrom, type ChatClient } from "../ai/index.js";
-import { isUnsafeExplanation } from "../ai/guard.js";
+import {
+  buildExplainMessages,
+  buildReadinessPlanMessages,
+  explanationFrom,
+  isUnsafeExplanation,
+  isUnsafeReadinessPlan,
+  readinessPlanFrom,
+  type ChatClient,
+} from "../ai/index.js";
 import { decide } from "../decision/decide.js";
 import { HttpError } from "../http/errors.js";
 import { recordOpsEvent, timeOps, timeOpsSync } from "../ops/metrics.js";
@@ -23,10 +31,33 @@ export type AnalysisService = {
   getById(id: string): Promise<Analysis | undefined>;
   getReadiness(id: string): Promise<ReadinessItem[] | undefined>;
   explain(id: string, language: Language): Promise<AnalysisExplanation>;
+  personalizedReadinessPlan(id: string, language: Language): Promise<ReadinessPlan>;
 };
 
 function httpCode(error: unknown): string | undefined {
   return error instanceof HttpError ? error.code : undefined;
+}
+
+async function completeWithRetry(
+  chat: ChatClient,
+  name: string,
+  messages: Array<{ role: "system" | "user"; content: string }>,
+): Promise<string> {
+  try {
+    return await timeOps("ai", name, () => chat.complete(messages), httpCode);
+  } catch (error) {
+    if (!(error instanceof HttpError) || error.code !== "AI_ERROR") {
+      throw error;
+    }
+    try {
+      return await timeOps("ai", `${name}.retry`, () => chat.complete(messages), httpCode);
+    } catch (retryError) {
+      if (!(retryError instanceof HttpError) || retryError.code !== "AI_ERROR") {
+        throw retryError;
+      }
+      return "";
+    }
+  }
 }
 
 export function createAnalysisService(deps: {
@@ -93,33 +124,11 @@ export function createAnalysisService(deps: {
           "GROQ_API_KEY and GROQ_MODEL must be set in the server environment.",
         );
       }
-      let text = "";
-      try {
-        text = await timeOps(
-          "ai",
-          "explain.groq",
-          () => deps.chat!.complete(buildExplainMessages(analysis, language)),
-          httpCode,
-        );
-      } catch (error) {
-        if (!(error instanceof HttpError) || error.code !== "AI_ERROR") {
-          throw error;
-        }
-        // One retry on transient provider failure; guards still replace unsafe text.
-        try {
-          text = await timeOps(
-            "ai",
-            "explain.groq.retry",
-            () => deps.chat!.complete(buildExplainMessages(analysis, language)),
-            httpCode,
-          );
-        } catch (retryError) {
-          if (!(retryError instanceof HttpError) || retryError.code !== "AI_ERROR") {
-            throw retryError;
-          }
-          text = "";
-        }
-      }
+      const text = await completeWithRetry(
+        deps.chat,
+        "explain.groq",
+        buildExplainMessages(analysis, language),
+      );
       if (isUnsafeExplanation(analysis, text)) {
         recordOpsEvent({
           kind: "ai_validation",
@@ -137,6 +146,42 @@ export function createAnalysisService(deps: {
         });
       }
       return explanationFrom(analysis, language, text);
+    },
+
+    async personalizedReadinessPlan(id: string, language: Language): Promise<ReadinessPlan> {
+      const analysis = await deps.store.getById(id);
+      if (analysis === undefined) {
+        throw new HttpError(404, "NOT_FOUND", "Analysis not found.");
+      }
+      if (deps.chat === undefined) {
+        throw new HttpError(
+          503,
+          "AI_UNAVAILABLE",
+          "GROQ_API_KEY and GROQ_MODEL must be set in the server environment.",
+        );
+      }
+      const text = await completeWithRetry(
+        deps.chat,
+        "readiness_plan.groq",
+        buildReadinessPlanMessages(analysis, language),
+      );
+      if (isUnsafeReadinessPlan(analysis, text)) {
+        recordOpsEvent({
+          kind: "ai_validation",
+          name: "readiness_plan.unsafe_fallback",
+          ok: false,
+          ms: 0,
+          code: "AI_UNSAFE_OUTPUT",
+        });
+      } else {
+        recordOpsEvent({
+          kind: "ai_validation",
+          name: "readiness_plan.accepted",
+          ok: true,
+          ms: 0,
+        });
+      }
+      return readinessPlanFrom(analysis, language, text);
     },
   };
 }

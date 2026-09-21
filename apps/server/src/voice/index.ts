@@ -103,11 +103,18 @@ function toAnalysisDetail(
 export function createVoiceService(deps: {
   profiles: Pick<ProfileService, "getByUserId">;
   opportunities: Pick<OpportunityService, "list" | "getById">;
-  analyses: Pick<AnalysisService, "analyze" | "getById">;
+  analyses: Pick<AnalysisService, "analyze" | "getById" | "personalizedReadinessPlan">;
   clock?: Clock;
   persistSession?: (input: { id: string; userId: string; language: LanguageCode }) => Promise<void>;
 }): VoiceService {
   const clock = deps.clock ?? systemClock;
+  /** Last assistant reply only — never stores user utterance text. */
+  const lastReplyByUser = new Map<string, { intent: VoiceActionResponse["intent"]; reply: string }>();
+
+  function remember(userId: string, result: VoiceActionResponse): VoiceActionResponse {
+    lastReplyByUser.set(userId, { intent: result.intent, reply: result.reply });
+    return result;
+  }
 
   return {
     async createSession(userId, language) {
@@ -141,12 +148,24 @@ export function createVoiceService(deps: {
     },
 
     async handleAction(input) {
-      return timeOps(
+      const parsed = parseVoiceIntent(input.text, input.language);
+      if (parsed.replyHint === "repeat") {
+        const previous = lastReplyByUser.get(input.userId);
+        if (previous === undefined) {
+          return {
+            intent: "UNSUPPORTED" as VoiceIntent,
+            reply: "Nothing to repeat yet. Ask a HULUM question first.",
+          };
+        }
+        return { intent: previous.intent, reply: previous.reply };
+      }
+
+      const result = await timeOps(
         "voice",
         "voice.action",
         async () => {
       const language = input.language;
-      const intent = parseVoiceIntent(input.text, language);
+      const intent = parsed;
       const opportunities = await deps.opportunities.list();
       const analysis = input.analysisId ? await deps.analyses.getById(input.analysisId) : undefined;
       const opportunity = input.opportunityId
@@ -329,6 +348,34 @@ export function createVoiceService(deps: {
           };
         }
         if (intent.intent === "SHOW_READINESS") {
+          if (intent.replyHint === "personalized_plan") {
+            try {
+              const plan = await deps.analyses.personalizedReadinessPlan(analysis.id, language);
+              return {
+                intent: intent.intent,
+                reply: plan.plan,
+                analysis: detail,
+                opportunity: relatedOpportunity,
+              };
+            } catch (error) {
+              if (error instanceof HttpError && error.code === "AI_UNAVAILABLE") {
+                const list = readiness.length
+                  ? readiness
+                      .map((item) => `${item.title} (${item.status.replace("_", " ")})`)
+                      .join("; ")
+                  : "No readiness checklist is stored yet.";
+                return {
+                  intent: intent.intent,
+                  reply: readiness.length
+                    ? `${analysis.nextAction} Prepare: ${list}`
+                    : `${analysis.nextAction} ${list}`,
+                  analysis: detail,
+                  opportunity: relatedOpportunity,
+                };
+              }
+              throw error;
+            }
+          }
           const list = readiness.length
             ? readiness.map((item) => `${item.title} (${item.status.replace("_", " ")})`).join("; ")
             : "No readiness checklist is stored yet.";
@@ -363,6 +410,7 @@ export function createVoiceService(deps: {
         },
         (error) => (error instanceof HttpError ? error.code : undefined),
       );
+      return remember(input.userId, result);
     },
   };
 }

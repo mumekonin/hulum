@@ -41,6 +41,12 @@ describe("parseVoiceIntent", () => {
         intent: "SHOW_MISSING_REQUIREMENTS",
         replyHint: "clarify_uncertain",
       },
+      {
+        text: "Personalize my readiness plan",
+        intent: "SHOW_READINESS",
+        replyHint: "personalized_plan",
+      },
+      { text: "Repeat that", intent: "UNSUPPORTED", replyHint: "repeat" },
       { text: "What's the weather in Addis?", intent: "UNSUPPORTED" },
     ];
 

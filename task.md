@@ -720,7 +720,7 @@ Deadline verification  TODO
 - [x] **P0** Support NOT_REQUIRED.
 - [x] **P0** Display next action.
 - [x] **P1** Allow manual checklist updates.
-- [ ] **P1** Generate personalized readiness plan with AI.
+- [x] **P1** Generate personalized readiness plan with AI.
 
 ---
 
@@ -743,8 +743,8 @@ It must perform meaningful HULUM actions and must not be decorative.
 - [ ] **P1** Create/update profile by voice.
 - [ ] **P1** Handle recognition failure.
 - [ ] **P1** Handle silence/timeouts.
-- [ ] **P1** Support repeat requests.
-- [ ] **P1** Measure latency.
+- [x] **P1** Support repeat requests.
+- [x] **P1** Measure latency.
 
 ## Example voice intents
 

@@ -7,6 +7,7 @@ export const EXPLAIN_RATE_LIMIT_WINDOW_MS = 60_000;
 export const EXPLAIN_RATE_LIMIT_MAX = 10;
 
 const EXPLAIN_PATH = /^\/api\/analyses\/[^/]+\/explain\/?$/;
+const READINESS_PLAN_PATH = /^\/api\/analyses\/[^/]+\/readiness\/plan\/?$/;
 
 export type RateLimiter = {
   allow(key: string): boolean;
@@ -45,7 +46,10 @@ function clientKey(address: string | undefined): string {
 
 export function explainRateLimitMiddleware(limiter: RateLimiter): RequestHandler {
   return (req, _res, next) => {
-    if (req.method !== "POST" || !EXPLAIN_PATH.test(req.path)) {
+    if (
+      req.method !== "POST" ||
+      (!EXPLAIN_PATH.test(req.path) && !READINESS_PLAN_PATH.test(req.path))
+    ) {
       next();
       return;
     }
@@ -54,7 +58,7 @@ export function explainRateLimitMiddleware(limiter: RateLimiter): RequestHandler
         new HttpError(
           429,
           "RATE_LIMITED",
-          "Too many explanation requests. Please try again shortly.",
+          "Too many AI wording requests. Please try again shortly.",
         ),
       );
       return;

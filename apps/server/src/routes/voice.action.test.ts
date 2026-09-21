@@ -416,6 +416,61 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     expect(readiness.intent).toBe("SHOW_READINESS");
   });
 
+  it("repeats the last assistant reply without storing user utterance text", async () => {
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+    const userId = demoBody.data.userId;
+
+    const listed = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ userId, text: "Show me internships" }),
+    });
+    const listedBody = (await listed.json()) as { data: { intent: string; reply: string } };
+    expect(listed.status).toBe(200);
+
+    const repeated = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ userId, text: "Repeat that" }),
+    });
+    const repeatedBody = (await repeated.json()) as { data: { intent: string; reply: string } };
+
+    expect(repeated.status).toBe(200);
+    expect(repeatedBody.data.intent).toBe(listedBody.data.intent);
+    expect(repeatedBody.data.reply).toBe(listedBody.data.reply);
+  });
+
+  it("returns a personalized readiness plan from the stored checklist", async () => {
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+
+    await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Should I apply for this?",
+        opportunityId: "opp-a2sv",
+      }),
+    });
+
+    const plan = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Personalize my readiness plan",
+        opportunityId: "opp-a2sv",
+      }),
+    });
+    const planBody = (await plan.json()) as { data: { intent: string; reply: string } };
+
+    expect(plan.status).toBe(200);
+    expect(planBody.data.intent).toBe("SHOW_READINESS");
+    expect(planBody.data.reply).toMatch(/Prepare:|checklist|Personalized plan/i);
+  });
+
   it("describes the current opportunity from stored facts, not the first catalog item", async () => {
     const fresh = await fetch(`${baseUrl}/api/profile`, {
       method: "POST",

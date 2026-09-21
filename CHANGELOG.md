@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-21 — Personalized readiness plan and voice repeat
+
+### Added
+- `POST /api/analyses/:id/readiness/plan` — Groq wording over the stored checklist; unsafe or inventing plans fall back to deterministic titles.
+- Voice `replyHint` paths for personalized readiness plan and “repeat that” (last assistant reply only; no user utterance storage).
+- Assistant quick actions for both.
+
+### Why
+Phase 11/12 P1s asked for AI-personalized readiness and repeat requests without expanding the Task 22 intent enum or inventing checklist items.
+
 ## 2026-09-21 — Ops latency/errors and decision audit endpoint
 
 ### Added
