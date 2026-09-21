@@ -31,6 +31,16 @@ describe("parseVoiceIntent", () => {
       { text: "Open this opportunity", intent: "OPEN_OPPORTUNITY" },
       { text: "Tell me about this opportunity", intent: "OPEN_OPPORTUNITY" },
       { text: "Update profile", intent: "UPDATE_PROFILE" },
+      {
+        text: "What is missing from my profile?",
+        intent: "UPDATE_PROFILE",
+        replyHint: "profile_gaps",
+      },
+      {
+        text: "Clarify uncertain requirements",
+        intent: "SHOW_MISSING_REQUIREMENTS",
+        replyHint: "clarify_uncertain",
+      },
       { text: "What's the weather in Addis?", intent: "UNSUPPORTED" },
     ];
 

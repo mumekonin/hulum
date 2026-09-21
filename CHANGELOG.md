@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-21 — Assistant profile gaps and requirement clarification
+
+### Added
+- Voice `replyHint` paths for profile completeness gaps and UNCERTAIN-only requirement clarification (Task 22 intent enum unchanged).
+- Assistant quick actions: “What is missing from my profile?” and “Clarify uncertain requirements”.
+
+### Why
+Phase 18 P1s asked Ask HULUM to surface profile incompleteness and clarify uncertain requirements without inventing eligibility or expanding the locked voice intent set.
+
 ## 2026-09-21 — Decision audit trail and explain eval fixtures
 
 ### Added

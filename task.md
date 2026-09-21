@@ -958,9 +958,9 @@ The assistant should remain grounded in the current HULUM context.
 - [x] **P0** Ask what is missing.
 - [x] **P0** Ask what to prepare.
 - [x] **P0** Ask about the current opportunity.
-- [ ] **P1** Ask about profile gaps.
+- [x] **P1** Ask about profile gaps.
 - [x] **P1** Ask to filter opportunities.
-- [ ] **P1** Ask for clarification of requirements.
+- [x] **P1** Ask for clarification of requirements.
 
 The assistant must not become an unrestricted chatbot.
 

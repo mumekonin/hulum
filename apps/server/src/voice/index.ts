@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import {
   RequirementStatus,
+  profileCompleteness,
   voiceActionSchema,
   type Analysis,
   type AnalysisDetail,
@@ -28,7 +29,7 @@ import { createProfileService, type ProfileService } from "../profiles/service.j
 import { createPgProfileStore } from "../profiles/store.js";
 import type { Clock } from "../services/common/clock.js";
 import { systemClock } from "../services/common/clock.js";
-import { formatOpportunityContext, formatOpportunityList, parseVoiceIntent } from "./intents.js";
+import { formatOpportunityContext, formatOpportunityList, formatProfileGaps, parseVoiceIntent } from "./intents.js";
 
 export type VoiceSessionView = {
   id: string;
@@ -207,6 +208,17 @@ export function createVoiceService(deps: {
       }
 
       if (intent.intent === "UPDATE_PROFILE") {
+        if (intent.replyHint === "profile_gaps") {
+          const profileView = await deps.profiles.getByUserId(input.userId);
+          if (profileView === undefined) {
+            throw new HttpError(404, "PROFILE_NOT_FOUND", "Create a profile before asking HULUM.");
+          }
+          const gaps = profileCompleteness(profileView.profile);
+          return {
+            intent: intent.intent,
+            reply: formatProfileGaps(gaps.missing),
+          };
+        }
         return {
           intent: intent.intent,
           reply:
@@ -280,6 +292,19 @@ export function createVoiceService(deps: {
           };
         }
         if (intent.intent === "SHOW_MISSING_REQUIREMENTS") {
+          const uncertainOnly = requirements
+            .filter((item) => item.status === RequirementStatus.UNCERTAIN)
+            .map((item) => `${item.text} (${item.reason ?? "needs verification"})`);
+          if (intent.replyHint === "clarify_uncertain") {
+            return {
+              intent: intent.intent,
+              reply: uncertainOnly.length
+                ? `These requirements are UNCERTAIN — confirm them on the official source before treating them as met: ${uncertainOnly.join("; ")}`
+                : "No UNCERTAIN requirements are stored for this analysis. Confirm any doubt on the official source; HULUM is not the organization.",
+              analysis: detail,
+              opportunity: relatedOpportunity,
+            };
+          }
           return {
             intent: intent.intent,
             reply: gaps.length

@@ -198,6 +198,75 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     expect(gapsBody.data.reply).toMatch(/NOT_MET|UNCERTAIN/);
   });
 
+  it("reports profile completeness gaps without changing stored profile facts", async () => {
+    const created = await fetch(`${baseUrl}/api/profile`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: "user_profile_gaps",
+        name: "Gap Checker",
+        educationLevel: "bachelor_in_progress",
+        fieldOfStudy: "Computer Science",
+        graduationYear: 2027,
+        country: "Ethiopia",
+        languages: ["English"],
+        preferredLanguage: "en",
+      }),
+    });
+    expect(created.ok).toBe(true);
+
+    const response = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: "user_profile_gaps",
+        text: "What is missing from my profile?",
+      }),
+    });
+    const body = (await response.json()) as { data: { intent: string; reply: string } };
+
+    expect(response.status).toBe(200);
+    expect(body.data.intent).toBe("UPDATE_PROFILE");
+    expect(body.data.reply).toContain("Your profile is missing:");
+    expect(body.data.reply).toMatch(/city|skills|experience|interests/);
+    expect(body.data.reply).toContain("Voice cannot silently change stored facts");
+  });
+
+  it("clarifies UNCERTAIN requirements without treating them as met", async () => {
+    const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
+    const demoBody = (await demo.json()) as { data: { userId: string } };
+
+    await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Should I apply for this?",
+        opportunityId: "opp-chevening",
+      }),
+    });
+
+    const clarified = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: demoBody.data.userId,
+        text: "Clarify uncertain requirements",
+        opportunityId: "opp-chevening",
+      }),
+    });
+    const clarifiedBody = (await clarified.json()) as {
+      data: { intent: string; reply: string };
+    };
+
+    expect(clarified.status).toBe(200);
+    expect(clarifiedBody.data.intent).toBe("SHOW_MISSING_REQUIREMENTS");
+    expect(clarifiedBody.data.reply).toMatch(
+      /UNCERTAIN|No UNCERTAIN requirements|official source/,
+    );
+    expect(clarifiedBody.data.reply.toLowerCase()).not.toContain("you meet");
+  });
+
   it("filters the catalog by APPLY without treating the request as analyze-this", async () => {
     const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
     const demoBody = (await demo.json()) as { data: { userId: string } };
