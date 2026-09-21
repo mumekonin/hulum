@@ -8,6 +8,7 @@ import {
   type EducationLevel,
   type LanguageCode,
   type Profile,
+  type ProfileExtractResult,
 } from "@hulum/shared";
 import { api, isNotFound, userFacingError } from "@/lib/api";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
@@ -47,6 +48,10 @@ export default function ProfilePage() {
   const [boot, setBoot] = useState<"loading" | "ready" | "error">("loading");
   const [loadError, setLoadError] = useState<string | null>(null);
   const [reloadKey, setReloadKey] = useState(0);
+  const [extractText, setExtractText] = useState("");
+  const [extracting, setExtracting] = useState(false);
+  const [extractNotice, setExtractNotice] = useState<string | null>(null);
+  const [proposal, setProposal] = useState<ProfileExtractResult | null>(null);
 
   useEffect(() => {
     const userId = getUserId();
@@ -137,6 +142,47 @@ export default function ProfilePage() {
     }
   }
 
+  async function runExtract() {
+    setExtracting(true);
+    setError(null);
+    setExtractNotice(null);
+    setProposal(null);
+    try {
+      const result = await api<ProfileExtractResult>("/api/ai/profile-extract", {
+        method: "POST",
+        body: JSON.stringify({ text: extractText }),
+      });
+      setProposal(result);
+      setExtractNotice(result.notice);
+    } catch (err) {
+      setError(userFacingError(err));
+    } finally {
+      setExtracting(false);
+    }
+  }
+
+  function applyProposalToForm() {
+    if (!proposal) return;
+    const p = proposal.proposed;
+    setForm((current) => ({
+      ...current,
+      educationLevel:
+        (p.educationLevel as EducationLevel | null) ?? current.educationLevel,
+      fieldOfStudy: p.fieldOfStudy ?? current.fieldOfStudy,
+      graduationYear: p.graduationYear ?? current.graduationYear,
+      country: p.country ?? current.country,
+      city: p.city ?? current.city,
+      languages: p.languages.length > 0 ? p.languages.join(", ") : current.languages,
+      skills: p.skills.length > 0 ? p.skills.join(", ") : current.skills,
+      experience: p.experience ?? current.experience,
+      interests: p.interests.length > 0 ? p.interests.join(", ") : current.interests,
+    }));
+    setExtractNotice(
+      "Proposed fields were copied into the form. Review them, then save — nothing was stored yet.",
+    );
+    setProposal(null);
+  }
+
   return (
     <section className="max-w-2xl">
       <h1 className="font-display text-4xl">Your profile</h1>
@@ -180,6 +226,66 @@ export default function ProfilePage() {
           >
             {saving ? "Working…" : "Use demo profile (Abeba Tesfaye)"}
           </button>
+
+          <div className="mt-8 grid gap-3 border-t border-line pt-8">
+            <h2 className="font-display text-2xl">Extract from a self-description</h2>
+            <p className="text-sm text-muted">
+              Paste text about yourself. HULUM proposes fields only — you must confirm into the form
+              and save before they are stored.
+            </p>
+            <label className="grid gap-1 text-sm">
+              Self-description
+              <textarea
+                value={extractText}
+                onChange={(e) => setExtractText(e.target.value)}
+                rows={4}
+                className="border border-line bg-white px-3 py-2"
+                placeholder="I am a Computer Science student in Addis Ababa, Ethiopia. I speak English and Amharic…"
+              />
+            </label>
+            <button
+              type="button"
+              onClick={() => void runExtract()}
+              disabled={extracting || extractText.trim().length < 8}
+              className="min-h-11 w-fit border border-ink px-4 py-2 text-sm disabled:opacity-60"
+            >
+              {extracting ? "Extracting…" : "Propose profile fields"}
+            </button>
+            {extractNotice ? <p className="text-sm text-muted">{extractNotice}</p> : null}
+            {proposal && proposal.filledFields.length > 0 ? (
+              <div className="grid gap-2 text-sm">
+                <p className="font-medium">Proposed (not saved):</p>
+                <ul className="list-disc pl-5">
+                  {proposal.filledFields.map((field) => {
+                    const value = proposal.proposed[field];
+                    const shown = Array.isArray(value) ? value.join(", ") : String(value);
+                    return (
+                      <li key={field}>
+                        {field}: {shown}
+                      </li>
+                    );
+                  })}
+                </ul>
+                <div className="flex flex-wrap gap-3">
+                  <button
+                    type="button"
+                    onClick={applyProposalToForm}
+                    className="min-h-11 border border-ink bg-ink px-4 py-2 text-sm text-white"
+                  >
+                    Confirm into form
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setProposal(null)}
+                    className="min-h-11 border border-line px-4 py-2 text-sm"
+                  >
+                    Discard
+                  </button>
+                </div>
+              </div>
+            ) : null}
+          </div>
+
           <form
             onSubmit={(event) => void submit(event)}
             className="mt-8 grid gap-4"

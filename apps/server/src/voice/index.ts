@@ -18,6 +18,12 @@ import type { AnalysisService } from "../analysis/service.js";
 import { createAnalysisService } from "../analysis/service.js";
 import { createPgAnalysisStore } from "../analysis/store.js";
 import { createGroqChatClient, type ChatClient } from "../ai/index.js";
+import {
+  buildProfileExtractMessages,
+  emptyProfileExtract,
+  formatProfileExtractReply,
+  profileExtractFromModelText,
+} from "../ai/profileExtract.js";
 import { loadEnv } from "../config/env.js";
 import { decide } from "../decision/decide.js";
 import { getPool } from "../db/pool.js";
@@ -105,6 +111,7 @@ export function createVoiceService(deps: {
   opportunities: Pick<OpportunityService, "list" | "getById">;
   analyses: Pick<AnalysisService, "analyze" | "getById" | "personalizedReadinessPlan">;
   clock?: Clock;
+  chat?: ChatClient;
   persistSession?: (input: { id: string; userId: string; language: LanguageCode }) => Promise<void>;
 }): VoiceService {
   const clock = deps.clock ?? systemClock;
@@ -241,6 +248,26 @@ export function createVoiceService(deps: {
       }
 
       if (intent.intent === "UPDATE_PROFILE") {
+        if (intent.replyHint === "profile_extract") {
+          if (deps.chat === undefined) {
+            return {
+              intent: intent.intent,
+              reply:
+                "Profile extract needs GROQ_API_KEY. Open your profile page to type facts manually. Voice cannot silently change stored facts.",
+            };
+          }
+          let raw = "";
+          try {
+            raw = await deps.chat.complete(buildProfileExtractMessages(input.text));
+          } catch {
+            raw = "";
+          }
+          const extracted = raw ? profileExtractFromModelText(raw) : emptyProfileExtract();
+          return {
+            intent: intent.intent,
+            reply: formatProfileExtractReply(extracted),
+          };
+        }
         if (intent.replyHint === "profile_gaps") {
           const profileView = await deps.profiles.getByUserId(input.userId);
           if (profileView === undefined) {
@@ -443,6 +470,7 @@ function defaultVoiceService(): VoiceService {
     opportunities,
     analyses,
     clock: systemClock,
+    ...(chat === undefined ? {} : { chat }),
     persistSession: persistVoiceSession,
   });
 }

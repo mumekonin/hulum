@@ -12,7 +12,12 @@ export type ParsedIntent = {
   type?: OpportunityType;
   decision?: Decision;
   /** Narrower handler hint without expanding the Task 22 lock set. */
-  replyHint?: "profile_gaps" | "clarify_uncertain" | "personalized_plan" | "repeat";
+  replyHint?:
+    | "profile_gaps"
+    | "clarify_uncertain"
+    | "personalized_plan"
+    | "repeat"
+    | "profile_extract";
 };
 
 const TYPE_WORDS: Array<[RegExp, OpportunityType]> = [
@@ -48,6 +53,13 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
   }
   if (/repeat|say (that|it) again|again please|ድገም/i.test(value)) {
     return { intent: "UNSUPPORTED", replyHint: "repeat" };
+  }
+  if (
+    /extract (my )?profile|build (my )?profile from|profile from (this|my) (text|description)|fill (my )?profile from/i.test(
+      value,
+    )
+  ) {
+    return { intent: "UPDATE_PROFILE", replyHint: "profile_extract" };
   }
   // Profile gaps before generic "what am I missing" (opportunity requirements).
   if (

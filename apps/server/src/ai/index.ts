@@ -10,4 +10,13 @@ export {
   READINESS_PLAN_SYSTEM_PROMPT,
   sanitizeReadinessPlan,
 } from "./readinessPlan.js";
+export {
+  buildProfileExtractMessages,
+  emptyProfileExtract,
+  formatProfileExtractReply,
+  profileExtractFromModelText,
+  PROFILE_EXTRACT_NOTICE,
+  PROFILE_EXTRACT_SYSTEM_PROMPT,
+} from "./profileExtract.js";
+export { createProfileExtractRouter, profileExtractRouter } from "./profileExtractRouter.js";
 export { parseExplainRequest } from "./validate.js";

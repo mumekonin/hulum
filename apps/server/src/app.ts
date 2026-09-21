@@ -3,6 +3,7 @@ import express from "express";
 import { loadEnv, type AppEnv } from "./config/env.js";
 import { errorHandler as postgresErrorHandler, notFoundHandler } from "./http/error-handler.js";
 import { createOpsRouter, opsRequestTimingMiddleware } from "./ops/index.js";
+import { profileExtractRouter } from "./ai/profileExtractRouter.js";
 import { analysisRouter } from "./routes/analysis.js";
 import { health } from "./routes/health.js";
 import { opportunitiesRouter } from "./routes/opportunities.js";
@@ -63,6 +64,7 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
 
   app.get("/api/health", health);
   app.use("/api/ops", createOpsRouter("file"));
+  app.use("/api/ai", profileExtractRouter);
   app.use("/api/profile", profileRouter);
   app.use("/api/opportunities", opportunitiesRouter);
   app.use("/api", analysisRouter);

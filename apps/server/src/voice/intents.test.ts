@@ -47,6 +47,11 @@ describe("parseVoiceIntent", () => {
         replyHint: "personalized_plan",
       },
       { text: "Repeat that", intent: "UNSUPPORTED", replyHint: "repeat" },
+      {
+        text: "Extract profile from this: I study CS in Addis",
+        intent: "UPDATE_PROFILE",
+        replyHint: "profile_extract",
+      },
       { text: "What's the weather in Addis?", intent: "UNSUPPORTED" },
     ];
 

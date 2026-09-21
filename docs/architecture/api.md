@@ -13,6 +13,7 @@ Auth is a client-supplied `userId` (UUID). Full login is P1 and not implemented.
 | `GET` | `/api/health` | — | `{ status: "ok" }` |
 | `GET` | `/api/ops/summary` | — | In-process latency/error aggregates (no PII) |
 | `POST` | `/api/ops/decision-audit` | `{ userId, opportunityId }` | Deterministic `decide().audit` debug trail |
+| `POST` | `/api/ai/profile-extract` | `{ "text" }` | Proposed profile fields only; **never auto-saves**; rate-limited |
 | `POST` | `/api/profile` | profile fields + name/email | Creates user + profile |
 | `POST` | `/api/profile/demo` | — | Loads Abeba demo profile |
 | `GET` | `/api/profile/:userId` | — | UUID required |

@@ -167,6 +167,38 @@ voiceRouter.post("/action", async (req, res) => {
   }
 
   if (intent.intent === "UPDATE_PROFILE") {
+    if (intent.replyHint === "profile_extract") {
+      const { createGroqChatClient } = await import("../ai/groq.js");
+      const {
+        buildProfileExtractMessages,
+        emptyProfileExtract,
+        formatProfileExtractReply,
+        profileExtractFromModelText,
+      } = await import("../ai/profileExtract.js");
+      const apiKey = process.env.GROQ_API_KEY?.trim();
+      const model = process.env.GROQ_MODEL?.trim();
+      if (!apiKey || !model) {
+        replyOk(res, userId, {
+          intent: intent.intent,
+          reply:
+            "Open your profile page to extract facts from a self-description, then confirm before saving. Voice cannot silently change stored facts.",
+        });
+        return;
+      }
+      const chat = createGroqChatClient({ apiKey, model });
+      let raw = "";
+      try {
+        raw = await chat.complete(buildProfileExtractMessages(text));
+      } catch {
+        raw = "";
+      }
+      const extracted = raw ? profileExtractFromModelText(raw) : emptyProfileExtract();
+      replyOk(res, userId, {
+        intent: intent.intent,
+        reply: formatProfileExtractReply(extracted),
+      });
+      return;
+    }
     if (intent.replyHint === "profile_gaps") {
       const profile = store.profiles.find((item) => item.userId === userId);
       if (!profile) {
