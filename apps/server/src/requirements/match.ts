@@ -144,6 +144,94 @@ function asStringList(value: string | string[]): string[] {
   return trimmed === "" ? [] : [trimmed];
 }
 
+function fieldOverlaps(text: string, values: string[]): boolean {
+  if (!text.trim()) {
+    return false;
+  }
+  return values.some((value) => normalize(text).includes(normalize(value)) || normalize(value).includes(normalize(text)));
+}
+
+function deniesListedExperience(text: string): boolean {
+  return /\bno (work |professional )?experience\b|\bno work history\b|\bzero years\b|\bhave not worked\b/i.test(text);
+}
+
+function educationStatus(
+  profile: Profile,
+  required: string[],
+  clock: Clock,
+): Pick<RequirementMatch, "status" | "evidence" | "reason"> {
+  const base = memberStatus(profile.educationLevel, required, {
+    profile: "educationLevel",
+    requirement: "education",
+  });
+  const educationLevel = profile.educationLevel ?? "";
+  const inProgress = educationLevel.endsWith("_in_progress");
+  const graduationYear = profile.graduationYear;
+  const currentYear = clock.now().getUTCFullYear();
+
+  if (inProgress && typeof graduationYear === "number" && graduationYear < currentYear) {
+    return {
+      status: RequirementStatus.UNCERTAIN,
+      evidence: `educationLevel=${educationLevel}; graduationYear=${graduationYear}`,
+      reason:
+        "Current enrollment conflicts with a graduation year that is already in the past. Confirm status on the official source.",
+    };
+  }
+  return base;
+}
+
+function fieldStatus(
+  profile: Profile,
+  required: string[],
+): Pick<RequirementMatch, "status" | "evidence" | "reason"> {
+  const base = memberStatus(profile.fieldOfStudy, required, {
+    profile: "fieldOfStudy",
+    requirement: "field",
+  });
+  if (required.length === 0 || base.status !== RequirementStatus.NOT_MET) {
+    return base;
+  }
+  const field = profile.fieldOfStudy ?? "";
+  const extras = [...profile.skills, ...profile.interests];
+  const extraHit = extras.some((item) => fieldOverlaps(item, required));
+  if (extraHit && field.trim()) {
+    return {
+      status: RequirementStatus.UNCERTAIN,
+      evidence: `fieldOfStudy=${field}; skills/interests=${extras.join(", ")}`,
+      reason:
+        "Declared field of study does not match, but skills or interests do. Confirm the official field requirement before treating this as a fit.",
+    };
+  }
+  return base;
+}
+
+function experienceStatus(
+  profile: Profile,
+  required: string[],
+): Pick<RequirementMatch, "status" | "evidence" | "reason"> {
+  if (required.length === 0) {
+    return {
+      status: RequirementStatus.NOT_APPLICABLE,
+      evidence: null,
+      reason: "The opportunity does not list experience requirements.",
+    };
+  }
+  const yearsExperience = profile.yearsExperience ?? 0;
+  const experience = profile.experience ?? "";
+  if (yearsExperience > 0 && deniesListedExperience(experience)) {
+    return {
+      status: RequirementStatus.UNCERTAIN,
+      evidence: `yearsExperience=${yearsExperience}; experience=${experience}`,
+      reason:
+        "Years of experience conflict with the written experience description. Confirm before treating this as met.",
+    };
+  }
+  return unstructuredStatus(required, !hasText(profile.experience), {
+    name: "experience",
+    whyUncertain: "The profile has no experience text, so experience requirements cannot be confirmed.",
+  });
+}
+
 /**
  * Deterministic matcher. Same profile + opportunity + clock.now() date
  * always returns the same statuses. Never infers MET from similar wording.
@@ -158,19 +246,10 @@ export function matchRequirements(profile: Profile, opportunity: Opportunity, cl
     profile: "country",
     requirement: "country",
   });
-  const education = memberStatus(profile.educationLevel, educationRequirements, {
-    profile: "educationLevel",
-    requirement: "education",
-  });
-  const field = memberStatus(profile.fieldOfStudy, fieldRequirements, {
-    profile: "fieldOfStudy",
-    requirement: "field",
-  });
+  const education = educationStatus(profile, educationRequirements, clock);
+  const field = fieldStatus(profile, fieldRequirements);
   const language = languageStatus(profile, languageRequirements);
-  const experience = unstructuredStatus(experienceRequirements, !hasText(profile.experience), {
-    name: "experience",
-    whyUncertain: "The profile has no experience text, so experience requirements cannot be confirmed.",
-  });
+  const experience = experienceStatus(profile, experienceRequirements);
   const documents = unstructuredStatus(opportunity.documentRequirements, true, {
     name: "document",
     whyUncertain: "The profile has no document facts, so document requirements cannot be confirmed.",

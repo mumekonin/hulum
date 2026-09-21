@@ -11,6 +11,14 @@ HULUM records actual work. Do not invent history.
 ### Why
 After merging the Kidist demo next to Mulualem’s API, the product needed one coherent typecheck path and one web→API runtime (ADR 001).
 
+## 2026-09-21 — Conflicting profile facts stay UNCERTAIN
+
+### Changed
+- Matchers no longer treat mixed signals as MET: field of study vs skills/interests, years vs “no experience” text, and in-progress education with a past graduation year (file-store and Postgres `requirements/match`).
+
+### Why
+Phase 8 required handling conflicting information. Guessing MET from one fact while another fact contradicts it would hide a MAYBE.
+
 ## 2026-09-20 — Merge Kidist `feat/ci-checks` into main
 
 ### Changed
