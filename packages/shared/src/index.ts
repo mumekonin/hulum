@@ -1,6 +1,6 @@
-export * from "./constants";
-export * from "./types";
-export * from "./schemas";
+export * from "./constants.js";
+export * from "./types.js";
+export * from "./schemas.js";
 export { fail, ok } from "./api.js";
 export type { APIError, ApiEnvelope, ApiFailure, ApiSuccess } from "./api.js";
 export {

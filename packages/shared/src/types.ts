@@ -4,7 +4,7 @@ import type {
   LANGUAGES,
   READINESS_PRIORITIES,
   VOICE_INTENTS,
-} from "./constants";
+} from "./constants.js";
 import type {
   Decision,
   OpportunityType,

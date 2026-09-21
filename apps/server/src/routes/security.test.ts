@@ -39,7 +39,7 @@ describe("API security", () => {
     process.env.NODE_ENV = "test";
     resetStoreForTests();
 
-    const server = createServer(createApp());
+    const server = createServer(createApp({ store: "file" }));
     await new Promise<void>((resolve) => {
       server.listen(0, "127.0.0.1", resolve);
     });
@@ -128,7 +128,7 @@ describe("production CORS", () => {
     delete process.env.CLIENT_URL;
     process.env.NODE_ENV = "production";
 
-    const server = createServer(createApp());
+    const server = createServer(createApp({ store: "file" }));
     await new Promise<void>((resolve) => {
       server.listen(0, "127.0.0.1", resolve);
     });

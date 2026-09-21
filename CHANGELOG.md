@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-21 — Shared exports and Postgres dev runtime
+
+### Changed
+- `@hulum/shared` relative imports use `.js` so `typecheck:shared` passes under NodeNext.
+- `npm run dev` boots Postgres (`decide.ts`) on API port **3001**; web defaults to `http://localhost:3001`. File-store remains available via `createApp({ store: "file" })` for tests.
+
+### Why
+After merging the Kidist demo next to Mulualem’s API, the product needed one coherent typecheck path and one web→API runtime (ADR 001).
+
 ## 2026-09-20 — Merge Kidist `feat/ci-checks` into main
 
 ### Changed
