@@ -19,3 +19,4 @@ Ship `/assistant` and `POST /api/voice/action` as **the same intents** as the pr
 - `FILTER_BY_DECISION` evaluates the catalog in memory and does not persist those analyses.
 - Amharic keywords exist; live Amharic STT is not claimed.
 - Wiring Voxide later should map audio → the same intent parser → the same services.
+- Integration requirements for the browser widget are recorded in `docs/research/voxide-integration.md` (studied 2026-09-21; still not wired).

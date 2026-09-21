@@ -26,7 +26,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Database | `database/migrations/001_init.sql`, ADR 001 | Schema + migrate/smoke; `npm run dev` uses Postgres |
 | Decision engine | `apps/server/src/decision/`, ADR 002 | Present + tests |
 | AI responsibility | ADR 002, Groq explain in `apps/server/src/ai/` | Engine decides; Groq explains only |
-| Voice UX | ADR 003, ADR 004, `docs/demo/script.md` | Text/quick-action fallback; Voxide unwired |
+| Voice UX | ADR 003, ADR 004, `docs/research/voxide-integration.md`, `docs/demo/script.md` | Text/quick-action fallback; Voxide studied, unwired |
 | Implementation | `apps/web`, `apps/server`, `packages/shared` | Present |
 | Testing | `npm test` in `apps/server`, `.github/workflows/ci.yml` | Engine, API, voice-text, failures; CI: shared+server typecheck + tests (no lint/build/deploy) |
 | Iteration | `CHANGELOG.md`, `docs/stark/narrative.md` | Present; Day 20 narrative; do not rewrite history |

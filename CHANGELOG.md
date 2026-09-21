@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-21 — Voxide integration requirements studied
+
+### Added
+- `docs/research/voxide-integration.md`: browser `@voxide/react` widget, publishable key + domain whitelist, capabilities that call existing HULUM APIs. No install, no mic claim, no Amharic STT claim.
+
+### Why
+Phase 12 P0 required studying Voxide before wiring. Public docs confirm a client widget, not a server voice API (ADR 001).
+
 ## 2026-09-21 — CI checks and local-only deployment decision
 
 ### Added
