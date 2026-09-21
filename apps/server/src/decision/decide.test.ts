@@ -119,6 +119,25 @@ describe("decide", () => {
     const result = decide(profile, opportunity, clock);
     expect(opportunity.verificationStatus).toBe(VerificationStatus.NEEDS_REVIEW);
     expect(result.decision).toBe(Decision.APPLY);
+    expect(result.audit.rulePath).toBe("keys_met_no_uncertainty");
+    expect(result.audit.fitScoreIsAdvisoryOnly).toBe(true);
+    expect(result.audit.criticalNotMet).toEqual([]);
+  });
+
+  it("records critical_not_met on the audit trail for a country SKIP", () => {
+    const result = decide({ ...profile, country: "US" }, opportunity, clock);
+    expect(result.audit.rulePath).toBe("critical_not_met");
+    expect(result.audit.criticalNotMet).toContain(RequirementKey.COUNTRY);
+  });
+
+  it("records expired_override when effective verification is EXPIRED", () => {
+    const result = decide(
+      profile,
+      { ...opportunity, verificationStatus: VerificationStatus.EXPIRED },
+      clock,
+    );
+    expect(result.audit.rulePath).toBe("expired_override");
+    expect(result.audit.effectiveVerificationStatus).toBe(VerificationStatus.EXPIRED);
   });
 
   it("returns the same result for the same profile, opportunity, and clock", () => {

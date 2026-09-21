@@ -130,6 +130,19 @@ export type RequirementMatch = {
   reason: string;
 };
 
+export type DecisionAudit = {
+  /** Which engine branch produced the final decision (expired can override). */
+  rulePath: "critical_not_met" | "keys_met_no_uncertainty" | "default_maybe" | "expired_override";
+  criticalKeys: string[];
+  keyRequirementKeys: string[];
+  criticalNotMet: string[];
+  keyStatuses: Record<string, RequirementStatus>;
+  uncertainKeys: string[];
+  effectiveVerificationStatus: VerificationStatus;
+  fitScoreIsAdvisoryOnly: true;
+  decidedAt: string;
+};
+
 export type DecisionResult = {
   decision: Decision;
   fitScore: number;
@@ -138,6 +151,8 @@ export type DecisionResult = {
   uncertainRequirements: RequirementMatch[];
   reasons: string[];
   nextAction: string;
+  /** Deterministic debug trail. Not shown as a user-facing guarantee. */
+  audit: DecisionAudit;
 };
 
 export type Requirement = {

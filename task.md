@@ -647,7 +647,7 @@ MAYBE
 - [x] **P0** Ensure fit score never replaces the decision rules.
 - [x] **P0** Add unit tests.
 - [x] **P0** Add edge-case tests.
-- [ ] **P1** Add decision audit/debug information.
+- [x] **P1** Add decision audit/debug information.
 
 ## Important
 
@@ -688,9 +688,9 @@ AI is an assistant, not the eligibility authority.
 - [x] **P0** Implement decision-aware explanation.
 - [x] **P0** Implement readiness-plan generation.
 - [x] **P0** Implement contextual Q&A.
-- [ ] **P1** Add retry/fallback behavior.
+- [x] **P1** Add retry/fallback behavior.
 - [ ] **P1** Track latency/errors.
-- [ ] **P1** Create evaluation examples.
+- [x] **P1** Create evaluation examples.
 
 ---
 

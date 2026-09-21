@@ -30,6 +30,6 @@ UPDATE_PROFILE
 
 Profile API types: `CreateProfileRequest`, `PatchProfileRequest`, `ProfileView`. Completeness uses `profileCompleteness()`.
 
-Matcher keys: `RequirementKey`. Matcher rows: `RequirementMatch`. Decision payload: `DecisionResult`. Analyze body: `AnalyzeOpportunityRequest` (`{ userId }`). Readiness patch: `PatchReadinessRequest` (`{ status }`). Explain body: `ExplainAnalysisRequest` (`{ language?: "en" | "am" | "om" }`). Explain result: `AnalysisExplanation` (decision copied from the stored analysis). Official-source copy: `OFFICIAL_SOURCE_NOTICE` (show on opportunity and analysis screens).
+Matcher keys: `RequirementKey`. Matcher rows: `RequirementMatch`. Decision payload: `DecisionResult` (includes `audit` for rule-path debug). Analyze body: `AnalyzeOpportunityRequest` (`{ userId }`). Readiness patch: `PatchReadinessRequest` (`{ status }`). Explain body: `ExplainAnalysisRequest` (`{ language?: "en" | "am" | "om" }`). Explain result: `AnalysisExplanation` (decision copied from the stored analysis). Official-source copy: `OFFICIAL_SOURCE_NOTICE` (show on opportunity and analysis screens).
 
 Tell both teammates before changing these names.

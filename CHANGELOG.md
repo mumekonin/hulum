@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-21 — Decision audit trail and explain eval fixtures
+
+### Added
+- `DecisionResult.audit` with rule path, critical/key statuses, verification, and advisory fit-score flag.
+- Groq explain evaluation examples (`apps/server/src/ai/eval-examples.ts`) covering safe prose vs unsafe JSON/URL/contradiction/short text.
+- One retry on transient `AI_ERROR` during explain; unsafe text still falls back to stored summary.
+
+### Why
+Phase 9–10 asked for decision debug information, explain eval coverage, and retry/fallback without letting the model change APPLY/MAYBE/SKIP.
+
 ## 2026-09-21 — API docs, verification workflow, and retention
 
 ### Added

@@ -85,6 +85,15 @@ export function createAnalysisService(deps: {
         if (!(error instanceof HttpError) || error.code !== "AI_ERROR") {
           throw error;
         }
+        // One retry on transient provider failure; guards still replace unsafe text.
+        try {
+          text = await deps.chat.complete(buildExplainMessages(analysis, language));
+        } catch (retryError) {
+          if (!(retryError instanceof HttpError) || retryError.code !== "AI_ERROR") {
+            throw retryError;
+          }
+          text = "";
+        }
       }
       return explanationFrom(analysis, language, text);
     },

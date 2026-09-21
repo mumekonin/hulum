@@ -2,6 +2,7 @@ import {
   Decision,
   RequirementStatus,
   VerificationStatus,
+  type DecisionAudit,
   type DecisionResult,
   type Opportunity,
   type Profile,
@@ -50,12 +51,20 @@ export function decide(profile: Profile, opportunity: Opportunity, clock: Clock)
     (item) => item.status === RequirementStatus.UNCERTAIN,
   );
 
+  const criticalNotMet = CRITICAL_REQUIREMENT_KEYS.filter(
+    (key) => statusOf(matches, key) === RequirementStatus.NOT_MET,
+  );
+  const keyStatuses = Object.fromEntries(
+    KEY_REQUIREMENT_KEYS.map((key) => [key, statusOf(matches, key)]),
+  ) as DecisionAudit["keyStatuses"];
+
   let decision: typeof Decision.APPLY | typeof Decision.MAYBE | typeof Decision.SKIP =
     Decision.MAYBE;
-  if (
-    CRITICAL_REQUIREMENT_KEYS.some((key) => statusOf(matches, key) === RequirementStatus.NOT_MET)
-  ) {
+  let rulePath: DecisionAudit["rulePath"] = "default_maybe";
+
+  if (criticalNotMet.length > 0) {
     decision = Decision.SKIP;
+    rulePath = "critical_not_met";
   } else if (
     KEY_REQUIREMENT_KEYS.every((key) => {
       const status = statusOf(matches, key);
@@ -64,15 +73,18 @@ export function decide(profile: Profile, opportunity: Opportunity, clock: Clock)
     uncertainRequirements.length === 0
   ) {
     decision = Decision.APPLY;
+    rulePath = "keys_met_no_uncertainty";
   }
 
   const reasons = matches
     .filter((item) => item.status !== RequirementStatus.NOT_APPLICABLE)
     .map((item) => item.reason);
 
+  const verification = effectiveVerificationStatus(opportunity, clock);
   // Stored or computed EXPIRED is never APPLY. HULUM is not the official listing.
-  if (effectiveVerificationStatus(opportunity, clock) === VerificationStatus.EXPIRED) {
+  if (verification === VerificationStatus.EXPIRED) {
     decision = Decision.SKIP;
+    rulePath = "expired_override";
     reasons.unshift(
       "This opportunity is expired. Confirm the deadline on the official source; HULUM is not the organization.",
     );
@@ -85,6 +97,18 @@ export function decide(profile: Profile, opportunity: Opportunity, clock: Clock)
         ? NEXT_ACTION.SKIP
         : NEXT_ACTION.MAYBE;
 
+  const audit: DecisionAudit = {
+    rulePath,
+    criticalKeys: [...CRITICAL_REQUIREMENT_KEYS],
+    keyRequirementKeys: [...KEY_REQUIREMENT_KEYS],
+    criticalNotMet: [...criticalNotMet],
+    keyStatuses,
+    uncertainKeys: uncertainRequirements.map((item) => item.key),
+    effectiveVerificationStatus: verification,
+    fitScoreIsAdvisoryOnly: true,
+    decidedAt: clock.now().toISOString(),
+  };
+
   return {
     decision,
     fitScore: computeFitScore(matches),
@@ -93,5 +117,6 @@ export function decide(profile: Profile, opportunity: Opportunity, clock: Clock)
     uncertainRequirements,
     reasons,
     nextAction,
+    audit,
   };
 }
