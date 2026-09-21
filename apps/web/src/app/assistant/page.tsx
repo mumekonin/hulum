@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import type { LanguageCode, Profile, VoiceActionResponse } from "@hulum/shared";
 import { Notice } from "@/components/Notice";
 import { StatusPanel } from "@/components/StatusPanel";
+import { VoxidePanel, hasVoxidePublicKey } from "@/components/VoxidePanel";
 import { api, userFacingError } from "@/lib/api";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
 import { getLanguage, getUserId, setLanguage } from "@/lib/storage";
@@ -81,12 +82,13 @@ function AssistantInner() {
       .then((session) => {
         if (cancelled) return;
         setVoiceSession(session);
-        setBackupMode(session.provider !== "voxide");
+        // Browser widget is gated by NEXT_PUBLIC_VOXIDE_PUBLIC_KEY; server sessions stay text-fallback.
+        setBackupMode(!hasVoxidePublicKey());
       })
       .catch(() => {
         if (cancelled) return;
         setVoiceSession(null);
-        setBackupMode(true);
+        setBackupMode(!hasVoxidePublicKey());
       });
     return () => {
       cancelled = true;
@@ -108,11 +110,11 @@ function AssistantInner() {
   }
 
   const contextLabel = useMemo(() => {
-    const sessionNote = voiceSession
-      ? voiceSession.provider === "voxide"
-        ? " Voice session is live."
-        : " Text fallback session is active until Voxide is connected."
-      : "";
+    const sessionNote = hasVoxidePublicKey()
+      ? " Voxide publishable key is present; widget capabilities call the same HULUM APIs."
+      : voiceSession
+        ? " Text fallback session is active until a Voxide publishable key is set."
+        : "";
     if (analysisId) return `This conversation is attached to your latest analysis.${sessionNote}`;
     if (opportunityId) return `This conversation is attached to a selected opportunity.${sessionNote}`;
     return `No analysis selected yet. You can still browse or filter opportunities by voice/text.${sessionNote}`;
@@ -197,6 +199,21 @@ function AssistantInner() {
           </StatusPanel>
         </div>
       ) : null}
+      <VoxidePanel
+        language={language}
+        opportunityId={opportunityId}
+        analysisId={analysisId}
+        onReply={(utterance, response) => {
+          setMessages((current) => [
+            ...current,
+            { role: "user", text: utterance },
+            { role: "hulum", text: response.reply },
+          ]);
+          if (response.opportunity?.id) setSessionOpportunityId(response.opportunity.id);
+          if (response.analysis?.id) setSessionAnalysisId(response.analysis.id);
+        }}
+        onError={(message) => setError(message)}
+      />
       {error ? (
         <StatusPanel
           variant="error"

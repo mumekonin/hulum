@@ -21,16 +21,14 @@ Voxide is a **browser** Voice AI SDK. It is not an Express STT/TTS client.
 
 ## Minimum install path (when a key exists)
 
-From the public docs (not yet run in this repo):
+As of 2026-09-21 the repo includes:
 
-1. `npm install @voxide/react@latest` in `apps/web`.
-2. Create a project in the Voxide dashboard; copy the publishable key.
-3. Whitelist `http://localhost:3000` (and later the production web origin).
-4. Instantiate `VoxideClient({ publicKey: "vox_pub_…" })`.
-5. Register **capabilities** that call the same actions Ask HULUM text already uses.
-6. Mount `VoxideWidget` on `/assistant` (or a shared shell) beside the text fallback.
+1. `@voxide/react` in `apps/web`.
+2. `NEXT_PUBLIC_VOXIDE_PUBLIC_KEY` (`vox_pub_…`) in `.env.example`.
+3. `VoxidePanel` on `/assistant` — mounts only when the key is set; registers `runHulumRequest` → `POST /api/voice/action`.
+4. Postgres Ask HULUM routes on `/api/voice/session` and `/api/voice/action` (text fallback works without Voxide).
 
-Without a real `vox_pub_…` key and whitelist, steps 4–6 stay blocked. Text/quick actions remain the demo path (ADR 003).
+Still required from the dashboard (not in this repo): a real publishable key and domain whitelist for `localhost:3000`. Without that key the UI stays text/quick-action only (ADR 003).
 
 ## Capabilities HULUM must expose
 
@@ -52,12 +50,12 @@ Public Voxide marketing/docs describe the SDK and React widget. They **do not** 
 
 **Phase 13 “Verify Voxide supported languages” stays open** until a teammate with a live key measures English quality first, then Amharic. Until then ADR 004 stands: English text path is the e2e language; do not claim live Amharic voice.
 
-## Explicitly out of scope for this study
+## Explicitly out of scope for this study (and still open)
 
-- Installing `@voxide/react` without a key
-- Claiming microphone demo success
+- Claiming microphone demo success without a live key
 - Server-side Voxide proxy or inventing STT
 - Letting the Gemini agent override `decide()`
+- Verified Amharic / Afaan Oromo STT quality
 
 ## Next gated tasks
 
