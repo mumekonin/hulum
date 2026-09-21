@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-21 — Ops latency/errors and decision audit endpoint
+
+### Added
+- In-process ops metrics (API/AI/voice/decision/session) without storing profile or transcript content.
+- `GET /api/ops/summary` and `POST /api/ops/decision-audit` for local observability and engine debug.
+- `docs/architecture/observability.md` and `docs/architecture/opportunity-catalog.md` (import not required for curated v0.1 seed).
+
+### Why
+Phase 10/13/22 asked for latency/error tracking and an audit/debug service without inventing a metrics vendor or an import pipeline.
+
 ## 2026-09-21 — Assistant profile gaps and requirement clarification
 
 ### Added

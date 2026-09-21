@@ -4,6 +4,7 @@ import { runAnalysis, toAnalysisDetail } from "../analysis/runAnalysis.js";
 import { analyzeOpportunity } from "../decision/engine.js";
 import { fail, ok } from "../lib/http.js";
 import { createId, nowIso } from "../lib/id.js";
+import { recordOpsEvent, timeOps } from "../ops/metrics.js";
 import {
   formatOpportunityContext,
   formatOpportunityList,
@@ -16,30 +17,40 @@ import { loadStore, mutateStore } from "../store/fileStore.js";
 export const voiceRouter = Router();
 
 voiceRouter.post("/session", async (req, res) => {
-  const userId =
-    typeof req.body?.userId === "string" && req.body.userId.trim()
-      ? req.body.userId.trim()
-      : "anonymous";
-  const language =
-    req.body?.language === "am" || req.body?.language === "om" ? req.body.language : "en";
-  const session = {
-    id: createId("voice"),
-    userId,
-    language,
-    startedAt: nowIso(),
-    endedAt: null as string | null,
-  };
-  await mutateStore((store) => {
-    store.voiceSessions.push(session);
-  });
-  ok(
-    res,
-    {
-      ...session,
-      provider: process.env.VOXIDE_API_KEY ? "voxide" : "text-fallback",
-    },
-    201,
-  );
+  try {
+    const result = await timeOps("session", "voice.session", async () => {
+      const userId =
+        typeof req.body?.userId === "string" && req.body.userId.trim()
+          ? req.body.userId.trim()
+          : "anonymous";
+      const language =
+        req.body?.language === "am" || req.body?.language === "om" ? req.body.language : "en";
+      const session = {
+        id: createId("voice"),
+        userId,
+        language,
+        startedAt: nowIso(),
+        endedAt: null as string | null,
+      };
+      await mutateStore((store) => {
+        store.voiceSessions.push(session);
+      });
+      return {
+        ...session,
+        provider: process.env.VOXIDE_API_KEY ? "voxide" : "text-fallback",
+      };
+    });
+    ok(res, result, 201);
+  } catch (error) {
+    recordOpsEvent({
+      kind: "session",
+      name: "voice.session",
+      ok: false,
+      ms: 0,
+      code: "SESSION_FAILED",
+    });
+    throw error;
+  }
 });
 
 voiceRouter.post("/action", async (req, res) => {

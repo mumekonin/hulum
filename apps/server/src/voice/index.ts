@@ -25,6 +25,7 @@ import { HttpError } from "../http/errors.js";
 import { isUuid } from "../http/ids.js";
 import { createOpportunityService, type OpportunityService } from "../opportunities/service.js";
 import { createPgOpportunityStore } from "../opportunities/store.js";
+import { recordOpsEvent, timeOps } from "../ops/metrics.js";
 import { createProfileService, type ProfileService } from "../profiles/service.js";
 import { createPgProfileStore } from "../profiles/store.js";
 import type { Clock } from "../services/common/clock.js";
@@ -110,27 +111,40 @@ export function createVoiceService(deps: {
 
   return {
     async createSession(userId, language) {
-      const id = randomUUID();
-      const startedAt = clock.now().toISOString();
-      if (isUuid(userId) && deps.persistSession) {
-        try {
-          await deps.persistSession({ id, userId, language });
-        } catch {
-          // Session metadata is best-effort; text actions still work without it.
+      return timeOps("session", "voice.session", async () => {
+        const id = randomUUID();
+        const startedAt = clock.now().toISOString();
+        if (isUuid(userId) && deps.persistSession) {
+          try {
+            await deps.persistSession({ id, userId, language });
+          } catch {
+            recordOpsEvent({
+              kind: "session",
+              name: "voice.session.persist",
+              ok: false,
+              ms: 0,
+              code: "SESSION_PERSIST_FAILED",
+            });
+            // Session metadata is best-effort; text actions still work without it.
+          }
         }
-      }
-      return {
-        id,
-        userId,
-        language,
-        startedAt,
-        endedAt: null,
-        // Browser Voxide uses a publishable web key. Server leftover VOXIDE_API_KEY is not the widget path.
-        provider: "text-fallback",
-      };
+        return {
+          id,
+          userId,
+          language,
+          startedAt,
+          endedAt: null,
+          // Browser Voxide uses a publishable web key. Server leftover VOXIDE_API_KEY is not the widget path.
+          provider: "text-fallback" as const,
+        };
+      });
     },
 
     async handleAction(input) {
+      return timeOps(
+        "voice",
+        "voice.action",
+        async () => {
       const language = input.language;
       const intent = parseVoiceIntent(input.text, language);
       const opportunities = await deps.opportunities.list();
@@ -346,6 +360,9 @@ export function createVoiceService(deps: {
         reply:
           "I can show opportunities, filter internships or scholarships, filter APPLY MAYBE or SKIP, analyze a selected opportunity, explain a decision, or list what to prepare. You can also type instead of speaking.",
       };
+        },
+        (error) => (error instanceof HttpError ? error.code : undefined),
+      );
     },
   };
 }

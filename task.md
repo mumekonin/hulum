@@ -427,7 +427,7 @@ Opportunity
 - [x] **P0** Store verification status.
 - [x] **P0** Store last verified date.
 - [x] **P1** Add opportunity search/filtering.
-- [ ] **P1** Add opportunity import workflow if required.
+- [-] **P1** Add opportunity import workflow if required.
 
 ---
 
@@ -689,7 +689,7 @@ AI is an assistant, not the eligibility authority.
 - [x] **P0** Implement readiness-plan generation.
 - [x] **P0** Implement contextual Q&A.
 - [x] **P1** Add retry/fallback behavior.
-- [ ] **P1** Track latency/errors.
+- [x] **P1** Track latency/errors.
 - [x] **P1** Create evaluation examples.
 
 ---
@@ -808,7 +808,7 @@ Do not trade reliability for language count.
 - [x] **P0** AI orchestration service.
 - [x] **P0** Voice integration service.
 - [x] **P1** Search/filter service.
-- [ ] **P1** Audit/debug service.
+- [x] **P1** Audit/debug service.
 
 ## Suggested endpoints
 
@@ -1076,14 +1076,14 @@ Normal HULUM UI
 
 Track useful technical signals without unnecessarily storing sensitive content.
 
-- [ ] **P1** API latency.
-- [ ] **P1** AI latency.
-- [ ] **P1** Voice latency.
-- [ ] **P1** API error rates.
-- [ ] **P1** AI validation failures.
+- [x] **P1** API latency.
+- [x] **P1** AI latency.
+- [x] **P1** Voice latency.
+- [x] **P1** API error rates.
+- [x] **P1** AI validation failures.
 - [ ] **P1** Voice recognition failures.
-- [ ] **P1** Decision-engine errors.
-- [ ] **P1** Session failures.
+- [x] **P1** Decision-engine errors.
+- [x] **P1** Session failures.
 
 Do not log unnecessary personal profile data or raw voice/conversation content.
 
