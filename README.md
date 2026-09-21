@@ -125,6 +125,8 @@ POST   /api/voice/action
 
 Envelope: `{ data, error }`. Auth is a local `userId` (full login is P1).
 
+Full endpoint notes (validation, explain rate limit, CORS): `docs/architecture/api.md`.
+
 Set `CLIENT_URL` in `apps/server/.env` to the web origin (`http://localhost:3000`). The API does not send CORS `*` and does not put secrets in error bodies.
 
 ---

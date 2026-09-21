@@ -2,6 +2,19 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-21 — API docs, verification workflow, and retention
+
+### Added
+- `docs/architecture/api.md` — endpoint inventory, Zod validation, explain rate limit, CORS/secrets notes.
+- `docs/architecture/manual-verification.md` — curated catalog check steps against `sourceUrl`.
+- `docs/architecture/retention.md` — no voice audio/transcripts; no automated purge yet.
+
+### Changed
+- Task checkboxes for validation/rate-limit/docs, requirement explanations (UI already shows `reason`), manual verification, retention, and data-exposure review.
+
+### Why
+Phase 14–16 P1s asked for documentation around shipped validation and data handling without inventing OpenAPI or a purge cron.
+
 ## 2026-09-21 — CI build gates and stale-opportunity rules
 
 ### Changed

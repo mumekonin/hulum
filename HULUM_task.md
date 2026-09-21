@@ -422,7 +422,7 @@ HULUM should not treat generated AI content as authoritative opportunity require
 - [x] **P0** Store last verification date.
 - [x] **P0** Display source/verification information.
 - [x] **P0** Add responsible-AI notice.
-- [ ] **P1** Define manual verification workflow.
+- [x] **P1** Define manual verification workflow.
 - [x] **P1** Define stale-opportunity behavior.
 
 ## Responsible AI notice
@@ -449,7 +449,7 @@ NOT_APPLICABLE
 - [x] **P0** Preserve uncertainty.
 - [x] **P0** Handle missing profile information.
 - [x] **P0** Handle conflicting information.
-- [ ] **P1** Add requirement explanations.
+- [x] **P1** Add requirement explanations.
 - [x] **P1** Add unit tests for matching.
 
 ---
@@ -674,7 +674,7 @@ GET    /api/health
 - [x] **P0** Implement analysis endpoint.
 - [x] **P0** Implement readiness endpoint.
 - [x] **P0** Implement health endpoint.
-- [ ] **P1** Add validation/rate limiting/documentation.
+- [x] **P1** Add validation/rate limiting/documentation.
 
 ---
 
@@ -708,7 +708,7 @@ audit_logs
 - [x] **P0** Persist readiness state.
 - [x] **P1** Add indexes.
 - [ ] **P1** Add security policies/RLS where applicable.
-- [ ] **P1** Define retention strategy.
+- [x] **P1** Define retention strategy.
 
 ---
 
@@ -812,8 +812,8 @@ The assistant must not become an unrestricted chatbot.
 - [x] **P0** Protect admin/debug routes if any.
 - [ ] **P1** Add authentication if required.
 - [ ] **P1** Add authorization if required.
-- [ ] **P1** Review data exposure.
-- [ ] **P1** Review retention.
+- [x] **P1** Review data exposure.
+- [x] **P1** Review retention.
 
 Never commit:
 

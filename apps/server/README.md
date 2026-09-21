@@ -24,6 +24,8 @@ Optional keys in `.env` stay empty until later tasks. Never commit `.env`.
 
 Production hosts must set `NODE_ENV=production`, `CLIENT_URL` (web origin for CORS), and `PORT` if not using **3001**. Groq keys stay optional. File-store (`createApp({ store: "file" })`) is for tests, not the default boot.
 
+API reference: `docs/architecture/api.md` (validation, explain rate limit, envelope).
+
 ## Test
 
 ```bash
