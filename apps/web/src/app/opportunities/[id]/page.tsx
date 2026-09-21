@@ -8,7 +8,7 @@ import { Notice } from "@/components/Notice";
 import { ExternalLink } from "@/components/ExternalLink";
 import { StatusPanel } from "@/components/StatusPanel";
 import { api, isNotFound, userFacingError } from "@/lib/api";
-import { formatDeadline } from "@/lib/format";
+import { formatDeadline, formatRequirementList } from "@/lib/format";
 import { getUserId } from "@/lib/storage";
 
 export default function OpportunityDetailPage() {
@@ -115,7 +115,7 @@ export default function OpportunityDetailPage() {
         </div>
         <div>
           <dt className="text-muted">Last verified</dt>
-          <dd>{opportunity.lastVerifiedAt.slice(0, 10)}</dd>
+          <dd>{opportunity.lastVerifiedAt?.slice(0, 10) ?? "Not recorded"}</dd>
         </div>
         <div>
           <dt className="text-muted">Country eligibility</dt>
@@ -123,15 +123,15 @@ export default function OpportunityDetailPage() {
         </div>
         <div>
           <dt className="text-muted">Education</dt>
-          <dd>{opportunity.educationRequirements}</dd>
+          <dd>{formatRequirementList(opportunity.educationRequirements)}</dd>
         </div>
       </dl>
       <h2 className="mt-10 font-display text-2xl">Requirements</h2>
       <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6">
-        <li>{opportunity.educationRequirements}</li>
-        <li>{opportunity.fieldRequirements}</li>
-        <li>{opportunity.experienceRequirements}</li>
-        <li>{opportunity.languageRequirements}</li>
+        <li>{formatRequirementList(opportunity.educationRequirements)}</li>
+        <li>{formatRequirementList(opportunity.fieldRequirements)}</li>
+        <li>{formatRequirementList(opportunity.experienceRequirements)}</li>
+        <li>{formatRequirementList(opportunity.languageRequirements)}</li>
         {opportunity.documentRequirements.map((doc) => (
           <li key={doc}>{doc}</li>
         ))}

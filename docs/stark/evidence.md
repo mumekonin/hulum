@@ -28,7 +28,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | AI responsibility | ADR 002, Groq explain in `apps/server/src/ai/` | Engine decides; Groq explains only |
 | Voice UX | ADR 003, ADR 004, `docs/research/voxide-integration.md`, `docs/demo/script.md` | Text/quick-action fallback; Voxide studied, unwired |
 | Implementation | `apps/web`, `apps/server`, `packages/shared` | Present |
-| Testing | `npm test` in `apps/server`, `.github/workflows/ci.yml` | Engine, API, voice-text, failures; CI: typecheck + lint + format check + tests (no web build/deploy) |
+| Testing | `npm test` in `apps/server`, `.github/workflows/ci.yml` | Engine, API, voice-text, failures; CI: typecheck + lint + format + builds + tests (no deploy) |
 | Iteration | `CHANGELOG.md`, `docs/stark/narrative.md` | Present; Day 20 narrative; do not rewrite history |
 | Deployment | `docs/stark/deployment.md`, README production table | **Not deployed**; decision documented 2026-09-21 |
 | Demo | `docs/demo/script.md`, `docs/demo/backup.md`, `docs/demo/rehearsal.md` | Abeba Tesfaye; text/API backup; rehearsal 2026-09-19 via tests, **no video** |

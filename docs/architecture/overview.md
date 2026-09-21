@@ -90,6 +90,8 @@ Product analyze uses `analysis/service.ts` → `decide.ts`. File-store tests sti
 
 `NODE_ENV=production` requires `CLIENT_URL` as an http(s) origin. Missing `CLIENT_URL` does not fall back to localhost CORS. Groq and Voxide keys stay optional. There is **no live host**; see `docs/stark/deployment.md`.
 
+Stale / expired catalog presentation: `docs/architecture/stale-opportunities.md`.
+
 ## ADRs
 
 - `docs/decisions/001-stack-and-providers.md`

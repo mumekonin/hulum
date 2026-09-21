@@ -59,19 +59,20 @@ export default function ProfilePage() {
     void api<Profile>(`/api/profile/${userId}`)
       .then((profile) => {
         setForm({
-          name: profile.name,
-          educationLevel: profile.educationLevel,
-          fieldOfStudy: profile.fieldOfStudy,
-          graduationYear: profile.graduationYear,
-          country: profile.country,
+          name: profile.name ?? "",
+          educationLevel:
+            (profile.educationLevel as EducationLevel | null) ?? emptyForm.educationLevel,
+          fieldOfStudy: profile.fieldOfStudy ?? "",
+          graduationYear: profile.graduationYear ?? emptyForm.graduationYear,
+          country: profile.country ?? emptyForm.country,
           city: profile.city ?? "",
           languages: profile.languages.join(", "),
           skills: profile.skills.join(", "),
-          experience: profile.experience,
-          yearsExperience: profile.yearsExperience,
+          experience: profile.experience ?? "",
+          yearsExperience: profile.yearsExperience ?? 0,
           interests: profile.interests.join(", "),
-          documentsHeld: profile.documentsHeld.join(", "),
-          preferredLanguage: profile.preferredLanguage,
+          documentsHeld: (profile.documentsHeld ?? []).join(", "),
+          preferredLanguage: profile.preferredLanguage ?? "en",
         });
         setBoot("ready");
       })
@@ -111,7 +112,7 @@ export default function ProfilePage() {
         }),
       });
       setUserId(profile.userId);
-      setLanguage(profile.preferredLanguage);
+      setLanguage(profile.preferredLanguage ?? "en");
       setSaved(true);
       router.push("/opportunities");
     } catch (err) {
@@ -127,7 +128,7 @@ export default function ProfilePage() {
     try {
       const profile = await api<Profile>("/api/profile/demo", { method: "POST" });
       setUserId(profile.userId);
-      setLanguage(profile.preferredLanguage);
+      setLanguage(profile.preferredLanguage ?? "en");
       router.push("/opportunities");
     } catch (err) {
       setError(userFacingError(err));

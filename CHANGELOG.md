@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-21 — CI build gates and stale-opportunity rules
+
+### Changed
+- Web typefixes so `next build` passes (nullable application URLs, profile nulls, requirement list formatting).
+- CI runs `npm run build:server` and `npm run build` after lint/format.
+- Documented stale/expired opportunity presentation in `docs/architecture/stale-opportunities.md` (already implemented in `verification/rules.ts`).
+
+### Why
+Phase 24 asked for frontend/backend builds in CI. Phase 7 stale behavior was already in the matcher presentation layer but unchecked.
+
 ## 2026-09-21 — ESLint and Prettier configured
 
 ### Added

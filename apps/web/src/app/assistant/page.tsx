@@ -61,7 +61,7 @@ function AssistantInner() {
     let cancelled = false;
     void api<Profile>(`/api/profile/${userId}`)
       .then((profile) => {
-        if (!cancelled) chooseLanguage(profile.preferredLanguage, false);
+        if (!cancelled) chooseLanguage(profile.preferredLanguage ?? "en", false);
       })
       .catch(() => {
         // Keep the stored or default language.

@@ -18,4 +18,6 @@ jobs:
       - run: npm run typecheck:server
       - run: npm run lint
       - run: npm run format:check
+      - run: npm run build:server
+      - run: npm run build
       - run: npm test

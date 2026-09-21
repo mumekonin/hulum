@@ -3,10 +3,13 @@ export function ExternalLink({
   children,
   className,
 }: {
-  href: string;
+  href: string | null;
   children: React.ReactNode;
   className?: string;
 }) {
+  if (!href) {
+    return null;
+  }
   return (
     <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
       {children}

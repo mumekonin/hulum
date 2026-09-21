@@ -423,7 +423,7 @@ HULUM should not treat generated AI content as authoritative opportunity require
 - [x] **P0** Display source/verification information.
 - [x] **P0** Add responsible-AI notice.
 - [ ] **P1** Define manual verification workflow.
-- [ ] **P1** Define stale-opportunity behavior.
+- [x] **P1** Define stale-opportunity behavior.
 
 ## Responsible AI notice
 
@@ -949,8 +949,8 @@ EthioDeploy is optional, but if used, document it as part of the implementation/
 - [x] **P1** Type check.
 - [x] **P1** Lint.
 - [x] **P1** Run tests.
-- [ ] **P1** Build frontend.
-- [ ] **P1** Build backend.
+- [x] **P1** Build frontend.
+- [x] **P1** Build backend.
 - [ ] **P1** Block merges when checks fail.
 - [ ] **P1** Configure deployment workflow if appropriate.
 

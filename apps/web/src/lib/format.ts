@@ -4,6 +4,14 @@ export function formatDeadline(value: string): string {
   return date.toLocaleDateString(undefined, { year: "numeric", month: "short", day: "numeric" });
 }
 
+export function formatRequirementList(value: string | string[]): string {
+  if (Array.isArray(value)) {
+    return value.join(", ") || "Not listed";
+  }
+  const trimmed = value.trim();
+  return trimmed === "" ? "Not listed" : trimmed;
+}
+
 export function daysUntil(value: string): number | null {
   const date = new Date(`${value}T23:59:59`);
   if (Number.isNaN(date.getTime())) return null;
