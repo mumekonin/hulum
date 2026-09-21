@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-21 — Postgres Ask HULUM + optional Voxide widget
+
+### Added
+- Postgres `/api/voice/session` and `/api/voice/action` use `decide()` / analysis services (text fallback works on `npm run dev`).
+- `@voxide/react` + `VoxidePanel` on `/assistant` when `NEXT_PUBLIC_VOXIDE_PUBLIC_KEY` (`vox_pub_…`) is set; capabilities call the same voice action API.
+
+### Why
+After switching the default store to Postgres, Ask HULUM had an empty voice router. Development integration for Voxide is the browser widget path (ADR 001), not a server STT client.
+
 ## 2026-09-23 — Explain evaluation fixtures and Groq retry
 
 ### Added

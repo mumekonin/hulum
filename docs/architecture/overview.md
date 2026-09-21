@@ -31,7 +31,7 @@ ScholarXIV is **not** on this path. See `docs/research/`.
 | Requirement MET / NOT_MET / UNCERTAIN | `requirements/match.ts` | Never guess MET. |
 | Plain-language “why” | Groq, then guards | Must match the stored decision. |
 | Official deadline / eligibility | `sourceUrl` on the opportunity | HULUM analysis is secondary. |
-| Voice | Ask HULUM text/quick actions | Voxide widget is planned, not connected. |
+| Voice | Ask HULUM text/quick actions + optional `@voxide/react` | Widget mounts only with `NEXT_PUBLIC_VOXIDE_PUBLIC_KEY`; Postgres voice routes call `decide()`. |
 | Research trail | ScholarXIV | Not a production opportunity API. |
 
 Shared TypeScript types live in `packages/shared`. Web, mobile, and server must not copy them.

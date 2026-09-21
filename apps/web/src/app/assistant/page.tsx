@@ -6,6 +6,7 @@ import { useSearchParams } from "next/navigation";
 import type { LanguageCode, ProfileView } from "@hulum/shared";
 import { Notice } from "@/components/Notice";
 import { StatusPanel } from "@/components/StatusPanel";
+import { VoxidePanel, hasVoxidePublicKey } from "@/components/VoxidePanel";
 import { api, userFacingError } from "@/lib/api";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
 import { getLanguage, getUserId, setLanguage } from "@/lib/storage";
@@ -50,6 +51,8 @@ function AssistantInner() {
   const [lastFailed, setLastFailed] = useState<string | null>(null);
   const [sessionOpportunityId, setSessionOpportunityId] = useState<string | undefined>();
   const [sessionAnalysisId, setSessionAnalysisId] = useState<string | undefined>();
+  const [voiceSession, setVoiceSession] = useState<{ id: string; provider: string } | null>(null);
+  const [backupMode, setBackupMode] = useState(true);
   const [language, setLanguageState] = useState<LanguageCode>(getLanguage);
   const requestInput = useRef<HTMLInputElement>(null);
   const opportunityId = sessionOpportunityId ?? search.get("opportunityId") ?? undefined;
@@ -72,17 +75,45 @@ function AssistantInner() {
     };
   }, []);
 
+  useEffect(() => {
+    const userId = getUserId();
+    if (!userId) return;
+    let cancelled = false;
+    void api<{ id: string; provider: string }>("/api/voice/session", {
+      method: "POST",
+      body: JSON.stringify({ userId, language }),
+    })
+      .then((session) => {
+        if (cancelled) return;
+        setVoiceSession(session);
+        // Browser widget is gated by NEXT_PUBLIC_VOXIDE_PUBLIC_KEY; server sessions stay text-fallback.
+        setBackupMode(!hasVoxidePublicKey());
+      })
+      .catch(() => {
+        if (cancelled) return;
+        setVoiceSession(null);
+        setBackupMode(!hasVoxidePublicKey());
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [language]);
+
   function chooseLanguage(next: LanguageCode, _persistProfile: boolean) {
     setLanguageState(next);
     setLanguage(next);
   }
 
   const contextLabel = useMemo(() => {
-    const sessionNote = " Text actions call the Postgres API. Voice is not connected.";
+    const sessionNote = hasVoxidePublicKey()
+      ? " Voxide publishable key is present; widget capabilities call the same HULUM APIs."
+      : voiceSession
+        ? " Text fallback session is active until a Voxide publishable key is set. Typed actions use Postgres."
+        : " Text actions call the Postgres API. Voice is not connected.";
     if (analysisId) return `This conversation is attached to your latest analysis.${sessionNote}`;
     if (opportunityId) return `This conversation is attached to a selected opportunity.${sessionNote}`;
     return `No analysis selected yet. You can still browse stored opportunities.${sessionNote}`;
-  }, [analysisId, opportunityId]);
+  }, [analysisId, opportunityId, voiceSession]);
 
   async function send(value: string, echo = true) {
     const userId = getUserId();
@@ -148,16 +179,33 @@ function AssistantInner() {
           English is the stable v0.1 path. Amharic and Afaan Oromo are stored for Voxide; they do not enable live speech yet.
         </p>
       </fieldset>
-      <div id="voice-unavailable">
-        <StatusPanel
-          variant="empty"
-          title="Voice unavailable"
-          primary={{ label: "Type a request", onClick: () => requestInput.current?.focus() }}
-          secondary={{ label: "Browse opportunities", href: "/opportunities" }}
-        >
-          Voxide is not connected. Type a request or use a quick action. The buttons call the Postgres API.
-        </StatusPanel>
-      </div>
+      {backupMode ? (
+        <div id="voice-unavailable">
+          <StatusPanel
+            variant="empty"
+            title="Voice unavailable"
+            primary={{ label: "Type a request", onClick: () => requestInput.current?.focus() }}
+            secondary={{ label: "Browse opportunities", href: "/opportunities" }}
+          >
+            Voxide is not connected. Type a request or use a quick action. The buttons call the Postgres API.
+          </StatusPanel>
+        </div>
+      ) : null}
+      <VoxidePanel
+        language={language}
+        opportunityId={opportunityId}
+        analysisId={analysisId}
+        onReply={(utterance, response) => {
+          setMessages((current) => [
+            ...current,
+            { role: "user", text: utterance },
+            { role: "hulum", text: response.reply },
+          ]);
+          if (response.opportunity?.id) setSessionOpportunityId(response.opportunity.id);
+          if (response.analysis?.id) setSessionAnalysisId(response.analysis.id);
+        }}
+        onError={(message) => setError(message)}
+      />
       {error ? (
         <StatusPanel
           variant="error"
