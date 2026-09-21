@@ -612,7 +612,7 @@ Profile → Opportunity → Analysis → Matching → Decision → Claude → Re
 - [x] **P0** Produce requirement statuses.
 - [x] **P0** Preserve uncertainty.
 - [x] **P0** Handle missing profile information.
-- [ ] **P0** Handle conflicting information.
+- [x] **P0** Handle conflicting information.
 - [ ] **P1** Add requirement explanations.
 - [x] **P1** Add unit tests for matching.
 
