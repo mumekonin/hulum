@@ -2,6 +2,20 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-21 — Mulualem
+
+### Changed
+Added a Postgres integration test for profile → opportunity → `decide()` → readiness, and checked that explain does not change the stored decision.
+
+### Why
+Task 36 asks the core slice to use real services and persisted data. The older flow test still uses the JSON file store.
+
+### Evidence
+`apps/server/src/routes/postgres-slice.test.ts` passed against the local database. The fixture opportunity is deleted after the test.
+
+### Decision
+Voice stays a browser widget. This test does not add a Voxide backend.
+
 ## 2026-09-21 — Shared exports and Postgres dev runtime
 
 ### Changed
