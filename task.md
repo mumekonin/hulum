@@ -581,12 +581,15 @@ final eligibility/deadline authority.
 
 ### Task 36 — Integration testing (Days 14–17)
 **Shared with:** Kidist.
+**Status:** Postgres API slice proven (2026-09-21, Mulualem). Not DONE. Web profile and voice still use the file-store shapes.
 
 Test:
 
 ```text
-Profile → Opportunity → Analysis → Matching → Decision → Claude → Readiness → Voice → UI
+Profile → Opportunity → Analysis → Matching → Decision → Groq explains stored analysis → Readiness → text voice (file store) → UI
 ```
+
+Team lock: Groq explains. The engine still owns APPLY / MAYBE / SKIP. No Voxide backend.
 
 **Verify:** the core vertical slice uses real services and persisted data.
 
