@@ -114,7 +114,7 @@ export default function OpportunityDetailPage() {
         </div>
         <div>
           <dt className="text-muted">Last verified</dt>
-          <dd>{opportunity.lastVerifiedAt.slice(0, 10)}</dd>
+          <dd>{opportunity.lastVerifiedAt ? opportunity.lastVerifiedAt.slice(0, 10) : "Not recorded"}</dd>
         </div>
         <div>
           <dt className="text-muted">Country eligibility</dt>
@@ -139,9 +139,11 @@ export default function OpportunityDetailPage() {
         <button onClick={() => void analyze()} disabled={analyzing} className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
           {analyzing ? "Analyzing…" : "Analyze for me"}
         </button>
-        <ExternalLink href={opportunity.applicationUrl} className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
-          Official application
-        </ExternalLink>
+        {opportunity.applicationUrl ? (
+          <ExternalLink href={opportunity.applicationUrl} className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
+            Official application
+          </ExternalLink>
+        ) : null}
         <ExternalLink href={opportunity.sourceUrl} className="inline-flex min-h-11 items-center px-5 py-3 text-muted">
           Official source
         </ExternalLink>
