@@ -3,12 +3,13 @@
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import type { LanguageCode, Profile, VoiceActionResponse } from "@hulum/shared";
+import type { LanguageCode, ProfileView } from "@hulum/shared";
 import { Notice } from "@/components/Notice";
 import { StatusPanel } from "@/components/StatusPanel";
 import { api, userFacingError } from "@/lib/api";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
 import { getLanguage, getUserId, setLanguage } from "@/lib/storage";
+import { runTextAction } from "@/lib/text-actions";
 
 const quickActions = [
   "Show me internships",
@@ -46,8 +47,6 @@ function AssistantInner() {
   const [lastFailed, setLastFailed] = useState<string | null>(null);
   const [sessionOpportunityId, setSessionOpportunityId] = useState<string | undefined>();
   const [sessionAnalysisId, setSessionAnalysisId] = useState<string | undefined>();
-  const [voiceSession, setVoiceSession] = useState<{ id: string; provider: string } | null>(null);
-  const [backupMode, setBackupMode] = useState(true);
   const [language, setLanguageState] = useState<LanguageCode>(getLanguage);
   const requestInput = useRef<HTMLInputElement>(null);
   const opportunityId = sessionOpportunityId ?? search.get("opportunityId") ?? undefined;
@@ -58,9 +57,9 @@ function AssistantInner() {
     const userId = getUserId();
     if (!userId) return;
     let cancelled = false;
-    void api<Profile>(`/api/profile/${userId}`)
-      .then((profile) => {
-        if (!cancelled) chooseLanguage(profile.preferredLanguage, false);
+    void api<ProfileView>(`/api/profile/${userId}`)
+      .then(() => {
+        if (!cancelled) chooseLanguage(getLanguage(), false);
       })
       .catch(() => {
         // Keep the stored or default language.
@@ -70,53 +69,17 @@ function AssistantInner() {
     };
   }, []);
 
-  useEffect(() => {
-    const userId = getUserId();
-    if (!userId) return;
-    let cancelled = false;
-    void api<{ id: string; provider: string }>("/api/voice/session", {
-      method: "POST",
-      body: JSON.stringify({ userId, language }),
-    })
-      .then((session) => {
-        if (cancelled) return;
-        setVoiceSession(session);
-        setBackupMode(session.provider !== "voxide");
-      })
-      .catch(() => {
-        if (cancelled) return;
-        setVoiceSession(null);
-        setBackupMode(true);
-      });
-    return () => {
-      cancelled = true;
-    };
-  }, [language]);
-
-  function chooseLanguage(next: LanguageCode, persistProfile: boolean) {
+  function chooseLanguage(next: LanguageCode, _persistProfile: boolean) {
     setLanguageState(next);
     setLanguage(next);
-    if (!persistProfile) return;
-    const userId = getUserId();
-    if (!userId) return;
-    void api<Profile>(`/api/profile/${userId}`, {
-      method: "PATCH",
-      body: JSON.stringify({ preferredLanguage: next }),
-    }).catch(() => {
-      // Local selection still applies if profile patch fails.
-    });
   }
 
   const contextLabel = useMemo(() => {
-    const sessionNote = voiceSession
-      ? voiceSession.provider === "voxide"
-        ? " Voice session is live."
-        : " Text fallback session is active until Voxide is connected."
-      : "";
+    const sessionNote = " Text actions call the Postgres API. Voice is not connected.";
     if (analysisId) return `This conversation is attached to your latest analysis.${sessionNote}`;
     if (opportunityId) return `This conversation is attached to a selected opportunity.${sessionNote}`;
-    return `No analysis selected yet. You can still browse or filter opportunities by voice/text.${sessionNote}`;
-  }, [analysisId, opportunityId, voiceSession]);
+    return `No analysis selected yet. You can still browse stored opportunities.${sessionNote}`;
+  }, [analysisId, opportunityId]);
 
   async function send(value: string, echo = true) {
     const userId = getUserId();
@@ -132,12 +95,9 @@ function AssistantInner() {
     }
     setPending(true);
     try {
-      const response = await api<VoiceActionResponse>("/api/voice/action", {
-        method: "POST",
-        body: JSON.stringify({ userId, text: value, opportunityId, analysisId, language }),
-      });
-      if (response.opportunity?.id) setSessionOpportunityId(response.opportunity.id);
-      if (response.analysis?.id) setSessionAnalysisId(response.analysis.id);
+      const response = await runTextAction({ userId, text: value, opportunityId, analysisId });
+      if (response.opportunityId) setSessionOpportunityId(response.opportunityId);
+      if (response.analysisId) setSessionAnalysisId(response.analysisId);
       setMessages((current) => [...current, { role: "hulum", text: response.reply }]);
     } catch (err) {
       setLastFailed(value);
@@ -185,18 +145,16 @@ function AssistantInner() {
           English is the stable v0.1 path. Amharic and Afaan Oromo are stored for Voxide; they do not enable live speech yet.
         </p>
       </fieldset>
-      {backupMode ? (
-        <div id="voice-unavailable">
-          <StatusPanel
-            variant="empty"
-            title="Voice unavailable"
-            primary={{ label: "Type a request", onClick: () => requestInput.current?.focus() }}
-            secondary={{ label: "Browse opportunities", href: "/opportunities" }}
-          >
-            Voxide is not connected. Type a request or use a quick action. You are not stuck waiting for a microphone.
-          </StatusPanel>
-        </div>
-      ) : null}
+      <div id="voice-unavailable">
+        <StatusPanel
+          variant="empty"
+          title="Voice unavailable"
+          primary={{ label: "Type a request", onClick: () => requestInput.current?.focus() }}
+          secondary={{ label: "Browse opportunities", href: "/opportunities" }}
+        >
+          Voxide is not connected. Type a request or use a quick action. The buttons call the Postgres API.
+        </StatusPanel>
+      </div>
       {error ? (
         <StatusPanel
           variant="error"
@@ -231,7 +189,7 @@ function AssistantInner() {
             type="button"
             disabled
             className="min-h-11 border border-dashed border-line px-3 py-2 text-sm text-muted"
-            aria-describedby={backupMode ? "voice-unavailable" : undefined}
+            aria-describedby="voice-unavailable"
           >
             Voice (not connected)
           </button>

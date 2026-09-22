@@ -5,6 +5,14 @@ HULUM records actual work. Do not invent history.
 ## 2026-09-21 — Mulualem
 
 ### Changed
+Pointed the web profile, opportunity list, analysis, and Ask HULUM screens at the Postgres API. Text actions call analyze, explain, readiness, and opportunity reads. Voice stays unavailable.
+
+### Why
+The UI still spoke the file-store shapes after `npm run dev` switched to Postgres.
+
+## 2026-09-21 — Mulualem
+
+### Changed
 Added a Postgres integration test for profile → opportunity → `decide()` → readiness, and checked that explain does not change the stored decision.
 
 ### Why
