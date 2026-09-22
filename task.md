@@ -443,8 +443,8 @@ HULUM should not treat generated AI content as authoritative opportunity require
 - [x] **P0** Store last verification date.
 - [x] **P0** Display source/verification information.
 - [x] **P0** Add responsible-AI notice.
-- [ ] **P1** Define manual verification workflow.
-- [ ] **P1** Define stale-opportunity behavior.
+- [x] **P1** Define manual verification workflow.
+- [x] **P1** Define stale-opportunity behavior.
 
 ## Responsible AI notice
 
