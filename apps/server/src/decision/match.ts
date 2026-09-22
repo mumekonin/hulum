@@ -45,6 +45,13 @@ function educationValue(level: EducationLevel): number {
 }
 
 function matchCountry(profile: Profile, values: string[]): MatchOutcome {
+  if (!profile.country) {
+    return {
+      status: "UNCERTAIN",
+      evidence: "Profile country is not set.",
+      reason: "Country eligibility cannot be confirmed without a profile country.",
+    };
+  }
   const allowed = values.map(norm);
   const country = norm(profile.country);
   const africaOk = allowed.some((value) => value === "africa" || value === "african countries" || value === "african");
@@ -67,9 +74,16 @@ function matchCountry(profile: Profile, values: string[]): MatchOutcome {
 }
 
 function matchEducation(profile: Profile, level: EducationLevel, enrolledOk?: boolean): MatchOutcome {
+  if (!profile.educationLevel) {
+    return {
+      status: "UNCERTAIN",
+      evidence: "Education level is not set.",
+      reason: "Education requirements cannot be confirmed without a profile education level.",
+    };
+  }
   const have = educationValue(profile.educationLevel as EducationLevel);
   const need = educationValue(level);
-  const educationLevel = String(profile.educationLevel ?? "");
+  const educationLevel = String(profile.educationLevel);
   const inProgress = educationLevel.endsWith("_in_progress");
   const graduationYear = profile.graduationYear;
   const currentYear = new Date().getUTCFullYear();
@@ -78,14 +92,15 @@ function matchEducation(profile: Profile, level: EducationLevel, enrolledOk?: bo
     return {
       status: "UNCERTAIN",
       evidence: `Education level is ${educationLevel}, graduating ${graduationYear}.`,
-      reason: "Current enrollment conflicts with a graduation year that is already in the past. Confirm status on the official source.",
+      reason:
+        "Current enrollment conflicts with a graduation year that is already in the past. Confirm status on the official source.",
     };
   }
 
   if (enrolledOk && have >= educationValue("bachelor_in_progress")) {
     return {
       status: "MET",
-      evidence: `Education level is ${profile.educationLevel}.`,
+      evidence: `Education level is ${educationLevel}.`,
       reason: "The opportunity accepts currently enrolled university students.",
     };
   }
@@ -93,7 +108,7 @@ function matchEducation(profile: Profile, level: EducationLevel, enrolledOk?: bo
   if (have >= need && !inProgress) {
     return {
       status: "MET",
-      evidence: `Education level is ${profile.educationLevel}.`,
+      evidence: `Education level is ${educationLevel}.`,
       reason: "Completed education meets or exceeds the stated minimum.",
     };
   }
@@ -101,14 +116,14 @@ function matchEducation(profile: Profile, level: EducationLevel, enrolledOk?: bo
   if (inProgress && have >= need - 1) {
     return {
       status: "UNCERTAIN",
-      evidence: `Education level is ${profile.educationLevel}, graduating ${profile.graduationYear}.`,
+      evidence: `Education level is ${educationLevel}, graduating ${profile.graduationYear}.`,
       reason: "The opportunity may require a completed credential rather than current enrollment.",
     };
   }
 
   return {
     status: "NOT_MET",
-    evidence: `Education level is ${profile.educationLevel}.`,
+    evidence: `Education level is ${educationLevel}.`,
     reason: `Minimum stated education is ${level}.`,
   };
 }
@@ -131,7 +146,8 @@ function matchField(profile: Profile, values: string[]): MatchOutcome {
     return {
       status: "UNCERTAIN",
       evidence: `Field of study is ${field}; skills/interests include ${extras.join(", ")}.`,
-      reason: "Declared field of study does not match, but skills or interests do. Confirm the official field requirement before treating this as a fit.",
+      reason:
+        "Declared field of study does not match, but skills or interests do. Confirm the official field requirement before treating this as a fit.",
     };
   }
 

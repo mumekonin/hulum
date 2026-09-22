@@ -1,12 +1,10 @@
 import { createApp } from "./app.js";
 import { loadEnv } from "./config/env.js";
-import { loadStore } from "./store/fileStore.js";
 
 const env = loadEnv();
 
 try {
-  await loadStore();
-  const app = createApp();
+  const app = createApp({ store: "postgres", env });
   app.listen(env.PORT, () => {
     console.log(`HULUM API listening on port ${env.PORT}`);
   });

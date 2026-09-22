@@ -14,7 +14,7 @@ describe("GET /api/health", () => {
   });
 
   it("returns the success envelope without secrets", async () => {
-    const server = createServer(createApp());
+    const server = createServer(createApp({ store: "file" }));
     await new Promise<void>((resolve) => {
       server.listen(0, "127.0.0.1", resolve);
     });

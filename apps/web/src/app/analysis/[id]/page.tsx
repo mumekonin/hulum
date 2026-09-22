@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import type { AnalysisDetail, ReadinessItem } from "@hulum/shared";
+import { OFFICIAL_SOURCE_NOTICE, type Analysis, type Opportunity, type ReadinessItem } from "@hulum/shared";
 import { DecisionBadge } from "@/components/DecisionBadge";
 import { ExternalLink } from "@/components/ExternalLink";
 import { Notice } from "@/components/Notice";
@@ -14,7 +14,8 @@ import { api, isNotFound, userFacingError } from "@/lib/api";
 
 export default function AnalysisPage() {
   const params = useParams<{ id: string }>();
-  const [analysis, setAnalysis] = useState<AnalysisDetail | null>(null);
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [missing, setMissing] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
@@ -24,9 +25,18 @@ export default function AnalysisPage() {
     setError(null);
     setMissing(false);
     setAnalysis(null);
-    void api<AnalysisDetail>(`/api/analyses/${params.id}`)
-      .then((data) => {
-        if (!cancelled) setAnalysis(data);
+    setOpportunity(null);
+    void api<Analysis>(`/api/analyses/${params.id}`)
+      .then(async (data) => {
+        if (cancelled) return;
+        setAnalysis(data);
+        if (!data.opportunityId) return;
+        try {
+          const item = await api<Opportunity>(`/api/opportunities/${data.opportunityId}`);
+          if (!cancelled) setOpportunity(item);
+        } catch {
+          if (!cancelled) setOpportunity(null);
+        }
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -44,7 +54,7 @@ export default function AnalysisPage() {
   function replaceReadiness(item: ReadinessItem) {
     setAnalysis((current) =>
       current
-        ? { ...current, readiness: current.readiness.map((row) => (row.id === item.id ? item : row)) }
+        ? { ...current, readiness: (current.readiness ?? []).map((row) => (row.id === item.id ? item : row)) }
         : current,
     );
   }
@@ -70,7 +80,7 @@ export default function AnalysisPage() {
         primary={{ label: "Browse opportunities", href: "/opportunities" }}
         secondary={{ label: "Create a profile", href: "/profile" }}
       >
-        Analyses live in the local store for this session. Open an opportunity and ask HULUM again.
+        This analysis is not in Postgres. Open an opportunity and analyze it again.
       </StatusPanel>
     );
   }
@@ -83,12 +93,14 @@ export default function AnalysisPage() {
     );
   }
 
-  const matched = analysis.requirements.filter((item) => item.status === "MET");
-  const attention = analysis.requirements.filter((item) => item.status !== "MET");
+  const requirements = analysis.requirements ?? [];
+  const readiness = analysis.readiness ?? [];
+  const matched = requirements.filter((item) => item.status === "MET");
+  const attention = requirements.filter((item) => item.status !== "MET");
 
   return (
     <article className="max-w-3xl">
-      <p className="text-sm uppercase tracking-wide text-muted">{analysis.opportunity.title}</p>
+      <p className="text-sm uppercase tracking-wide text-muted">{opportunity?.title ?? "Stored analysis"}</p>
       <div className="mt-4 flex flex-wrap items-end gap-6">
         <div>
           <p className="text-sm font-medium text-muted">Decision</p>
@@ -100,7 +112,7 @@ export default function AnalysisPage() {
           {analysis.fitScore}% FIT
         </p>
       </div>
-      <p className="mt-6 text-lg leading-8">{analysis.explanation}</p>
+      <p className="mt-6 text-lg leading-8">{analysis.summary}</p>
       <p className="mt-4 border-l-4 border-forest pl-4 text-sm">
         <span className="font-medium">Next action.</span> {analysis.nextAction}
       </p>
@@ -129,22 +141,26 @@ export default function AnalysisPage() {
 
       <h2 className="mt-12 font-display text-2xl">Readiness</h2>
       <div className="mt-4">
-        {analysis.readiness.length === 0 ? (
+        {readiness.length === 0 ? (
           <StatusPanel variant="empty" title="No readiness items yet">
             This analysis did not generate a checklist.
           </StatusPanel>
         ) : (
-          <ReadinessList items={analysis.readiness} onChange={replaceReadiness} />
+          <ReadinessList items={readiness} onChange={replaceReadiness} />
         )}
       </div>
 
       <div className="mt-10 flex flex-wrap gap-3">
-        <ExternalLink href={analysis.opportunity.applicationUrl} className="inline-flex min-h-11 items-center bg-ink px-5 py-3 text-paper">
-          Apply officially
-        </ExternalLink>
-        <ExternalLink href={analysis.opportunity.sourceUrl} className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
-          Official source
-        </ExternalLink>
+        {opportunity?.applicationUrl ? (
+          <ExternalLink href={opportunity.applicationUrl} className="inline-flex min-h-11 items-center bg-ink px-5 py-3 text-paper">
+            Apply officially
+          </ExternalLink>
+        ) : null}
+        {opportunity?.sourceUrl ? (
+          <ExternalLink href={opportunity.sourceUrl} className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
+            Official source
+          </ExternalLink>
+        ) : null}
         <Link href={`/assistant?analysisId=${analysis.id}&opportunityId=${analysis.opportunityId}`} className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
           Ask HULUM
         </Link>
@@ -153,7 +169,7 @@ export default function AnalysisPage() {
         </Link>
       </div>
       <div className="mt-8">
-        <Notice>{analysis.disclaimer}</Notice>
+        <Notice>{analysis.disclaimer ?? OFFICIAL_SOURCE_NOTICE}</Notice>
       </div>
     </article>
   );

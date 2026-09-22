@@ -37,7 +37,7 @@ function parseNodeEnv(value: string | undefined): AppEnv["NODE_ENV"] {
 }
 
 function parsePort(value: string | undefined): number {
-  const raw = value ?? "4000";
+  const raw = value ?? "3001";
   const port = Number(raw);
   if (!Number.isInteger(port) || port < 1 || port > 65535) {
     throw new Error("PORT must be an integer between 1 and 65535");

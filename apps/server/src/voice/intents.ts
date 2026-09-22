@@ -7,7 +7,8 @@ import {
 } from "@hulum/shared";
 
 export type ParsedIntent = {
-  intent: VoiceIntent;
+  /** Locked Task 22 intents, plus runtime `UNSUPPORTED` when nothing matched. */
+  intent: VoiceIntent | "UNSUPPORTED";
   type?: OpportunityType;
   decision?: Decision;
   replyHint?: string;

@@ -37,10 +37,10 @@ describe("loadEnv", () => {
     }
   });
 
-  it("defaults PORT to 4000 outside production", () => {
+  it("defaults PORT to 3001 outside production", () => {
     const env = loadEnv({ fromFile: false });
     expect(env.NODE_ENV).toBe("development");
-    expect(env.PORT).toBe(4000);
+    expect(env.PORT).toBe(3001);
     expect(env.CLIENT_URL).toBeUndefined();
   });
 
