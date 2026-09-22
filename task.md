@@ -843,7 +843,7 @@ GET    /api/health
 - [x] **P0** Implement analysis endpoint.
 - [x] **P0** Implement readiness endpoint.
 - [x] **P0** Implement health endpoint.
-- [ ] **P1** Add validation/rate limiting/documentation.
+- [x] **P1** Add validation/rate limiting/documentation.
 
 ---
 
@@ -876,8 +876,8 @@ audit_logs
 - [x] **P0** Persist analyses.
 - [x] **P0** Persist readiness state.
 - [x] **P1** Add indexes.
-- [ ] **P1** Add security policies/RLS where applicable.
-- [ ] **P1** Define retention strategy.
+- [x] **P1** Add security policies/RLS where applicable.
+- [x] **P1** Define retention strategy.
 
 ---
 
@@ -981,8 +981,8 @@ The assistant must not become an unrestricted chatbot.
 - [x] **P0** Protect admin/debug routes if any.
 - [ ] **P1** Add authentication if required.
 - [ ] **P1** Add authorization if required.
-- [ ] **P1** Review data exposure.
-- [ ] **P1** Review retention.
+- [x] **P1** Review data exposure.
+- [x] **P1** Review retention.
 
 Never commit:
 

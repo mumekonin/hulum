@@ -45,6 +45,15 @@ Shared TypeScript types live in `packages/shared`. Web, mobile, and server must 
 
 Do not put Groq or `decide()` in the browser.
 
+## Related docs
+
+| File | Role |
+|---|---|
+| `docs/architecture/api.md` | Endpoints, validation, rate limits |
+| `docs/architecture/retention.md` | What is kept and for how long |
+| `docs/architecture/data-exposure.md` | What leaves the API / web |
+| `docs/architecture/manual-verification.md` | Catalog verification checklist |
+
 ## Local ports
 
 | App | Port | CORS |
