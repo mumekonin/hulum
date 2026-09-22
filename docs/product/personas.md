@@ -32,7 +32,7 @@ May browse opportunities. Analysis still needs a saved profile. v0.1 uses a loca
 
 ## System administrator (not a v0.1 user-facing screen)
 
-Curates and verifies opportunity records. In v0.1 this is seed data + `verificationStatus` / `lastVerifiedAt`, not an admin console.
+Curates and verifies opportunity records. In v0.1 this is seed data + `verificationStatus` / `lastVerifiedAt`, not an admin console. Teammate checklist and stale rules: `docs/product/opportunity-verification.md`.
 
 ---
 

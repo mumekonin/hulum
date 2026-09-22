@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-22 — Opportunity verification workflow docs
+
+### Added
+- `docs/product/opportunity-verification.md`: teammate manual verification checklist and stale/expired behavior (`VERIFICATION_STALE_AFTER_DAYS = 30`, effective status on read, EXPIRED → SKIP in `decide()`).
+- Linked from `docs/stark/README.md`.
+
+### Why
+Task 34 leftover P1s asked to define the manual workflow and stale-opportunity rules. The behavior already lives in `verification/rules.ts`; this records it for judges and catalog editors without inventing an admin UI.
+
 ## 2026-09-20 — Conflicting profile facts stay UNCERTAIN
 
 ### Changed
