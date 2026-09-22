@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-22 — Ask HULUM can repeat the last reply
+
+### Added
+- Assistant quick action and typed “Repeat that” / “ድገም” re-shows the last HULUM reply from the on-screen thread only.
+
+### Why
+Phase 12 asked for repeat requests without expanding the Task 22 intent enum or storing user utterances beyond the live conversation UI.
+
 ## 2026-09-23 — Kidist: Voxide widget on Ask HULUM
 
 ### Added
