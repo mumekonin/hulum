@@ -10,6 +10,37 @@ HULUM records actual work. Do not invent history.
 ### Why
 Phase 8 required handling conflicting information. Guessing MET from one fact while another fact contradicts it would hide a MAYBE.
 
+## 2026-09-21 — Mulualem
+
+### Changed
+Pointed the web profile, opportunity list, analysis, and Ask HULUM screens at the Postgres API. Text actions call analyze, explain, readiness, and opportunity reads. Voice stays unavailable.
+
+### Why
+The UI still spoke the file-store shapes after `npm run dev` switched to Postgres.
+
+## 2026-09-21 — Mulualem
+
+### Changed
+Added a Postgres integration test for profile → opportunity → `decide()` → readiness, and checked that explain does not change the stored decision.
+
+### Why
+Task 36 asks the core slice to use real services and persisted data. The older flow test still uses the JSON file store.
+
+### Evidence
+`apps/server/src/routes/postgres-slice.test.ts` passed against the local database. The fixture opportunity is deleted after the test.
+
+### Decision
+Voice stays a browser widget. This test does not add a Voxide backend.
+
+## 2026-09-21 — Shared exports and Postgres dev runtime
+
+### Changed
+- `@hulum/shared` relative imports use `.js` so `typecheck:shared` passes under NodeNext.
+- `npm run dev` boots Postgres (`decide.ts`) on API port **3001**; web defaults to `http://localhost:3001`. File-store remains available via `createApp({ store: "file" })` for tests.
+
+### Why
+After merging the Kidist demo next to Mulualem’s API, the product needed one coherent typecheck path and one web→API runtime (ADR 001).
+
 ## 2026-09-20 — Merge Kidist `feat/ci-checks` into main
 
 ### Changed

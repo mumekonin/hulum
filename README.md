@@ -40,14 +40,16 @@ Out of v0.1: auto-apply, payments, native mobile, scraping unverified lists, liv
 
 ## Tech stack (as built)
 
+`npm run dev` starts the web on **:3000** and the Express API on **:3001**. The web calls that single API (`NEXT_PUBLIC_API_URL`, default `http://localhost:3001`). The API uses the **Postgres** store and Mulualem’s `decide()` engine by default. A JSON file-store path still exists for tests (`createApp({ store: "file" })`) but is not what `npm run dev` boots.
+
 | Layer | v0.1 | Planned / unused in runtime |
 |---|---|---|
 | Web | Next.js 15, TypeScript, Tailwind 4 (`:3000`) | — |
-| API | Express, TypeScript (`:4000`) | — |
-| Store | JSON file (`STORE_PATH`) | Supabase/Postgres + RLS (`001_init.sql`) |
-| Decision | `apps/server/src/decision/` | An LLM must not decide |
-| Explanation | Engine summary; optional Claude (file store) or Groq (Postgres) | — |
-| Voice | Keyword intents + text/quick actions | Voxide STT/TTS |
+| API | Express, TypeScript (`:3001`) | — |
+| Store | PostgreSQL via `DATABASE_URL` | JSON file store (tests / optional) |
+| Decision | `apps/server/src/decision/decide.ts` | An LLM must not decide |
+| Explanation | Groq on stored analyses (`GROQ_API_KEY`, `GROQ_MODEL`) | Claude leftover env names |
+| Voice | Keyword intents + text/quick actions | Voxide browser widget |
 | Research | `docs/research/` (design-time) | ScholarXIV Papers API — **no papers retrieved yet** |
 | Host | Local `npm run dev` | EthioDeploy / production — **not deployed** |
 
@@ -57,9 +59,8 @@ Out of v0.1: auto-apply, payments, native mobile, scraping unverified lists, liv
 
 ```
 hulum/
-hulum/
 ├── apps/web/          # Next.js: /, /profile, /opportunities, /analysis/[id], /assistant
-├── apps/server/       # Express API, file-store demo + Postgres services
+├── apps/server/       # Express API (Postgres default + optional file-store)
 ├── packages/shared/   # Zod + Task 22 contracts
 ├── database/          # Postgres migration
 ├── docs/              # Product, research, ADRs, demo script, STARK evidence
@@ -79,17 +80,17 @@ npm run dev
 ```
 
 - Web: http://localhost:3000
-- API health: http://localhost:4000/api/health → `{ "data": { "status": "ok" }, "error": null }`
+- API health: http://localhost:3001/api/health → `{ "data": { "status": "ok" }, "error": null }`
 
 Never put real keys in chat or in Git. `.env.example` is names only.
 
-The engine runs with empty Claude/Voxide keys. Set `CLAUDE_API_KEY` (or `ANTHROPIC_API_KEY`) **and** `CLAUDE_MODEL` only if you want LLM wording on top of the structured decision.
+Set `DATABASE_URL` and `CLIENT_URL=http://localhost:3000` in local `.env` before `npm run dev`. Optional: `GROQ_API_KEY` + `GROQ_MODEL` for explanation wording only (never decides APPLY / MAYBE / SKIP).
 
-`npm test` runs matching, APPLY / MAYBE / SKIP, API flows, and failure cases.
+`npm test` / `npm run test:server` runs matching, APPLY / MAYBE / SKIP, API flows, and failure cases.
 
-API-only: `cp apps/server/.env.example apps/server/.env` then `npm run dev:server`.
+API-only: `cp apps/server/.env.example apps/server/.env` then `npm run db:migrate` and `npm run dev:server`.
 
-Postgres schema exists (`npm run db:migrate` / `npm run db:smoke` when `DATABASE_URL` is set). The API still uses the file store until that switch is wired. See `database/README.md`.
+See `database/README.md` for migrate/smoke.
 
 ---
 
@@ -132,13 +133,13 @@ v0.1 is **not deployed**. When a host exists:
 |---|---|---|
 | `NODE_ENV` | yes (`production`) | Disables localhost CORS fallback |
 | `CLIENT_URL` | yes (web origin, no path) | CORS allowlist |
-| `PORT` | no (default `4000`) | API listen port |
-| `NEXT_PUBLIC_API_URL` | web build | Browser → API origin |
-| `STORE_PATH` | no | File-store path (gitignored) |
-| `CLAUDE_API_KEY` + `CLAUDE_MODEL` | no | Optional file-store explanation |
-| `GROQ_API_KEY` + `GROQ_MODEL` | no | Optional Postgres explain route |
-| `VOXIDE_API_KEY` | no | Not wired |
-| `DATABASE_URL` / `SUPABASE_*` | no | Unused until the store switches |
+| `PORT` | no (default `3001`) | API listen port |
+| `NEXT_PUBLIC_API_URL` | web build | Browser → API origin (`http://localhost:3001`) |
+| `STORE_PATH` | no | File-store path for tests only |
+| `CLAUDE_API_KEY` + `CLAUDE_MODEL` | no | Leftover names; v0.1 explain uses Groq |
+| `GROQ_API_KEY` + `GROQ_MODEL` | no | Optional explain of a stored analysis |
+| `VOXIDE_API_KEY` | no | Leftover; widget uses public web key |
+| `DATABASE_URL` / `SUPABASE_*` | yes for `npm run dev` | Postgres for the default API |
 
 The API refuses to start in production without `CLIENT_URL`.
 

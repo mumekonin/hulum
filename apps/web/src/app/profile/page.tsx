@@ -2,15 +2,17 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { EDUCATION_LABELS, EDUCATION_LEVELS, type EducationLevel, type LanguageCode, type Profile } from "@hulum/shared";
+import { EDUCATION_LABELS, EDUCATION_LEVELS, type EducationLevel, type LanguageCode, type ProfileView } from "@hulum/shared";
 import { api, isNotFound, userFacingError } from "@/lib/api";
+import { ABEBA_DEMO } from "@/lib/demo-profile";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
-import { getUserId, setLanguage, setUserId } from "@/lib/storage";
+import { getLanguage, getUserId, setLanguage, setUserId } from "@/lib/storage";
 import { Notice } from "@/components/Notice";
 import { StatusPanel } from "@/components/StatusPanel";
 
 const emptyForm = {
   name: "",
+  email: "",
   educationLevel: "bachelor_in_progress" as EducationLevel,
   fieldOfStudy: "",
   graduationYear: 2027,
@@ -44,28 +46,31 @@ export default function ProfilePage() {
 
   useEffect(() => {
     const userId = getUserId();
-    if (!userId) {
+    if (!userId || !/^[0-9a-f-]{36}$/i.test(userId)) {
       setBoot("ready");
       return;
     }
     setBoot("loading");
     setLoadError(null);
-    void api<Profile>(`/api/profile/${userId}`)
-      .then((profile) => {
+    void api<ProfileView>(`/api/profile/${userId}`)
+      .then((view) => {
+        const profile = view.profile;
+        const storedLevel = EDUCATION_LEVELS.find((level) => level === profile.educationLevel);
         setForm({
-          name: profile.name,
-          educationLevel: profile.educationLevel,
-          fieldOfStudy: profile.fieldOfStudy,
-          graduationYear: profile.graduationYear,
-          country: profile.country,
+          name: view.name,
+          email: view.email,
+          educationLevel: storedLevel ?? "bachelor_in_progress",
+          fieldOfStudy: profile.fieldOfStudy ?? "",
+          graduationYear: profile.graduationYear ?? 2027,
+          country: profile.country ?? "",
           city: profile.city ?? "",
           languages: profile.languages.join(", "),
           skills: profile.skills.join(", "),
-          experience: profile.experience,
-          yearsExperience: profile.yearsExperience,
+          experience: profile.experience ?? "",
+          yearsExperience: 0,
           interests: profile.interests.join(", "),
-          documentsHeld: profile.documentsHeld.join(", "),
-          preferredLanguage: profile.preferredLanguage,
+          documentsHeld: "",
+          preferredLanguage: getLanguage(),
         });
         setBoot("ready");
       })
@@ -84,28 +89,26 @@ export default function ProfilePage() {
     setSaving(true);
     setError(null);
     try {
-      const userId = getUserId();
-      const profile = await api<Profile>("/api/profile", {
-        method: "POST",
+      const storedId = getUserId();
+      const userId = storedId !== null && /^[0-9a-f-]{36}$/i.test(storedId) ? storedId : null;
+      const view = await api<ProfileView>(userId ? `/api/profile/${userId}` : "/api/profile", {
+        method: userId ? "PATCH" : "POST",
         body: JSON.stringify({
-          userId: userId ?? undefined,
           name: form.name,
+          email: form.email,
           educationLevel: form.educationLevel,
           fieldOfStudy: form.fieldOfStudy,
           graduationYear: Number(form.graduationYear),
           country: form.country,
-          city: form.city || undefined,
+          city: form.city || null,
           languages: splitList(form.languages),
           skills: splitList(form.skills),
           experience: form.experience,
-          yearsExperience: Number(form.yearsExperience),
           interests: splitList(form.interests),
-          documentsHeld: splitList(form.documentsHeld),
-          preferredLanguage: form.preferredLanguage,
         }),
       });
-      setUserId(profile.userId);
-      setLanguage(profile.preferredLanguage);
+      setUserId(view.profile.userId);
+      setLanguage(form.preferredLanguage);
       setSaved(true);
       router.push("/opportunities");
     } catch (err) {
@@ -119,9 +122,12 @@ export default function ProfilePage() {
     setSaving(true);
     setError(null);
     try {
-      const profile = await api<Profile>("/api/profile/demo", { method: "POST" });
-      setUserId(profile.userId);
-      setLanguage(profile.preferredLanguage);
+      const view = await api<ProfileView>("/api/profile", {
+        method: "POST",
+        body: JSON.stringify(ABEBA_DEMO),
+      });
+      setUserId(view.profile.userId);
+      setLanguage("en");
       router.push("/opportunities");
     } catch (err) {
       setError(userFacingError(err));
@@ -173,6 +179,10 @@ export default function ProfilePage() {
               <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} autoComplete="name" className="min-h-11 border border-line bg-white px-3 py-2" />
             </label>
             <label className="grid gap-1 text-sm">
+              Email
+              <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoComplete="email" className="min-h-11 border border-line bg-white px-3 py-2" />
+            </label>
+            <label className="grid gap-1 text-sm">
               Education
               <select
                 value={form.educationLevel}
@@ -195,10 +205,11 @@ export default function ProfilePage() {
                 Graduation year
                 <input type="number" value={form.graduationYear} onChange={(e) => setForm({ ...form, graduationYear: Number(e.target.value) })} className="min-h-11 border border-line bg-white px-3 py-2" />
               </label>
-              <label className="grid gap-1 text-sm">
-                Years of experience
-                <input type="number" min={0} step={0.5} value={form.yearsExperience} onChange={(e) => setForm({ ...form, yearsExperience: Number(e.target.value) })} className="min-h-11 border border-line bg-white px-3 py-2" />
-              </label>
+            <label className="grid gap-1 text-sm">
+              Years of experience
+              <input type="number" min={0} step={0.5} value={form.yearsExperience} onChange={(e) => setForm({ ...form, yearsExperience: Number(e.target.value) })} className="min-h-11 border border-line bg-white px-3 py-2" />
+              <span className="text-muted">Shown here only. Postgres v1 stores the experience text, not this number.</span>
+            </label>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
               <label className="grid gap-1 text-sm">
@@ -243,6 +254,7 @@ export default function ProfilePage() {
             <label className="grid gap-1 text-sm">
               Documents you already have
               <input value={form.documentsHeld} onChange={(e) => setForm({ ...form, documentsHeld: e.target.value })} placeholder="CV, Transcript" className="min-h-11 border border-line bg-white px-3 py-2" />
+              <span className="text-muted">Not stored in Postgres v1. Readiness still comes from the analysis.</span>
             </label>
             <button disabled={saving} className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
               {saving ? "Saving…" : "Save profile"}

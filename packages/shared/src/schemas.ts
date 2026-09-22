@@ -6,7 +6,7 @@ import {
   OPPORTUNITY_TYPES,
   READINESS_STATUSES,
   REQUIREMENT_STATUSES,
-} from "./constants";
+} from "./constants.js";
 
 export const languageSchema = z.enum(LANGUAGES);
 export const educationLevelSchema = z.enum(EDUCATION_LEVELS);

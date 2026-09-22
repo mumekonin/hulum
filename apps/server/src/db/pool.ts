@@ -9,3 +9,12 @@ export function getPool(): pg.Pool {
   }
   return pool;
 }
+
+export async function closePool(): Promise<void> {
+  if (pool === undefined) {
+    return;
+  }
+  const current = pool;
+  pool = undefined;
+  await current.end();
+}
