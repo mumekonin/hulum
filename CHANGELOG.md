@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-20 — Conflicting profile facts stay UNCERTAIN
+
+### Changed
+- File-store matcher no longer treats mixed signals as MET: field of study vs skills/interests, years vs “no experience” text, and in-progress education with a past graduation year.
+
+### Why
+Phase 8 required handling conflicting information. Guessing MET from one fact while another fact contradicts it would hide a MAYBE.
+
 ## 2026-09-21 — Mulualem
 
 ### Changed

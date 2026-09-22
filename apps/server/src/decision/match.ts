@@ -18,6 +18,17 @@ function norm(value: string): string {
   return value.trim().toLowerCase();
 }
 
+function fieldOverlaps(text: string, values: string[]): boolean {
+  if (!text.trim()) return false;
+  return values.some((value) => norm(text).includes(norm(value)) || norm(value).includes(norm(text)));
+}
+
+function deniesListedExperience(text: string): boolean {
+  return /\bno (work |professional )?experience\b|\bno work history\b|\bzero years\b|\bhave not worked\b/i.test(
+    text,
+  );
+}
+
 function includesAny(haystack: string[], needles: string[]): boolean {
   const hay = haystack.map(norm);
   return needles.some((needle) => hay.some((item) => item.includes(norm(needle)) || norm(needle).includes(item)));
@@ -74,6 +85,17 @@ function matchEducation(profile: Profile, level: EducationLevel, enrolledOk?: bo
   const need = educationValue(level);
   const educationLevel = String(profile.educationLevel);
   const inProgress = educationLevel.endsWith("_in_progress");
+  const graduationYear = profile.graduationYear;
+  const currentYear = new Date().getUTCFullYear();
+
+  if (inProgress && typeof graduationYear === "number" && graduationYear < currentYear) {
+    return {
+      status: "UNCERTAIN",
+      evidence: `Education level is ${educationLevel}, graduating ${graduationYear}.`,
+      reason:
+        "Current enrollment conflicts with a graduation year that is already in the past. Confirm status on the official source.",
+    };
+  }
 
   if (enrolledOk && have >= educationValue("bachelor_in_progress")) {
     return {
@@ -108,13 +130,31 @@ function matchEducation(profile: Profile, level: EducationLevel, enrolledOk?: bo
 
 function matchField(profile: Profile, values: string[]): MatchOutcome {
   const field = profile.fieldOfStudy ?? "";
-  const blob = [field, ...profile.skills, ...profile.interests].join(" ");
-  const hit = values.some((value) => norm(blob).includes(norm(value)) || (field !== "" && norm(value).includes(norm(field))));
+  const fieldHit = fieldOverlaps(field, values);
+  const extras = [...profile.skills, ...profile.interests];
+  const extraHit = extras.some((item) => fieldOverlaps(item, values));
 
-  if (hit) {
+  if (fieldHit) {
     return {
       status: "MET",
-      evidence: `Field of study is ${field || "not listed"}.`,
+      evidence: `Field of study is ${field}.`,
+      reason: "Field of study overlaps the stated requirement.",
+    };
+  }
+
+  if (extraHit && field.trim()) {
+    return {
+      status: "UNCERTAIN",
+      evidence: `Field of study is ${field}; skills/interests include ${extras.join(", ")}.`,
+      reason:
+        "Declared field of study does not match, but skills or interests do. Confirm the official field requirement before treating this as a fit.",
+    };
+  }
+
+  if (extraHit) {
+    return {
+      status: "MET",
+      evidence: `Skills/interests: ${extras.join(", ")}.`,
       reason: "Field, skills, or interests overlap the stated requirement.",
     };
   }
@@ -146,6 +186,13 @@ function matchExperience(profile: Profile, years: number): MatchOutcome {
   const yearsExperience = profile.yearsExperience ?? 0;
   const experience = profile.experience ?? "";
   if (yearsExperience >= years) {
+    if (deniesListedExperience(experience)) {
+      return {
+        status: "UNCERTAIN",
+        evidence: `${yearsExperience} year(s) listed, but experience text says: ${experience}`,
+        reason: "Years of experience conflict with the written experience description. Confirm before treating this as met.",
+      };
+    }
     return {
       status: "MET",
       evidence: `${yearsExperience} year(s) of experience. ${experience}`.trim(),

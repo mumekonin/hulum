@@ -117,4 +117,63 @@ describe("decision engine", () => {
       "SKIP",
     );
   });
+
+  it("treats a conflicting field of study vs skills as UNCERTAIN, not MET", () => {
+    const result = analyzeOpportunity(
+      {
+        ...profile,
+        fieldOfStudy: "Nursing",
+        skills: ["Python"],
+        interests: [],
+      },
+      opportunity({
+        deadline: "2027-01-01",
+        requirements: [
+          { key: "field", category: "field", text: "Computer science", critical: true, matcher: { type: "field", values: ["computer science", "software"] } },
+          { key: "deadline", category: "deadline", text: "Open", critical: true, matcher: { type: "deadline_open" } },
+        ],
+      }),
+    );
+    const field = result.requirements.find((item) => item.key === "field");
+    assert.equal(field?.status, "UNCERTAIN");
+    assert.equal(result.decision, "MAYBE");
+  });
+
+  it("treats years of experience that contradict the experience text as UNCERTAIN", () => {
+    const result = analyzeOpportunity(
+      {
+        ...profile,
+        yearsExperience: 5,
+        experience: "No work experience.",
+      },
+      opportunity({
+        deadline: "2027-01-01",
+        requirements: [
+          { key: "experience", category: "experience", text: "Two years of work", critical: false, matcher: { type: "experience_min", years: 2 } },
+          { key: "deadline", category: "deadline", text: "Open", critical: true, matcher: { type: "deadline_open" } },
+        ],
+      }),
+    );
+    const experience = result.requirements.find((item) => item.key === "experience");
+    assert.equal(experience?.status, "UNCERTAIN");
+  });
+
+  it("treats in-progress education with a past graduation year as UNCERTAIN", () => {
+    const result = analyzeOpportunity(
+      {
+        ...profile,
+        educationLevel: "bachelor_in_progress",
+        graduationYear: 2020,
+      },
+      opportunity({
+        deadline: "2027-01-01",
+        requirements: [
+          { key: "education", category: "education", text: "University student", critical: true, matcher: { type: "education_min", level: "bachelor_in_progress", enrolledOk: true } },
+          { key: "deadline", category: "deadline", text: "Open", critical: true, matcher: { type: "deadline_open" } },
+        ],
+      }),
+    );
+    const education = result.requirements.find((item) => item.key === "education");
+    assert.equal(education?.status, "UNCERTAIN");
+  });
 });
