@@ -581,7 +581,7 @@ final eligibility/deadline authority.
 
 ### Task 36 — Integration testing (Days 14–17)
 **Shared with:** Kidist.
-**Status:** Postgres API slice proven (2026-09-21, Mulualem). Not DONE. Web profile and voice still use the file-store shapes.
+**Status:** Postgres API slice proven, and the web profile, analysis, and Ask HULUM screens now call that API (2026-09-21, Mulualem). Not DONE until this branch is merged. Voice stays text. No Voxide backend.
 
 Test:
 
