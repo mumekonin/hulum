@@ -24,13 +24,18 @@ export default function OpportunitiesPage() {
     let cancelled = false;
     setLoading(true);
     setError(null);
-    const params = new URLSearchParams();
-    if (type) params.set("type", type);
-    if (query) params.set("q", query);
-    const suffix = params.toString() ? `?${params.toString()}` : "";
-    void api<Opportunity[]>(`/api/opportunities${suffix}`)
+    void api<Opportunity[]>("/api/opportunities")
       .then((data) => {
-        if (!cancelled) setItems(data);
+        if (cancelled) return;
+        const needle = query.toLowerCase();
+        setItems(
+          data.filter((item) => {
+            if (type && item.type !== type) return false;
+            if (!needle) return true;
+            const blob = `${item.title} ${item.organization} ${item.description}`.toLowerCase();
+            return blob.includes(needle);
+          }),
+        );
       })
       .catch((err: unknown) => {
         if (!cancelled) {
