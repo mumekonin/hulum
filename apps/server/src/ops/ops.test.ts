@@ -119,4 +119,28 @@ describe("GET /api/ops/summary and POST /api/ops/decision-debug", () => {
     expect(body.data.reasons.length).toBeGreaterThan(0);
     expect(body.data.nextAction.length).toBeGreaterThan(0);
   });
+
+  it("records whitelist voice client events without accepting free-form text", async () => {
+    const bad = await fetch(`${baseUrl}/api/ops/client-event`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ code: "PLEASE_STORE_THIS_UTTERANCE", name: "hello mic" }),
+    });
+    expect(bad.status).toBe(422);
+
+    const okRes = await fetch(`${baseUrl}/api/ops/client-event`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ code: "VOICE_RECOGNITION_FAILED", kind: "voice" }),
+    });
+    expect(okRes.status).toBe(200);
+
+    const summary = await fetch(`${baseUrl}/api/ops/summary`);
+    const body = (await summary.json()) as {
+      data: { byKind: { voice?: { errors: number; codes: Record<string, number> } } };
+    };
+    expect(body.data.byKind.voice?.errors).toBeGreaterThanOrEqual(1);
+    expect(body.data.byKind.voice?.codes.VOICE_RECOGNITION_FAILED).toBeGreaterThanOrEqual(1);
+    expect(JSON.stringify(body)).not.toMatch(/PLEASE_STORE|hello mic/i);
+  });
 });
