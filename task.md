@@ -785,7 +785,7 @@ Initial target:
 
 Actual support depends on Voxide capabilities and quality.
 
-- [ ] **P0** Verify Voxide supported languages.
+- [x] **P0** Verify Voxide supported languages.
 - [x] **P0** Define language architecture.
 - [x] **P0** Implement language selection.
 - [x] **P0** Test one language end-to-end.

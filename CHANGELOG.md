@@ -3,6 +3,14 @@
 HULUM records actual work. Do not invent history.
 
 
+## 2026-09-23 — Voxide language support verified from public docs
+
+### Added
+- `docs/research/voxide-languages.md`: public Voxide docs do not list Amharic/Oromo; English stays the only stable end-to-end claim (ADR 004).
+
+### Why
+Phase 13 P0 asked to verify Voxide supported languages before adding a second language. Inventing a matrix would break STARK evidence rules.
+
 ## 2026-09-21 — Postgres Ask HULUM voice routes
 
 ### Added
