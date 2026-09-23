@@ -155,10 +155,13 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
     }
 
     for (const item of extracted) {
+<<<<<<< HEAD
       if (isAllowedOfficialUrl(item.officialSourceUrl, officialDomains)) {
         enqueue(page.sourceName, item.officialSourceUrl);
       }
 
+=======
+>>>>>>> origin/main
       const why = evaluateExtracted(item, pageText, officialDomains, now);
       if (why !== undefined) {
         rejected += 1;
