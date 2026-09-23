@@ -1,4 +1,9 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 import { config as loadDotenv } from "dotenv";
+
+/** Always `apps/server/.env`, even when npm is started from the repo root. */
+const SERVER_ENV_PATH = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../.env");
 
 export type AppEnv = {
   NODE_ENV: "development" | "test" | "production";
@@ -16,6 +21,7 @@ export type AppEnv = {
   JOB_OPPORTUNITIES_API_KEY: string | undefined;
   JOB_OPPORTUNITIES_API_URL: string | undefined;
   INVESTIGATE_ADMIN_SECRET: string | undefined;
+  SCHOLARXIV_API_KEY: string | undefined;
 };
 
 export type LoadEnvOptions = {
@@ -77,7 +83,7 @@ export function parseClientUrl(value: string | undefined): string | undefined {
 
 export function loadEnv(options: LoadEnvOptions = {}): AppEnv {
   if (options.fromFile !== false) {
-    loadDotenv();
+    loadDotenv({ path: SERVER_ENV_PATH, override: true });
   }
 
   const NODE_ENV = parseNodeEnv(process.env.NODE_ENV);
@@ -101,5 +107,6 @@ export function loadEnv(options: LoadEnvOptions = {}): AppEnv {
     JOB_OPPORTUNITIES_API_KEY: optionalString(process.env.JOB_OPPORTUNITIES_API_KEY),
     JOB_OPPORTUNITIES_API_URL: optionalString(process.env.JOB_OPPORTUNITIES_API_URL),
     INVESTIGATE_ADMIN_SECRET: optionalString(process.env.INVESTIGATE_ADMIN_SECRET),
+    SCHOLARXIV_API_KEY: optionalString(process.env.SCHOLARXIV_API_KEY),
   };
 }

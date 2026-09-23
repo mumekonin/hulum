@@ -234,7 +234,7 @@ ScholarXIV is part of the STARK ideation requirement.
 - [x] **P0** Document rejected ideas.
 - [x] **P0** Explain why HULUM was selected.
 - [ ] **P1** Explore ScholarXIV MCP integration.
-- [ ] **P1** Explore ScholarXIV Papers API.
+- [x] **P1** Explore ScholarXIV Papers API.
 - [-] **P1** Link research findings to product decisions.
 - [x] **P1** Preserve research evidence in repository documentation.
 

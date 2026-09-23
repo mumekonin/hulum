@@ -37,6 +37,13 @@ describe("loadEnv", () => {
     }
   });
 
+  it("reads SCHOLARXIV_API_KEY when set", () => {
+    process.env.SCHOLARXIV_API_KEY = "sxv_test_not_a_real_key";
+    const env = loadEnv({ fromFile: false });
+    expect(env.SCHOLARXIV_API_KEY).toBe("sxv_test_not_a_real_key");
+    delete process.env.SCHOLARXIV_API_KEY;
+  });
+
   it("defaults PORT to 3001 outside production", () => {
     const env = loadEnv({ fromFile: false });
     expect(env.NODE_ENV).toBe("development");
