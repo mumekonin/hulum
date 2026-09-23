@@ -102,7 +102,7 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
     }
 
     for (const item of extracted) {
-      const why = rejectReason(item, pageText, officialDomains, now);
+      const why = evaluateExtracted(item, pageText, officialDomains, now);
       if (why !== undefined) {
         rejected += 1;
         await logEvent(runId, source.name, "reject", `${item.title}: ${why}`);
@@ -133,7 +133,7 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
   return { runId, checked, saved, rejected, notes };
 }
 
-function rejectReason(
+export function evaluateExtracted(
   item: {
     title: string;
     deadline: string;
