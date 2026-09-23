@@ -33,6 +33,7 @@ const quickActions = [
   "Clarify uncertain requirements",
   "Personalize my readiness plan",
   "Repeat that",
+  "Extract profile from this: I study CS in Addis Ababa",
 ];
 
 export default function AssistantPage() {
