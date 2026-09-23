@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — CI builds web and server
+
+### Added
+- GitHub Actions runs `npm run build:server` (`tsc`) and `npm run build` (Next.js) after tests.
+
+### Why
+Phase 24 asked for frontend and backend build gates. Typecheck alone does not prove `next build` or emit server JS.
+
 ## 2026-09-23 — Kidist: Ask HULUM profile gaps, clarify, repeat
 
 ### Added

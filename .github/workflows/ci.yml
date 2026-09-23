@@ -1,4 +1,4 @@
-# Install, typecheck, lint, and test. No deploy (local only).
+# Install, typecheck, lint, test, and production builds. No deploy (local only).
 name: CI
 
 on:
@@ -57,3 +57,9 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Build server
+        run: npm run build:server
+
+      - name: Build web
+        run: npm run build
