@@ -579,7 +579,7 @@ It must perform meaningful HULUM actions and must not be decorative.
 - [ ] **P1** Create/update profile by voice.
 - [ ] **P1** Handle recognition failure.
 - [ ] **P1** Handle silence/timeouts.
-- [ ] **P1** Support repeat requests.
+- [x] **P1** Support repeat requests.
 - [ ] **P1** Measure latency.
 
 ## Example voice intents
