@@ -112,4 +112,33 @@ describe("matchRequirements", () => {
     const second = matchRequirements(profile, opportunity, clock);
     expect(first).toEqual(second);
   });
+
+  it("returns UNCERTAIN when field of study conflicts with skills that match the requirement", () => {
+    const result = matchRequirements(
+      { ...profile, fieldOfStudy: "nursing", skills: ["computer_science"], interests: [] },
+      opportunity,
+      clock,
+    );
+    expect(status(result, RequirementKey.FIELD)).toBe(RequirementStatus.UNCERTAIN);
+  });
+
+  it("returns UNCERTAIN when years of experience conflict with no-experience text", () => {
+    const result = matchRequirements(
+      { ...profile, yearsExperience: 5, experience: "No work experience." },
+      { ...opportunity, experienceRequirements: ["2 years"] },
+      clock,
+    );
+    expect(status(result, RequirementKey.EXPERIENCE)).toBe(RequirementStatus.UNCERTAIN);
+    const row = result.find((item) => item.key === RequirementKey.EXPERIENCE);
+    expect(row?.reason).toMatch(/conflict/i);
+  });
+
+  it("returns UNCERTAIN when in-progress education conflicts with a past graduation year", () => {
+    const result = matchRequirements(
+      { ...profile, educationLevel: "bachelor_in_progress", graduationYear: 2020 },
+      { ...opportunity, educationRequirements: ["bachelor_in_progress"] },
+      clock,
+    );
+    expect(status(result, RequirementKey.EDUCATION)).toBe(RequirementStatus.UNCERTAIN);
+  });
 });
