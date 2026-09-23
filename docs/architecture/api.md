@@ -21,8 +21,12 @@ Auth is a client-supplied `userId` (UUID). Full login is P1 and not implemented.
 | `POST` | `/api/analyses/:id/explain` | `{ "language"? }` | Groq wording only; **rate-limited** |
 | `GET` | `/api/analyses/:id/readiness` | — | Checklist for analysis |
 | `PATCH` | `/api/readiness/:id` | `{ "status" }` | `TODO` / `IN_PROGRESS` / `DONE` / `NOT_REQUIRED` |
-| `POST` | `/api/voice/session` | `{ "userId", "language"? }` | Metadata only; provider `text-fallback` |
-| `POST` | `/api/voice/action` | `{ "userId", "text", ... }` | Same intents as Ask HULUM text |
+| `POST` | `/api/voice/session` | `{ "userId", "language"? }` | Metadata only; provider `text-fallback` until a Voxide key is set |
+| `POST` | `/api/voice/action` | `{ "userId", "text", ... }` | Same intents as Ask HULUM text; timed in ops |
+| `POST` | `/api/ai/profile-extract` | self-description text | Proposes fields only; never auto-saves |
+| `GET` | `/api/ops/summary` | — | In-process latency/error aggregates (no profile/transcript payloads) |
+| `POST` | `/api/ops/decision-debug` | `{ "userId", "opportunityId" }` | Re-runs `decide()` for debug; not a user guarantee |
+| `POST` | `/api/ops/client-event` | `{ "code", "kind?", "name?" }` | Whitelist voice failure codes only |
 | `GET` | `/api/research/papers` | `?q=` | ScholarXIV Papers API proxy; needs `SCHOLARXIV_API_KEY` |
 | `POST` | `/api/investigate` | — | Admin investigator; needs `x-hulum-investigate` + `INVESTIGATE_ADMIN_SECRET` |
 
@@ -35,7 +39,7 @@ Auth is a client-supplied `userId` (UUID). Full login is P1 and not implemented.
 
 ## Rate limiting
 
-- `POST /api/analyses/:id/explain`: **10 requests / 60 seconds / client IP** (`EXPLAIN_RATE_LIMIT_MAX` / `EXPLAIN_RATE_LIMIT_WINDOW_MS`).
+- `POST /api/analyses/:id/explain` and profile-extract: rate-limited per client IP (see env).
 - Other routes are not rate-limited in v0.1.
 
 ## CORS and secrets
@@ -47,6 +51,6 @@ Auth is a client-supplied `userId` (UUID). Full login is P1 and not implemented.
 
 - OpenAPI/Swagger UI is not shipped.
 - JWT auth and a public production URL are not claimed.
-- Voxide STT is not wired; Ask HULUM is text/quick-action capable without a mic.
+- Live mic demo is not claimed without a keyed `VoxideAskHulum` test; text/quick actions remain the reliable Ask HULUM path.
 
-Related: `docs/architecture/retention.md`, `docs/architecture/data-exposure.md`.
+Related: `docs/architecture/retention.md`, `docs/architecture/data-exposure.md`, `docs/architecture/observability.md`.
