@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — CI: Postgres service for vertical-slice tests
+
+### Changed
+- `.github/workflows/ci.yml` runs Postgres 16, sets ephemeral `DATABASE_URL`, and migrates before `npm test`.
+
+### Why
+`postgres-slice.test.ts` calls `getPool()` and needs a real database. CI had neither Postgres nor `DATABASE_URL`.
+
 ## 2026-09-23 — CI: record Linux Rollup optional dependency
 
 ### Fixed
