@@ -18,7 +18,13 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
       <div className="flex flex-wrap items-center gap-2 text-xs uppercase tracking-wide text-muted">
         <span>{TYPE_LABELS[opportunity.type]}</span>
         <span aria-hidden="true">·</span>
-        <span>{opportunity.verificationStatus === "VERIFIED" ? "Verified source" : opportunity.verificationStatus}</span>
+        <span>
+          {opportunity.verificationStatus === "VERIFIED"
+            ? "Verified source"
+            : opportunity.verificationStatus === "AI_EXTRACTED"
+              ? "AI-extracted, not yet verified"
+              : opportunity.verificationStatus}
+        </span>
       </div>
       <h2 className="mt-3 font-display text-2xl leading-tight">{opportunity.title}</h2>
       <p className="mt-1 text-muted">{opportunity.organization}</p>
