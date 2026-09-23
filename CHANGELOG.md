@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Voice latency and recognition ops signals
+
+### Added
+- `timeOps` on Postgres `POST /api/voice/session` and `/api/voice/action`.
+- `POST /api/ops/client-event` whitelist for `VOICE_RECOGNITION_FAILED` / `VOICE_SESSION_ERROR` / `VOICE_SILENCE_TIMEOUT` (no transcripts).
+- `VoxideAskHulum` reports those codes when the widget errors, session fails, or silence times out.
+
+### Why
+Phase 22 asked for voice latency, recognition failures, and session failures without logging utterance text.
 
 ## 2026-09-23 — Voxide language support verified from public docs
 
