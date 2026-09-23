@@ -25,6 +25,7 @@ const quickActions = [
   "What is missing from my profile?",
   "Clarify uncertain requirements",
   "Personalize my readiness plan",
+  "Repeat that",
 ];
 
 export default function AssistantPage() {
@@ -96,6 +97,20 @@ function AssistantInner() {
     if (echo) {
       setMessages((current) => [...current, { role: "user", text: value }]);
     }
+
+    // Last assistant reply only — never stores user utterances beyond the on-screen thread.
+    if (/repeat|say (that|it) again|again please|ድገም/i.test(value.trim())) {
+      setMessages((current) => {
+        const last = [...current].reverse().find((message) => message.role === "hulum");
+        const reply =
+          last === undefined
+            ? "Nothing to repeat yet. Ask a HULUM question first."
+            : last.text;
+        return [...current, { role: "hulum", text: reply }];
+      });
+      return;
+    }
+
     setPending(true);
     try {
       const response = await runTextAction({ userId, text: value, opportunityId, analysisId });

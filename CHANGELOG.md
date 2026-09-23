@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Kidist: Ask HULUM profile gaps, clarify, repeat
+
+### Added
+- Text actions for profile completeness gaps and UNCERTAIN requirement clarification (stored analysis only).
+- Assistant quick actions plus “Repeat that” / “ድገም” re-shows the last on-screen HULUM reply (no utterance storage).
+
+### Why
+Phase 12/18 asked for profile-gap and clarification asks, and repeat requests, without expanding the Task 22 intent enum or inventing requirements.
+
 ## 2026-09-23 — Explain evaluation fixtures and Groq retry
 
 ### Added
