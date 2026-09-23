@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — In-process latency and error tracking
+
+### Added
+- `apps/server/src/ops/`: rolling API/AI/decision metrics (no profile text or transcripts).
+- `GET /api/ops/summary` and `POST /api/ops/decision-debug`.
+- `docs/architecture/observability.md`.
+
+### Why
+Phase 10/22 asked to track latency and errors without a production metrics vendor or logging sensitive content.
+
 ## 2026-09-23 — Kidist: Voxide widget on Ask HULUM
 
 ### Added
