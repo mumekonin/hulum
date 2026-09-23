@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — CI: force-install Linux Tailwind Oxide after npm ci
+
+### Fixed
+- After `npm ci --include=optional`, CI explicitly installs `@tailwindcss/oxide-linux-x64-gnu@4.3.3` (and Lightning CSS / Rollup Linux bindings) so Ubuntu runners get the native packages even when npm’s os/cpu/libc filter skips them.
+- Verify step asserts the Oxide and Lightning CSS Linux package directories exist before `require()`.
+- `@hulum/web` lists the same Linux Oxide / Lightning CSS packages under `optionalDependencies`.
+
+### Why
+Lockfile and root `optionalDependencies` already recorded Oxide Linux, but Build web still failed with `Cannot find native binding` — optional install alone was not enough on the runner.
+
 ## 2026-09-23 — CI: record Linux Tailwind Oxide optional dependency
 
 ### Fixed
