@@ -18,6 +18,7 @@ export type PersistAnalysisInput = {
   summary: string;
   matches: RequirementMatch[];
   readiness: DraftReadinessItem[];
+  audit: NonNullable<Analysis["audit"]>;
 };
 
 export type AnalysisStore = {
@@ -26,7 +27,7 @@ export type AnalysisStore = {
 };
 
 const ANALYSIS_COLUMNS = `
-  id, user_id, opportunity_id, decision, fit_score, summary, created_at, updated_at
+  id, user_id, opportunity_id, decision, fit_score, summary, decision_audit, created_at, updated_at
 `;
 
 const REQUIREMENT_COLUMNS = `
@@ -61,10 +62,17 @@ export function createPgAnalysisStore(): AnalysisStore {
       try {
         await client.query("begin");
         const analysis = await client.query<AnalysisRow>(
-          `insert into analyses (user_id, opportunity_id, decision, fit_score, summary)
-           values ($1, $2, $3, $4, $5)
+          `insert into analyses (user_id, opportunity_id, decision, fit_score, summary, decision_audit)
+           values ($1, $2, $3, $4, $5, $6::jsonb)
            returning ${ANALYSIS_COLUMNS}`,
-          [input.userId, input.opportunityId, input.decision, input.fitScore, input.summary],
+          [
+            input.userId,
+            input.opportunityId,
+            input.decision,
+            input.fitScore,
+            input.summary,
+            JSON.stringify(input.audit),
+          ],
         );
         const analysisRow = analysis.rows[0];
         if (analysisRow === undefined) {

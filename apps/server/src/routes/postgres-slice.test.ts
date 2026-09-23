@@ -14,6 +14,8 @@ loadDotenv({
   path: path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../../.env"),
 });
 
+const hasDatabaseUrl = Boolean(process.env.DATABASE_URL?.trim());
+
 type Envelope<T> = {
   data: T | null;
   error: { message: string; code?: string } | null;
@@ -23,8 +25,9 @@ type Envelope<T> = {
  * Task 36. One HTTP pass through the Postgres API that `npm run dev` boots.
  * The fixture opportunity is deleted afterward. It is not a catalog seed.
  * Voice stays off this server (ADR 001). Text voice is covered by the file-store flow test.
+ * Skips when DATABASE_URL is unset so local/CI unit gates still pass without Postgres.
  */
-describe("postgres vertical slice", () => {
+describe.skipIf(!hasDatabaseUrl)("postgres vertical slice", () => {
   let closeServer: (() => Promise<void>) | undefined;
   let userId: string | undefined;
   let opportunityId: string | undefined;

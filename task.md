@@ -652,7 +652,7 @@ MAYBE
 - [x] **P0** Ensure fit score never replaces the decision rules.
 - [x] **P0** Add unit tests.
 - [x] **P0** Add edge-case tests.
-- [ ] **P1** Add decision audit/debug information.
+- [x] **P1** Add decision audit/debug information.
 
 ## Important
 

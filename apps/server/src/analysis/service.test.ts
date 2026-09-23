@@ -82,6 +82,7 @@ function storedFrom(input: StoreInput): Analysis {
       reason: match.reason,
     })),
     nextAction: "Prepare your application materials and verify the official source.",
+    audit: input.audit,
     readiness: input.readiness.map((draft, index) => ({
       id: `66666666-6666-4666-8666-66666666666${String(index)}`,
       analysisId: "44444444-4444-4444-8444-444444444444",
@@ -96,6 +97,18 @@ function storedFrom(input: StoreInput): Analysis {
     updatedAt: "2026-09-19T00:00:00.000Z",
   };
 }
+
+const stubAudit = {
+  rulePath: "default_maybe" as const,
+  criticalKeys: ["country", "education", "deadline"],
+  keyRequirementKeys: ["country", "education", "deadline", "field", "language"],
+  criticalNotMet: [] as string[],
+  keyStatuses: {},
+  uncertainKeys: [] as string[],
+  effectiveVerificationStatus: VerificationStatus.NEEDS_REVIEW,
+  fitScoreIsAdvisoryOnly: true as const,
+  decidedAt: "2026-09-19T12:00:00.000Z",
+};
 
 describe("analysis service", () => {
   it("persists a complete structured analysis from decide()", async () => {
@@ -130,6 +143,8 @@ describe("analysis service", () => {
     expect(persisted?.userId).toBe(profile.userId);
     expect(persisted?.opportunityId).toBe(opportunity.id);
     expect(persisted?.summary).toBe(analysisSummaryFor(Decision.APPLY));
+    expect(persisted?.audit.rulePath).toBe("keys_met_no_uncertainty");
+    expect(result.audit?.rulePath).toBe("keys_met_no_uncertainty");
   });
 
   it("persists SKIP when the opportunity is EXPIRED", async () => {
@@ -157,6 +172,7 @@ describe("analysis service", () => {
     const result = await service.analyze(opportunity.id, profile.userId);
     expect(result.decision).toBe(Decision.SKIP);
     expect(persisted?.decision).toBe(Decision.SKIP);
+    expect(persisted?.audit.rulePath).toBe("expired_override");
     expect(result.summary).toBe(analysisSummaryFor(Decision.SKIP));
   });
 
@@ -173,6 +189,7 @@ describe("analysis service", () => {
           summary: "",
           matches: [],
           readiness: [],
+          audit: stubAudit,
         }),
         getById: async () => undefined,
       },
@@ -191,6 +208,7 @@ describe("analysis service", () => {
       summary: ANALYSIS_SUMMARY[Decision.APPLY],
       matches: [],
       readiness: [],
+      audit: stubAudit,
     });
     const service = createAnalysisService({
       profiles: { getByUserId: async () => view },
@@ -220,6 +238,7 @@ describe("analysis service", () => {
       summary: ANALYSIS_SUMMARY[Decision.MAYBE],
       matches: [],
       readiness: [],
+      audit: stubAudit,
     });
     const service = createAnalysisService({
       profiles: { getByUserId: async () => view },
