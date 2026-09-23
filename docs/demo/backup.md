@@ -26,7 +26,7 @@ Stable inputs already in the product:
 
 ## Path A — 3 minutes, text only (use this if time or voice is the problem)
 
-Setup is the same as `docs/demo/script.md`: `npm run dev`, http://localhost:3000, health at `:4000/api/health`.
+Setup is the same as `docs/demo/script.md`: `npm run dev`, http://localhost:3000, health at `:3001/api/health`.
 
 | Time | Action | Show / say |
 |---|---|---|
