@@ -1,11 +1,25 @@
 # ScholarXIV log
 
-**Status:** Space created. **No papers have been retrieved yet.**  
-**Date:** 2026-09-18
+**Status:** Website search is wired through HULUM’s API. Papers still come only from a live ScholarXIV call.  
+**Date:** 2026-09-22  
+**Official docs:** https://scholarxiv.com/developers/docs/papers-api
+
+## What is in the product
+
+- Web: `/research`
+- API: `GET /api/research/papers?q=`
+- Server calls `GET https://scholarxiv.com/api/v1/papers/search` with `Authorization: Bearer` (`SCHOLARXIV_API_KEY`)
+- The browser never receives the key
+- Papers are research evidence. They are not opportunity listings. They do not set APPLY / MAYBE / SKIP
+
+## Local setup
+
+1. Create a key at https://scholarxiv.com/developers (keys start with `sxv_`).
+2. Put `SCHOLARXIV_API_KEY=` in `apps/server/.env`. Do not commit it.
+3. Restart `npm run dev:server`.
+4. Open http://localhost:3000/research and search.
 
 ## Planned queries
-
-Use these with ScholarXIV Papers API / MCP when that integration is actually run. Copy results here with title, year, identifier, and a short note. Do not paste invented citations.
 
 1. Barriers to scholarship / opportunity application among Ethiopian or African university students.
 2. Communicating eligibility uncertainty and responsible use of AI in high-stakes advice.
@@ -15,21 +29,16 @@ Use these with ScholarXIV Papers API / MCP when that integration is actually run
 
 ## Paper table
 
+Record a row only after a real `/research` (or Papers API) result. Do not invent citations.
+
 | Query | Paper | Year | ID / URL | Finding used in HULUM | Date retrieved |
 |---|---|---|---|---|---|
-| — | *None yet* | — | — | — | — |
+| — | *None copied here yet* | — | — | Use the Research page for live results | — |
 
 ## Findings
 
-None from ScholarXIV so far. Product rules currently rest on:
+Product rules still rest on the deterministic engine and official-source URLs. ScholarXIV now informs those rules from the Research page when a key is set.
 
-- Engineering decisions (deterministic engine, official-source URLs, text fallback for voice).
-- Labeled hypotheses in `docs/product/research-questions.md`.
+## MCP
 
-## ScholarXIV MCP / Papers API
-
-`HULUM_Documentation.md` places ScholarXIV **outside the runtime request path**. It informs design; it does not run during Analyze.
-
-v0.1 has not yet configured ScholarXIV MCP or called the Papers API from this repository. That is Phase 2 P1 and remains open.
-
-When someone runs a real search, add a row to the table above in the same commit as the notes. Empty rows are more honest than fake papers.
+ScholarXIV MCP is documented at https://scholarxiv.com/developers/docs/mcp. This slice uses the Papers API in the website, not MCP inside Analyze.

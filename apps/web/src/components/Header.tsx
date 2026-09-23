@@ -7,6 +7,7 @@ const links = [
   { href: "/opportunities", label: "Opportunities" },
   { href: "/profile", label: "Profile" },
   { href: "/assistant", label: "Ask HULUM" },
+  { href: "/research", label: "Research" },
 ];
 
 export function Header() {

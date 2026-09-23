@@ -9,7 +9,6 @@ describe("@hulum/shared Task 22 lock (enums/api modules)", () => {
       SKIP: "SKIP",
     });
   });
-
   it("locks the Task 22 voice intents and rejects SHOW_GAPS as a lock name", () => {
     expect(Object.values(VoiceIntent)).toEqual([
       "SHOW_OPPORTUNITIES",

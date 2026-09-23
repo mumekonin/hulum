@@ -18,7 +18,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 |---|---|---|
 | Problem | `docs/product/problem.md` | Present |
 | Research questions | `docs/product/research-questions.md` | Present (hypotheses labeled) |
-| ScholarXIV | `docs/research/scholarxiv.md` | Space only — **no papers retrieved** |
+| ScholarXIV | `docs/research/scholarxiv.md`, `/research` | Papers API proxy on the server. Live rows need `SCHOLARXIV_API_KEY` |
 | Ideation + rejected ideas | `docs/research/ideation.md` | Present |
 | Competitors | `docs/research/competitive-analysis.md` | Live-checked 2026-09-18; do not invent extra claims |
 | Product requirements | `task.md`, `docs/stark/task-status.md` | Present; Day 20 status pass 2026-09-19 |

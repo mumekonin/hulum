@@ -5,7 +5,17 @@ HULUM records actual work. Do not invent history.
 ## 2026-09-22 — Mulualem
 
 ### Changed
-<<<<<<< HEAD
+Wired ScholarXIV Papers API to the website: `GET /api/research/papers` and `/research`. The server uses `SCHOLARXIV_API_KEY`. Papers stay research evidence.
+
+### Why
+Task 40 P1. Judges can search real papers without putting the key in the browser.
+
+### Decision
+ScholarXIV is not an opportunity source. `decide()` is unchanged.
+
+## 2026-09-22 — Mulualem
+
+### Changed
 `npm run db:seed` loads the existing curated catalog into Postgres so the web can show official sourced cards (including one internship) while the investigator still refuses to invent rows.
 
 ### Why
@@ -28,8 +38,6 @@ Still no invented listings. Aggregators stay leads. `hetriil.moe.gov.et` stays t
 ## 2026-09-22 — Mulualem
 
 ### Changed
-=======
->>>>>>> origin/main
 Closed Task 48. Evidence and official-domain rules are tested. The opportunity card shows “AI-extracted, not yet verified”. Job API still waits for a documented URL.
 
 ### Why

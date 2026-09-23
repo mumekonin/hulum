@@ -5,12 +5,14 @@ import { profileRouter } from "../profiles/index.js";
 import { readinessRouter } from "../readiness/index.js";
 import { voiceRouter } from "../voice/index.js";
 import { investigateRouter } from "../investigator/routes.js";
+import { researchRouter } from "../scholarxiv/routes.js";
 import { healthRouter } from "./health.js";
 
 export function createApiRouter(): Router {
   const router = Router();
   router.use("/health", healthRouter);
   router.use("/investigate", investigateRouter);
+  router.use("/research", researchRouter);
   router.use("/profile", profileRouter);
   router.use("/opportunities", analyzeRouter);
   router.use("/opportunities", opportunityRouter);
