@@ -29,6 +29,16 @@ values ('example.org', 'Why this domain is official');
 2. Insert a `sources` row with `type = 'API'`, `api_key_env`, and `api_url_env`.
 3. Write a documented client. `JOB_OPPORTUNITIES_API_KEY` is reserved; the client is not called until `JOB_OPPORTUNITIES_API_URL` is a real documented URL.
 
+## Curated catalog (web cards)
+
+Investigator does not invent listings. To show official sourced cards locally:
+
+```text
+npm run db:seed
+```
+
+That loads `seedOpportunities` (already in the repo). It is not Groq output.
+
 ## Run
 
 ```text
@@ -36,3 +46,5 @@ npm run db:migrate
 ```
 
 `POST /api/investigate` with header `x-hulum-investigate` matching `INVESTIGATE_ADMIN_SECRET`.
+
+Groq extract uses a larger completion budget and `reasoning_effort=low` for `gpt-oss` models so reasoning tokens do not empty the reply. Official pages may follow a few same-domain listing links (for example HETRIIL internships). Aggregators stay leads. A page with no explicit deadline is saved as nothing.
