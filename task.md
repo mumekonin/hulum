@@ -233,7 +233,7 @@ ScholarXIV is part of the STARK ideation requirement.
 - [x] **P0** Document alternative ideas considered.
 - [x] **P0** Document rejected ideas.
 - [x] **P0** Explain why HULUM was selected.
-- [ ] **P1** Explore ScholarXIV MCP integration.
+- [x] **P1** Explore ScholarXIV MCP integration.
 - [x] **P1** Explore ScholarXIV Papers API.
 - [-] **P1** Link research findings to product decisions.
 - [x] **P1** Preserve research evidence in repository documentation.
@@ -429,7 +429,7 @@ Opportunity
 - [x] **P0** Store verification status.
 - [x] **P0** Store last verified date.
 - [x] **P1** Add opportunity search/filtering.
-- [ ] **P1** Add opportunity import workflow if required.
+- [x] **P1** Add opportunity import workflow if required.
 
 ---
 

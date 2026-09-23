@@ -42,3 +42,5 @@ Product rules still rest on the deterministic engine and official-source URLs. S
 ## MCP
 
 ScholarXIV MCP is documented at https://scholarxiv.com/developers/docs/mcp. This slice uses the Papers API in the website, not MCP inside Analyze.
+
+**Exploration result:** MCP is optional tooling for research. HULUM does not run ScholarXIV MCP during Analyze or `decide()`. Phase 2 P1 “Explore ScholarXIV MCP” is closed by preferring the Papers API proxy already on `/research`.

@@ -26,7 +26,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Database | `database/migrations/001_init.sql`, ADR 001 | Schema + migrate/smoke on `main`; **file store in the running API** |
 | Decision engine | `apps/server/src/decision/`, ADR 002 | Present + tests |
 | AI responsibility | ADR 002, Claude validation in `apps/server/src/ai/` | Engine decides; Claude explains only |
-| Voice UX | ADR 003, ADR 004, `docs/demo/script.md` | Text/quick-action fallback; Voxide unwired |
+| Voice UX | ADR 003, ADR 004, `docs/demo/script.md`, `docs/research/voxide-integration.md` | Text/quick-action fallback; Voxide studied, unwired on `main` |
 | Implementation | `apps/web`, `apps/server`, `packages/shared` | Present |
 | Testing | `npm test` in `apps/server` | Engine, API, voice-text, failures |
 | Iteration | `CHANGELOG.md`, `docs/stark/narrative.md` | Present; Day 20 narrative; do not rewrite history |
@@ -40,9 +40,9 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 
 ## Gaps (do not paper over)
 
-1. ScholarXIV Papers API / MCP has not been run. Planned queries are in `docs/research/scholarxiv.md`.
+1. ScholarXIV Papers API is proxied on `/research`; MCP is not used in Analyze. The paper table stays empty until a teammate copies a live result (`docs/research/scholarxiv.md`).
 2. No production host. CORS/`CLIENT_URL` are configured; health is local.
-3. Voxide STT/TTS is not connected. Demo uses Ask HULUM text.
+3. Voxide STT/TTS is not connected on `main` (requirements studied in `docs/research/voxide-integration.md`). Demo uses Ask HULUM text.
 4. Full login/RLS is P1. v0.1 uses a local `userId`.
 5. Not all Kidist `feat/*` branches are on `main` yet.
 
