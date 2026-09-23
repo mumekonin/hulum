@@ -78,7 +78,7 @@ If voice fails, buttons and text still call the same APIs.
 
 ### Research — ScholarXIV
 
-ScholarXIV documents ideation (Task 40). It is **not** a third production API key and not a source of live scholarships.
+ScholarXIV documents ideation (Task 40). The website searches papers through `GET /api/research/papers` (server-side Papers API). It is **not** a source of live scholarships and does not sit on the Analyze path.
 
 ### Deploy — EthioDeploy (later)
 
