@@ -1118,8 +1118,8 @@ EthioDeploy is optional, but if used, document it as part of the implementation/
 - [x] **P1** Type check.
 - [x] **P1** Lint.
 - [x] **P1** Run tests.
-- [ ] **P1** Build frontend.
-- [ ] **P1** Build backend.
+- [x] **P1** Build frontend.
+- [x] **P1** Build backend.
 - [ ] **P1** Block merges when checks fail.
 - [ ] **P1** Configure deployment workflow if appropriate.
 

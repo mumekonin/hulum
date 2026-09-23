@@ -2,6 +2,43 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — CI: force-install Linux Tailwind Oxide after npm ci
+
+### Fixed
+- After `npm ci --include=optional`, CI explicitly installs `@tailwindcss/oxide-linux-x64-gnu@4.3.3` (and Lightning CSS / Rollup Linux bindings) so Ubuntu runners get the native packages even when npm’s os/cpu/libc filter skips them.
+- Verify step asserts the Oxide and Lightning CSS Linux package directories exist before `require()`.
+- `@hulum/web` lists the same Linux Oxide / Lightning CSS packages under `optionalDependencies`.
+
+### Why
+Lockfile and root `optionalDependencies` already recorded Oxide Linux, but Build web still failed with `Cannot find native binding` — optional install alone was not enough on the runner.
+
+## 2026-09-23 — CI: record Linux Tailwind Oxide optional dependency
+
+### Fixed
+- Root `optionalDependencies` includes `@tailwindcss/oxide-linux-x64-gnu@4.3.3` so Ubuntu `npm ci --include=optional` can load `@tailwindcss/oxide` during `next build`.
+- Pin `@tailwindcss/postcss` / `tailwindcss` to `4.3.3` in `apps/web`.
+- CI verifies `require('@tailwindcss/oxide')` alongside Lightning CSS before Build web.
+
+### Why
+`next/font` triggers Tailwind v4 Oxide. The lockfile only recorded the Windows Oxide binary, so Build web failed after Lightning CSS was fixed.
+
+## 2026-09-23 — CI: record Linux Lightning CSS optional dependency
+
+### Fixed
+- Root `optionalDependencies` includes `lightningcss-linux-x64-gnu@1.32.0` so Ubuntu `npm ci --include=optional` can load Tailwind’s Lightning CSS native binary during `next build`.
+- CI verifies `require('lightningcss')` before the web build.
+
+### Why
+`next/font` + Tailwind need `lightningcss.linux-x64-gnu.node`. The lockfile was Windows-generated and only recorded `lightningcss-win32-*`, so Build web failed after typecheck/tests passed.
+
+## 2026-09-23 — CI builds web and server
+
+### Added
+- GitHub Actions runs `npm run build:server` (`tsc`) and `npm run build` (Next.js) after tests.
+
+### Why
+Phase 24 asked for frontend and backend build gates. Typecheck alone does not prove `next build` or emit server JS.
+
 ## 2026-09-23 — Kidist: Ask HULUM profile gaps, clarify, repeat
 
 ### Added
