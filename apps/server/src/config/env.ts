@@ -83,7 +83,9 @@ export function parseClientUrl(value: string | undefined): string | undefined {
 
 export function loadEnv(options: LoadEnvOptions = {}): AppEnv {
   if (options.fromFile !== false) {
-    loadDotenv({ path: SERVER_ENV_PATH, override: true });
+    // Do not override existing process.env (CI sets DATABASE_URL on the job).
+    // Local apps/server/.env still fills vars that are unset.
+    loadDotenv({ path: SERVER_ENV_PATH });
   }
 
   const NODE_ENV = parseNodeEnv(process.env.NODE_ENV);
