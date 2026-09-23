@@ -38,6 +38,26 @@ export type CreateProfileRequest = {
 
 export type PatchProfileRequest = Partial<ProfileWrite>;
 
+/** AI-proposed profile fields. Never auto-saved — user must confirm. */
+export type ProfileExtractProposal = {
+  educationLevel: string | null;
+  fieldOfStudy: string | null;
+  graduationYear: number | null;
+  country: string | null;
+  city: string | null;
+  languages: string[];
+  skills: string[];
+  experience: string | null;
+  interests: string[];
+};
+
+export type ProfileExtractResult = {
+  proposed: ProfileExtractProposal;
+  filledFields: Array<keyof ProfileExtractProposal>;
+  confirmationRequired: true;
+  notice: string;
+};
+
 export type ProfileView = {
   name: string;
   email: string;
