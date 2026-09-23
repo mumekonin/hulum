@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — CI: record Linux Rollup optional dependency
+
+### Fixed
+- `package-lock.json` now includes `@rollup/rollup-linux-x64-gnu` so Ubuntu `npm ci` / Vitest can resolve Rollup’s native binary.
+- CI install uses `npm ci --include=optional`.
+
+### Why
+The lockfile was generated on Windows and only recorded `rollup-win32-*`. Job failure was missing `@rollup/rollup-linux-x64-gnu`, not a failing test assertion.
+
 ## 2026-09-23 — Lint, format tooling, and GitHub CI
 
 ### Added
