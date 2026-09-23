@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Requirement explanations in the analysis UI
+
+### Changed
+- Analysis requirement rows show a clear **Why** line (matcher `reason`) and **Evidence** when stored.
+
+### Why
+Phase 8 asked for requirement explanations. Matchers already produce `reason`; the analysis screen now surfaces them for users.
+
 ## 2026-09-23 — CI: Postgres service for vertical-slice tests
 
 ### Changed
