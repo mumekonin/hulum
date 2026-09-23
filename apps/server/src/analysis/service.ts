@@ -1,5 +1,18 @@
-import type { Analysis, AnalysisExplanation, Language, ProfileView, ReadinessItem } from "@hulum/shared";
-import { buildExplainMessages, explanationFrom, type ChatClient } from "../ai/index.js";
+import type {
+  Analysis,
+  AnalysisExplanation,
+  Language,
+  ProfileView,
+  ReadinessItem,
+  ReadinessPlan,
+} from "@hulum/shared";
+import {
+  buildExplainMessages,
+  buildReadinessPlanMessages,
+  explanationFrom,
+  readinessPlanFrom,
+  type ChatClient,
+} from "../ai/index.js";
 import { decide } from "../decision/decide.js";
 import { HttpError } from "../http/errors.js";
 import type { OpportunityService } from "../opportunities/service.js";
@@ -15,7 +28,29 @@ export type AnalysisService = {
   getById(id: string): Promise<Analysis | undefined>;
   getReadiness(id: string): Promise<ReadinessItem[] | undefined>;
   explain(id: string, language: Language): Promise<AnalysisExplanation>;
+  personalizedReadinessPlan(id: string, language: Language): Promise<ReadinessPlan>;
 };
+
+async function completeWithOptionalRetry(
+  chat: ChatClient,
+  messages: Array<{ role: "system" | "user"; content: string }>,
+): Promise<string> {
+  try {
+    return await chat.complete(messages);
+  } catch (error) {
+    if (!(error instanceof HttpError) || error.code !== "AI_ERROR") {
+      throw error;
+    }
+    try {
+      return await chat.complete(messages);
+    } catch (retryError) {
+      if (!(retryError instanceof HttpError) || retryError.code !== "AI_ERROR") {
+        throw retryError;
+      }
+      return "";
+    }
+  }
+}
 
 export function createAnalysisService(deps: {
   profiles: Pick<ProfileService, "getByUserId">;
@@ -73,15 +108,30 @@ export function createAnalysisService(deps: {
           "GROQ_API_KEY and GROQ_MODEL must be set in the server environment.",
         );
       }
-      let text = "";
-      try {
-        text = await deps.chat.complete(buildExplainMessages(analysis, language));
-      } catch (error) {
-        if (!(error instanceof HttpError) || error.code !== "AI_ERROR") {
-          throw error;
-        }
-      }
+      const text = await completeWithOptionalRetry(
+        deps.chat,
+        buildExplainMessages(analysis, language),
+      );
       return explanationFrom(analysis, language, text);
+    },
+
+    async personalizedReadinessPlan(id: string, language: Language): Promise<ReadinessPlan> {
+      const analysis = await deps.store.getById(id);
+      if (analysis === undefined) {
+        throw new HttpError(404, "NOT_FOUND", "Analysis not found.");
+      }
+      if (deps.chat === undefined) {
+        throw new HttpError(
+          503,
+          "AI_UNAVAILABLE",
+          "GROQ_API_KEY and GROQ_MODEL must be set in the server environment.",
+        );
+      }
+      const text = await completeWithOptionalRetry(
+        deps.chat,
+        buildReadinessPlanMessages(analysis, language),
+      );
+      return readinessPlanFrom(analysis, language, text);
     },
   };
 }

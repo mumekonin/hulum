@@ -55,6 +55,15 @@ function fakeService(overrides: Partial<AnalysisService> = {}): AnalysisService 
     getById: async () => analysis,
     getReadiness: async () => [],
     explain: async () => explanation,
+    personalizedReadinessPlan: async () => ({
+      analysisId: analysis.id,
+      decision: analysis.decision,
+      fitScore: analysis.fitScore,
+      nextAction: analysis.nextAction,
+      plan: analysis.nextAction,
+      language: Language.ENGLISH,
+      items: [],
+    }),
     ...overrides,
   };
 }
@@ -210,6 +219,37 @@ describe("analysis routes", () => {
     const payload = body as { data: AnalysisExplanation };
     expect(payload.data.decision).toBe(Decision.APPLY);
     expect(payload.data.analysisId).toBe(analysis.id);
+  });
+
+  it("returns a personalized readiness plan without changing the decision", async () => {
+    const port = await listen(
+      createTestApp(
+        fakeService({
+          personalizedReadinessPlan: async () => ({
+            analysisId: analysis.id,
+            decision: analysis.decision,
+            fitScore: analysis.fitScore,
+            nextAction: analysis.nextAction,
+            plan: "Keep APPLY. Prepare your application materials and verify the official source.",
+            language: Language.ENGLISH,
+            items: [],
+          }),
+        }),
+      ),
+    );
+    const response = await fetch(
+      `http://127.0.0.1:${port}/api/analyses/${analysis.id}/readiness/plan`,
+      {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ language: Language.ENGLISH }),
+      },
+    );
+    const body: unknown = await response.json();
+    expect(response.status).toBe(200);
+    const payload = body as { data: { decision: string; plan: string } };
+    expect(payload.data.decision).toBe(Decision.APPLY);
+    expect(payload.data.plan.length).toBeGreaterThan(0);
   });
 
   it("returns 404 when the analysis does not exist", async () => {
