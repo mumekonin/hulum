@@ -13,8 +13,10 @@ import {
   readinessPlanFrom,
   type ChatClient,
 } from "../ai/index.js";
+import { isUnsafeExplanation } from "../ai/guard.js";
 import { decide } from "../decision/decide.js";
 import { HttpError } from "../http/errors.js";
+import { recordOpsEvent, timeOps, timeOpsSync } from "../ops/metrics.js";
 import type { OpportunityService } from "../opportunities/service.js";
 import type { ProfileService } from "../profiles/service.js";
 import { matchRequirements } from "../requirements/match.js";
@@ -31,18 +33,23 @@ export type AnalysisService = {
   personalizedReadinessPlan(id: string, language: Language): Promise<ReadinessPlan>;
 };
 
+function httpCode(error: unknown): string | undefined {
+  return error instanceof HttpError ? error.code : undefined;
+}
+
 async function completeWithOptionalRetry(
   chat: ChatClient,
   messages: Array<{ role: "system" | "user"; content: string }>,
+  opsName: string,
 ): Promise<string> {
   try {
-    return await chat.complete(messages);
+    return await timeOps("ai", opsName, () => chat.complete(messages), httpCode);
   } catch (error) {
     if (!(error instanceof HttpError) || error.code !== "AI_ERROR") {
       throw error;
     }
     try {
-      return await chat.complete(messages);
+      return await timeOps("ai", `${opsName}.retry`, () => chat.complete(messages), httpCode);
     } catch (retryError) {
       if (!(retryError instanceof HttpError) || retryError.code !== "AI_ERROR") {
         throw retryError;
@@ -61,27 +68,36 @@ export function createAnalysisService(deps: {
 }): AnalysisService {
   return {
     async analyze(opportunityId: string, userId: string): Promise<Analysis> {
-      const profileView: ProfileView | undefined = await deps.profiles.getByUserId(userId);
-      if (profileView === undefined) {
-        throw new HttpError(404, "NOT_FOUND", "Profile not found.");
-      }
-      const opportunity = await deps.opportunities.getById(opportunityId);
-      if (opportunity === undefined) {
-        throw new HttpError(404, "NOT_FOUND", "Opportunity not found.");
-      }
+      return timeOps(
+        "decision",
+        "analyze",
+        async () => {
+          const profileView: ProfileView | undefined = await deps.profiles.getByUserId(userId);
+          if (profileView === undefined) {
+            throw new HttpError(404, "NOT_FOUND", "Profile not found.");
+          }
+          const opportunity = await deps.opportunities.getById(opportunityId);
+          if (opportunity === undefined) {
+            throw new HttpError(404, "NOT_FOUND", "Opportunity not found.");
+          }
 
-      const result = decide(profileView.profile, opportunity, deps.clock);
-      const matches = matchRequirements(profileView.profile, opportunity, deps.clock);
-      return deps.store.create({
-        userId,
-        opportunityId,
-        decision: result.decision,
-        fitScore: result.fitScore,
-        summary: analysisSummaryFor(result.decision),
-        matches,
-        readiness: buildReadinessItems(matches),
-        audit: result.audit,
-      });
+          const result = timeOpsSync("decision", "decide", () =>
+            decide(profileView.profile, opportunity, deps.clock),
+          );
+          const matches = matchRequirements(profileView.profile, opportunity, deps.clock);
+          return deps.store.create({
+            userId,
+            opportunityId,
+            decision: result.decision,
+            fitScore: result.fitScore,
+            summary: analysisSummaryFor(result.decision),
+            matches,
+            readiness: buildReadinessItems(matches),
+            audit: result.audit,
+          });
+        },
+        httpCode,
+      );
     },
 
     getById(id: string): Promise<Analysis | undefined> {
@@ -112,7 +128,17 @@ export function createAnalysisService(deps: {
       const text = await completeWithOptionalRetry(
         deps.chat,
         buildExplainMessages(analysis, language),
+        "explain.groq",
       );
+      if (isUnsafeExplanation(analysis, text)) {
+        recordOpsEvent({
+          kind: "ai_validation",
+          name: "explain.unsafe_fallback",
+          ok: false,
+          ms: 0,
+          code: "AI_UNSAFE_OUTPUT",
+        });
+      }
       return explanationFrom(analysis, language, text);
     },
 
@@ -131,6 +157,7 @@ export function createAnalysisService(deps: {
       const text = await completeWithOptionalRetry(
         deps.chat,
         buildReadinessPlanMessages(analysis, language),
+        "readiness.plan.groq",
       );
       return readinessPlanFrom(analysis, language, text);
     },

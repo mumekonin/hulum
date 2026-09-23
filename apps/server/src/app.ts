@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import { loadEnv, type AppEnv } from "./config/env.js";
 import { errorHandler as postgresErrorHandler, notFoundHandler } from "./http/error-handler.js";
+import { createOpsRouter, opsRequestTimingMiddleware } from "./ops/index.js";
 import { analysisRouter } from "./routes/analysis.js";
 import { health } from "./routes/health.js";
 import { opportunitiesRouter } from "./routes/opportunities.js";
@@ -47,6 +48,7 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
     });
     app.use(corsMiddleware(env));
     app.use(express.json({ limit: "100kb" }));
+    app.use(opsRequestTimingMiddleware());
     app.use(explainRateLimitMiddleware(limiter));
     app.use("/api", createApiRouter());
     app.use(notFoundHandler);
@@ -57,8 +59,10 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
   app.use(securityHeaders);
   app.use(cors({ origin: allowedCorsOrigin() }));
   app.use(express.json({ limit: "1mb" }));
+  app.use(opsRequestTimingMiddleware());
 
   app.get("/api/health", health);
+  app.use("/api/ops", createOpsRouter("file"));
   app.use("/api/profile", profileRouter);
   app.use("/api/opportunities", opportunitiesRouter);
   app.use("/api", analysisRouter);

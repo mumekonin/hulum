@@ -694,7 +694,7 @@ AI is an assistant, not the eligibility authority.
 - [x] **P0** Implement readiness-plan generation.
 - [x] **P0** Implement contextual Q&A.
 - [x] **P1** Add retry/fallback behavior.
-- [ ] **P1** Track latency/errors.
+- [x] **P1** Track latency/errors.
 - [x] **P1** Create evaluation examples.
 
 ---
@@ -1081,13 +1081,13 @@ Normal HULUM UI
 
 Track useful technical signals without unnecessarily storing sensitive content.
 
-- [ ] **P1** API latency.
-- [ ] **P1** AI latency.
+- [x] **P1** API latency.
+- [x] **P1** AI latency.
 - [ ] **P1** Voice latency.
-- [ ] **P1** API error rates.
-- [ ] **P1** AI validation failures.
+- [x] **P1** API error rates.
+- [x] **P1** AI validation failures.
 - [ ] **P1** Voice recognition failures.
-- [ ] **P1** Decision-engine errors.
+- [x] **P1** Decision-engine errors.
 - [ ] **P1** Session failures.
 
 Do not log unnecessary personal profile data or raw voice/conversation content.
