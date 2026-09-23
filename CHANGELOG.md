@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+
+## 2026-09-21 — Postgres Ask HULUM voice routes
+
+### Added
+- Postgres `/api/voice/session` and `/api/voice/action` use `decide()` / analysis services (text fallback works on `npm run dev`).
+- `docs/research/voxide-integration.md` notes the browser-widget development path (ADR 001).
+
+### Why
+After switching the default store to Postgres, Ask HULUM had an empty voice router. Browser Voxide UI on `/assistant` already ships as `VoxideAskHulum` (see below); this slice wires the server voice actions.
+
 ## 2026-09-23 — AI profile extract with confirmation
 
 ### Added

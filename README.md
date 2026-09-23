@@ -139,6 +139,7 @@ v0.1 is **not deployed**. When a host exists:
 | `CLAUDE_API_KEY` + `CLAUDE_MODEL` | no | Leftover names; v0.1 explain uses Groq |
 | `GROQ_API_KEY` + `GROQ_MODEL` | no | Optional explain of a stored analysis |
 | `VOXIDE_API_KEY` | no | Leftover; widget uses public web key |
+| `NEXT_PUBLIC_VOXIDE_PUBLIC_KEY` | no | Optional `vox_pub_…` for `@voxide/react` on `/assistant` |
 | `DATABASE_URL` / `SUPABASE_*` | yes for `npm run dev` | Postgres for the default API |
 
 The API refuses to start in production without `CLIENT_URL`.
