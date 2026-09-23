@@ -5,6 +5,14 @@ HULUM records actual work. Do not invent history.
 ## 2026-09-22 — Mulualem
 
 ### Changed
+Closed Task 48. Evidence and official-domain rules are tested. The opportunity card shows “AI-extracted, not yet verified”. Job API still waits for a documented URL.
+
+### Why
+Finish the investigator on Mulualem’s side without blocking on Kidist.
+
+## 2026-09-22 — Mulualem
+
+### Changed
 Started Task 48: `sources` and `official_domains` tables, demo lead sites, `JOB_OPPORTUNITIES_API_KEY` / `JOB_OPPORTUNITIES_API_URL` names, and `POST /api/investigate`. Groq extracts; evidence must appear on the page. The job API is not called until its URL is documented.
 
 ### Why
