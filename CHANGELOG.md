@@ -2,6 +2,20 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-22 — Mulualem
+
+### Changed
+Marked Task 36 DONE. The Postgres slice test, web profile/analysis/Ask HULUM path, and Next.js `.js` resolve are already on `main`.
+
+### Why
+The integration verify is the real API plus persisted data, not the file-store flow test.
+
+### Evidence
+`apps/server/src/routes/postgres-slice.test.ts` on `main`. Web calls that API (PR merge `848fe27`). Next.js loads `@hulum/shared` (PR #18). Voice stays text.
+
+### Decision
+No Voxide backend. Task 32 stays skipped.
+
 ## 2026-09-20 — Conflicting profile facts stay UNCERTAIN
 
 ### Changed
