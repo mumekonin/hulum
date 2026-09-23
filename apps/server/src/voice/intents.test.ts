@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { parseVoiceIntent } from "./intents.js";
+import { formatProfileGaps, parseVoiceIntent } from "./intents.js";
 
 describe("parseVoiceIntent", () => {
   it("maps documented English and Amharic utterances to product intents", () => {
@@ -8,6 +8,7 @@ describe("parseVoiceIntent", () => {
       intent: string;
       type?: string;
       decision?: string;
+      replyHint?: string;
     }> = [
       { text: "Should I apply for this?", intent: "ANALYZE_OPPORTUNITY" },
       { text: "ለዚህ እድል ማመልከት", intent: "ANALYZE_OPPORTUNITY" },
@@ -27,6 +28,16 @@ describe("parseVoiceIntent", () => {
       { text: "Open this opportunity", intent: "OPEN_OPPORTUNITY" },
       { text: "Tell me about this opportunity", intent: "OPEN_OPPORTUNITY" },
       { text: "Update profile", intent: "UPDATE_PROFILE" },
+      {
+        text: "What is missing from my profile?",
+        intent: "UPDATE_PROFILE",
+        replyHint: "profile_gaps",
+      },
+      {
+        text: "Clarify uncertain requirements",
+        intent: "SHOW_MISSING_REQUIREMENTS",
+        replyHint: "clarify_uncertain",
+      },
       { text: "What's the weather in Addis?", intent: "UNSUPPORTED" },
     ];
 
@@ -39,5 +50,14 @@ describe("parseVoiceIntent", () => {
   it("does not treat analyze-this as a catalog APPLY filter", () => {
     expect(parseVoiceIntent("Should I apply for this?").intent).toBe("ANALYZE_OPPORTUNITY");
     expect(parseVoiceIntent("Show me opportunities I should apply for.").intent).toBe("FILTER_BY_DECISION");
+  });
+});
+
+describe("formatProfileGaps", () => {
+  it("lists missing fields without inventing profile facts", () => {
+    expect(formatProfileGaps([])).toMatch(/complete/i);
+    expect(formatProfileGaps(["city", "skills"])).toContain("city");
+    expect(formatProfileGaps(["city", "skills"])).toContain("skills");
+    expect(formatProfileGaps(["city"])).toContain("Voice cannot silently change stored facts");
   });
 });

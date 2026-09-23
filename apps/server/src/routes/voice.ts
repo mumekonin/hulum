@@ -1,10 +1,15 @@
 import { Router } from "express";
-import { voiceActionSchema } from "@hulum/shared";
+import { profileCompleteness, voiceActionSchema } from "@hulum/shared";
 import { runAnalysis, toAnalysisDetail } from "../analysis/runAnalysis.js";
 import { analyzeOpportunity } from "../decision/engine.js";
 import { fail, ok } from "../lib/http.js";
 import { createId, nowIso } from "../lib/id.js";
-import { formatOpportunityContext, formatOpportunityList, parseVoiceIntent } from "../voice/intents.js";
+import {
+  formatOpportunityContext,
+  formatOpportunityList,
+  formatProfileGaps,
+  parseVoiceIntent,
+} from "../voice/intents.js";
 import { findLatestAnalysis } from "../voice/findAnalysis.js";
 import { loadStore, mutateStore } from "../store/fileStore.js";
 
@@ -115,6 +120,19 @@ voiceRouter.post("/action", async (req, res) => {
   }
 
   if (intent.intent === "UPDATE_PROFILE") {
+    if (intent.replyHint === "profile_gaps") {
+      const profile = store.profiles.find((item) => item.userId === userId);
+      if (!profile) {
+        fail(res, "Create a profile before asking HULUM.", 404, "PROFILE_NOT_FOUND");
+        return;
+      }
+      const gaps = profileCompleteness(profile);
+      ok(res, {
+        intent: intent.intent,
+        reply: formatProfileGaps(gaps.missing),
+      });
+      return;
+    }
     ok(res, {
       intent: intent.intent,
       reply: "Open your profile to update education, skills, or documents. Voice cannot silently change stored facts.",
@@ -178,6 +196,23 @@ voiceRouter.post("/action", async (req, res) => {
       const relatedOpportunity =
         opportunity ?? store.opportunities.find((item) => item.id === analysis.opportunityId);
       const relatedProfile = store.profiles.find((item) => item.userId === analysis.userId);
+      if (intent.replyHint === "clarify_uncertain") {
+        const uncertainOnly = requirements
+          .filter((item) => item.status === "UNCERTAIN")
+          .map((item) => `${item.requirementText} (${item.reason})`);
+        ok(res, {
+          intent: intent.intent,
+          reply: uncertainOnly.length
+            ? `These requirements are UNCERTAIN — confirm them on the official source before treating them as met: ${uncertainOnly.join("; ")}`
+            : "No UNCERTAIN requirements are stored for this analysis. Confirm any doubt on the official source; HULUM is not the organization.",
+          analysis:
+            relatedOpportunity && relatedProfile
+              ? toAnalysisDetail(analysis, relatedOpportunity, relatedProfile, requirements, readiness)
+              : undefined,
+          opportunity: relatedOpportunity,
+        });
+        return;
+      }
       ok(res, {
         intent: intent.intent,
         reply: gaps.length
