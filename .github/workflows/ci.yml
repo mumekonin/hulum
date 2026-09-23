@@ -43,11 +43,11 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=optional
 
-      # Windows-generated lockfiles can leave Linux optional natives skipped by
-      # npm's os/cpu/libc filter even when the packages are listed. Force them.
+      # Windows-generated lockfiles list Linux optionals, but npm's os/cpu/libc
+      # filter can still skip them on the runner. Force without rewriting the lockfile.
       - name: Ensure Linux native CSS bindings
         run: |
-          npm install --no-save --include=optional \
+          npm install --no-save --no-package-lock --include=optional \
             @tailwindcss/oxide-linux-x64-gnu@4.3.3 \
             lightningcss-linux-x64-gnu@1.32.0 \
             @rollup/rollup-linux-x64-gnu@4.63.3
