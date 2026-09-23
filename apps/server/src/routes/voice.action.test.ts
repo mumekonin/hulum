@@ -228,6 +228,22 @@ describe("POST /api/voice/action ANALYZE_OPPORTUNITY", () => {
     expect(body.data.reply).toContain("Voice cannot silently change stored facts");
   });
 
+  it("proposes profile extract without saving when Groq is unset", async () => {
+    const response = await fetch(`${baseUrl}/api/voice/action`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: "user_profile_extract",
+        text: "Extract profile from this: I study computer science in Addis Ababa, Ethiopia",
+      }),
+    });
+    const body = (await response.json()) as { data: { intent: string; reply: string } };
+
+    expect(response.status).toBe(200);
+    expect(body.data.intent).toBe("UPDATE_PROFILE");
+    expect(body.data.reply).toMatch(/could not extract|not saved|confirm|Propose|Profile/i);
+  });
+
   it("clarifies UNCERTAIN requirements without treating them as met", async () => {
     const demo = await fetch(`${baseUrl}/api/profile/demo`, { method: "POST" });
     const demoBody = (await demo.json()) as { data: { userId: string } };

@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Voice profile extract (propose only)
+
+### Added
+- Voice intent `UPDATE_PROFILE` + `replyHint: profile_extract` for utterances like “Extract profile from this: …”.
+- Postgres and file-store voice handlers call `proposeProfileExtract` and reply with proposed fields; nothing is persisted until the user confirms on Profile.
+- `stripProfileExtractDescription` strips the request prefix before Groq sees the self-description.
+
+### Why
+Phase 12 P1 asked to create/update profile by voice without silently writing stored facts — reuse the existing propose → confirm → save path from Phase 5.
+
 ## 2026-09-23 — Deployment guide and ops API docs
 
 ### Added

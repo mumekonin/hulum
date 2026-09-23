@@ -14,6 +14,10 @@ import {
   ok,
 } from "@hulum/shared";
 import { createGroqChatClient, type ChatClient } from "../ai/index.js";
+import {
+  formatProfileExtractReply,
+  proposeProfileExtract,
+} from "../ai/profileExtract.js";
 import { createAnalysisService } from "../analysis/service.js";
 import type { AnalysisService } from "../analysis/service.js";
 import { createPgAnalysisStore } from "../analysis/store.js";
@@ -32,7 +36,9 @@ import { systemClock } from "../services/common/clock.js";
 import {
   formatOpportunityContext,
   formatOpportunityList,
+  formatProfileGaps,
   parseVoiceIntent,
+  stripProfileExtractDescription,
 } from "./intents.js";
 
 export type VoiceSessionView = {
@@ -101,6 +107,7 @@ export function createVoiceService(deps: {
   opportunities: Pick<OpportunityService, "list" | "getById">;
   analyses: Pick<AnalysisService, "analyze" | "getById">;
   clock?: Clock;
+  chat?: ChatClient;
   persistSession?: (input: { id: string; userId: string; language: LanguageCode }) => Promise<void>;
 }): VoiceService {
   const clock = deps.clock ?? systemClock;
@@ -200,9 +207,40 @@ export function createVoiceService(deps: {
       }
 
       if (intent.intent === "UPDATE_PROFILE") {
+        if (intent.replyHint === "profile_gaps") {
+          const profileView = await deps.profiles.getByUserId(input.userId);
+          if (profileView === undefined) {
+            return {
+              intent: intent.intent,
+              reply:
+                "Create a profile first on the Profile page. Voice cannot invent stored facts.",
+            };
+          }
+          const missing = profileView.completeness?.missing ?? [];
+          return {
+            intent: intent.intent,
+            reply: formatProfileGaps(missing),
+          };
+        }
+        if (intent.replyHint === "profile_extract") {
+          const description = stripProfileExtractDescription(input.text);
+          if (description.length < 8) {
+            return {
+              intent: intent.intent,
+              reply:
+                "Paste a short self-description after the request, or open Profile and use Propose profile fields. Nothing is saved until you confirm.",
+            };
+          }
+          const proposed = await proposeProfileExtract(description, deps.chat);
+          return {
+            intent: intent.intent,
+            reply: formatProfileExtractReply(proposed),
+          };
+        }
         return {
           intent: intent.intent,
-          reply: "Open your profile to update education, skills, or documents. Voice cannot silently change stored facts.",
+          reply:
+            "Open your profile to update education, skills, or documents. To propose fields from speech or text, say “Extract profile from this: …” — confirm on Profile before save. Voice cannot silently change stored facts.",
         };
       }
 
@@ -334,6 +372,7 @@ function defaultVoiceService(): VoiceService {
     analyses,
     clock: systemClock,
     persistSession: persistVoiceSession,
+    ...(chat === undefined ? {} : { chat }),
   });
 }
 

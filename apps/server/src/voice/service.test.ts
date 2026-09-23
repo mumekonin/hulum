@@ -148,4 +148,70 @@ describe("createVoiceService", () => {
       /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i,
     );
   });
+
+  it("proposes profile extract without saving when chat is available", async () => {
+    const service = createVoiceService({
+      profiles: { getByUserId: async () => profileView },
+      opportunities: { list: async () => [], getById: async () => undefined },
+      analyses: {
+        analyze: async () => {
+          throw new Error("unused");
+        },
+        getById: async () => undefined,
+      },
+      clock,
+      chat: {
+        complete: async () =>
+          JSON.stringify({
+            educationLevel: null,
+            fieldOfStudy: "Computer Science",
+            graduationYear: null,
+            country: "Ethiopia",
+            city: "Addis Ababa",
+            languages: [],
+            skills: [],
+            experience: null,
+            interests: [],
+          }),
+      },
+    });
+
+    const result = await service.handleAction({
+      userId: profile.userId,
+      text: "Extract profile from this: I study CS in Addis Ababa, Ethiopia",
+      language: "en",
+    });
+    expect(result.intent).toBe("UPDATE_PROFILE");
+    expect(result.reply).toMatch(/Proposed profile facts \(not saved yet\)/);
+    expect(result.reply).toContain("fieldOfStudy");
+    expect(result.reply).toMatch(/not saved|confirm/i);
+  });
+
+  it("lists profile gaps without inventing facts", async () => {
+    const incomplete: ProfileView = {
+      ...profileView,
+      completeness: { complete: false, missing: ["city", "skills"] },
+    };
+    const service = createVoiceService({
+      profiles: { getByUserId: async () => incomplete },
+      opportunities: { list: async () => [], getById: async () => undefined },
+      analyses: {
+        analyze: async () => {
+          throw new Error("unused");
+        },
+        getById: async () => undefined,
+      },
+      clock,
+    });
+
+    const result = await service.handleAction({
+      userId: profile.userId,
+      text: "What is missing from my profile?",
+      language: "en",
+    });
+    expect(result.intent).toBe("UPDATE_PROFILE");
+    expect(result.reply).toContain("city");
+    expect(result.reply).toContain("skills");
+    expect(result.reply).toContain("Voice cannot silently change stored facts");
+  });
 });

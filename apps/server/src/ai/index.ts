@@ -17,6 +17,7 @@ export {
   PROFILE_EXTRACT_NOTICE,
   PROFILE_EXTRACT_SYSTEM_PROMPT,
   profileExtractFromModelText,
+  proposeProfileExtract,
 } from "./profileExtract.js";
 export { createProfileExtractRouter, profileExtractRouter } from "./profileExtractRouter.js";
 export { parseExplainRequest } from "./validate.js";

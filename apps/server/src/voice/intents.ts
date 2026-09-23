@@ -12,7 +12,7 @@ export type ParsedIntent = {
   type?: OpportunityType;
   decision?: Decision;
   /** Narrower handler hint without expanding the Task 22 lock set. */
-  replyHint?: "profile_gaps" | "clarify_uncertain";
+  replyHint?: "profile_gaps" | "clarify_uncertain" | "profile_extract";
 };
 
 const TYPE_WORDS: Array<[RegExp, OpportunityType]> = [
@@ -67,6 +67,13 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
   if (/ምን ላዘጋጅ|what should i prepare|readiness|checklist|prepare/i.test(value)) {
     return { intent: "SHOW_READINESS" };
   }
+  if (
+    /extract (my )?profile|build (my )?profile from|profile from (this|my) (text|description)|fill (my )?profile from|create (my )?profile from/i.test(
+      value,
+    )
+  ) {
+    return { intent: "UPDATE_PROFILE", replyHint: "profile_extract" };
+  }
   if (/update profile|change profile|edit profile/i.test(value)) {
     return { intent: "UPDATE_PROFILE" };
   }
@@ -116,4 +123,14 @@ export function formatProfileGaps(missing: string[]): string {
   }
   const labels = missing.map((field) => PROFILE_FIELD_LABELS[field] ?? field);
   return `Your profile is missing: ${labels.join(", ")}. Open your profile to add them before analyzing. Voice cannot silently change stored facts.`;
+}
+
+/** Strip the extract-request prefix so Groq sees the self-description only. */
+export function stripProfileExtractDescription(text: string): string {
+  return text
+    .replace(
+      /^.*?(?:extract (?:my )?profile(?: from this)?:?|build (?:my )?profile from|create (?:my )?profile from|profile from (?:this|my) (?:text|description):?|fill (?:my )?profile from)\s*/i,
+      "",
+    )
+    .trim();
 }
