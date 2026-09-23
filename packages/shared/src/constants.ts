@@ -31,7 +31,7 @@ export const OPPORTUNITY_TYPES = [
 
 export const DECISIONS = ["APPLY", "MAYBE", "SKIP"] as const;
 export const REQUIREMENT_STATUSES = ["MET", "NOT_MET", "UNCERTAIN", "NOT_APPLICABLE"] as const;
-export const VERIFICATION_STATUSES = ["VERIFIED", "NEEDS_REVIEW", "EXPIRED"] as const;
+export const VERIFICATION_STATUSES = ["VERIFIED", "NEEDS_REVIEW", "EXPIRED", "AI_EXTRACTED"] as const;
 export const READINESS_STATUSES = ["TODO", "IN_PROGRESS", "DONE", "NOT_REQUIRED"] as const;
 export const READINESS_PRIORITIES = ["high", "medium", "low"] as const;
 

@@ -1761,7 +1761,7 @@ History
 ## P2
 
 ```text
-Automatic web crawling
+Automatic web crawling (superseded in part by Task 48: allow-listed investigator, not a general crawler)
 Notifications
 Email alerts
 Application tracking
@@ -1779,7 +1779,7 @@ Do not allow P2 features to delay P0.
 
 Do not build:
 
-- huge scraping infrastructure
+- huge scraping infrastructure (Task 48 is allow-listed fetch + evidence check only; aggregators are leads, never `sourceUrl`)
 - native mobile application
 - complex recommendation ML
 - social network

@@ -29,7 +29,11 @@ npm run db:smoke
 
 `db:smoke` inserts sample rows in a transaction and rolls them back. It does not seed the catalog.
 
-`GET /api/opportunities` reads this table. Do not insert invented postings. Add only official-source rows.
+`GET /api/opportunities` reads this table. Do not insert invented postings.
+
+Task 48 adds `sources`, `official_domains`, and investigation logs (`002_investigator.sql`). Add a new website later with `insert into sources (...)`. Add an official apply domain with `insert into official_domains (domain, note) values (...)`. Env names only in `.env.example`.
+
+`POST /api/investigate` (header `x-hulum-investigate`) runs a fetch/extract pass. Saved rows are `AI_EXTRACTED` until a person marks `VERIFIED`.
 
 You can also paste `migrations/001_init.sql` into the Supabase SQL editor.
 
