@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Personalized readiness plan (AI wording)
+
+### Added
+- `POST /api/analyses/:id/readiness/plan` — Groq wording over the stored checklist; unsafe or inventing plans fall back to deterministic titles.
+- Shared `ReadinessPlan` type; Ask HULUM text action and assistant quick action for personalized plans.
+- Rate limit on readiness-plan posts (same limiter as explain).
+
+### Why
+Phase 10/11 asked for AI-personalized readiness without letting the model invent checklist items or change APPLY / MAYBE / SKIP.
+
 ## 2026-09-23 — Ask about profile gaps and uncertain requirements
 
 ### Added
