@@ -9,7 +9,7 @@ PostgreSQL / Supabase schema for v0.1. The running API still uses a local JSON f
 | `users` | App user record (auth is P1; this is enough for profile persistence) |
 | `profiles` | Structured applicant facts used by matching |
 | `opportunities` | Curated official-source opportunities |
-| `analyses` | Stored APPLY / MAYBE / SKIP result |
+| `analyses` | Stored APPLY / MAYBE / SKIP result (+ optional `decision_audit` jsonb from migration 003) |
 | `requirement_results` | Per-requirement status for one analysis |
 | `readiness_items` | Checklist produced from an analysis |
 | `voice_sessions` | Session metadata only — no audio or transcript |

@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Decision audit trail
+
+### Added
+- `DecisionAudit` on `decide()` (`rulePath`, critical/uncertain keys, effective verification, advisory fit flag).
+- Migration `003_analysis_decision_audit.sql` stores audit JSON on `analyses.decision_audit`.
+- Analysis page “Decision audit (debug)” panel when audit is present.
+
+### Why
+Phase 9 asked for decision audit/debug information. Judges and teammates can see which engine branch produced APPLY / MAYBE / SKIP without treating fit score as a guarantee.
+
 ## 2026-09-23 — Conflicting facts stay UNCERTAIN on Postgres matcher
 
 ### Changed
