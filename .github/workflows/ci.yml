@@ -1,0 +1,31 @@
+# Install, typecheck, lint, and test. No deploy (local only).
+name: CI
+
+on:
+  push:
+  pull_request:
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+      - name: Install dependencies
+        run: npm ci
+      - name: Typecheck shared contracts
+        run: npm run typecheck:shared
+      - name: Typecheck server
+        run: npm run typecheck:server
+      - name: Lint
+        run: npm run lint
+      - name: Test
+        run: npm test

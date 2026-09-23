@@ -3,7 +3,7 @@ import { Decision, type Analysis } from "@hulum/shared";
 export const MIN_EXPLANATION_LENGTH = 24;
 
 const DECISION_WORD = /\b(apply|maybe|skip)\b/gi;
-const LOOKS_LIKE_JSON = /^\s*[\[{]/;
+const LOOKS_LIKE_JSON = /^\s*[{[]/;
 const INVENTED_URL = /\bhttps?:\/\//i;
 
 export function fallbackExplanation(analysis: Analysis): string {

@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Lint, format tooling, and GitHub CI
+
+### Added
+- Flat ESLint (`eslint.config.mjs`) and Prettier (`.prettierrc.json`) with `npm run lint` / `format` / `format:check`.
+- `.github/workflows/ci.yml` — install, typecheck shared/server, lint, test (no deploy, no format gate yet).
+
+### Why
+Phase 1 asked for linting, formatting, and CI checks. Format check stays a local script until a dedicated format pass; CI must not fail the whole tree on Prettier alone.
+
 ## 2026-09-23 — Decision audit trail
 
 ### Added
