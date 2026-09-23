@@ -19,3 +19,7 @@ Phase 13 requires one language end-to-end before adding more. Shared `LanguageCo
 
 - Changing language restarts the voice session with that code.
 - Wiring Voxide later should pass the same `LanguageCode` into the same parser and actions.
+
+## Follow-up (2026-09-23)
+
+Phase 13 **Verify Voxide supported languages** is recorded in `docs/research/voxide-languages.md`. Public Voxide docs still do not list Amharic/Oromo. English stays the only stable claim until a keyed mic test says otherwise.
