@@ -579,7 +579,7 @@ It must perform meaningful HULUM actions and must not be decorative.
 - [ ] **P1** Create/update profile by voice.
 - [x] **P1** Handle recognition failure.
 - [x] **P1** Handle silence/timeouts.
-- [ ] **P1** Support repeat requests.
+- [x] **P1** Support repeat requests.
 - [ ] **P1** Measure latency.
 
 ## Example voice intents
@@ -949,8 +949,8 @@ EthioDeploy is optional, but if used, document it as part of the implementation/
 - [x] **P1** Type check.
 - [x] **P1** Lint.
 - [x] **P1** Run tests.
-- [ ] **P1** Build frontend.
-- [ ] **P1** Build backend.
+- [x] **P1** Build frontend.
+- [x] **P1** Build backend.
 - [ ] **P1** Block merges when checks fail.
 - [ ] **P1** Configure deployment workflow if appropriate.
 
