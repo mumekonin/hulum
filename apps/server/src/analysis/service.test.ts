@@ -261,6 +261,43 @@ describe("analysis service", () => {
     expect(result.explanation).toBe(`${stored.summary} ${stored.nextAction}`.trim());
   });
 
+  it("retries once after AI_ERROR and keeps the stored decision", async () => {
+    const stored = storedFrom({
+      userId: profile.userId,
+      opportunityId: opportunity.id,
+      decision: Decision.APPLY,
+      fitScore: 95,
+      summary: ANALYSIS_SUMMARY[Decision.APPLY],
+      matches: [],
+      readiness: [],
+    });
+    let attempts = 0;
+    const service = createAnalysisService({
+      profiles: { getByUserId: async () => view },
+      opportunities: { getById: async () => opportunity },
+      store: {
+        create: async () => stored,
+        getById: async () => stored,
+      },
+      clock,
+      chat: {
+        complete: async () => {
+          attempts += 1;
+          if (attempts === 1) {
+            throw new HttpError(502, "AI_ERROR", "Transient Groq failure.");
+          }
+          return "You look ready to apply based on the stored profile facts HULUM already checked. Confirm the official source before you invest time.";
+        },
+      },
+    });
+
+    const result = await service.explain(stored.id, Language.ENGLISH);
+    expect(attempts).toBe(2);
+    expect(result.decision).toBe(Decision.APPLY);
+    expect(result.explanation).toContain("ready to apply");
+    expect(result.explanation.toLowerCase()).not.toContain("skip");
+  });
+
   it("personalizes readiness plan wording without inventing checklist titles", async () => {
     const stored = storedFrom({
       userId: profile.userId,

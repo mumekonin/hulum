@@ -108,6 +108,7 @@ export function createAnalysisService(deps: {
           "GROQ_API_KEY and GROQ_MODEL must be set in the server environment.",
         );
       }
+      // One AI_ERROR retry via shared helper; guards still replace unsafe text.
       const text = await completeWithOptionalRetry(
         deps.chat,
         buildExplainMessages(analysis, language),
