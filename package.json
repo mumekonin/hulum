@@ -16,6 +16,9 @@
     "build:server": "npm run build -w @hulum/server",
     "typecheck:shared": "npm run typecheck -w @hulum/shared",
     "typecheck:server": "npm run typecheck -w @hulum/server",
+    "lint": "eslint apps/server/src apps/web/src packages/shared/src",
+    "format": "prettier --write \"apps/server/src/**/*.{ts,tsx}\" \"apps/web/src/**/*.{ts,tsx}\" \"packages/shared/src/**/*.{ts,tsx}\" eslint.config.mjs .prettierrc.json",
+    "format:check": "prettier --check \"apps/server/src/**/*.{ts,tsx}\" \"apps/web/src/**/*.{ts,tsx}\" \"packages/shared/src/**/*.{ts,tsx}\" eslint.config.mjs .prettierrc.json",
     "test": "npm run test -w @hulum/server",
     "test:server": "npm run test -w @hulum/server",
     "db:migrate": "npm run db:migrate -w @hulum/server",
@@ -23,12 +26,21 @@
     "db:smoke": "npm run db:smoke -w @hulum/server"
   },
   "devDependencies": {
-    "concurrently": "^9.2.1"
+    "@eslint/js": "^9.39.5",
+    "concurrently": "^9.2.1",
+    "eslint": "^9.39.5",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.12.0",
+    "prettier": "^3.9.8",
+    "typescript-eslint": "^8.70.1"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
     "@swc/helpers": "^0.5.23"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-linux-x64-gnu": "4.63.3"
   }
 }

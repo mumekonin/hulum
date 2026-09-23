@@ -132,10 +132,10 @@ Primary ownership:
 - [x] **P0** Initialize frontend.
 - [x] **P0** Initialize backend.
 - [x] **P0** Establish shared types/constants.
-- [ ] **P1** Configure linting.
-- [ ] **P1** Configure formatting.
+- [x] **P1** Configure linting.
+- [x] **P1** Configure formatting.
 - [x] **P1** Configure testing.
-- [ ] **P1** Configure CI checks.
+- [x] **P1** Configure CI checks.
 
 ## Recommended structure
 
@@ -944,11 +944,11 @@ EthioDeploy is optional, but if used, document it as part of the implementation/
 
 # 28. Phase 24 — CI/CD
 
-- [ ] **P1** Configure GitHub Actions.
-- [ ] **P1** Install dependencies.
-- [ ] **P1** Type check.
-- [ ] **P1** Lint.
-- [ ] **P1** Run tests.
+- [x] **P1** Configure GitHub Actions.
+- [x] **P1** Install dependencies.
+- [x] **P1** Type check.
+- [x] **P1** Lint.
+- [x] **P1** Run tests.
 - [ ] **P1** Build frontend.
 - [ ] **P1** Build backend.
 - [ ] **P1** Block merges when checks fail.
