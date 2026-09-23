@@ -367,8 +367,8 @@ Avoid making the interface look like a generic AI chat product.
 - [x] **P0** Persist profile.
 - [x] **P0** Validate profile fields.
 - [x] **P0** Use profile in requirement matching.
-- [ ] **P1** Extract profile information from voice/text using AI.
-- [ ] **P1** Allow user confirmation before saving AI-extracted facts.
+- [x] **P1** Extract profile information from voice/text using AI.
+- [x] **P1** Allow user confirmation before saving AI-extracted facts.
 
 ---
 

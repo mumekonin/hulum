@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — AI profile extract with confirmation
+
+### Added
+- `POST /api/ai/profile-extract` — Groq proposes profile fields from a self-description; never auto-saves.
+- Profile page “Propose profile fields” → Confirm into form → Save (existing create/patch).
+- Ask HULUM text action for extract proposals (confirmation still on Profile).
+
+### Why
+Phase 5 P1s asked for AI profile extraction with an explicit confirmation step before stored facts change.
+
 ## 2026-09-23 — API, retention, verification, and deployment docs
 
 ### Added
