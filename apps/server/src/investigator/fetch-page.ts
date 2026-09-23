@@ -1,7 +1,7 @@
 import { assertSafeHttpUrl, isAllowedFetchUrl } from "./safety.js";
 
 const MAX_BYTES = 400_000;
-const TIMEOUT_MS = 8000;
+const TIMEOUT_MS = 15000;
 
 export async function fetchPageText(
   raw: string,

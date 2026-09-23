@@ -5,6 +5,31 @@ HULUM records actual work. Do not invent history.
 ## 2026-09-22 — Mulualem
 
 ### Changed
+<<<<<<< HEAD
+`npm run db:seed` loads the existing curated catalog into Postgres so the web can show official sourced cards (including one internship) while the investigator still refuses to invent rows.
+
+### Why
+HETRIIL internship HTML has no public deadline. The frontend was empty.
+
+### Decision
+Curated catalog and investigator stay separate. Investigator still does not invent listings.
+
+## 2026-09-22 — Mulualem
+
+### Changed
+Investigator extract follow-up: Groq `gpt-oss` calls use `reasoning_effort=low` and a larger completion budget so extract is not cut off mid-thought. Official HTML may follow a few same-domain listing links. Invalid JSON extract becomes zero rows, not a hard fail.
+
+### Why
+A live run checked four pages and saved zero rows. Groq returned empty or unavailable replies. HETRIIL listings are not on the homepage.
+
+### Decision
+Still no invented listings. Aggregators stay leads. `hetriil.moe.gov.et` stays the official domain.
+
+## 2026-09-22 — Mulualem
+
+### Changed
+=======
+>>>>>>> origin/main
 Closed Task 48. Evidence and official-domain rules are tested. The opportunity card shows “AI-extracted, not yet verified”. Job API still waits for a documented URL.
 
 ### Why

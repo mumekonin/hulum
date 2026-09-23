@@ -19,6 +19,7 @@
     "test": "npm run test -w @hulum/server",
     "test:server": "npm run test -w @hulum/server",
     "db:migrate": "npm run db:migrate -w @hulum/server",
+    "db:seed": "npm run db:seed -w @hulum/server",
     "db:smoke": "npm run db:smoke -w @hulum/server"
   },
   "devDependencies": {
