@@ -18,9 +18,11 @@ This folder is the judge entry. It does not invent ScholarXIV papers, a producti
 | 2 | `docs/product/problem.md` | Why APPLY / MAYBE / SKIP |
 | 3 | `docs/research/ideation.md` | What was rejected |
 | 4 | `docs/architecture/overview.md` | What actually runs |
-| 5 | `docs/demo/script.md` | Abeba Tesfaye walkthrough |
-| 6 | `docs/stark/evidence.md` | Task 47 map |
-| 7 | `docs/stark/narrative.md` | How it was built (honest) |
+| 5 | `docs/product/opportunity-verification.md` | Manual verify + stale rules |
+| 6 | `docs/stark/deployment.md` | Local-only; no EthioDeploy URL |
+| 7 | `docs/demo/script.md` | Abeba Tesfaye walkthrough |
+| 8 | `docs/stark/evidence.md` | Task 47 map |
+| 9 | `docs/stark/narrative.md` | How it was built (honest) |
 
 Then run locally (README at repo root): `npm install` → `npm run dev` → http://localhost:3000
 
