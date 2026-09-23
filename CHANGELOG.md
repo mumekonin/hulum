@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Ask about profile gaps and uncertain requirements
+
+### Added
+- Ask HULUM (text + file-store voice) answers “What is missing from my profile?” using `profileCompleteness` without writing profile facts.
+- “Clarify uncertain requirements” lists UNCERTAIN rows only and tells the user to confirm on the official source.
+- Quick actions on `/assistant` for both prompts.
+
+### Why
+Phase 18 P1s asked for profile-gap and clarification asks. Reuses locked `UPDATE_PROFILE` / `SHOW_MISSING_REQUIREMENTS` with reply hints so the Task 22 intent set stays closed.
+
 ## 2026-09-23 — Requirement explanations in the analysis UI
 
 ### Changed
