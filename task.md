@@ -29,6 +29,7 @@ This is the master implementation checklist for HULUM.
 | 31 | AI output validation | Mulualem | DONE |
 | 34 | Opportunity verification | Mulualem | DONE |
 | 35 | API security and validation | Mulualem | DONE |
+| 36 | Integration testing | Mulualem + Kidist | DONE |
 | 39 | Problem definition | Kidist + Mulualem | DONE |
 | 42 | Architecture decision record | Mulualem + Kidist | DONE |
 
@@ -581,7 +582,7 @@ final eligibility/deadline authority.
 
 ### Task 36 — Integration testing (Days 14–17)
 **Shared with:** Kidist.
-**Status:** Postgres API slice and the web profile, analysis, and Ask HULUM screens are on main (2026-09-21, Mulualem). Voice stays text. No Voxide backend.
+**Status:** DONE (2026-09-22, Mulualem). Postgres API slice, web screens, and Next.js shared-import fix are on `main`. Voice stays text. No Voxide backend.
 
 Test:
 
