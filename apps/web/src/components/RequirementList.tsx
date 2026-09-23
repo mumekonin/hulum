@@ -21,6 +21,17 @@ const borders: Record<RequirementStatus, string> = {
   NOT_APPLICABLE: "border-l-line",
 };
 
+function explanationFor(item: {
+  status: RequirementStatus;
+  reason?: string | null;
+}): string {
+  const reason = item.reason?.trim();
+  if (reason) {
+    return reason;
+  }
+  return "No stored explanation for this requirement. Confirm against the official source.";
+}
+
 export function RequirementList({
   items,
 }: {
@@ -36,21 +47,35 @@ export function RequirementList({
 }) {
   return (
     <ul className="space-y-3">
-      {items.map((item) => (
-        <li key={item.id ?? item.key} className={`border border-line border-l-4 bg-white/60 p-4 ${borders[item.status]}`}>
-          <p className="flex items-start gap-3">
-            <span aria-hidden="true" className="font-display text-xl">
-              {marks[item.status]}
-            </span>
-            <span>
-              <span className="block font-medium">{item.requirementText ?? item.text ?? item.key}</span>
-              <span className="mt-1 block text-sm text-muted">
-                {labels[item.status]}. {item.reason ?? ""}
+      {items.map((item) => {
+        const evidence = item.evidence?.trim();
+        return (
+          <li
+            key={item.id ?? item.key}
+            className={`border border-line border-l-4 bg-white/60 p-4 ${borders[item.status]}`}
+          >
+            <div className="flex items-start gap-3">
+              <span aria-hidden="true" className="font-display text-xl">
+                {marks[item.status]}
               </span>
-            </span>
-          </p>
-        </li>
-      ))}
+              <div className="min-w-0 flex-1">
+                <p className="font-medium">{item.requirementText ?? item.text ?? item.key}</p>
+                <p className="mt-1 text-sm text-muted">{labels[item.status]}</p>
+                <p className="mt-2 text-sm leading-6">
+                  <span className="font-medium">Why. </span>
+                  {explanationFor(item)}
+                </p>
+                {evidence ? (
+                  <p className="mt-2 text-sm text-muted">
+                    <span className="font-medium text-ink">Evidence. </span>
+                    {evidence}
+                  </p>
+                ) : null}
+              </div>
+            </div>
+          </li>
+        );
+      })}
     </ul>
   );
 }

@@ -449,7 +449,7 @@ NOT_APPLICABLE
 - [x] **P0** Preserve uncertainty.
 - [x] **P0** Handle missing profile information.
 - [x] **P0** Handle conflicting information.
-- [ ] **P1** Add requirement explanations.
+- [x] **P1** Add requirement explanations.
 - [x] **P1** Add unit tests for matching.
 
 ---

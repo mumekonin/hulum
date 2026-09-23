@@ -45,7 +45,7 @@ Official opportunity source
 | Analyze opportunity | POST via details page | Calls the backend decision engine |
 | APPLY/MAYBE/SKIP result | `/analysis/[id]` | Decision is visually dominant |
 | Explanation view | `/analysis/[id]` | Why the engine decided |
-| Requirement status view | `/analysis/[id]` | MET / NOT_MET / UNCERTAIN |
+| Requirement status view | `/analysis/[id]` | MET / NOT_MET / UNCERTAIN with a **Why** explanation (and evidence when stored) |
 | Readiness checklist | `/analysis/[id]` | TODO / IN_PROGRESS / DONE / NOT_REQUIRED |
 | Voice interaction | `/assistant` | Text and quick actions until Voxide is wired |
 | Official source/application | links on detail + analysis | Never invented; opens the organization URL |

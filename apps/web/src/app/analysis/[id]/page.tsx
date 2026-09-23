@@ -119,6 +119,7 @@ export default function AnalysisPage() {
       </p>
 
       <h2 className="mt-12 font-display text-2xl">Matched</h2>
+      <p className="mt-2 text-sm text-muted">Each row includes why the engine marked it MET.</p>
       <div className="mt-4">
         {matched.length === 0 ? (
           <StatusPanel variant="empty" title="No matched requirements">
@@ -130,6 +131,9 @@ export default function AnalysisPage() {
       </div>
 
       <h2 className="mt-12 font-display text-2xl">Needs attention</h2>
+      <p className="mt-2 text-sm text-muted">
+        Missing or uncertain requirements, each with a short explanation. Confirm on the official source.
+      </p>
       <div className="mt-4">
         {attention.length === 0 ? (
           <StatusPanel variant="empty" title="No gaps on this analysis">
