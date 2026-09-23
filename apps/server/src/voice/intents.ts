@@ -11,7 +11,8 @@ export type ParsedIntent = {
   intent: VoiceIntent | "UNSUPPORTED";
   type?: OpportunityType;
   decision?: Decision;
-  replyHint?: string;
+  /** Narrower handler hint without expanding the Task 22 lock set. */
+  replyHint?: "profile_gaps" | "clarify_uncertain";
 };
 
 const TYPE_WORDS: Array<[RegExp, OpportunityType]> = [
@@ -44,6 +45,21 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
   }
   if (/ለምን|why (apply|maybe|skip|did you)|explain|^why\b/i.test(value)) {
     return { intent: "EXPLAIN_DECISION" };
+  }
+  // Profile gaps before generic "what am I missing" (opportunity requirements).
+  if (
+    /profile\s*(gap|gaps|incomplete|missing)|missing from my profile|what.*(incomplete|missing).*profile|profile.*(incomplete|missing)/i.test(
+      value,
+    )
+  ) {
+    return { intent: "UPDATE_PROFILE", replyHint: "profile_gaps" };
+  }
+  if (
+    /clarif(y|ication)|which requirements.*(uncertain|unclear)|explain.*(uncertain|unclear).*requirement/i.test(
+      value,
+    )
+  ) {
+    return { intent: "SHOW_MISSING_REQUIREMENTS", replyHint: "clarify_uncertain" };
   }
   if (/ምን ጎድሎኛል|what am i missing|gaps?|missing/i.test(value)) {
     return { intent: "SHOW_MISSING_REQUIREMENTS" };
@@ -80,4 +96,24 @@ export function formatOpportunityList(opportunities: Opportunity[]): string {
 export function formatOpportunityContext(item: Opportunity, decision?: string): string {
   const stored = decision ? ` Stored HULUM decision: ${decision}.` : "";
   return `${item.title} — ${item.organization}. Type ${item.type}. Deadline ${item.deadline}. Official source: ${item.sourceUrl}.${stored} Confirm details on the official page.`;
+}
+
+const PROFILE_FIELD_LABELS: Record<string, string> = {
+  educationLevel: "education level",
+  fieldOfStudy: "field of study",
+  graduationYear: "graduation year",
+  country: "country",
+  city: "city",
+  languages: "languages",
+  skills: "skills",
+  experience: "experience",
+  interests: "interests",
+};
+
+export function formatProfileGaps(missing: string[]): string {
+  if (missing.length === 0) {
+    return "Your profile looks complete for v0.1 matching. You can still edit details on the profile page.";
+  }
+  const labels = missing.map((field) => PROFILE_FIELD_LABELS[field] ?? field);
+  return `Your profile is missing: ${labels.join(", ")}. Open your profile to add them before analyzing. Voice cannot silently change stored facts.`;
 }
