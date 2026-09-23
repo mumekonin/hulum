@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — CI: record Linux Lightning CSS optional dependency
+
+### Fixed
+- Root `optionalDependencies` includes `lightningcss-linux-x64-gnu@1.32.0` so Ubuntu `npm ci --include=optional` can load Tailwind’s Lightning CSS native binary during `next build`.
+- CI verifies `require('lightningcss')` before the web build.
+
+### Why
+`next/font` + Tailwind need `lightningcss.linux-x64-gnu.node`. The lockfile was Windows-generated and only recorded `lightningcss-win32-*`, so Build web failed after typecheck/tests passed.
+
 ## 2026-09-23 — CI builds web and server
 
 ### Added
