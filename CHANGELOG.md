@@ -2,6 +2,18 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Voxide study, ScholarXIV MCP note, import decision
+
+### Added
+- `docs/research/voxide-integration.md`: browser `@voxide/react` widget requirements; no install claim on `main`, no mic claim.
+- `docs/architecture/opportunity-import.md`: curated catalog only; bulk import not required for v0.1.
+
+### Changed
+- `docs/research/scholarxiv.md`: MCP exploration closed; Papers API remains the research path (not Analyze).
+
+### Why
+Phase 2 explore P1s and Phase 12 study P0 asked for honest research notes. Empty ScholarXIV rows and an unwired Voxide widget on `main` stay accurate for judges.
+
 ## 2026-09-23 — In-process latency and error tracking
 
 ### Added

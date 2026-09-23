@@ -11,6 +11,7 @@ This folder is the canonical STARK ideation/research record. ScholarXIV is **des
 | `ideation.md` | Problem → alternatives → rejected ideas → why HULUM |
 | `scholarxiv.md` | Queries, Papers API wiring, paper log (copy rows only after a live search) |
 | `competitive-analysis.md` | Ethiopian / global / African products checked 2026-09-18 |
+| `voxide-integration.md` | Browser widget requirements studied 2026-09-23 (not wired on `main`) |
 | `../product/research-questions.md` | Questions and labeled hypotheses |
 | `../product/problem.md` | Problem definition |
 | `../stark/evidence.md` | STARK evidence index (what exists vs still empty) |
