@@ -36,6 +36,17 @@ ScholarXIV is **not** on this path. See `docs/research/`.
 
 Shared TypeScript types live in `packages/shared`. Web, mobile, and server must not copy them.
 
+## Related docs
+
+| Doc | Topic |
+|---|---|
+| `docs/architecture/api.md` | Endpoints, Zod validation, explain rate limit |
+| `docs/architecture/retention.md` | What is kept; no audio/transcripts |
+| `docs/architecture/data-exposure.md` | Honest API/web/DB exposure review |
+| `docs/architecture/manual-verification.md` | Catalog verification checklist |
+| `docs/product/opportunity-verification.md` | Manual verify + stale rules |
+| `docs/stark/deployment.md` | Local-only deploy decision |
+
 ## What is on `main` today
 
 - `apps/web` — Next.js Abeba Tesfaye demo
