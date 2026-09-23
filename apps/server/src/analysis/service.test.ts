@@ -2,6 +2,7 @@ import {
   Decision,
   Language,
   OpportunityType,
+  ReadinessStatus,
   VerificationStatus,
   type Analysis,
   type Opportunity,
@@ -258,5 +259,49 @@ describe("analysis service", () => {
     const result = await service.explain(stored.id, Language.ENGLISH);
     expect(result.decision).toBe(Decision.MAYBE);
     expect(result.explanation).toBe(`${stored.summary} ${stored.nextAction}`.trim());
+  });
+
+  it("personalizes readiness plan wording without inventing checklist titles", async () => {
+    const stored = storedFrom({
+      userId: profile.userId,
+      opportunityId: opportunity.id,
+      decision: Decision.MAYBE,
+      fitScore: 60,
+      summary: ANALYSIS_SUMMARY[Decision.MAYBE],
+      matches: [],
+      readiness: [
+        {
+          title: "Prepare CV",
+          description: null,
+          status: ReadinessStatus.TODO,
+          priority: 1,
+        },
+        {
+          title: "Resolve the language requirement",
+          description: null,
+          status: ReadinessStatus.TODO,
+          priority: 2,
+        },
+      ],
+    });
+    const service = createAnalysisService({
+      profiles: { getByUserId: async () => view },
+      opportunities: { getById: async () => opportunity },
+      store: {
+        create: async () => stored,
+        getById: async () => stored,
+      },
+      clock,
+      chat: {
+        complete: async () =>
+          "With a MAYBE decision, prioritize Prepare CV and Resolve the language requirement, then re-check the official source.",
+      },
+    });
+
+    const result = await service.personalizedReadinessPlan(stored.id, Language.ENGLISH);
+    expect(result.decision).toBe(Decision.MAYBE);
+    expect(result.plan).toContain("Prepare CV");
+    expect(result.plan).toContain("Resolve the language requirement");
+    expect(result.items).toHaveLength(2);
   });
 });

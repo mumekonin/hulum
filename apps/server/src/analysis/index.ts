@@ -87,6 +87,20 @@ export function createAnalysisRouter(service?: AnalysisService): Router {
     }
   });
 
+  router.post("/:id/readiness/plan", async (req, res, next) => {
+    try {
+      const id = req.params.id;
+      if (id === undefined || !isUuid(id)) {
+        throw new HttpError(400, "INVALID_ID", "Analysis id must be a UUID.");
+      }
+      const input = parseExplainRequest(req.body);
+      const plan = await getService().personalizedReadinessPlan(id, input.language);
+      res.status(200).json(ok(plan));
+    } catch (error) {
+      next(error);
+    }
+  });
+
   router.get("/:id", async (req, res, next) => {
     try {
       const id = req.params.id;

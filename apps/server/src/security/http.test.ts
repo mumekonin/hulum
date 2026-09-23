@@ -116,7 +116,7 @@ describe("API security middleware", () => {
       data: null,
       error: {
         code: "RATE_LIMITED",
-        message: "Too many explanation requests. Please try again shortly.",
+        message: "Too many AI wording requests. Please try again shortly.",
       },
     });
   });

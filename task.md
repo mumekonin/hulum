@@ -670,7 +670,7 @@ AI is an assistant, not the eligibility authority.
 - [ ] Extract structured profile information.
 - [ ] Explain an existing decision.
 - [ ] Explain requirement gaps.
-- [ ] Generate readiness plans.
+- [x] Generate readiness plans.
 - [ ] Answer contextual product questions.
 - [ ] Assist multilingual interaction.
 - [ ] Rephrase explanations for the user's language.
@@ -691,7 +691,7 @@ AI is an assistant, not the eligibility authority.
 - [x] **P0** Define structured output schema.
 - [x] **P0** Implement output validation.
 - [x] **P0** Implement decision-aware explanation.
-- [ ] **P0** Implement readiness-plan generation.
+- [x] **P0** Implement readiness-plan generation.
 - [x] **P0** Implement contextual Q&A.
 - [ ] **P1** Add retry/fallback behavior.
 - [ ] **P1** Track latency/errors.
@@ -725,7 +725,7 @@ Deadline verification  TODO
 - [x] **P0** Support NOT_REQUIRED.
 - [x] **P0** Display next action.
 - [x] **P1** Allow manual checklist updates.
-- [ ] **P1** Generate personalized readiness plan with AI.
+- [x] **P1** Generate personalized readiness plan with AI.
 
 ---
 

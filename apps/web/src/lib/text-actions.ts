@@ -173,6 +173,33 @@ export async function runTextAction(input: {
     };
   }
 
+  if (/personalized readiness|personalize.*(plan|readiness|checklist)|readiness plan/i.test(value)) {
+    if (!input.analysisId) {
+      return { reply: "Analyze an opportunity first, then ask for a personalized readiness plan." };
+    }
+    try {
+      const plan = await api<{ plan: string; decision: string }>(
+        `/api/analyses/${input.analysisId}/readiness/plan`,
+        { method: "POST", body: JSON.stringify({ language: "en" }) },
+      );
+      return {
+        reply: `${plan.decision}. ${plan.plan}`,
+        analysisId: input.analysisId,
+        opportunityId: input.opportunityId,
+      };
+    } catch {
+      const items = await api<ReadinessItem[]>(`/api/analyses/${input.analysisId}/readiness`);
+      return {
+        reply:
+          items.length === 0
+            ? "This analysis has no readiness items."
+            : items.map((item) => `${item.title} (${item.status})`).join("; "),
+        analysisId: input.analysisId,
+        opportunityId: input.opportunityId,
+      };
+    }
+  }
+
   if (/ምን ላዘጋጅ|what should i prepare|readiness|checklist|prepare/i.test(value)) {
     if (!input.analysisId) {
       return { reply: "Analyze an opportunity first, then ask what to prepare." };
