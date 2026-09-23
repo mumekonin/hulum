@@ -580,7 +580,7 @@ It must perform meaningful HULUM actions and must not be decorative.
 - [x] **P1** Handle recognition failure.
 - [x] **P1** Handle silence/timeouts.
 - [x] **P1** Support repeat requests.
-- [ ] **P1** Measure latency.
+- [x] **P1** Measure latency.
 
 ## Example voice intents
 
@@ -914,12 +914,12 @@ Track useful technical signals without unnecessarily storing sensitive content.
 
 - [x] **P1** API latency.
 - [x] **P1** AI latency.
-- [ ] **P1** Voice latency.
+- [x] **P1** Voice latency.
 - [x] **P1** API error rates.
 - [x] **P1** AI validation failures.
-- [ ] **P1** Voice recognition failures.
+- [x] **P1** Voice recognition failures.
 - [x] **P1** Decision-engine errors.
-- [ ] **P1** Session failures.
+- [x] **P1** Session failures.
 
 Do not log unnecessary personal profile data or raw voice/conversation content.
 

@@ -9,7 +9,13 @@ import { createProfileService } from "../profiles/service.js";
 import { createPgProfileStore } from "../profiles/store.js";
 import { systemClock } from "../services/common/clock.js";
 import { loadStore } from "../store/fileStore.js";
-import { opsSummary, timeOpsSync } from "./metrics.js";
+import { opsSummary, recordOpsEvent, timeOpsSync } from "./metrics.js";
+
+const CLIENT_VOICE_CODES = new Set([
+  "VOICE_RECOGNITION_FAILED",
+  "VOICE_SESSION_ERROR",
+  "VOICE_SILENCE_TIMEOUT",
+]);
 
 /**
  * Local observability + decision debug.
@@ -25,6 +31,37 @@ export function createOpsRouter(mode: "file" | "postgres" = "file"): Router {
       return;
     }
     fileOk(res, summary);
+  });
+
+  /** Browser-reported voice issues — codes only, never utterance text. */
+  router.post("/client-event", (req, res, next) => {
+    try {
+      const code = typeof req.body?.code === "string" ? req.body.code.trim() : "";
+      const kindRaw = typeof req.body?.kind === "string" ? req.body.kind.trim() : "voice";
+      const name = typeof req.body?.name === "string" ? req.body.name.trim() : "client.voice";
+      if (!CLIENT_VOICE_CODES.has(code)) {
+        if (mode === "postgres") {
+          throw new HttpError(422, "INVALID_INPUT", "Unsupported client event code.");
+        }
+        fileFail(res, "Unsupported client event code.", 422, "INVALID_INPUT");
+        return;
+      }
+      const kind = kindRaw === "session" ? "session" : "voice";
+      recordOpsEvent({
+        kind,
+        name: name.slice(0, 64) || "client.voice",
+        ok: false,
+        ms: 0,
+        code,
+      });
+      if (mode === "postgres") {
+        res.status(200).json(sharedOk({ recorded: true }));
+        return;
+      }
+      fileOk(res, { recorded: true });
+    } catch (error) {
+      next(error);
+    }
   });
 
   router.post("/decision-debug", async (req, res, next) => {

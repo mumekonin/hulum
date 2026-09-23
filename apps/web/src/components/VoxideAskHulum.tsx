@@ -23,6 +23,22 @@ type Props = {
 const TEXT_FALLBACK_HINT =
   "Voice had trouble. Type a request or use a quick action — those call the same HULUM APIs.";
 
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
+
+/** Codes only — never send utterance text to ops. */
+function reportVoiceOpsEvent(
+  code: "VOICE_RECOGNITION_FAILED" | "VOICE_SESSION_ERROR" | "VOICE_SILENCE_TIMEOUT",
+  kind: "voice" | "session" = "voice",
+): void {
+  void fetch(`${API_URL}/api/ops/client-event`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ code, kind, name: "voxide.widget" }),
+  }).catch(() => {
+    /* Ops is best-effort; never block the Ask HULUM UI. */
+  });
+}
+
 /**
  * Official Voxide React widget (voxide.app/docs / @voxide/react README).
  * Tools call the same runTextAction path as typed Ask HULUM — never invent APPLY/MAYBE/SKIP.
@@ -163,6 +179,7 @@ export function VoxideAskHulum({
 
     const unsubError = client.on("error", (payload: unknown) => {
       clearSilence();
+      reportVoiceOpsEvent("VOICE_RECOGNITION_FAILED", "voice");
       const detail =
         payload && typeof payload === "object" && "message" in payload
           ? String((payload as { message: unknown }).message)
@@ -178,6 +195,7 @@ export function VoxideAskHulum({
       lastStatus = status;
       clearSilence();
       if (status === "error") {
+        reportVoiceOpsEvent("VOICE_SESSION_ERROR", "session");
         onVoiceIssueRef.current?.(`Voice session error. ${TEXT_FALLBACK_HINT}`);
         return;
       }
@@ -185,6 +203,7 @@ export function VoxideAskHulum({
       if (status === "listening") {
         silenceTimer = setTimeout(() => {
           if (lastStatus === "listening") {
+            reportVoiceOpsEvent("VOICE_SILENCE_TIMEOUT", "voice");
             onVoiceIssueRef.current?.(
               `No speech detected for a while (silence/timeout). ${TEXT_FALLBACK_HINT}`,
             );
