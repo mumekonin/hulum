@@ -644,7 +644,7 @@ Do not trade reliability for language count.
 - [x] **P0** AI orchestration service.
 - [x] **P0** Voice integration service.
 - [x] **P1** Search/filter service.
-- [ ] **P1** Audit/debug service.
+- [x] **P1** Audit/debug service.
 
 ## Suggested endpoints
 
@@ -952,7 +952,7 @@ EthioDeploy is optional, but if used, document it as part of the implementation/
 - [x] **P1** Build frontend.
 - [x] **P1** Build backend.
 - [ ] **P1** Block merges when checks fail.
-- [ ] **P1** Configure deployment workflow if appropriate.
+- [x] **P1** Configure deployment workflow if appropriate.
 
 ---
 
@@ -1013,7 +1013,7 @@ Interest: AI
 - [x] **P0** ScholarXIV ideation evidence.
 - [x] **P1** Architecture decision records.
 - [x] **P1** Demo instructions.
-- [ ] **P1** Deployment guide.
+- [x] **P1** Deployment guide.
 - [x] **P1** STARK evidence checklist.
 
 ---
