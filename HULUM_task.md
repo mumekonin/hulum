@@ -576,7 +576,7 @@ It must perform meaningful HULUM actions and must not be decorative.
 - [x] **P0** Ask "What am I missing?"
 - [x] **P0** Ask "What should I prepare?"
 - [x] **P0** Filter/show opportunities by decision.
-- [ ] **P1** Create/update profile by voice.
+- [-] **P1** Create/update profile by voice.
 - [x] **P1** Handle recognition failure.
 - [x] **P1** Handle silence/timeouts.
 - [x] **P1** Support repeat requests.

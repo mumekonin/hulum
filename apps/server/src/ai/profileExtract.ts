@@ -1,6 +1,6 @@
 import { z } from "zod";
 import type { ProfileExtractProposal, ProfileExtractResult } from "@hulum/shared";
-import type { ChatMessage } from "./groq.js";
+import type { ChatClient, ChatMessage } from "./groq.js";
 
 export const PROFILE_EXTRACT_SYSTEM_PROMPT =
   "You extract structured HULUM profile fields from the user's self-description. Output JSON only. Never invent credentials, documents, or countries the user did not state. Use null or [] when unknown. Do not claim eligibility.";
@@ -123,4 +123,25 @@ export function formatProfileExtractReply(result: ProfileExtractResult): string 
     return `${field}: ${shown}`;
   });
   return `Proposed profile facts (not saved yet): ${parts.join("; ")}. ${result.notice}`;
+}
+
+/** Propose fields only — never persist. Missing Groq → empty proposal + notice. */
+export async function proposeProfileExtract(
+  text: string,
+  chat: ChatClient | undefined,
+): Promise<ProfileExtractResult> {
+  if (chat === undefined) {
+    return emptyProfileExtract();
+  }
+  let raw = "";
+  try {
+    raw = await chat.complete(buildProfileExtractMessages(text));
+  } catch {
+    try {
+      raw = await chat.complete(buildProfileExtractMessages(text));
+    } catch {
+      raw = "";
+    }
+  }
+  return raw ? profileExtractFromModelText(raw) : emptyProfileExtract();
 }

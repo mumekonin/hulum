@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatProfileGaps, parseVoiceIntent } from "./intents.js";
+import { formatProfileGaps, parseVoiceIntent, stripProfileExtractDescription } from "./intents.js";
 
 describe("parseVoiceIntent", () => {
   it("maps documented English and Amharic utterances to product intents", () => {
@@ -28,6 +28,11 @@ describe("parseVoiceIntent", () => {
       { text: "Open this opportunity", intent: "OPEN_OPPORTUNITY" },
       { text: "Tell me about this opportunity", intent: "OPEN_OPPORTUNITY" },
       { text: "Update profile", intent: "UPDATE_PROFILE" },
+      {
+        text: "Extract profile from this: I study CS in Addis Ababa",
+        intent: "UPDATE_PROFILE",
+        replyHint: "profile_extract",
+      },
       {
         text: "What is missing from my profile?",
         intent: "UPDATE_PROFILE",
@@ -59,5 +64,13 @@ describe("formatProfileGaps", () => {
     expect(formatProfileGaps(["city", "skills"])).toContain("city");
     expect(formatProfileGaps(["city", "skills"])).toContain("skills");
     expect(formatProfileGaps(["city"])).toContain("Voice cannot silently change stored facts");
+  });
+});
+
+describe("stripProfileExtractDescription", () => {
+  it("removes the extract-request prefix", () => {
+    expect(
+      stripProfileExtractDescription("Extract profile from this: I study CS in Addis Ababa"),
+    ).toBe("I study CS in Addis Ababa");
   });
 });

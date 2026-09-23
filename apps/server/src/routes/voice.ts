@@ -4,11 +4,15 @@ import { runAnalysis, toAnalysisDetail } from "../analysis/runAnalysis.js";
 import { analyzeOpportunity } from "../decision/engine.js";
 import { fail, ok } from "../lib/http.js";
 import { createId, nowIso } from "../lib/id.js";
+import { formatProfileExtractReply, proposeProfileExtract } from "../ai/profileExtract.js";
+import { createGroqChatClient } from "../ai/groq.js";
+import { loadEnv } from "../config/env.js";
 import {
   formatOpportunityContext,
   formatOpportunityList,
   formatProfileGaps,
   parseVoiceIntent,
+  stripProfileExtractDescription,
 } from "../voice/intents.js";
 import { findLatestAnalysis } from "../voice/findAnalysis.js";
 import { loadStore, mutateStore } from "../store/fileStore.js";
@@ -133,9 +137,32 @@ voiceRouter.post("/action", async (req, res) => {
       });
       return;
     }
+    if (intent.replyHint === "profile_extract") {
+      const description = stripProfileExtractDescription(text);
+      if (description.length < 8) {
+        ok(res, {
+          intent: intent.intent,
+          reply:
+            "Paste a short self-description after the request, or open Profile and use Propose profile fields. Nothing is saved until you confirm.",
+        });
+        return;
+      }
+      const env = loadEnv({ fromFile: false });
+      const chat =
+        env.GROQ_API_KEY !== undefined && env.GROQ_MODEL !== undefined
+          ? createGroqChatClient({ apiKey: env.GROQ_API_KEY, model: env.GROQ_MODEL })
+          : undefined;
+      const proposed = await proposeProfileExtract(description, chat);
+      ok(res, {
+        intent: intent.intent,
+        reply: formatProfileExtractReply(proposed),
+      });
+      return;
+    }
     ok(res, {
       intent: intent.intent,
-      reply: "Open your profile to update education, skills, or documents. Voice cannot silently change stored facts.",
+      reply:
+        "Open your profile to update education, skills, or documents. To propose fields from speech or text, say “Extract profile from this: …” — confirm on Profile before save. Voice cannot silently change stored facts.",
     });
     return;
   }

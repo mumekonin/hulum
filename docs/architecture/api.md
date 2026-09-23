@@ -22,7 +22,7 @@ Auth is a client-supplied `userId` (UUID). Full login is P1 and not implemented.
 | `GET` | `/api/analyses/:id/readiness` | — | Checklist for analysis |
 | `PATCH` | `/api/readiness/:id` | `{ "status" }` | `TODO` / `IN_PROGRESS` / `DONE` / `NOT_REQUIRED` |
 | `POST` | `/api/voice/session` | `{ "userId", "language"? }` | Metadata only; provider `text-fallback` until a Voxide key is set |
-| `POST` | `/api/voice/action` | `{ "userId", "text", ... }` | Same intents as Ask HULUM text; timed in ops |
+| `POST` | `/api/voice/action` | `{ "userId", "text", ... }` | Same intents as Ask HULUM text; timed in ops; profile extract proposes only |
 | `POST` | `/api/ai/profile-extract` | self-description text | Proposes fields only; never auto-saves |
 | `GET` | `/api/ops/summary` | — | In-process latency/error aggregates (no profile/transcript payloads) |
 | `POST` | `/api/ops/decision-debug` | `{ "userId", "opportunityId" }` | Re-runs `decide()` for debug; not a user guarantee |
