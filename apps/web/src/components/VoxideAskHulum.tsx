@@ -1,7 +1,7 @@
 "use client";
 
-import { useMemo, useRef } from "react";
-import { VoxideClient, VoxideWidget } from "@voxide/react";
+import { useEffect, useMemo, useRef } from "react";
+import { VoxideClient, VoxideWidget, type VoxideStatus } from "@voxide/react";
 import { getUserId } from "@/lib/storage";
 import { runTextAction } from "@/lib/text-actions";
 
@@ -16,13 +16,24 @@ type Props = {
   onSessionUpdate: (next: { opportunityId?: string; analysisId?: string }) => void;
   onReply: (userText: string, reply: string) => void;
   onError: (message: string) => void;
+  /** Mic / recognition / silence recovery — keep text + quick actions usable. */
+  onVoiceIssue?: (message: string) => void;
 };
+
+const TEXT_FALLBACK_HINT =
+  "Voice had trouble. Type a request or use a quick action — those call the same HULUM APIs.";
 
 /**
  * Official Voxide React widget (voxide.app/docs / @voxide/react README).
  * Tools call the same runTextAction path as typed Ask HULUM — never invent APPLY/MAYBE/SKIP.
  */
-export function VoxideAskHulum({ session, onSessionUpdate, onReply, onError }: Props) {
+export function VoxideAskHulum({
+  session,
+  onSessionUpdate,
+  onReply,
+  onError,
+  onVoiceIssue,
+}: Props) {
   const sessionRef = useRef(session);
   sessionRef.current = session;
   const onSessionUpdateRef = useRef(onSessionUpdate);
@@ -31,6 +42,8 @@ export function VoxideAskHulum({ session, onSessionUpdate, onReply, onError }: P
   onReplyRef.current = onReply;
   const onErrorRef = useRef(onError);
   onErrorRef.current = onError;
+  const onVoiceIssueRef = useRef(onVoiceIssue);
+  onVoiceIssueRef.current = onVoiceIssue;
 
   const publicKey = process.env.NEXT_PUBLIC_VOXIDE_KEY?.trim() ?? "";
 
@@ -49,6 +62,18 @@ export function VoxideAskHulum({ session, onSessionUpdate, onReply, onError }: P
       },
     });
 
+    ai.setFallback({
+      message:
+        "That was not a HULUM product action. Try Show me internships, Should I apply for this?, Why?, What am I missing?, or What should I prepare? Or type below.",
+      suggestions: [
+        "Show me internships",
+        "Should I apply for this?",
+        "Why did you say that?",
+        "What am I missing?",
+        "What should I prepare?",
+      ],
+    });
+
     ai.register({
       runHulumAction: {
         description:
@@ -65,6 +90,9 @@ export function VoxideAskHulum({ session, onSessionUpdate, onReply, onError }: P
         handler: async ({ text }) => {
           const utterance = typeof text === "string" ? text.trim() : "";
           if (utterance.length < 2) {
+            onVoiceIssueRef.current?.(
+              "No clear speech heard. Try again, or type a request / use a quick action.",
+            );
             return {
               ok: false,
               reply: "Say a HULUM request such as Show me internships or Should I apply for this?",
@@ -117,6 +145,60 @@ export function VoxideAskHulum({ session, onSessionUpdate, onReply, onError }: P
 
     return ai;
   }, [publicKey]);
+
+  useEffect(() => {
+    if (client === null) {
+      return;
+    }
+
+    let silenceTimer: ReturnType<typeof setTimeout> | undefined;
+    let lastStatus: VoxideStatus | null = null;
+
+    const clearSilence = () => {
+      if (silenceTimer !== undefined) {
+        clearTimeout(silenceTimer);
+        silenceTimer = undefined;
+      }
+    };
+
+    const unsubError = client.on("error", (payload: unknown) => {
+      clearSilence();
+      const detail =
+        payload && typeof payload === "object" && "message" in payload
+          ? String((payload as { message: unknown }).message)
+          : "";
+      onVoiceIssueRef.current?.(
+        detail
+          ? `Voice error: ${detail}. ${TEXT_FALLBACK_HINT}`
+          : `Recognition or connection failed. ${TEXT_FALLBACK_HINT}`,
+      );
+    });
+
+    const unsubStatus = client.on("status", (status: VoxideStatus) => {
+      lastStatus = status;
+      clearSilence();
+      if (status === "error") {
+        onVoiceIssueRef.current?.(`Voice session error. ${TEXT_FALLBACK_HINT}`);
+        return;
+      }
+      // If we stay in listening with no follow-up activity, nudge toward text.
+      if (status === "listening") {
+        silenceTimer = setTimeout(() => {
+          if (lastStatus === "listening") {
+            onVoiceIssueRef.current?.(
+              `No speech detected for a while (silence/timeout). ${TEXT_FALLBACK_HINT}`,
+            );
+          }
+        }, 12_000);
+      }
+    });
+
+    return () => {
+      clearSilence();
+      unsubError();
+      unsubStatus();
+    };
+  }, [client]);
 
   if (client === null) {
     return null;

@@ -59,6 +59,7 @@ function AssistantInner() {
   const [sessionAnalysisId, setSessionAnalysisId] = useState<string | undefined>();
   const [language, setLanguageState] = useState<LanguageCode>(getLanguage);
   const [voxideReady] = useState(() => hasVoxidePublicKey());
+  const [voiceIssue, setVoiceIssue] = useState<string | null>(null);
   const requestInput = useRef<HTMLInputElement>(null);
   const opportunityId = sessionOpportunityId ?? search.get("opportunityId") ?? undefined;
   const analysisId = sessionAnalysisId ?? search.get("analysisId") ?? undefined;
@@ -176,8 +177,20 @@ function AssistantInner() {
           <StatusPanel variant="empty" title="Voxide widget ready">
             Use the Ask HULUM launcher (bottom-right) for voice or widget text. Tools call the same
             product actions as the quick buttons. APPLY / MAYBE / SKIP still come from decide() on the
-            server.
+            server. If the mic fails or goes silent, type or use a quick action.
           </StatusPanel>
+          {voiceIssue ? (
+            <div className="mt-4">
+              <StatusPanel
+                variant="error"
+                title="Voice issue"
+                primary={{ label: "Type a request", onClick: () => requestInput.current?.focus() }}
+                secondary={{ label: "Show internships", onClick: () => void send("Show me internships") }}
+              >
+                {voiceIssue}
+              </StatusPanel>
+            </div>
+          ) : null}
           <VoxideAskHulum
             session={{ opportunityId, analysisId }}
             onSessionUpdate={(next) => {
@@ -191,8 +204,10 @@ function AssistantInner() {
                 { role: "hulum", text: reply },
               ]);
               setError(null);
+              setVoiceIssue(null);
             }}
             onError={(message) => setError(message)}
+            onVoiceIssue={(message) => setVoiceIssue(message)}
           />
         </div>
       )}
