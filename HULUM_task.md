@@ -422,8 +422,8 @@ HULUM should not treat generated AI content as authoritative opportunity require
 - [x] **P0** Store last verification date.
 - [x] **P0** Display source/verification information.
 - [x] **P0** Add responsible-AI notice.
-- [ ] **P1** Define manual verification workflow.
-- [ ] **P1** Define stale-opportunity behavior.
+- [x] **P1** Define manual verification workflow.
+- [x] **P1** Define stale-opportunity behavior.
 
 ## Responsible AI notice
 
@@ -674,7 +674,7 @@ GET    /api/health
 - [x] **P0** Implement analysis endpoint.
 - [x] **P0** Implement readiness endpoint.
 - [x] **P0** Implement health endpoint.
-- [ ] **P1** Add validation/rate limiting/documentation.
+- [x] **P1** Add validation/rate limiting/documentation.
 
 ---
 
@@ -708,7 +708,7 @@ audit_logs
 - [x] **P0** Persist readiness state.
 - [x] **P1** Add indexes.
 - [ ] **P1** Add security policies/RLS where applicable.
-- [ ] **P1** Define retention strategy.
+- [x] **P1** Define retention strategy.
 
 ---
 
@@ -812,8 +812,8 @@ The assistant must not become an unrestricted chatbot.
 - [x] **P0** Protect admin/debug routes if any.
 - [ ] **P1** Add authentication if required.
 - [ ] **P1** Add authorization if required.
-- [ ] **P1** Review data exposure.
-- [ ] **P1** Review retention.
+- [x] **P1** Review data exposure.
+- [x] **P1** Review retention.
 
 Never commit:
 
@@ -935,8 +935,8 @@ Do not log unnecessary personal profile data or raw voice/conversation content.
 - [ ] **P0** Configure production secrets.
 - [ ] **P0** Verify production analysis flow.
 - [ ] **P0** Verify production voice flow.
-- [ ] **P1** Deploy on EthioDeploy if practical.
-- [ ] **P1** Document deployment decision.
+- [x] **P1** Deploy on EthioDeploy if practical.
+- [x] **P1** Document deployment decision.
 
 EthioDeploy is optional, but if used, document it as part of the implementation/deployment story.
 

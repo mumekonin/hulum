@@ -2,6 +2,18 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — API, retention, verification, and deployment docs
+
+### Added
+- `docs/architecture/api.md` — endpoints (including research/investigate), Zod validation, explain rate limit, CORS/secrets.
+- `docs/architecture/retention.md` — what is kept; no audio/transcripts; no purge cron yet.
+- `docs/architecture/data-exposure.md` — honest review of API/web/DB exposure (UUID `userId` demo risk).
+- `docs/architecture/manual-verification.md` and `docs/product/opportunity-verification.md` — teammate catalog verification + 30-day stale rules.
+- `docs/stark/deployment.md` — local-only deploy decision; EthioDeploy not used.
+
+### Why
+Phase 14–16, 23, and security P1s asked for documentation of validation, rate limits, retention, data exposure, verification, and deployment against the shipped Postgres API — without inventing OpenAPI, a public URL, or a purge job.
+
 ## 2026-09-23 — Voxide study, ScholarXIV MCP note, import decision
 
 ### Added
