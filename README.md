@@ -86,7 +86,7 @@ Never put real keys in chat or in Git. `.env.example` is names only.
 
 Set `DATABASE_URL` and `CLIENT_URL=http://localhost:3000` in local `.env` before `npm run dev`. Optional: `GROQ_API_KEY` + `GROQ_MODEL` for explanation wording only (never decides APPLY / MAYBE / SKIP).
 
-`npm test` / `npm run test:server` runs matching, APPLY / MAYBE / SKIP, API flows, and failure cases.
+`npm test` / `npm run test:server` runs matching, APPLY / MAYBE / SKIP, API flows, and failure cases. `npm run lint` / `npm run format:check` use ESLint and Prettier. GitHub Actions runs typecheck, lint, and test on push/PR (`.github/workflows/ci.yml`).
 
 API-only: `cp apps/server/.env.example apps/server/.env` then `npm run db:migrate` and `npm run dev:server`.
 

@@ -2,6 +2,33 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — CI: Postgres service for vertical-slice tests
+
+### Changed
+- `.github/workflows/ci.yml` runs Postgres 16 (`hulum_test`), sets ephemeral job-level `DATABASE_URL`, migrates right after install, then typecheck/lint/`npm test`.
+- `loadEnv` no longer overrides existing process env with `.env`, so the CI `DATABASE_URL` is not wiped when `apps/server/.env` is absent or empty.
+
+### Why
+`postgres-slice.test.ts` calls `getPool()` / `requireDatabaseUrl()` and needs a live schema. CI had neither Postgres nor `DATABASE_URL`. Credentials are workflow-only disposable values — not committed to `.env`.
+
+## 2026-09-23 — CI: record Linux Rollup optional dependency
+
+### Fixed
+- `package-lock.json` now includes `@rollup/rollup-linux-x64-gnu` so Ubuntu `npm ci` / Vitest can resolve Rollup’s native binary.
+- CI install uses `npm ci --include=optional`.
+
+### Why
+The lockfile was generated on Windows and only recorded `rollup-win32-*`. Job failure was missing `@rollup/rollup-linux-x64-gnu`, not a failing test assertion.
+
+## 2026-09-23 — Lint, format tooling, and GitHub CI
+
+### Added
+- Flat ESLint (`eslint.config.mjs`) and Prettier (`.prettierrc.json`) with `npm run lint` / `format` / `format:check`.
+- `.github/workflows/ci.yml` — install, typecheck shared/server, lint, test (no deploy, no format gate yet).
+
+### Why
+Phase 1 asked for linting, formatting, and CI checks. Format check stays a local script until a dedicated format pass; CI must not fail the whole tree on Prettier alone.
+
 ## 2026-09-23 — Decision audit trail
 
 ### Added

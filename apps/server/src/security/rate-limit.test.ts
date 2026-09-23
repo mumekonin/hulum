@@ -4,7 +4,7 @@ import { createRateLimiter } from "./rate-limit.js";
 
 describe("createRateLimiter", () => {
   it("allows up to max hits in the window and then rejects", () => {
-    let now = 1_000;
+    const now = 1_000;
     const clock: Clock = { now: () => new Date(now) };
     const limiter = createRateLimiter({ windowMs: 1_000, max: 2, clock });
 
