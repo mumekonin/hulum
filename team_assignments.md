@@ -535,6 +535,14 @@ Git history
 
 **Verify:** a judge can follow HULUM from problem → research → decisions → implementation → working product.
 
+### Task 48 — AI Opportunity Investigator (after Tasks 21, 23, 30, 31)
+**Owner:** Mulualem.
+**Team lock (2026-09-22, Kidist + Mulualem):** the investigator finds opportunities. Listings are not typed in by hand. APPLY / MAYBE / SKIP still come only from `decide()`.
+
+> Discover → fetch → extract → evidence check → save. Demo leads: scholarship.et, scholars4dev.com, opportunitydesk.org (never `sourceUrl`). hetriil.moe.gov.et may be official. Developers add a row to `sources` / `official_domains` and optional env names. Keys stay in `.env`.
+
+**Verify:** a saved row has page evidence; aggregators are not stored as `sourceUrl`; a missing API URL is skipped, not invented.
+
 ---
 
 # Dependency Order

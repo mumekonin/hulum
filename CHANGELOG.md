@@ -5,6 +5,17 @@ HULUM records actual work. Do not invent history.
 ## 2026-09-22 — Mulualem
 
 ### Changed
+Started Task 48: `sources` and `official_domains` tables, demo lead sites, `JOB_OPPORTUNITIES_API_KEY` / `JOB_OPPORTUNITIES_API_URL` names, and `POST /api/investigate`. Groq extracts; evidence must appear on the page. The job API is not called until its URL is documented.
+
+### Why
+The team locked automatic discovery. Developers add a source row instead of hardcoding sites.
+
+### Decision
+Aggregator hosts stay leads. `hetriil.moe.gov.et` is the first official domain. `decide()` still owns APPLY / MAYBE / SKIP.
+
+## 2026-09-22 — Mulualem
+
+### Changed
 Marked Task 36 DONE. The Postgres slice test, web profile/analysis/Ask HULUM path, and Next.js `.js` resolve are already on `main`.
 
 ### Why
