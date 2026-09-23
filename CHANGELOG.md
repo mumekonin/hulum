@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Conflicting facts stay UNCERTAIN on Postgres matcher
+
+### Changed
+- `requirements/match.ts` (Postgres / `decide()` path) now matches file-store conflict rules: field vs skills, years vs “no experience” text, in-progress education with a past graduation year → UNCERTAIN, not MET.
+
+### Why
+Phase 8 conflict handling must apply on both matchers. File-store already did; product analysis uses this matcher.
+
 ## 2026-09-22 — Mulualem
 
 ### Changed
