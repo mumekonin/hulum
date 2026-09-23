@@ -811,7 +811,7 @@ Do not trade reliability for language count.
 - [x] **P0** Decision service.
 - [x] **P0** Readiness service.
 - [x] **P0** AI orchestration service.
-- [-] **P0** Voice integration service.
+- [x] **P0** Voice integration service.
 - [x] **P1** Search/filter service.
 - [ ] **P1** Audit/debug service.
 

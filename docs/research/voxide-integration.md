@@ -1,11 +1,11 @@
 # Voxide integration requirements (study)
 
-**Status:** studied, not wired on `main`  
+**Status:** widget on Ask HULUM behind a publishable key; Postgres voice routes call `decide()`  
 **Date:** 2026-09-23  
 **Sources:** [voxide.app/docs](https://voxide.app/docs), [voxide.app](https://voxide.app/), ADR 001, ADR 003  
 **Owners:** Kidist (widget UX), Mulualem (API contracts the widget calls)
 
-This note closes Phase 12 **Study Voxide integration requirements**. It does **not** claim a live mic, Amharic STT, or a dashboard key committed in this repo.
+This note closes Phase 12 **Study Voxide integration requirements**. It does **not** claim a live mic demo, Amharic STT, or a dashboard key committed in this repo.
 
 ## What Voxide is (as documented)
 
@@ -15,22 +15,18 @@ Voxide is a **browser** Voice AI SDK. It is not an Express STT/TTS client.
 |---|---|
 | Tools run in the **browser** | Register capabilities that `fetch` existing HULUM APIs (`/api/voice/action`, analyze, readiness). Do not add a fake Voxide backend on `:3001`. |
 | Gemini Live powers the agent | Gemini may route speech to capabilities. It **must not** invent APPLY / MAYBE / SKIP. The engine stays on the server (`decide()`). |
-| React path: `@voxide/react` | Next.js (`apps/web`) can mount `VoxideWidget` after `VoxideClient` init. |
+| React path: `@voxide/react` | Next.js (`apps/web`) mounts `VoxideAskHulum` after client init. |
 | Publishable key `vox_pub_…` | Safe in frontend **only** with Voxide Dashboard **domain whitelist** (CORS on the WebSocket). Whitelist `localhost:3000` for local, then the real web origin when deployed. |
 | `VOXIDE_API_KEY` on the server | Leftover naming in `.env.example`. Not the integration path ADR 001 locks. |
 
-## Minimum install path (when a key exists)
+## What ships in this repo
 
-From the public docs (not yet the default on `main`):
+1. `@voxide/react` in `apps/web`.
+2. `NEXT_PUBLIC_VOXIDE_KEY` / `NEXT_PUBLIC_VOXIDE_PUBLIC_KEY` (`vox_pub_…`) in `.env.example`.
+3. `VoxideAskHulum` on `/assistant` — mounts only when the key is set; tools call the same Ask HULUM text-action path.
+4. Postgres Ask HULUM routes on `/api/voice/session` and `/api/voice/action` (text fallback works without Voxide).
 
-1. `npm install @voxide/react@latest` in `apps/web`.
-2. Create a project in the Voxide dashboard; copy the publishable key.
-3. Whitelist `http://localhost:3000` (and later the production web origin).
-4. Instantiate `VoxideClient({ publicKey: "vox_pub_…" })`.
-5. Register **capabilities** that call the same actions Ask HULUM text already uses.
-6. Mount `VoxideWidget` on `/assistant` (or a shared shell) beside the text fallback.
-
-Without a real `vox_pub_…` key and whitelist, steps 4–6 stay blocked. Text/quick actions remain the demo path (ADR 003).
+Still required from the dashboard (not in this repo): a real publishable key and domain whitelist for `localhost:3000`. Without that key the UI stays text/quick-action only (ADR 003).
 
 ## Capabilities HULUM must expose
 
@@ -50,17 +46,16 @@ Dangerous or irreversible actions (none in v0.1 apply flows) would need Voxide c
 
 Public Voxide marketing/docs describe the SDK and React widget. They **do not** publish a verified Amharic / Afaan Oromo STT/TTS matrix we can cite.
 
-**Phase 13 “Verify Voxide supported languages” stays open** until a teammate with a live key measures English quality first, then Amharic. Until then ADR 004 stands: English text path is the e2e language; do not claim live Amharic voice.
+**Phase 13 “Verify Voxide supported languages”** is recorded separately in `docs/research/voxide-languages.md`. Until a teammate with a live key measures English quality first, then Amharic, ADR 004 stands: English text path is the e2e language; do not claim live Amharic voice.
 
-## Explicitly out of scope for this study
+## Explicitly out of scope (still open)
 
-- Installing `@voxide/react` without a key on `main`
-- Claiming microphone demo success
+- Claiming microphone demo success without a live key and mic test
 - Server-side Voxide proxy or inventing STT
 - Letting the Gemini agent override `decide()`
+- Verified Amharic / Afaan Oromo STT quality
 
 ## Next gated tasks
 
-1. **Create development integration** — needs dashboard key + domain whitelist + widget mount.
-2. **Receive/process voice input** / **Produce voice response** — come with the widget once wired.
-3. **Verify supported languages** — live measurement after (1).
+1. **Receive/process voice input** / **Produce voice response** — live mic with a keyed widget.
+2. **Verify supported languages** — live measurement after (1).
