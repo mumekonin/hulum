@@ -18,6 +18,9 @@ const env: AppEnv = {
   GROQ_API_KEY: undefined,
   GROQ_MODEL: undefined,
   VOXIDE_API_KEY: undefined,
+  JOB_OPPORTUNITIES_API_KEY: undefined,
+  JOB_OPPORTUNITIES_API_URL: undefined,
+  INVESTIGATE_ADMIN_SECRET: undefined,
 };
 
 describe("API security middleware", () => {

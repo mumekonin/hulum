@@ -41,6 +41,7 @@ export const VerificationStatus = {
   VERIFIED: "VERIFIED",
   NEEDS_REVIEW: "NEEDS_REVIEW",
   EXPIRED: "EXPIRED",
+  AI_EXTRACTED: "AI_EXTRACTED",
 } as const;
 
 export type VerificationStatus = (typeof VerificationStatus)[keyof typeof VerificationStatus];

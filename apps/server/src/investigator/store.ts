@@ -1,0 +1,109 @@
+import { getPool } from "../db/pool.js";
+
+export type SourceRow = {
+  id: string;
+  name: string;
+  type: "WEB_PAGE" | "API" | "SEARCH";
+  url: string;
+  enabled: boolean;
+  is_lead: boolean;
+  api_key_env: string | null;
+  api_url_env: string | null;
+};
+
+export type InvestigationSummary = {
+  runId: string;
+  checked: number;
+  saved: number;
+  rejected: number;
+  notes: string[];
+};
+
+export async function listEnabledSources(): Promise<SourceRow[]> {
+  const result = await getPool().query<SourceRow>(
+    `select id, name, type, url, enabled, is_lead, api_key_env, api_url_env
+     from sources where enabled = true order by name`,
+  );
+  return result.rows;
+}
+
+export async function listOfficialDomains(): Promise<string[]> {
+  const result = await getPool().query<{ domain: string }>("select domain from official_domains");
+  return result.rows.map((row) => row.domain.toLowerCase());
+}
+
+export async function createRun(): Promise<string> {
+  const result = await getPool().query<{ id: string }>(
+    "insert into investigation_runs (notes) values ($1) returning id",
+    [""],
+  );
+  const id = result.rows[0]?.id;
+  if (id === undefined) {
+    throw new Error("Failed to start investigation run");
+  }
+  return id;
+}
+
+export async function logEvent(runId: string, sourceName: string, action: string, detail: string): Promise<void> {
+  await getPool().query(
+    "insert into investigation_events (run_id, source_name, action, detail) values ($1, $2, $3, $4)",
+    [runId, sourceName, action, detail],
+  );
+}
+
+export async function finishRun(
+  runId: string,
+  checked: number,
+  saved: number,
+  rejected: number,
+  notes: string,
+): Promise<void> {
+  await getPool().query(
+    `update investigation_runs
+     set finished_at = now(), checked = $2, saved = $3, rejected = $4, notes = $5
+     where id = $1`,
+    [runId, checked, saved, rejected, notes],
+  );
+}
+
+export async function findDuplicate(title: string, sourceUrl: string): Promise<boolean> {
+  const result = await getPool().query(
+    "select 1 from opportunities where lower(title) = lower($1) and source_url = $2 limit 1",
+    [title, sourceUrl],
+  );
+  return (result.rowCount ?? 0) > 0;
+}
+
+export async function saveExtracted(input: {
+  title: string;
+  organization: string;
+  type: string;
+  description: string;
+  deadline: string;
+  countryEligibility: string[];
+  applicationUrl: string | null;
+  sourceUrl: string;
+}): Promise<string> {
+  const result = await getPool().query<{ id: string }>(
+    `insert into opportunities (
+       title, organization, type, description, deadline, country_eligibility,
+       application_url, source_url, verification_status, investigated_at
+     ) values ($1,$2,$3,$4,$5,$6,$7,$8,'AI_EXTRACTED', now())
+     returning id`,
+    [
+      input.title,
+      input.organization,
+      input.type,
+      input.description,
+      input.deadline,
+      input.countryEligibility,
+      input.applicationUrl,
+      input.sourceUrl,
+    ],
+  );
+  const id = result.rows[0]?.id;
+  if (id === undefined) {
+    throw new Error("Failed to persist extracted opportunity");
+  }
+  return id;
+}

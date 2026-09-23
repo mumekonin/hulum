@@ -13,6 +13,9 @@ export type AppEnv = {
   GROQ_API_KEY: string | undefined;
   GROQ_MODEL: string | undefined;
   VOXIDE_API_KEY: string | undefined;
+  JOB_OPPORTUNITIES_API_KEY: string | undefined;
+  JOB_OPPORTUNITIES_API_URL: string | undefined;
+  INVESTIGATE_ADMIN_SECRET: string | undefined;
 };
 
 export type LoadEnvOptions = {
@@ -95,5 +98,8 @@ export function loadEnv(options: LoadEnvOptions = {}): AppEnv {
     GROQ_API_KEY: optionalString(process.env.GROQ_API_KEY),
     GROQ_MODEL: optionalString(process.env.GROQ_MODEL),
     VOXIDE_API_KEY: optionalString(process.env.VOXIDE_API_KEY),
+    JOB_OPPORTUNITIES_API_KEY: optionalString(process.env.JOB_OPPORTUNITIES_API_KEY),
+    JOB_OPPORTUNITIES_API_URL: optionalString(process.env.JOB_OPPORTUNITIES_API_URL),
+    INVESTIGATE_ADMIN_SECRET: optionalString(process.env.INVESTIGATE_ADMIN_SECRET),
   };
 }
