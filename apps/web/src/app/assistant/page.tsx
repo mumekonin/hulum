@@ -1,15 +1,22 @@
 "use client";
 
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import type { LanguageCode, ProfileView } from "@hulum/shared";
 import { Notice } from "@/components/Notice";
 import { StatusPanel } from "@/components/StatusPanel";
+import { hasVoxidePublicKey } from "@/components/VoxideAskHulum";
 import { api, userFacingError } from "@/lib/api";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
 import { getLanguage, getUserId, setLanguage } from "@/lib/storage";
 import { runTextAction } from "@/lib/text-actions";
+
+const VoxideAskHulum = dynamic(
+  () => import("@/components/VoxideAskHulum").then((mod) => mod.VoxideAskHulum),
+  { ssr: false },
+);
 
 const quickActions = [
   "Show me internships",
@@ -51,6 +58,7 @@ function AssistantInner() {
   const [sessionOpportunityId, setSessionOpportunityId] = useState<string | undefined>();
   const [sessionAnalysisId, setSessionAnalysisId] = useState<string | undefined>();
   const [language, setLanguageState] = useState<LanguageCode>(getLanguage);
+  const [voxideReady] = useState(() => hasVoxidePublicKey());
   const requestInput = useRef<HTMLInputElement>(null);
   const opportunityId = sessionOpportunityId ?? search.get("opportunityId") ?? undefined;
   const analysisId = sessionAnalysisId ?? search.get("analysisId") ?? undefined;
@@ -78,11 +86,13 @@ function AssistantInner() {
   }
 
   const contextLabel = useMemo(() => {
-    const sessionNote = " Text actions call the Postgres API. Voice is not connected.";
-    if (analysisId) return `This conversation is attached to your latest analysis.${sessionNote}`;
-    if (opportunityId) return `This conversation is attached to a selected opportunity.${sessionNote}`;
-    return `No analysis selected yet. You can still browse stored opportunities.${sessionNote}`;
-  }, [analysisId, opportunityId]);
+    const voiceNote = voxideReady
+      ? " Voxide widget tools call the same Postgres actions as text."
+      : " Text actions call the Postgres API. Set NEXT_PUBLIC_VOXIDE_KEY (vox_pub_…) for the widget.";
+    if (analysisId) return `This conversation is attached to your latest analysis.${voiceNote}`;
+    if (opportunityId) return `This conversation is attached to a selected opportunity.${voiceNote}`;
+    return `No analysis selected yet. You can still browse stored opportunities.${voiceNote}`;
+  }, [analysisId, opportunityId, voxideReady]);
 
   async function send(value: string, echo = true) {
     const userId = getUserId();
@@ -122,8 +132,8 @@ function AssistantInner() {
     <section className="max-w-2xl" lang={language}>
       <h1 className="font-display text-4xl">Ask HULUM</h1>
       <p className="mt-3 text-muted">
-        Voice must perform real product actions. v0.1 ships with text and quick actions so a missing Voxide
-        key cannot kill the demo.
+        Voice must perform real product actions. Text and quick actions always work. The Voxide widget,
+        when keyed, calls the same actions — it never invents APPLY / MAYBE / SKIP.
       </p>
       <div className="mt-6">
         <Notice>{contextLabel}</Notice>
@@ -145,19 +155,47 @@ function AssistantInner() {
           ))}
         </div>
         <p className="mt-2 text-sm text-muted">
-          English is the stable v0.1 path. Amharic and Afaan Oromo are stored for Voxide; they do not enable live speech yet.
+          English is the stable v0.1 path. Amharic and Afaan Oromo are stored for Voxide; live Amharic STT
+          is not claimed.
         </p>
       </fieldset>
-      <div id="voice-unavailable">
-        <StatusPanel
-          variant="empty"
-          title="Voice unavailable"
-          primary={{ label: "Type a request", onClick: () => requestInput.current?.focus() }}
-          secondary={{ label: "Browse opportunities", href: "/opportunities" }}
-        >
-          Voxide is not connected. Type a request or use a quick action. The buttons call the Postgres API.
-        </StatusPanel>
-      </div>
+      {!voxideReady ? (
+        <div id="voice-unavailable" className="mt-6">
+          <StatusPanel
+            variant="empty"
+            title="Voice unavailable"
+            primary={{ label: "Type a request", onClick: () => requestInput.current?.focus() }}
+            secondary={{ label: "Browse opportunities", href: "/opportunities" }}
+          >
+            Voxide is not connected (missing or invalid NEXT_PUBLIC_VOXIDE_KEY). Type a request or use a
+            quick action. The buttons call the Postgres API.
+          </StatusPanel>
+        </div>
+      ) : (
+        <div className="mt-6">
+          <StatusPanel variant="empty" title="Voxide widget ready">
+            Use the Ask HULUM launcher (bottom-right) for voice or widget text. Tools call the same
+            product actions as the quick buttons. APPLY / MAYBE / SKIP still come from decide() on the
+            server.
+          </StatusPanel>
+          <VoxideAskHulum
+            session={{ opportunityId, analysisId }}
+            onSessionUpdate={(next) => {
+              if (next.opportunityId) setSessionOpportunityId(next.opportunityId);
+              if (next.analysisId) setSessionAnalysisId(next.analysisId);
+            }}
+            onReply={(userText, reply) => {
+              setMessages((current) => [
+                ...current,
+                { role: "user", text: userText },
+                { role: "hulum", text: reply },
+              ]);
+              setError(null);
+            }}
+            onError={(message) => setError(message)}
+          />
+        </div>
+      )}
       {error ? (
         <StatusPanel
           variant="error"
@@ -188,14 +226,6 @@ function AssistantInner() {
               {action}
             </button>
           ))}
-          <button
-            type="button"
-            disabled
-            className="min-h-11 border border-dashed border-line px-3 py-2 text-sm text-muted"
-            aria-describedby="voice-unavailable"
-          >
-            Voice (not connected)
-          </button>
         </div>
       </fieldset>
       <div className="mt-6 min-h-48 space-y-3" aria-live="polite" aria-relevant="additions">

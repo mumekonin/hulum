@@ -2,6 +2,19 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Kidist: Voxide widget on Ask HULUM
+
+### Added
+- `@voxide/react` on `/assistant` behind `NEXT_PUBLIC_VOXIDE_KEY` (`vox_pub_…`).
+- One browser tool `runHulumAction` that calls the same `runTextAction` path as typed text and quick actions.
+- Text/quick-action fallback StatusPanel when the public key is missing or invalid.
+
+### Why
+ADR 001: Voxide is a browser widget. Gemini must not invent APPLY / MAYBE / SKIP; `decide()` stays on the server. No Express STT/TTS.
+
+### Decision
+Live Amharic STT is not claimed. English remains the stable path. Do not mark full voice DONE without a real mic test with a keyed widget.
+
 ## 2026-09-23 — Explain evaluation fixtures and Groq retry
 
 ### Added

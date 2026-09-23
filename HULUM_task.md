@@ -566,11 +566,11 @@ Voice is a required product feature.
 
 It must perform meaningful HULUM actions and must not be decorative.
 
-- [ ] **P0** Study Voxide integration requirements.
-- [ ] **P0** Create development integration.
-- [ ] **P0** Receive/process voice input.
+- [x] **P0** Study Voxide integration requirements.
+- [x] **P0** Create development integration.
+- [-] **P0** Receive/process voice input.
 - [x] **P0** Connect voice to HULUM actions.
-- [ ] **P0** Produce voice response.
+- [-] **P0** Produce voice response.
 - [x] **P0** Analyze an opportunity by voice.
 - [x] **P0** Ask "Why?"
 - [x] **P0** Ask "What am I missing?"
