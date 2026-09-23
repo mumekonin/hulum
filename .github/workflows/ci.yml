@@ -14,23 +14,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
 
-    env:
-      DATABASE_URL: postgresql://postgres:postgres@127.0.0.1:5432/hulum
-
     services:
       postgres:
         image: postgres:16
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: hulum
+          POSTGRES_USER: hulum
+          POSTGRES_PASSWORD: hulum
+          POSTGRES_DB: hulum_test
         ports:
           - 5432:5432
         options: >-
-          --health-cmd "pg_isready -U postgres -d hulum"
+          --health-cmd "pg_isready -U hulum -d hulum_test"
           --health-interval 5s
           --health-timeout 5s
-          --health-retries 20
+          --health-retries 12
+
+    env:
+      DATABASE_URL: postgres://hulum:hulum@127.0.0.1:5432/hulum_test
 
     steps:
       - uses: actions/checkout@v4
@@ -53,7 +53,7 @@ jobs:
         run: npm run lint
 
       - name: Run database migrations
-        run: npm run db:migrate
+        run: npm --workspace @hulum/server run db:migrate
 
       - name: Test
         run: npm test
