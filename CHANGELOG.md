@@ -2,6 +2,18 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Deployment guide and ops API docs
+
+### Added
+- `docs/stark/deployment.md` expanded as the Phase 26 deployment guide (local-only decision; no fake deploy job).
+- Ops audit/debug routes documented in `docs/architecture/api.md` (`/api/ops/summary`, decision-debug, client-event).
+
+### Fixed
+- `docs/demo/backup.md` health URL uses `:3001` (not `:4000`).
+
+### Why
+Phase 14 audit/debug, Phase 24 “deployment workflow if appropriate”, and Phase 26 deployment guide asked for honest docs against the shipped local stack — without inventing EthioDeploy or branch protection.
+
 ## 2026-09-23 — Voice latency and recognition ops signals
 
 ### Added
