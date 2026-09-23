@@ -130,6 +130,20 @@ export type RequirementMatch = {
   reason: string;
 };
 
+/** Deterministic debug trail from `decide()`. Not a user-facing eligibility guarantee. */
+export type DecisionAudit = {
+  /** Which engine branch produced the final decision (expired can override). */
+  rulePath: "critical_not_met" | "keys_met_no_uncertainty" | "default_maybe" | "expired_override";
+  criticalKeys: string[];
+  keyRequirementKeys: string[];
+  criticalNotMet: string[];
+  keyStatuses: Record<string, RequirementStatus>;
+  uncertainKeys: string[];
+  effectiveVerificationStatus: VerificationStatus;
+  fitScoreIsAdvisoryOnly: true;
+  decidedAt: string;
+};
+
 export type DecisionResult = {
   decision: Decision;
   fitScore: number;
@@ -138,6 +152,7 @@ export type DecisionResult = {
   uncertainRequirements: RequirementMatch[];
   reasons: string[];
   nextAction: string;
+  audit: DecisionAudit;
 };
 
 export type Requirement = {
@@ -179,6 +194,8 @@ export type Analysis = {
   disclaimer?: string;
   requirements?: Requirement[];
   readiness?: ReadinessItem[];
+  /** Present when the engine stored an audit trail. Debug only — not an official guarantee. */
+  audit?: DecisionAudit;
   createdAt: string;
   updatedAt: string;
 };

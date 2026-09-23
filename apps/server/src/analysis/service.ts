@@ -45,6 +45,7 @@ export function createAnalysisService(deps: {
         summary: analysisSummaryFor(result.decision),
         matches,
         readiness: buildReadinessItems(matches),
+        audit: result.audit,
       });
     },
 

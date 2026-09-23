@@ -2,8 +2,10 @@ import {
   Decision,
   ReadinessStatus,
   RequirementStatus,
+  VerificationStatus,
   isDecision,
   type Analysis,
+  type DecisionAudit,
   type ReadinessItem,
   type Requirement,
 } from "@hulum/shared";
@@ -16,6 +18,7 @@ export type AnalysisRow = {
   decision: string;
   fit_score: number;
   summary: string;
+  decision_audit: unknown;
   created_at: Date | string;
   updated_at: Date | string;
 };
@@ -97,6 +100,31 @@ export function nextActionFor(decision: Decision): string {
   return NEXT_ACTION.MAYBE;
 }
 
+function isRulePath(value: unknown): value is DecisionAudit["rulePath"] {
+  return (
+    value === "critical_not_met" ||
+    value === "keys_met_no_uncertainty" ||
+    value === "default_maybe" ||
+    value === "expired_override"
+  );
+}
+
+function mapDecisionAudit(value: unknown): DecisionAudit | undefined {
+  if (value === null || value === undefined || typeof value !== "object") {
+    return undefined;
+  }
+  const record = value as DecisionAudit;
+  if (!isRulePath(record.rulePath) || record.fitScoreIsAdvisoryOnly !== true) {
+    return undefined;
+  }
+  if (
+    !Object.values(VerificationStatus).some((status) => status === record.effectiveVerificationStatus)
+  ) {
+    return undefined;
+  }
+  return record;
+}
+
 export function mapAnalysis(
   row: AnalysisRow,
   requirements: Requirement[],
@@ -105,6 +133,7 @@ export function mapAnalysis(
   if (!isDecision(row.decision)) {
     throw new Error("Analysis decision in the database is not a locked contract value");
   }
+  const audit = mapDecisionAudit(row.decision_audit);
   return {
     id: row.id,
     userId: row.user_id,
@@ -115,6 +144,7 @@ export function mapAnalysis(
     requirements,
     nextAction: nextActionFor(row.decision),
     readiness,
+    ...(audit !== undefined ? { audit } : {}),
     createdAt: toIsoDateTime(row.created_at),
     updatedAt: toIsoDateTime(row.updated_at),
   };

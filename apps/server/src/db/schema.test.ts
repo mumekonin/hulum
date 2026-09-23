@@ -14,6 +14,15 @@ describe("002_investigator.sql", () => {
   });
 });
 
+describe("003_analysis_decision_audit.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "003_analysis_decision_audit.sql"), "utf8");
+
+  it("adds decision_audit jsonb on analyses", () => {
+    expect(sql).toContain("decision_audit jsonb");
+    expect(sql).toContain("alter table analyses");
+  });
+});
+
 describe("001_init.sql", () => {
   const sql = fs.readFileSync(path.join(migrationsDir(), "001_init.sql"), "utf8");
 

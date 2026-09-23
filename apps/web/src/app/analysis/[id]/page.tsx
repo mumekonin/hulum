@@ -5,6 +5,7 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { OFFICIAL_SOURCE_NOTICE, type Analysis, type Opportunity, type ReadinessItem } from "@hulum/shared";
 import { DecisionBadge } from "@/components/DecisionBadge";
+import { DecisionAuditPanel } from "@/components/DecisionAuditPanel";
 import { ExternalLink } from "@/components/ExternalLink";
 import { Notice } from "@/components/Notice";
 import { ReadinessList } from "@/components/ReadinessList";
@@ -149,6 +150,8 @@ export default function AnalysisPage() {
           <ReadinessList items={readiness} onChange={replaceReadiness} />
         )}
       </div>
+
+      {analysis.audit ? <DecisionAuditPanel audit={analysis.audit} /> : null}
 
       <div className="mt-10 flex flex-wrap gap-3">
         {opportunity?.applicationUrl ? (
