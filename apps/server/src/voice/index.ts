@@ -1,4 +1,5 @@
 import { randomUUID } from "node:crypto";
+import { Router } from "express";
 import {
   RequirementStatus,
   voiceActionSchema,
@@ -12,11 +13,10 @@ import {
   type VoiceIntent,
   ok,
 } from "@hulum/shared";
-import { Router } from "express";
-import type { AnalysisService } from "../analysis/service.js";
-import { createAnalysisService } from "../analysis/service.js";
-import { createPgAnalysisStore } from "../analysis/store.js";
 import { createGroqChatClient, type ChatClient } from "../ai/index.js";
+import { createAnalysisService } from "../analysis/service.js";
+import type { AnalysisService } from "../analysis/service.js";
+import { createPgAnalysisStore } from "../analysis/store.js";
 import { loadEnv } from "../config/env.js";
 import { decide } from "../decision/decide.js";
 import { getPool } from "../db/pool.js";
@@ -24,6 +24,7 @@ import { HttpError } from "../http/errors.js";
 import { isUuid } from "../http/ids.js";
 import { createOpportunityService, type OpportunityService } from "../opportunities/service.js";
 import { createPgOpportunityStore } from "../opportunities/store.js";
+import { timeOps } from "../ops/metrics.js";
 import { createProfileService, type ProfileService } from "../profiles/service.js";
 import { createPgProfileStore } from "../profiles/store.js";
 import type { Clock } from "../services/common/clock.js";
@@ -349,7 +350,9 @@ export function createVoiceRouter(service?: VoiceService): Router {
         typeof req.body?.userId === "string" && req.body.userId.trim() ? req.body.userId.trim() : "anonymous";
       const language: LanguageCode =
         req.body?.language === "am" || req.body?.language === "om" ? req.body.language : "en";
-      const session = await getService().createSession(userId, language);
+      const session = await timeOps("session", "voice.session", () =>
+        getService().createSession(userId, language),
+      );
       res.status(201).json(ok(session));
     } catch (error) {
       next(error);
@@ -363,13 +366,24 @@ export function createVoiceRouter(service?: VoiceService): Router {
         throw new HttpError(422, "INVALID_VOICE", "Voice action needs text and a user id.");
       }
       const { text, language = "en", userId, opportunityId, analysisId } = parsed.data;
-      const result = await getService().handleAction({
-        userId,
-        text,
-        language,
-        ...(opportunityId === undefined ? {} : { opportunityId }),
-        ...(analysisId === undefined ? {} : { analysisId }),
-      });
+      const result = await timeOps(
+        "voice",
+        "voice.action",
+        () =>
+          getService().handleAction({
+            userId,
+            text,
+            language,
+            ...(opportunityId === undefined ? {} : { opportunityId }),
+            ...(analysisId === undefined ? {} : { analysisId }),
+          }),
+        (error) =>
+          error instanceof HttpError
+            ? error.code
+            : error && typeof error === "object" && "code" in error && typeof error.code === "string"
+              ? error.code
+              : undefined,
+      );
       res.status(200).json(ok(result));
     } catch (error) {
       next(error);
