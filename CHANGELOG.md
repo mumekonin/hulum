@@ -5,7 +5,7 @@ HULUM records actual work. Do not invent history.
 ## 2026-09-23 — CI: Postgres service for vertical-slice tests
 
 ### Changed
-- `.github/workflows/ci.yml` runs Postgres 16 (`hulum_test`), sets ephemeral `DATABASE_URL`, migrates via root `npm run db:migrate`, then `npm test`.
+- `.github/workflows/ci.yml` runs Postgres 16 (`hulum_test`), sets ephemeral job-level `DATABASE_URL`, migrates with `npm run db:migrate --workspace @hulum/server`, then `npm test`.
 - `loadEnv` no longer overrides existing process env with `.env`, so the CI `DATABASE_URL` is not wiped when `apps/server/.env` is absent or empty.
 
 ### Why
