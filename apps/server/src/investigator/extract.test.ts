@@ -47,4 +47,18 @@ describe("investigator extract", () => {
     expect(rows).toHaveLength(1);
     expect(rows[0]?.title).toBe("HETRIIL internship");
   });
+
+  it("recovers JSON wrapped in extra model text", async () => {
+    const chat = {
+      complete: async () => 'Here you go:\n{"opportunities":[]}\nThanks.',
+    };
+    await expect(extractOpportunities(chat, "page")).resolves.toEqual([]);
+  });
+
+  it("returns no rows when the model reply is not JSON", async () => {
+    const chat = {
+      complete: async () => "I cannot extract anything useful.",
+    };
+    await expect(extractOpportunities(chat, "page")).resolves.toEqual([]);
+  });
 });

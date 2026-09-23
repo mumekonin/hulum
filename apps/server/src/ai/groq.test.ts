@@ -29,21 +29,50 @@ describe("Groq explainer", () => {
   });
 
   it("reads content from the Groq chat completions payload", async () => {
+    let body = "";
     const client = createGroqChatClient({
       apiKey: "test-key",
       model: "openai/gpt-oss-20b",
       url: GROQ_CHAT_COMPLETIONS_URL,
-      fetchImpl: async () =>
-        new Response(
+      fetchImpl: async (_url, init) => {
+        body = typeof init?.body === "string" ? init.body : "";
+        return new Response(
           JSON.stringify({
             choices: [{ message: { content: "  You meet the listed requirements.  " } }],
           }),
           { status: 200, headers: { "content-type": "application/json" } },
-        ),
+        );
+      },
     });
     await expect(client.complete([{ role: "user", content: "explain" }])).resolves.toBe(
       "You meet the listed requirements.",
     );
+    const sent = JSON.parse(body) as { reasoning_effort?: string; max_completion_tokens?: number };
+    expect(sent.reasoning_effort).toBe("low");
+    expect(sent.max_completion_tokens).toBeGreaterThanOrEqual(2048);
+  });
+
+  it("uses extract token and JSON options", async () => {
+    let body = "";
+    const client = createGroqChatClient({
+      apiKey: "test-key",
+      model: "openai/gpt-oss-20b",
+      fetchImpl: async (_url, init) => {
+        body = typeof init?.body === "string" ? init.body : "";
+        return new Response(JSON.stringify({ choices: [{ message: { content: "{\"opportunities\":[]}" } }] }), {
+          status: 200,
+        });
+      },
+    });
+    await expect(
+      client.complete([{ role: "user", content: "extract" }], { maxCompletionTokens: 4096, jsonObject: true }),
+    ).resolves.toBe('{"opportunities":[]}');
+    const sent = JSON.parse(body) as {
+      max_completion_tokens?: number;
+      response_format?: { type?: string };
+    };
+    expect(sent.max_completion_tokens).toBe(4096);
+    expect(sent.response_format?.type).toBe("json_object");
   });
 
   it("maps Groq failures to AI_UNAVAILABLE", async () => {
