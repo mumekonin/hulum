@@ -5,7 +5,8 @@ HULUM records actual work. Do not invent history.
 ## 2026-09-23 — CI: Postgres service for vertical-slice tests
 
 ### Changed
-- `.github/workflows/ci.yml` runs Postgres 16 (`hulum_test`), sets ephemeral `DATABASE_URL`, migrates immediately after install, then typecheck/lint/`npm test`.
+- `.github/workflows/ci.yml` runs Postgres 16 (`hulum_test`), sets ephemeral `DATABASE_URL`, migrates via root `npm run db:migrate`, then `npm test`.
+- `loadEnv` no longer overrides existing process env with `.env`, so the CI `DATABASE_URL` is not wiped when `apps/server/.env` is absent or empty.
 
 ### Why
 `postgres-slice.test.ts` calls `getPool()` / `requireDatabaseUrl()` and needs a live schema. CI had neither Postgres nor `DATABASE_URL`. Credentials are workflow-only disposable values — not committed to `.env`.
