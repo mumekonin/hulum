@@ -524,9 +524,9 @@ AI is an assistant, not the eligibility authority.
 - [x] **P0** Implement decision-aware explanation.
 - [x] **P0** Implement readiness-plan generation.
 - [x] **P0** Implement contextual Q&A.
-- [ ] **P1** Add retry/fallback behavior.
+- [x] **P1** Add retry/fallback behavior.
 - [ ] **P1** Track latency/errors.
-- [ ] **P1** Create evaluation examples.
+- [x] **P1** Create evaluation examples.
 
 ---
 

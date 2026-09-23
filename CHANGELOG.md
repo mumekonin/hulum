@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Explain evaluation fixtures and Groq retry
+
+### Added
+- `apps/server/src/ai/eval-examples.ts`: safe/unsafe Groq explanation fixtures checked against `sanitizeExplanation`.
+- One `AI_ERROR` retry in `explain()` before falling back to the stored summary + next action.
+
+### Why
+Phase 10 asked for evaluation examples and retry/fallback. Unsafe model text must not change APPLY / MAYBE / SKIP or invent URLs.
+
 ## 2026-09-23 — Personalized readiness plan (AI wording)
 
 ### Added
