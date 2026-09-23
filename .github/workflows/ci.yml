@@ -1,4 +1,4 @@
-# Install, typecheck, lint, and test. No deploy (local only).
+# Install, typecheck, lint, test, and production builds. No deploy (local only).
 name: CI
 
 on:
@@ -43,6 +43,22 @@ jobs:
       - name: Install dependencies
         run: npm ci --include=optional
 
+      # Windows-generated lockfiles list Linux optionals, but npm's os/cpu/libc
+      # filter can still skip them on the runner. Force without rewriting the lockfile.
+      - name: Ensure Linux native CSS bindings
+        run: |
+          npm install --no-save --no-package-lock --include=optional \
+            @tailwindcss/oxide-linux-x64-gnu@4.3.3 \
+            lightningcss-linux-x64-gnu@1.32.0 \
+            @rollup/rollup-linux-x64-gnu@4.63.3
+
+      - name: Verify native build dependencies
+        run: |
+          test -d node_modules/@tailwindcss/oxide-linux-x64-gnu
+          test -d node_modules/lightningcss-linux-x64-gnu
+          node -e "require('lightningcss'); console.log('lightningcss loaded')"
+          node -e "require('@tailwindcss/oxide'); console.log('tailwind oxide loaded')"
+
       - name: Run database migrations
         run: npm run db:migrate --workspace @hulum/server
 
@@ -57,3 +73,9 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Build server
+        run: npm run build:server
+
+      - name: Build web
+        run: npm run build
