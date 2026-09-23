@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — CI: record Linux Tailwind Oxide optional dependency
+
+### Fixed
+- Root `optionalDependencies` includes `@tailwindcss/oxide-linux-x64-gnu@4.3.3` so Ubuntu `npm ci --include=optional` can load `@tailwindcss/oxide` during `next build`.
+- Pin `@tailwindcss/postcss` / `tailwindcss` to `4.3.3` in `apps/web`.
+- CI verifies `require('@tailwindcss/oxide')` alongside Lightning CSS before Build web.
+
+### Why
+`next/font` triggers Tailwind v4 Oxide. The lockfile only recorded the Windows Oxide binary, so Build web failed after Lightning CSS was fixed.
+
 ## 2026-09-23 — CI: record Linux Lightning CSS optional dependency
 
 ### Fixed

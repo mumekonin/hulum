@@ -46,6 +46,7 @@ jobs:
       - name: Verify native build dependencies
         run: |
           node -e "require('lightningcss'); console.log('lightningcss loaded')"
+          node -e "require('@tailwindcss/oxide'); console.log('tailwind oxide loaded')"
 
       - name: Run database migrations
         run: npm run db:migrate --workspace @hulum/server
