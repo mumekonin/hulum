@@ -215,6 +215,50 @@ export async function runTextAction(input: {
     };
   }
 
+  if (
+    /extract (my )?profile|build (my )?profile from|profile from (this|my) (text|description)|fill (my )?profile from/i.test(
+      value,
+    )
+  ) {
+    const description =
+      value.replace(
+        /^.*?(?:extract (?:my )?profile(?: from this)?:?|build (?:my )?profile from|profile from (?:this|my) (?:text|description):?|fill (?:my )?profile from)\s*/i,
+        "",
+      ).trim() || value;
+    if (description.length < 8) {
+      return {
+        reply:
+          "Paste a short self-description after the request, or open Profile and use Propose profile fields. Nothing is saved until you confirm.",
+      };
+    }
+    try {
+      const result = await api<{
+        filledFields: string[];
+        notice: string;
+        proposed: Record<string, string | number | string[] | null>;
+      }>("/api/ai/profile-extract", {
+        method: "POST",
+        body: JSON.stringify({ text: description }),
+      });
+      if (result.filledFields.length === 0) {
+        return { reply: `I could not extract clear profile facts from that text. ${result.notice}` };
+      }
+      const parts = result.filledFields.map((field) => {
+        const raw = result.proposed[field];
+        const shown = Array.isArray(raw) ? raw.join(", ") : String(raw);
+        return `${field}: ${shown}`;
+      });
+      return {
+        reply: `Proposed profile facts (not saved yet): ${parts.join("; ")}. Open Profile, confirm into the form, then save. ${result.notice}`,
+      };
+    } catch {
+      return {
+        reply:
+          "Profile extract is unavailable right now (Groq may be unset). Open Profile and enter facts manually — HULUM never invents stored profile data.",
+      };
+    }
+  }
+
   if (/update profile|change profile|edit profile/i.test(value)) {
     return { reply: "Open your profile and save the facts there. Voice does not write profile facts." };
   }

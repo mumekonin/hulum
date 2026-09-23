@@ -24,6 +24,8 @@ export type {
   PatchProfileRequest,
   ProfileCompleteness,
   ProfileCompletenessField,
+  ProfileExtractProposal,
+  ProfileExtractResult,
   ProfileView,
   ProfileWrite,
 } from "./profile.js";

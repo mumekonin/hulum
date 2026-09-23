@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { analysisRouter, analyzeRouter } from "../analysis/index.js";
+import { profileExtractRouter } from "../ai/profileExtractRouter.js";
 import { createOpsRouter } from "../ops/index.js";
 import { opportunityRouter } from "../opportunities/index.js";
 import { profileRouter } from "../profiles/index.js";
@@ -16,6 +17,7 @@ export function createApiRouter(): Router {
   router.use("/investigate", investigateRouter);
   router.use("/research", researchRouter);
   router.use("/profile", profileRouter);
+  router.use("/ai", profileExtractRouter);
   router.use("/opportunities", analyzeRouter);
   router.use("/opportunities", opportunityRouter);
   router.use("/analyses", analysisRouter);
