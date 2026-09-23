@@ -2,6 +2,7 @@ import {
   type Analysis,
   type Opportunity,
   type OpportunityType,
+  type ProfileView,
   type ReadinessItem,
 } from "@hulum/shared";
 import { api } from "./api";
@@ -20,6 +21,26 @@ const TYPE_WORDS: Array<[RegExp, OpportunityType]> = [
   [/\bjob|remote job/i, "job"],
   [/\bcompetition/i, "competition"],
 ];
+
+const PROFILE_FIELD_LABELS: Record<string, string> = {
+  educationLevel: "education level",
+  fieldOfStudy: "field of study",
+  graduationYear: "graduation year",
+  country: "country",
+  city: "city",
+  languages: "languages",
+  skills: "skills",
+  experience: "experience",
+  interests: "interests",
+};
+
+function formatProfileGapsReply(missing: string[]): string {
+  if (missing.length === 0) {
+    return "Your profile looks complete for v0.1 matching. You can still edit details on the profile page.";
+  }
+  const labels = missing.map((field) => PROFILE_FIELD_LABELS[field] ?? field);
+  return `Your profile is missing: ${labels.join(", ")}. Open your profile to add them before analyzing. Voice cannot silently change stored facts.`;
+}
 
 function decisionWord(value: string): "APPLY" | "MAYBE" | "SKIP" | undefined {
   if (/\bmaybe\b/i.test(value)) return "MAYBE";
@@ -104,6 +125,39 @@ export async function runTextAction(input: {
         opportunityId: analysis.opportunityId,
       };
     }
+  }
+
+  // Profile gaps before generic "what am I missing" (opportunity requirements).
+  if (
+    /profile\s*(gap|gaps|incomplete|missing)|missing from my profile|what.*(incomplete|missing).*profile|profile.*(incomplete|missing)/i.test(
+      value,
+    )
+  ) {
+    try {
+      const view = await api<ProfileView>(`/api/profile/${input.userId}`);
+      return { reply: formatProfileGapsReply(view.completeness.missing) };
+    } catch {
+      return { reply: "Create a profile first so HULUM can list missing fields." };
+    }
+  }
+
+  if (
+    /clarif(y|ication)|which requirements.*(uncertain|unclear)|explain.*(uncertain|unclear).*requirement/i.test(
+      value,
+    )
+  ) {
+    if (!input.analysisId) {
+      return { reply: "Analyze an opportunity first, then ask to clarify uncertain requirements." };
+    }
+    const analysis = await api<Analysis>(`/api/analyses/${input.analysisId}`);
+    const uncertain = (analysis.requirements ?? []).filter((item) => item.status === "UNCERTAIN");
+    return {
+      reply: uncertain.length
+        ? `These requirements are UNCERTAIN — confirm them on the official source before treating them as met: ${uncertain.map(requirementLine).join("; ")}`
+        : "No UNCERTAIN requirements are stored for this analysis. Confirm any doubt on the official source; HULUM is not the organization.",
+      analysisId: analysis.id,
+      opportunityId: analysis.opportunityId,
+    };
   }
 
   if (/ምን ጎድሎኛል|what am i missing|gaps?|missing/i.test(value)) {

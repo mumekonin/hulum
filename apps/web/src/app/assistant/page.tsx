@@ -22,6 +22,8 @@ const quickActions = [
   "ምን ጎድሎኛል?",
   "What should I prepare?",
   "ምን ላዘጋጅ?",
+  "What is missing from my profile?",
+  "Clarify uncertain requirements",
 ];
 
 export default function AssistantPage() {
