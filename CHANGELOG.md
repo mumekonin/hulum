@@ -2,6 +2,22 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Postgres demo profile + demo doc ports
+
+### Added
+- `POST /api/profile/demo` on the Postgres API (idempotent Abeba Tesfaye persona).
+- `docs/ops/branch-protection.md` — how to require CI before merge (admin still must enable).
+
+### Fixed
+- Demo script / backup Path C used `:4000` and file-store `opp-a2sv` ids; now `:3001` + list-by-title for Postgres.
+
+### Changed
+- Marked demo **Demonstrate voice** for Ask HULUM text/quick-actions (ADR 003; not live mic).
+- Marked multilingual research question for shipped text intents + language selector (second-language e2e still open).
+
+### Why
+Make the API backup path work on the real `npm run dev` stack and close honest demo/docs leftovers.
+
 ## 2026-09-24 — Ask HULUM language + profile-by-voice honesty
 
 ### Changed

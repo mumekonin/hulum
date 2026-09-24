@@ -12,6 +12,7 @@ export type StoredProfile = {
 export type ProfileStore = {
   create(input: { name: string; email: string; userId?: string } & ProfileWrite): Promise<StoredProfile>;
   getByUserId(userId: string): Promise<StoredProfile | undefined>;
+  getByEmail(email: string): Promise<StoredProfile | undefined>;
   update(userId: string, patch: PatchProfileRequest): Promise<StoredProfile | undefined>;
 };
 
@@ -115,6 +116,21 @@ export function createPgProfileStore(): ProfileStore {
 
     async getByUserId(userId: string): Promise<StoredProfile | undefined> {
       return getByUserId(userId);
+    },
+
+    async getByEmail(email: string): Promise<StoredProfile | undefined> {
+      const result = await getPool().query<JoinedRow>(
+        `select ${PROFILE_COLUMNS}
+         from profiles p
+         join users u on u.id = p.user_id
+         where lower(u.email) = lower($1)`,
+        [email.trim()],
+      );
+      const row = result.rows[0];
+      if (row === undefined) {
+        return undefined;
+      }
+      return toStored(row);
     },
 
     async update(userId: string, patch: PatchProfileRequest): Promise<StoredProfile | undefined> {

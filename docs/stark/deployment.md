@@ -66,7 +66,7 @@ GitHub Actions CI (`.github/workflows/ci.yml`) already runs install, migrations,
 
 **Configure deployment workflow:** not appropriate for v0.1 — there is no production host to deploy to. Do not add a deploy job that invents a URL.
 
-**Block merges when checks fail:** CI runs on PRs, but requiring the check via GitHub branch protection needs org/repo admin. Until an admin enables **Settings → Branches → Require status checks to pass → job `check` (workflow CI)**, merges are not mechanically blocked. Do not claim branch protection is on.
+**Block merges when checks fail:** see `docs/ops/branch-protection.md`. CI runs on PRs; requiring the check needs a repo admin. Do not claim branch protection is on until that rule exists.
 
 ## What judges should run
 

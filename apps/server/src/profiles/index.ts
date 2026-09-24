@@ -25,6 +25,16 @@ export function createProfileRouter(service?: ProfileService): Router {
     }
   });
 
+  /** Abeba Tesfaye demo persona for local/API backup demos (idempotent by email). */
+  router.post("/demo", async (_req, res, next) => {
+    try {
+      const view = await getService().ensureDemo();
+      res.status(201).json(ok(view));
+    } catch (error) {
+      next(error);
+    }
+  });
+
   router.get("/:userId", async (req, res, next) => {
     try {
       const userId = req.params.userId;

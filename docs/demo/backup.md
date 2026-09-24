@@ -65,19 +65,22 @@ If the assistant session fails, keep typing; the UI is already in backup mode wh
 
 ## Path C — Browser UI is unusable (API)
 
-Judges can still see the engine. From the repo root, with the API on `:4000`:
+Judges can still see the engine. From the repo root, with `npm run dev` (API on `:3001`) and a seeded catalog (`npm run db:seed`):
 
 ```powershell
-Invoke-RestMethod http://localhost:4000/api/health
-Invoke-RestMethod -Method POST http://localhost:4000/api/profile/demo
-Invoke-RestMethod -Method POST http://localhost:4000/api/opportunities/opp-a2sv/analyze -ContentType application/json -Body '{"userId":"user_demo_abeba"}'
+Invoke-RestMethod http://localhost:3001/api/health
+$demo = Invoke-RestMethod -Method POST http://localhost:3001/api/profile/demo
+$userId = $demo.data.profile.userId
+$ops = Invoke-RestMethod http://localhost:3001/api/opportunities
+$a2sv = $ops.data | Where-Object { $_.title -match 'A2SV' } | Select-Object -First 1
+Invoke-RestMethod -Method POST "http://localhost:3001/api/opportunities/$($a2sv.id)/analyze" -ContentType application/json -Body (@{ userId = $userId } | ConvertTo-Json)
 ```
 
 Expected: envelope `{ data, error }`, A2SV **APPLY** for Abeba.
 
-Same body against `opp-mastercard-uct` → **MAYBE**. Against `opp-chevening` → **SKIP**.
+Find Mastercard / Chevening the same way by title → **MAYBE** / **SKIP**.
 
-Automated coverage of this path: `npm test` in `apps/server` (`flow.test.ts`, `failures.test.ts`, voice text-fallback tests).
+Automated coverage of the file-store twin path: `npm test` in `apps/server` (`flow.test.ts`, `failures.test.ts`, voice text-fallback tests).
 
 ---
 

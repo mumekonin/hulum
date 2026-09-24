@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-09-24 — Demo backup Postgres path
+
+- `POST /api/profile/demo` on Postgres; backup/script ports fixed to `:3001`.
+- Branch protection admin guide; Demonstrate voice = Ask HULUM text path.
+
+Still open: deploy, live mic, Amharic/Oromo e2e, CI require-check (admin), browser tests, backup video.
+
+---
+
 ## 2026-09-24 — Language wiring + research/product honesty
 
 - Explain / readiness plan use selected language; profile extract via Ask HULUM counted as profile-by-voice (text/widget path).
