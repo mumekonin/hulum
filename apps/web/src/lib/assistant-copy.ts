@@ -1,6 +1,8 @@
 import type { LanguageCode } from "@hulum/shared";
 
-/** Ask HULUM chrome copy. Amharic is text UX only — not a live STT claim (ADR 004). */
+/** Ask HULUM chrome copy. Amharic is text UX only — not a live STT claim (ADR 004).
+ * Afaan Oromo selects explain/readiness language; chrome stays English until reviewed copy exists.
+ */
 export type AssistantCopy = {
   title: string;
   intro: string;
@@ -92,7 +94,15 @@ const QUICK_AM = [
 ];
 
 export function assistantCopy(language: LanguageCode): AssistantCopy {
-  return language === "am" ? AM : EN;
+  if (language === "am") return AM;
+  if (language === "om") {
+    return {
+      ...EN,
+      languageHint:
+        "Afaan Oromo selects explain/readiness language when Groq is set. Ask HULUM chrome stays English — no invented Oromo UI copy (ADR 004).",
+    };
+  }
+  return EN;
 }
 
 export function assistantQuickActions(language: LanguageCode): string[] {

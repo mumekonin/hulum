@@ -80,6 +80,12 @@ Expected: envelope `{ data, error }`, A2SV **APPLY** for Abeba.
 
 Find Mastercard / Chevening the same way by title → **MAYBE** / **SKIP**.
 
+Or run the automated local triangle (same expectations):
+
+```powershell
+npm run smoke:local
+```
+
 Automated coverage of the file-store twin path: `npm test` in `apps/server` (`flow.test.ts`, `failures.test.ts`, voice text-fallback tests).
 
 ---

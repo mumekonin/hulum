@@ -97,6 +97,8 @@ Type or click:
 
 **Say:** Same product actions; language selector also drives explain/readiness wording when Groq is set.
 
+**Afaan Oromo:** selecting it sets explain language only. Ask HULUM chrome stays English — do not demo invented Oromo UI copy.
+
 ### 4:20 — MAYBE (optional, ~45s)
 
 Back to Opportunities. Open Mastercard Foundation Scholars Program at UCT. Analyze.

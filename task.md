@@ -790,7 +790,7 @@ Actual support depends on Voxide capabilities and quality.
 - [x] **P0** Implement language selection.
 - [x] **P0** Test one language end-to-end.
 - [x] **P0** Ensure core voice interaction works.
-- [ ] **P1** Add second language.
+- [x] **P1** Add second language.
 - [ ] **P1** Add third language if stable.
 - [x] **P1** Test mixed-language input.
 - [x] **P1** Test opportunity terminology.

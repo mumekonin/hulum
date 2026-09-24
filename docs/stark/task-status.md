@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-09-24 — Demo-triangle smoke + Amharic second language
+
+- `smoke:local` / CI: APPLY + MAYBE + SKIP for Abeba.
+- Amharic marked as second language (text UX); Oromo selector = explain language, English chrome.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), browser click-through, backup video/PNG files.
+
+---
+
 ## 2026-09-24 — CI smoke + Amharic demo text
 
 - CI runs `db:seed` + `smoke:local` after tests.
