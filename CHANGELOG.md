@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Exclude node:test files from Vitest
+
+### Fixed
+- Vitest no longer discovers `shared-failure-messages.test.ts` and `error-handler.node.test.ts` (they run only under `tsx --test` / `node:test`).
+
+### Why
+CI failed with “No test suite found” when Vitest re-scanned Node-runner files that import `describe`/`it` from `node:test`.
+
 ## 2026-09-24 — Auth recovery gateway (UI only)
 
 ### Added
