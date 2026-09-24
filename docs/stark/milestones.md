@@ -10,7 +10,7 @@ List tags: `git tag -l 'milestone/*'`
 | `milestone/vertical-slice` | `aafc203` | Profile → opportunity → analyze covered through the real API |
 | `milestone/ci-build-gates` | `a7422d9` | GitHub Actions builds web and server (`#40`) |
 | `milestone/postgres-ask-hulum` | `36987c2` | Postgres Ask HULUM voice routes + optional Voxide widget path |
-| `milestone/v0.1-local` | `e61a942` | Local-only v0.1 stack documented and tagged — **not deployed** |
+| `milestone/v0.1-local` | this tag’s tip | Local-only v0.1 stack documented and tagged — **not deployed** (`git rev-parse milestone/v0.1-local`) |
 
 ## What these are not
 
