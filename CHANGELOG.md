@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Demo-triangle smoke + Amharic as second language
+
+### Changed
+- `smoke:local` (and CI) now asserts Abeba → A2SV **APPLY**, UCT **MAYBE**, Chevening **SKIP**.
+- Marked **Add second language** for Amharic Ask HULUM text UX (not live STT).
+- Afaan Oromo language option: explain/readiness language only; chrome stays English with an honest hint (no invented Oromo UI copy).
+
+### Why
+Lock the demo decision triangle in CI and close the Amharic text-language checkbox without claiming Oromo chrome or voice.
+
 ## 2026-09-24 — CI local smoke + Amharic demo step
 
 ### Added

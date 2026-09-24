@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 /**
  * Local API smoke (not a browser pass, not production).
+ * Covers the demo triangle: Abeba → A2SV APPLY, UCT MAYBE, Chevening SKIP.
  * Requires: API on :3001, migrated + seeded Postgres.
  *
  *   npm run db:migrate && npm run db:seed
@@ -25,6 +26,25 @@ async function json(path, init) {
   return body.data;
 }
 
+async function analyzeExpect(userId, opportunity, expected) {
+  const analysis = await json(`/api/opportunities/${opportunity.id}/analyze`, {
+    method: "POST",
+    body: JSON.stringify({ userId }),
+  });
+  if (analysis.decision !== expected) {
+    throw new Error(
+      `expected ${expected} for Abeba+${opportunity.title}, got ${analysis.decision}`,
+    );
+  }
+  console.log(`ok: Abeba → ${opportunity.title} → ${analysis.decision} (fit ${analysis.fitScore})`);
+}
+
+function findOpportunity(opportunities, pattern, label) {
+  const item = opportunities.find((row) => pattern.test(row.title ?? ""));
+  if (!item) throw new Error(`${label} opportunity not found — run npm run db:seed`);
+  return item;
+}
+
 async function main() {
   console.log(`smoke:local → ${API}`);
   await json("/api/health");
@@ -32,16 +52,15 @@ async function main() {
   const userId = demo.profile?.userId ?? demo.userId;
   if (!userId) throw new Error("demo profile missing userId");
   const opportunities = await json("/api/opportunities");
-  const a2sv = opportunities.find((item) => /a2sv/i.test(item.title ?? ""));
-  if (!a2sv) throw new Error("A2SV opportunity not found — run npm run db:seed");
-  const analysis = await json(`/api/opportunities/${a2sv.id}/analyze`, {
-    method: "POST",
-    body: JSON.stringify({ userId }),
-  });
-  if (analysis.decision !== "APPLY") {
-    throw new Error(`expected APPLY for Abeba+A2SV, got ${analysis.decision}`);
-  }
-  console.log(`ok: Abeba → ${a2sv.title} → ${analysis.decision} (fit ${analysis.fitScore})`);
+
+  const a2sv = findOpportunity(opportunities, /a2sv/i, "A2SV");
+  const uct = findOpportunity(opportunities, /mastercard.*uct|uct.*mastercard/i, "UCT Mastercard");
+  const chevening = findOpportunity(opportunities, /chevening/i, "Chevening");
+
+  await analyzeExpect(userId, a2sv, "APPLY");
+  await analyzeExpect(userId, uct, "MAYBE");
+  await analyzeExpect(userId, chevening, "SKIP");
+  console.log("ok: demo triangle APPLY / MAYBE / SKIP");
 }
 
 main().catch((error) => {

@@ -77,7 +77,7 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Local API smoke (Abeba → A2SV APPLY)
+      - name: Local API smoke (Abeba → APPLY / MAYBE / SKIP)
         run: |
           npm run start -w @hulum/server > /tmp/hulum-api.log 2>&1 &
           ready=0
