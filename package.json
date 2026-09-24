@@ -21,7 +21,7 @@
     "format:check": "prettier --check \"apps/server/src/**/*.{ts,tsx}\" \"apps/web/src/**/*.{ts,tsx}\" \"packages/shared/src/**/*.{ts,tsx}\" eslint.config.mjs .prettierrc.json",
     "test": "npm run test -w @hulum/server",
     "test:server": "npm run test -w @hulum/server",
-    "test:failures": "npm exec -w @hulum/server -- tsx --test src/shared-failure-messages.node.test.ts src/http/error-handler.node.test.ts",
+    "test:failures": "npm exec -w @hulum/server -- vitest run src/shared-failure-messages.test.ts src/http/error-handler.test.ts",
     "db:migrate": "npm run db:migrate -w @hulum/server",
     "db:seed": "npm run db:seed -w @hulum/server",
     "db:smoke": "npm run db:smoke -w @hulum/server"
