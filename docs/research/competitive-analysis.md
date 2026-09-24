@@ -93,7 +93,19 @@ Absence in a web search is not proof that nothing exists. It is only “not foun
 
 ## Voice-enabled opportunity systems
 
-No Amharic or Afaan Oromo **voice decision** product was verified in this pass. Consumer scholarship sites above are web search/match. HULUM’s voice requirement stays: same actions as the UI, with text fallback if Voxide fails.
+**Phase 3 P1 research (2026-09-18 pass + 2026-09-24 doc sync).** This is a literature/product scan, not a mic demo.
+
+| Category | What we found | Gap vs HULUM |
+|---|---|---|
+| Consumer scholarship / job matchers (Fastweb-class, regional boards) | Web search + profile forms; rarely speech | No APPLY / MAYBE / SKIP with UNCERTAIN; no readiness; voice not the action path |
+| Generic voice assistants / browser Voice AI SDKs (incl. Voxide-style widgets) | Speech → LLM tools in the browser | Must not invent eligibility; HULUM keeps `decide()` on the server (ADR 001 / 003) |
+| Amharic / Afaan Oromo STT research projects (third-party ASR) | Exist outside Voxide | Not Voxide; not wired; do not claim as HULUM voice |
+| Amharic / Afaan Oromo **voice decision** product for opportunities | **None verified** in this pass | HULUM still targets that UX; English text/quick actions are the stable path until a keyed mic test |
+
+Sources for the Voxide-specific path: `docs/research/voxide-integration.md`, `docs/research/voxide-languages.md`.  
+Product mapping: `docs/research/product-links.md`.
+
+HULUM’s voice requirement stays: **same actions as the UI**, with text fallback if Voxide fails. Absence in a web search is not proof that nothing exists.
 
 ---
 

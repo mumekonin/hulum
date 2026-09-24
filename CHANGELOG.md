@@ -2,6 +2,19 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Remaining-task honesty sync
+
+### Added
+- `docs/research/product-links.md` mapping research notes to ADRs and shipped behavior.
+- Expanded Phase 3 voice-enabled opportunity systems scan in competitive analysis.
+
+### Changed
+- `task.md` / `HULUM_task.md`: marked AI may/must-not rows, Postgres connection, research links, and Gate documentation that the product already satisfies.
+- Refreshed `docs/stark/task-status.md` for post–Day 20 reality (auth UIs stay UI-only; deploy/Voxide/JWT stay open).
+
+### Why
+Close stale open checkboxes without inventing a host, live mic, or JWT auth.
+
 ## 2026-09-24 — Auth induction gateway (UI only)
 
 ### Added
