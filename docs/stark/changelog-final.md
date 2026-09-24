@@ -34,7 +34,7 @@ Voice: running parser still emits `SHOW_GAPS`. Task 22 lock name is `SHOW_MISSIN
 - Retrieved ScholarXIV papers
 - EthioDeploy / live URL
 - Microphone / Voxide STT
-- Milestone tags `v0.8.0` / `v1.0.0`
+- SemVer product releases `v0.8.0` / `v1.0.0` (honest `milestone/*` tags: `docs/stark/milestones.md`)
 - Every Kidist `feat/*` branch on `main`
 
 ---

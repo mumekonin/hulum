@@ -33,7 +33,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Deployment | README production table | **Not deployed** |
 | Demo | `docs/demo/script.md`, `docs/demo/backup.md`, `docs/demo/rehearsal.md` | Abeba Tesfaye; text/API backup; rehearsal 2026-09-19 via tests, **no video** |
 | Changelog | `CHANGELOG.md`, `docs/stark/changelog-review.md`, `docs/stark/changelog-final.md` | Present; Day 20 freeze pass 2026-09-19 |
-| Git history | this GitHub repo, `docs/stark/git-history.md` | Real commits; Kidist pushes without Cursor co-author; **most Kidist `feat/*` not on `main`** |
+| Git history | this GitHub repo, `docs/stark/git-history.md`, `docs/stark/milestones.md` | Real commits; `milestone/*` tags on real SHAs; no invented SemVer product release |
 | Team | `team_assignments.md`, `git-workflow.md` | Present |
 
 ---

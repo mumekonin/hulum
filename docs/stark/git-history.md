@@ -52,7 +52,7 @@ Do not treat unmerged branches as if they were squash-merged. Do not backfill fa
 ## What this review does not claim
 
 - Every feature branch is on `main`
-- Milestone tags (`v0.8.0` / `v1.0.0`) exist
+- Milestone tags (`v0.8.0` / `v1.0.0`) as product releases — see `docs/stark/milestones.md` for honest `milestone/*` tags instead
 - Cursor is a GitHub contributor on Kidist commits
 - History was rewritten to look cleaner
 
