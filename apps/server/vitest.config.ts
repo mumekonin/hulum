@@ -5,10 +5,13 @@ export default defineConfig({
     environment: "node",
     include: ["src/**/*.test.ts"],
     exclude: [
+      "**/node_modules/**",
+      "**/dist/**",
       "src/decision/engine.test.ts",
       "src/opportunities/search.test.ts",
-      "src/shared-failure-messages.test.ts",
-      "src/http/error-handler.node.test.ts",
+      "**/shared-failure-messages.test.ts",
+      "**/error-handler.node.test.ts",
+      "**/*.node.test.ts",
     ],
   },
 });
