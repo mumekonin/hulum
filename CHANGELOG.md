@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Milestone git tags
+
+### Added
+- Annotated `milestone/*` tags on real commits (`foundation-web-api`, `vertical-slice`, `ci-build-gates`, `postgres-ask-hulum`, `v0.1-local`).
+- `docs/stark/milestones.md` lists tag → SHA → what each marks (local-only; not a production release).
+
+### Why
+Phase 27 P1 asked for milestone tags without manufacturing SemVer product releases or rewriting history.
+
 ## 2026-09-23 — Voice profile extract (propose only)
 
 ### Added

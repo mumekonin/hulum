@@ -56,6 +56,7 @@ ScholarXIV space and planned queries: `docs/research/scholarxiv.md`. **No papers
 - Clean-browser/device pass in this freeze
 - Native mobile (Task 14, out of v0.1)
 - Full login/RLS
-- Milestone git tags
+
+Milestone git tags: see `docs/stark/milestones.md` (`milestone/*` on real commits; no fake SemVer release).
 
 The product loop still runs locally: profile → opportunity → APPLY/MAYBE/SKIP → official source.

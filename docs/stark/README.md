@@ -23,6 +23,7 @@ This folder is the judge entry. It does not invent ScholarXIV papers, a producti
 | 7 | `docs/demo/script.md` | Abeba Tesfaye walkthrough |
 | 8 | `docs/stark/evidence.md` | Task 47 map |
 | 9 | `docs/stark/narrative.md` | How it was built (honest) |
+| 10 | `docs/stark/milestones.md` | `milestone/*` tags on real commits |
 
 Then run locally (README at repo root): `npm install` → `npm run dev` → http://localhost:3000
 
