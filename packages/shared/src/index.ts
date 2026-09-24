@@ -18,6 +18,14 @@ export {
   isVoiceIntent,
 } from "./enums.js";
 export { OFFICIAL_SOURCE_NOTICE } from "./notices.js";
+export {
+  MIC_UNAVAILABLE_BODY,
+  MIC_UNAVAILABLE_TITLE,
+  NETWORK_MESSAGE,
+  TEXT_FALLBACK_HINT,
+  isNetworkFetchError,
+  recognitionFailureMessage,
+} from "./failureMessages.js";
 export { PROFILE_COMPLETENESS_FIELDS, profileCompleteness } from "./profile.js";
 export type {
   CreateProfileRequest,

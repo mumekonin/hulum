@@ -2,6 +2,17 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-23 — Phase 20 failure tests
+
+### Added
+- `503 DATABASE_UNAVAILABLE` mapping for Postgres connection failures (no URL/secret in the body).
+- Shared client failure copy for network interruption, mic unavailable, and recognition failure (`@hulum/shared` + web re-export).
+- API failure test: contradictory years vs experience text stay `UNCERTAIN` (MAYBE), not invented MET.
+- `docs/architecture/failure-tests.md` index for Phase 20 rows.
+
+### Why
+Phase 20 asked for failure coverage without inventing a production deploy or claiming live mic STT.
+
 ## 2026-09-23 — Milestone git tags
 
 ### Added

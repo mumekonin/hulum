@@ -66,7 +66,7 @@ describe("analysis failure paths", () => {
     const body = (await response.json()) as {
       data: {
         decision: string;
-        requirements: Array<{ status: string }>;
+        requirements: Array<{ key?: string; status: string }>;
       };
     };
     expect(response.status).toBe(201);
@@ -108,5 +108,30 @@ describe("analysis failure paths", () => {
     const body = (await session.json()) as { data: { provider: string } };
     expect(session.status).toBe(201);
     expect(body.data.provider).toBe("text-fallback");
+  });
+
+  it("keeps contradictory profile experience UNCERTAIN instead of inventing MET", async () => {
+    const created = await fetch(`${baseUrl}/api/profile`, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({
+        userId: "user_contradict_xp",
+        name: "Contradiction Case",
+        educationLevel: "bachelor",
+        fieldOfStudy: "Computer Science",
+        graduationYear: 2022,
+        country: "Ethiopia",
+        languages: ["English"],
+        preferredLanguage: "en",
+        yearsExperience: 5,
+        experience: "No work experience.",
+      }),
+    });
+    expect(created.ok).toBe(true);
+
+    const result = await analyze("user_contradict_xp", "opp-chevening");
+    const experience = result.requirements.find((item) => item.key === "experience");
+    expect(experience?.status).toBe("UNCERTAIN");
+    expect(result.decision).toBe("MAYBE");
   });
 });

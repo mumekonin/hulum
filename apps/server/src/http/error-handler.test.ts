@@ -1,6 +1,6 @@
 import type { NextFunction, Request, Response } from "express";
 import { describe, expect, it } from "vitest";
-import { errorHandler } from "./error-handler.js";
+import { errorHandler, isDatabaseFailure } from "./error-handler.js";
 import { HttpError } from "./errors.js";
 
 function capture(): { req: Request; res: Response; next: NextFunction; statusCode: () => number; body: () => unknown } {
@@ -69,6 +69,24 @@ describe("errorHandler", () => {
       data: null,
       error: { code: "INTERNAL_ERROR", message: "Something went wrong. Please try again." },
     });
+  });
+
+  it("maps Postgres connection refusal to 503 DATABASE_UNAVAILABLE without leaking the URL", () => {
+    const http = capture();
+    const err = new Error("connect ECONNREFUSED 127.0.0.1:5432");
+    (err as { code?: string }).code = "ECONNREFUSED";
+    errorHandler(err, http.req, http.res, http.next);
+    expect(isDatabaseFailure(err)).toBe(true);
+    expect(http.statusCode()).toBe(503);
+    expect(http.body()).toEqual({
+      data: null,
+      error: {
+        code: "DATABASE_UNAVAILABLE",
+        message:
+          "HULUM could not reach the database. Try again in a moment — your profile and decisions were not invented.",
+      },
+    });
+    expect(JSON.stringify(http.body())).not.toMatch(/5432|postgres:\/\//i);
   });
 
   it("maps oversized bodies to 413", () => {

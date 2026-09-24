@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef } from "react";
 import { VoxideClient, VoxideWidget, type VoxideStatus } from "@voxide/react";
 import { getUserId } from "@/lib/storage";
 import { runTextAction } from "@/lib/text-actions";
+import { recognitionFailureMessage, TEXT_FALLBACK_HINT } from "@/lib/client-failures";
 
 export type VoxideSessionIds = {
   opportunityId?: string;
@@ -19,9 +20,6 @@ type Props = {
   /** Mic / recognition / silence recovery — keep text + quick actions usable. */
   onVoiceIssue?: (message: string) => void;
 };
-
-const TEXT_FALLBACK_HINT =
-  "Voice had trouble. Type a request or use a quick action — those call the same HULUM APIs.";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -184,11 +182,7 @@ export function VoxideAskHulum({
         payload && typeof payload === "object" && "message" in payload
           ? String((payload as { message: unknown }).message)
           : "";
-      onVoiceIssueRef.current?.(
-        detail
-          ? `Voice error: ${detail}. ${TEXT_FALLBACK_HINT}`
-          : `Recognition or connection failed. ${TEXT_FALLBACK_HINT}`,
-      );
+      onVoiceIssueRef.current?.(recognitionFailureMessage(detail || undefined));
     });
 
     const unsubStatus = client.on("status", (status: VoxideStatus) => {

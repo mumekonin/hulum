@@ -868,15 +868,15 @@ Never commit:
 
 ## Failure tests
 
-- [ ] Microphone unavailable.
-- [ ] Speech recognition failure.
+- [x] Microphone unavailable.
+- [x] Speech recognition failure.
 - [x] Voxide failure.
 - [x] Claude timeout.
 - [x] Malformed AI response.
-- [ ] Database failure.
-- [ ] Network interruption.
+- [x] Database failure.
+- [x] Network interruption.
 - [x] Missing profile information.
-- [ ] Contradictory profile information.
+- [x] Contradictory profile information.
 - [x] Uncertain requirement.
 - [x] Expired opportunity.
 - [x] Unsupported voice request.

@@ -46,6 +46,7 @@ Auth is a client-supplied `userId` (UUID). Full login is P1 and not implemented.
 
 - Production requires `CLIENT_URL` (web origin). No `Access-Control-Allow-Origin: *`.
 - Error bodies and health/session responses must not include API keys, SQL, or voice transcripts (sessions store no utterance text).
+- Postgres connection failures map to `503 DATABASE_UNAVAILABLE` (see `docs/architecture/failure-tests.md`).
 
 ## What this is not
 
@@ -53,4 +54,4 @@ Auth is a client-supplied `userId` (UUID). Full login is P1 and not implemented.
 - JWT auth and a public production URL are not claimed.
 - Live mic demo is not claimed without a keyed `VoxideAskHulum` test; text/quick actions remain the reliable Ask HULUM path.
 
-Related: `docs/architecture/retention.md`, `docs/architecture/data-exposure.md`, `docs/architecture/observability.md`.
+Related: `docs/architecture/retention.md`, `docs/architecture/data-exposure.md`, `docs/architecture/observability.md`, `docs/architecture/failure-tests.md`.
