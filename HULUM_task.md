@@ -984,7 +984,7 @@ Interest: AI
 - [x] **P0** Show readiness checklist.
 - [x] **P0** Demonstrate voice.
 - [x] **P0** Demonstrate English.
-- [ ] **P1** Demonstrate Amharic if stable.
+- [x] **P1** Demonstrate Amharic if stable.
 - [x] **P0** Open official opportunity source.
 - [x] **P0** Show responsible-AI notice.
 - [x] **P1** Demonstrate a MAYBE case.

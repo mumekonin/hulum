@@ -87,6 +87,16 @@ Type or click:
 3. What am I missing?
 4. What should I prepare?
 
+### 3:40 — Amharic text (optional, ~30s)
+
+**Click:** Language → አማርኛ.
+
+**Say:** Amharic text and quick actions work. Live Amharic speech is not claimed.
+
+**Click:** ምን ጎድሎኛል? or ምን ላዘጋጅ?
+
+**Say:** Same product actions; language selector also drives explain/readiness wording when Groq is set.
+
 ### 4:20 — MAYBE (optional, ~45s)
 
 Back to Opportunities. Open Mastercard Foundation Scholars Program at UCT. Analyze.

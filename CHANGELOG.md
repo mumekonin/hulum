@@ -2,6 +2,18 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — CI local smoke + Amharic demo step
+
+### Added
+- CI: seed catalog + `smoke:local` (Abeba → A2SV APPLY) after unit tests.
+- Demo script optional Amharic text step; screenshots shot list under `docs/demo/screenshots/`.
+
+### Changed
+- Marked **Demonstrate Amharic if stable** for the text/quick-action demo path (not live STT).
+
+### Why
+Catch Postgres demo regressions in CI and document the Amharic text demo without inventing mic or screenshot files.
+
 ## 2026-09-24 — Amharic Ask HULUM text UX + local smoke
 
 ### Added
