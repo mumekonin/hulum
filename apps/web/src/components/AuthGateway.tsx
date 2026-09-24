@@ -332,13 +332,12 @@ export function AuthGateway() {
 
                   <div className="mt-6 flex items-center justify-center gap-1 border-t border-gw-outline-var/20 pt-4 text-[11px] text-gw-muted">
                     <span>Don&apos;t have an account?</span>
-                    <button
-                      type="button"
+                    <Link
+                      href="/verify"
                       className="text-[9px] font-medium uppercase tracking-wide text-gw-primary transition-colors hover:text-gw-secondary"
-                      onClick={showNotWired}
                     >
                       Create account
-                    </button>
+                    </Link>
                   </div>
 
                   <div className="mt-4 flex items-center justify-between pt-1 text-[9px] uppercase tracking-widest text-gw-outline-var">
