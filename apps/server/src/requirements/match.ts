@@ -1,4 +1,5 @@
 import {
+  AFRICAN_COUNTRIES,
   RequirementKey,
   RequirementStatus,
   type Opportunity,
@@ -17,6 +18,19 @@ function hasText(value: string | null): value is string {
 
 function normalizedSet(values: string[]): Set<string> {
   return new Set(values.map(normalize).filter((value) => value !== ""));
+}
+
+function isAfricanCountry(country: string): boolean {
+  const value = normalize(country);
+  if (value === "africa" || value === "african") return true;
+  return AFRICAN_COUNTRIES.some((item) => normalize(item) === value);
+}
+
+function countryAllowsAfrica(required: string[]): boolean {
+  return required.some((value) => {
+    const item = normalize(value);
+    return item === "africa" || item === "african" || item === "african countries";
+  });
 }
 
 function memberStatus(
@@ -52,6 +66,27 @@ function memberStatus(
     evidence: `${labels.profile}=${profileValue.trim()}`,
     reason: `The profile ${labels.profile} is not in the opportunity list.`,
   };
+}
+
+function countryStatus(
+  profile: Profile,
+  required: string[],
+): Pick<RequirementMatch, "status" | "evidence" | "reason"> {
+  const base = memberStatus(profile.country, required, {
+    profile: "country",
+    requirement: "country",
+  });
+  if (base.status !== RequirementStatus.NOT_MET || !hasText(profile.country)) {
+    return base;
+  }
+  if (countryAllowsAfrica(required) && isAfricanCountry(profile.country)) {
+    return {
+      status: RequirementStatus.MET,
+      evidence: `country=${profile.country.trim()}`,
+      reason: "The profile country is an African country listed under continental eligibility.",
+    };
+  }
+  return base;
 }
 
 function languageStatus(profile: Profile, required: string[]): Pick<RequirementMatch, "status" | "evidence" | "reason"> {
@@ -246,10 +281,7 @@ export function matchRequirements(profile: Profile, opportunity: Opportunity, cl
   const languageRequirements = asStringList(opportunity.languageRequirements);
   const experienceRequirements = asStringList(opportunity.experienceRequirements);
 
-  const country = memberStatus(profile.country, opportunity.countryEligibility, {
-    profile: "country",
-    requirement: "country",
-  });
+  const country = countryStatus(profile, opportunity.countryEligibility);
   const education = educationStatus(profile, educationRequirements, clock);
   const field = fieldStatus(profile, fieldRequirements);
   const language = languageStatus(profile, languageRequirements);

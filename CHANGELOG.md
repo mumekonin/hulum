@@ -2,6 +2,20 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Fix demo-triangle seed vs decide() contract
+
+### Fixed
+- Abeba + A2SV was **SKIP** in CI smoke: production `matchRequirements` treated `Ethiopia` ≠ `Africa` and prose education/field lists as critical misses.
+- Seed A2SV / UCT / Chevening list fields now align with the demo triangle (APPLY / MAYBE / SKIP).
+- Continent `Africa` eligibility expands to African countries (same idea as the engine matcher).
+- APPLY no longer blocked solely by non-key UNCERTAIN rows (documents / experience / other).
+
+### Added
+- `demo-triangle.test.ts` seed-level assertion for Abeba → A2SV APPLY, UCT MAYBE, Chevening SKIP.
+
+### Why
+Keep the documented demo contract honest without weakening the smoke assertion to accept SKIP.
+
 ## 2026-09-24 — Browser smoke (demo click-through)
 
 ### Added

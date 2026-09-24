@@ -72,6 +72,15 @@ describe("matchRequirements", () => {
     expect(status(result, RequirementKey.DOCUMENTS)).toBe(RequirementStatus.NOT_APPLICABLE);
   });
 
+  it("treats Ethiopia as MET when the opportunity lists Africa", () => {
+    const result = matchRequirements(
+      { ...profile, country: "Ethiopia" },
+      { ...opportunity, countryEligibility: ["Africa"] },
+      clock,
+    );
+    expect(status(result, RequirementKey.COUNTRY)).toBe(RequirementStatus.MET);
+  });
+
   it("returns NOT_MET for a country that is not listed", () => {
     const result = matchRequirements({ ...profile, country: "US" }, opportunity, clock);
     expect(status(result, RequirementKey.COUNTRY)).toBe(RequirementStatus.NOT_MET);

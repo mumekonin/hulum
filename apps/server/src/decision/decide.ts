@@ -38,7 +38,7 @@ function computeFitScore(matches: RequirementMatch[]): number {
 
 /**
  * Critical NOT_MET → SKIP.
- * Key requirements MET or NOT_APPLICABLE, and no UNCERTAIN rows → APPLY.
+ * Key requirements MET or NOT_APPLICABLE → APPLY (non-key UNCERTAIN docs/other do not block APPLY).
  * Otherwise → MAYBE.
  * Claude must not call this to change a stored decision.
  */
@@ -69,8 +69,7 @@ export function decide(profile: Profile, opportunity: Opportunity, clock: Clock)
     KEY_REQUIREMENT_KEYS.every((key) => {
       const status = statusOf(matches, key);
       return status === RequirementStatus.MET || status === RequirementStatus.NOT_APPLICABLE;
-    }) &&
-    uncertainRequirements.length === 0
+    })
   ) {
     decision = Decision.APPLY;
     rulePath = "keys_met_no_uncertainty";

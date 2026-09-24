@@ -88,9 +88,9 @@ describe("decide", () => {
     expect(result.uncertainRequirements.some((item) => item.key === RequirementKey.COUNTRY)).toBe(true);
   });
 
-  it("returns MAYBE when experience is uncertain even if key facts match", () => {
+  it("still returns APPLY when experience is uncertain and key facts match", () => {
     const result = decide(profile, { ...opportunity, experienceRequirements: ["2 years"] }, clock);
-    expect(result.decision).toBe(Decision.MAYBE);
+    expect(result.decision).toBe(Decision.APPLY);
     expect(result.uncertainRequirements.some((item) => item.key === RequirementKey.EXPERIENCE)).toBe(true);
   });
 
