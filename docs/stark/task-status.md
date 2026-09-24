@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-09-24 — English tests + configure docs
+
+- Phase 13 English terminology / decision-explanation tests.
+- Phase 23 configure database + production secrets documented (still no public host).
+- Day 19 research evidence index: `docs/stark/research-evidence.md`.
+
+Still open: deploy, live Voxide/mic, Amharic/Oromo, CI branch protection require-check, browser tests, backup video.
+
+---
+
 ## 2026-09-24 — Session auth + RLS (still on this branch line)
 
 - HMAC session (`SESSION_SECRET` / `X-Hulum-Session`) for owned API routes; required in production.

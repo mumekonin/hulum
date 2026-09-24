@@ -793,8 +793,8 @@ Actual support depends on Voxide capabilities and quality.
 - [ ] **P1** Add second language.
 - [ ] **P1** Add third language if stable.
 - [ ] **P1** Test mixed-language input.
-- [ ] **P1** Test opportunity terminology.
-- [ ] **P1** Test decision explanations.
+- [x] **P1** Test opportunity terminology.
+- [x] **P1** Test decision explanations.
 
 Do not trade reliability for language count.
 
@@ -1099,9 +1099,9 @@ Do not log unnecessary personal profile data or raw voice/conversation content.
 - [ ] **P0** Deploy frontend.
 - [ ] **P0** Deploy backend.
 - [x] **P0** Configure production environment.
-- [ ] **P0** Configure database.
+- [x] **P0** Configure database.
 - [x] **P0** Configure CORS.
-- [ ] **P0** Configure production secrets.
+- [x] **P0** Configure production secrets.
 - [ ] **P0** Verify production analysis flow.
 - [ ] **P0** Verify production voice flow.
 - [x] **P1** Deploy on EthioDeploy if practical.
@@ -1287,7 +1287,7 @@ Never manufacture commits, dates, research activity, or progress.
 
 - [x] Demo script.
 - [x] STARK documentation.
-- [ ] Research evidence.
+- [x] Research evidence.
 - [x] Changelog review.
 - [x] README review.
 - [x] Architecture review.
