@@ -707,7 +707,7 @@ audit_logs
 - [x] **P0** Persist analyses.
 - [x] **P0** Persist readiness state.
 - [x] **P1** Add indexes.
-- [ ] **P1** Add security policies/RLS where applicable.
+- [x] **P1** Add security policies/RLS where applicable.
 - [x] **P1** Define retention strategy.
 
 ---
@@ -810,8 +810,8 @@ The assistant must not become an unrestricted chatbot.
 - [x] **P0** Sanitize logs.
 - [x] **P0** Protect database access.
 - [x] **P0** Protect admin/debug routes if any.
-- [ ] **P1** Add authentication if required.
-- [ ] **P1** Add authorization if required.
+- [x] **P1** Add authentication if required.
+- [x] **P1** Add authorization if required.
 - [x] **P1** Review data exposure.
 - [x] **P1** Review retention.
 
@@ -1112,7 +1112,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] E2E testing.
 - [x] Failure testing.
 - [ ] Browser/device testing.
-- [ ] Fix critical bugs.
+- [x] Fix critical bugs.
 
 ## Day 19 — Demo + Documentation
 

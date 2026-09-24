@@ -1,12 +1,12 @@
 # HULUM database
 
-PostgreSQL / Supabase schema for v0.1. The running API still uses a local JSON file store (`STORE_PATH`) until the store switch is wired.
+PostgreSQL schema for v0.1. `npm run dev` defaults the API to Postgres (`createApp({ store: "postgres" })`). File-store mode remains for some unit tests only.
 
 ## Locked tables (Task 21)
 
 | Table | Purpose |
 |---|---|
-| `users` | App user record (auth is P1; this is enough for profile persistence) |
+| `users` | App user record (HMAC session auth is optional locally; required in production via `SESSION_SECRET`) |
 | `profiles` | Structured applicant facts used by matching |
 | `opportunities` | Curated official-source opportunities |
 | `analyses` | Stored APPLY / MAYBE / SKIP result (+ optional `decision_audit` jsonb from migration 003) |
@@ -35,6 +35,8 @@ Task 48 adds `sources`, `official_domains`, and investigation logs (`002_investi
 
 `POST /api/investigate` (header `x-hulum-investigate`) runs a fetch/extract pass. Saved rows are `AI_EXTRACTED` until a person marks `VERIFIED`.
 
+Migration `004_rls_owner_policies.sql` adds owner-scoped RLS policies (and public opportunity read). The API still connects as the table owner (owner bypasses RLS unless `FORCE`). Use a non-owner role + `app.current_user_id` / `app.rls_bypass` when hardening further.
+
 You can also paste `migrations/001_init.sql` into the Supabase SQL editor.
 
 ## Rules
@@ -43,4 +45,3 @@ You can also paste `migrations/001_init.sql` into the Supabase SQL editor.
 - `analyses.decision` is written by the deterministic engine only.
 - Default opportunity `verification_status` is `NEEDS_REVIEW`.
 - The Postgres path may return `EXPIRED` or `NEEDS_REVIEW` on read when the deadline has passed or verification is stale. That does not UPDATE the stored row.
-- `npm run dev` still uses the JSON file store. Do not claim the demo API reads these tables until that switch is wired.

@@ -24,11 +24,12 @@
 
 ## Database
 
-- Access is by known `userId` UUID on routes. App-layer JWT auth and per-user RLS policies are **not** implemented in v0.1.
+- Access is by known `userId` UUID on routes. When `SESSION_SECRET` is set (required in production), owned routes also require a matching `X-Hulum-Session` HMAC token issued on profile create/load.
+- RLS policies in `004_rls_owner_policies.sql` scope user tables to `app.current_user_id` for non-owner DB roles; the v0.1 API still connects as table owner (owner bypasses RLS).
 - Server uses `DATABASE_URL` / service credentials; never returned to the browser.
 
 ## Residual risk (honest)
 
-Anyone who knows a profile `userId` UUID can call profile/analysis routes. That is acceptable for the local demo; production needs authentication before public hosting.
+Without `SESSION_SECRET`, anyone who knows a profile `userId` UUID can call profile/analysis routes (local demo mode). Set `SESSION_SECRET` before any public host.
 
 Related: `docs/architecture/api.md`, `docs/architecture/retention.md`.

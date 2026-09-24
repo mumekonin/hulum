@@ -2,6 +2,23 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Session auth, RLS policies, profile create fix
+
+### Added
+- HMAC `X-Hulum-Session` tokens (`SESSION_SECRET`); enforced when set and required in production.
+- Migration `004_rls_owner_policies.sql` with owner-scoped RLS policies + public opportunity read.
+- Profile create accepts optional client `userId` so gateway local UUIDs are not orphaned.
+
+### Fixed
+- Profile form no longer PATCHes a missing profile after gateway Continue (POST with stored UUID instead).
+
+### Changed
+- Web stores/sends session token; profile/analyze/voice/analysis routes authorize when sessions are enforced.
+- `database/README.md` and data-exposure notes match Postgres + session reality.
+
+### Why
+Close Phase 15/19 authz/RLS P1s without inventing OAuth, and fix the gateway→profile path.
+
 ## 2026-09-24 — Remaining-task honesty sync
 
 ### Added
