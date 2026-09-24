@@ -2,6 +2,19 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — English product tests + production config docs
+
+### Added
+- English opportunity terminology + decision-explanation tests (`apps/server/src/language/english-product.test.ts`).
+- `docs/stark/research-evidence.md` Day 19 research evidence index.
+- Deployment guide sections for production database steps and secrets (`SESSION_SECRET`, etc.).
+
+### Changed
+- Marked Phase 13 terminology/explanation tests, Phase 23 configure database/secrets, and Day 19 research evidence done (config/docs ready; deploy/host still open).
+
+### Why
+Close remaining items that do not require a public host, live mic, or ScholarXIV paper pull.
+
 ## 2026-09-24 — Session auth, RLS policies, profile create fix
 
 ### Added

@@ -13,6 +13,8 @@ This folder is the canonical STARK ideation/research record. ScholarXIV is **des
 | `competitive-analysis.md` | Ethiopian / global / African products checked 2026-09-18 |
 | `voxide-integration.md` | Browser widget + Postgres voice routes (ADR 001); mic claim still gated on a live key |
 | `voxide-languages.md` | Phase 13: public Voxide docs have no Amharic/Oromo matrix; English stays the stable claim |
+| `product-links.md` | Research findings mapped to ADRs and shipped product behavior |
+| `../stark/research-evidence.md` | Day 19 research evidence index (what exists vs still empty) |
 | `../product/research-questions.md` | Questions and labeled hypotheses |
 | `../product/problem.md` | Problem definition |
 | `../stark/evidence.md` | STARK evidence index (what exists vs still empty) |
