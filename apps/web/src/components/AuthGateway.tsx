@@ -288,13 +288,12 @@ export function AuthGateway() {
                         <label className="uppercase tracking-widest text-gw-secondary" htmlFor="gateway-password">
                           Password
                         </label>
-                        <button
-                          type="button"
+                        <Link
+                          href="/forgot-password"
                           className="lowercase tracking-wider text-gw-muted transition-colors hover:text-gw-primary"
-                          onClick={showNotWired}
                         >
                           Forgot password?
-                        </button>
+                        </Link>
                       </div>
                       <div className="relative flex items-center">
                         <input
