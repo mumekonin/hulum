@@ -1,4 +1,5 @@
-import { describe, expect, it } from "vitest";
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
 import {
   MIC_UNAVAILABLE_BODY,
   MIC_UNAVAILABLE_TITLE,
@@ -10,22 +11,22 @@ import {
 
 describe("shared failure messages (Phase 20)", () => {
   it("maps fetch/network errors without inventing a host", () => {
-    expect(isNetworkFetchError(new Error("Failed to fetch"))).toBe(true);
-    expect(isNetworkFetchError(new Error("NetworkError when attempting to fetch"))).toBe(true);
-    expect(isNetworkFetchError(new Error("ECONNREFUSED"))).toBe(true);
-    expect(isNetworkFetchError(new Error("validation failed"))).toBe(false);
-    expect(NETWORK_MESSAGE).toMatch(/couldn't reach HULUM/i);
+    assert.equal(isNetworkFetchError(new Error("Failed to fetch")), true);
+    assert.equal(isNetworkFetchError(new Error("NetworkError when attempting to fetch")), true);
+    assert.equal(isNetworkFetchError(new Error("ECONNREFUSED")), true);
+    assert.equal(isNetworkFetchError(new Error("validation failed")), false);
+    assert.match(NETWORK_MESSAGE, /couldn't reach HULUM/i);
   });
 
   it("keeps microphone-unavailable copy pointing at text fallback", () => {
-    expect(MIC_UNAVAILABLE_TITLE).toBe("Voice unavailable");
-    expect(MIC_UNAVAILABLE_BODY).toMatch(/Type a request|quick action/i);
-    expect(MIC_UNAVAILABLE_BODY).not.toMatch(/deployed|production|ethiodeploy/i);
+    assert.equal(MIC_UNAVAILABLE_TITLE, "Voice unavailable");
+    assert.match(MIC_UNAVAILABLE_BODY, /Type a request|quick action/i);
+    assert.doesNotMatch(MIC_UNAVAILABLE_BODY, /deployed|production|ethiodeploy/i);
   });
 
   it("keeps recognition failure copy pointing at text fallback", () => {
-    expect(recognitionFailureMessage()).toMatch(/Recognition or connection failed/);
-    expect(recognitionFailureMessage("permission denied")).toMatch(/permission denied/);
-    expect(recognitionFailureMessage("permission denied")).toContain(TEXT_FALLBACK_HINT);
+    assert.match(recognitionFailureMessage(), /Recognition or connection failed/);
+    assert.match(recognitionFailureMessage("permission denied"), /permission denied/);
+    assert.ok(recognitionFailureMessage("permission denied").includes(TEXT_FALLBACK_HINT));
   });
 });

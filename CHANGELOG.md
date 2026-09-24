@@ -9,6 +9,7 @@ HULUM records actual work. Do not invent history.
 - Shared client failure copy for network interruption, mic unavailable, and recognition failure (`@hulum/shared` + web re-export).
 - API failure test: contradictory years vs experience text stay `UNCERTAIN` (MAYBE), not invented MET.
 - `docs/architecture/failure-tests.md` index for Phase 20 rows.
+- `node:test` suites for failure messages and DB error mapping (`npm run test:failures`) so local runs do not depend on a broken web test path.
 
 ### Why
 Phase 20 asked for failure coverage without inventing a production deploy or claiming live mic STT.
