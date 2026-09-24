@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Node-runner tests use *.node.test.ts
+
+### Fixed
+- Renamed all `node:test` suites to `*.node.test.ts` and excluded that pattern from Vitest `include` discovery.
+- `npm test` runs Node suites only via `tsx --test`; Vitest no longer collects them (fixes “No test suite found”).
+
+### Why
+Vitest was still discovering Node-runner files that import `describe`/`it` from `node:test`, failing CI after those suites already passed under `tsx --test`.
+
 ## 2026-09-24 — Exclude node:test files from Vitest
 
 ### Fixed
