@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Auth induction gateway (UI only)
+
+### Added
+- `/verify` OTP + admission-success panels in the dark gateway shell (EB Garamond + JetBrains Mono).
+- Demo auto-fill `849201` and any 6-digit UI gate; Begin Profile Setup continues with local UUID → `/profile`.
+- Gateway “Create account” links to `/verify`.
+
+### Why
+Port the induction mock without inventing email OTP, AES/session telemetry, or institutional IdP.
+
 ## 2026-09-24 — Failure suites run under Vitest only
 
 ### Fixed
@@ -43,7 +53,7 @@ Match the recovery mock visually without inventing mail dispatch, TLS auth claim
 
 ### Added
 - Dark `/` gateway screen (EB Garamond + JetBrains Mono) matching the auth mock layout.
-- Continue starts/continues a local UUID session and opens Profile; Google / password / create-account show an honest “not wired in v0.1” notice.
+- Continue starts/continues a local UUID session and opens Profile; Google / password show an honest “not wired in v0.1” notice; Create account opens `/verify`.
 - Former home journey content moved to `/journey` under the existing paper product shell.
 
 ### Why
