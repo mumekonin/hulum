@@ -2,6 +2,18 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Amharic Ask HULUM text UX + local smoke
+
+### Added
+- Amharic chrome copy + prioritized Amharic quick actions on Ask HULUM when language is `am` (text UX only).
+- `npm run smoke:local` — health → demo profile → A2SV APPLY (local API, not production).
+
+### Changed
+- Marked Days 13–14 **Amharic voice/UX if stable** for text UX; live Amharic STT / Demonstrate Amharic stay open.
+
+### Why
+Ship usable Amharic text assistant chrome without inventing Voxide STT quality.
+
 ## 2026-09-24 — Postgres demo profile + demo doc ports
 
 ### Added

@@ -1093,7 +1093,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Claude explanation.
 - [x] Structured AI output validation.
 - [x] Contextual assistant.
-- [ ] Amharic voice/UX if stable.
+- [x] Amharic voice/UX if stable.
 - [ ] Afaan Oromo if stable and quality is acceptable.
 
 ## Days 15–16 — Integration

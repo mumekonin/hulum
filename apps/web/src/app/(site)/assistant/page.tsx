@@ -9,7 +9,7 @@ import { Notice } from "@/components/Notice";
 import { StatusPanel } from "@/components/StatusPanel";
 import { hasVoxidePublicKey } from "@/components/VoxideAskHulum";
 import { api, userFacingError } from "@/lib/api";
-import { MIC_UNAVAILABLE_BODY, MIC_UNAVAILABLE_TITLE } from "@/lib/client-failures";
+import { assistantCopy, assistantQuickActions } from "@/lib/assistant-copy";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
 import { getLanguage, getUserId, setLanguage } from "@/lib/storage";
 import { runTextAction } from "@/lib/text-actions";
@@ -18,24 +18,6 @@ const VoxideAskHulum = dynamic(
   () => import("@/components/VoxideAskHulum").then((mod) => mod.VoxideAskHulum),
   { ssr: false },
 );
-
-const quickActions = [
-  "Show me internships",
-  "Show me opportunities I should apply for",
-  "Show me maybe opportunities",
-  "Should I apply for this?",
-  "Tell me about this opportunity",
-  "Why did you say that?",
-  "What am I missing?",
-  "ምን ጎድሎኛል?",
-  "What should I prepare?",
-  "ምን ላዘጋጅ?",
-  "What is missing from my profile?",
-  "Clarify uncertain requirements",
-  "Personalize my readiness plan",
-  "Repeat that",
-  "Extract profile from this: I study CS in Addis Ababa",
-];
 
 export default function AssistantPage() {
   return (
@@ -67,6 +49,8 @@ function AssistantInner() {
   const opportunityId = sessionOpportunityId ?? search.get("opportunityId") ?? undefined;
   const analysisId = sessionAnalysisId ?? search.get("analysisId") ?? undefined;
   const needsProfile = Boolean(error?.toLowerCase().includes("profile"));
+  const copy = useMemo(() => assistantCopy(language), [language]);
+  const quickActions = useMemo(() => assistantQuickActions(language), [language]);
 
   useEffect(() => {
     const userId = getUserId();
@@ -154,16 +138,13 @@ function AssistantInner() {
 
   return (
     <section className="max-w-2xl" lang={language}>
-      <h1 className="font-display text-4xl">Ask HULUM</h1>
-      <p className="mt-3 text-muted">
-        Voice must perform real product actions. Text and quick actions always work. The Voxide widget,
-        when keyed, calls the same actions — it never invents APPLY / MAYBE / SKIP.
-      </p>
+      <h1 className="font-display text-4xl">{copy.title}</h1>
+      <p className="mt-3 text-muted">{copy.intro}</p>
       <div className="mt-6">
         <Notice>{contextLabel}</Notice>
       </div>
       <fieldset className="mt-6 border-0 p-0">
-        <legend className="text-sm font-medium">Language</legend>
+        <legend className="text-sm font-medium">{copy.languageLegend}</legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {LANGUAGE_OPTIONS.map((option) => (
             <label key={option.code} className="inline-flex min-h-11 items-center gap-2 border border-line px-3 py-2 text-sm">
@@ -178,36 +159,31 @@ function AssistantInner() {
             </label>
           ))}
         </div>
-        <p className="mt-2 text-sm text-muted">
-          English is the stable v0.1 path. Amharic and Afaan Oromo are stored for Voxide; live Amharic STT
-          is not claimed.
-        </p>
+        <p className="mt-2 text-sm text-muted">{copy.languageHint}</p>
       </fieldset>
       {!voxideReady ? (
         <div id="voice-unavailable" className="mt-6">
           <StatusPanel
             variant="empty"
-            title={MIC_UNAVAILABLE_TITLE}
-            primary={{ label: "Type a request", onClick: () => requestInput.current?.focus() }}
-            secondary={{ label: "Browse opportunities", href: "/opportunities" }}
+            title={copy.micMissingTitle}
+            primary={{ label: copy.typeRequest, onClick: () => requestInput.current?.focus() }}
+            secondary={{ label: copy.browseOpportunities, href: "/opportunities" }}
           >
-            {MIC_UNAVAILABLE_BODY} Voxide key missing or invalid (`NEXT_PUBLIC_VOXIDE_KEY`).
+            {copy.micMissingBody}
           </StatusPanel>
         </div>
       ) : (
         <div className="mt-6">
-          <StatusPanel variant="empty" title="Voxide widget ready">
-            Use the Ask HULUM launcher (bottom-right) for voice or widget text. Tools call the same
-            product actions as the quick buttons. APPLY / MAYBE / SKIP still come from decide() on the
-            server. If the mic fails or goes silent, type or use a quick action.
+          <StatusPanel variant="empty" title={copy.voxideReadyTitle}>
+            {copy.voxideReadyBody}
           </StatusPanel>
           {voiceIssue ? (
             <div className="mt-4">
               <StatusPanel
                 variant="error"
-                title="Voice issue"
-                primary={{ label: "Type a request", onClick: () => requestInput.current?.focus() }}
-                secondary={{ label: "Show internships", onClick: () => void send("Show me internships") }}
+                title={copy.voiceIssueTitle}
+                primary={{ label: copy.typeRequest, onClick: () => requestInput.current?.focus() }}
+                secondary={{ label: copy.showInternships, onClick: () => void send("Show me internships") }}
               >
                 {voiceIssue}
               </StatusPanel>
@@ -249,7 +225,7 @@ function AssistantInner() {
         </StatusPanel>
       ) : null}
       <fieldset className="mt-6 border-0 p-0">
-        <legend className="text-sm font-medium">Quick actions</legend>
+        <legend className="text-sm font-medium">{copy.quickLegend}</legend>
         <div className="mt-2 flex flex-wrap gap-2">
           {quickActions.map((action) => (
             <button
@@ -257,7 +233,7 @@ function AssistantInner() {
               type="button"
               disabled={pending}
               onClick={() => void send(action)}
-              lang={action === "ምን ላዘጋጅ?" || action === "ምን ጎድሎኛል?" ? "am" : undefined}
+              lang={/[\u1200-\u137F]/.test(action) ? "am" : undefined}
               className="min-h-11 border border-line px-3 py-2 text-sm disabled:opacity-60"
             >
               {action}
@@ -267,7 +243,7 @@ function AssistantInner() {
       </fieldset>
       <div className="mt-6 min-h-48 space-y-3" aria-live="polite" aria-relevant="additions">
         {messages.length === 0 && !pending && !error ? (
-          <StatusPanel variant="empty" title="No question yet" primary={{ label: "Show internships", onClick: () => void send("Show me internships") }}>
+          <StatusPanel variant="empty" title="No question yet" primary={{ label: copy.showInternships, onClick: () => void send("Show me internships") }}>
             Type a request or use a quick action.
           </StatusPanel>
         ) : null}
@@ -297,13 +273,13 @@ function AssistantInner() {
             ref={requestInput}
             value={text}
             onChange={(e) => setText(e.target.value)}
-            placeholder="Should I apply for this?"
+            placeholder={copy.typePlaceholder}
             className="mt-1 min-h-11 w-full border border-line bg-white px-3 py-3"
             disabled={pending}
           />
         </label>
         <button disabled={pending} className="mt-auto min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
-          {pending ? "Sending…" : "Send"}
+          {pending ? "…" : copy.send}
         </button>
       </form>
     </section>

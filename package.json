@@ -24,7 +24,8 @@
     "test:failures": "npm exec -w @hulum/server -- vitest run src/shared-failure-messages.test.ts src/http/error-handler.test.ts",
     "db:migrate": "npm run db:migrate -w @hulum/server",
     "db:seed": "npm run db:seed -w @hulum/server",
-    "db:smoke": "npm run db:smoke -w @hulum/server"
+    "db:smoke": "npm run db:smoke -w @hulum/server",
+    "smoke:local": "node scripts/smoke-local.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
