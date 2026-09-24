@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Auth recovery gateway (UI only)
+
+### Added
+- `/forgot-password` recovery matrix UI (request + set-password panels) in the dark gateway shell.
+- Reset / send-link actions stay honest: no email token, no password store; optional Continue opens Profile via local UUID.
+
+### Why
+Match the recovery mock visually without inventing mail dispatch, TLS auth claims, or account recovery.
+
 ## 2026-09-24 — Auth gateway landing (UI only)
 
 ### Added
