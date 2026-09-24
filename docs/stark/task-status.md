@@ -6,6 +6,29 @@
 
 ---
 
+## 2026-09-24 — Session auth + RLS (still on this branch line)
+
+- HMAC session (`SESSION_SECRET` / `X-Hulum-Session`) for owned API routes; required in production.
+- RLS owner policies in migration 004 (table-owner API still bypasses until a non-owner role).
+- Fixed gateway UUID → profile create (POST with `userId`, not PATCH of missing row).
+- **Not claimed:** OAuth/JWT provider login, live Voxide mic, or a public deploy.
+
+Still **open on purpose** (need real external evidence or product work):
+
+| Item | Why |
+|---|---|
+| Second/third language, mixed-language tests | ADR 004 — English e2e only |
+| Live Voxide mic / voice response / demonstrate voice | Needs publishable key + mic pass |
+| Deploy / production secrets / production verify | No public host |
+| Browser/device / microphone test | Not run |
+| Block merges when checks fail | CI runs on PR; required branch protection not verified from this pass |
+| Backup video/screenshots | Not captured |
+| ScholarXIV live Papers API citations | No live paper pull claimed |
+
+Auth gateway / recovery / induction UIs on `/`, `/forgot-password`, `/verify` remain **UI previews**; API session HMAC is the real v0.1 auth when `SESSION_SECRET` is set.
+
+---
+
 ## 2026-09-24 honesty sync
 
 Marked done because the repo already ships them:

@@ -1,5 +1,6 @@
 import type { CreateProfileRequest, PatchProfileRequest, ProfileWrite } from "@hulum/shared";
 import { HttpError } from "../http/errors.js";
+import { isUuid } from "../http/ids.js";
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
@@ -59,7 +60,9 @@ const emptyWrite: ProfileWrite = {
   interests: [],
 };
 
-export function parseCreateProfileRequest(body: unknown): { name: string; email: string } & ProfileWrite {
+export function parseCreateProfileRequest(
+  body: unknown,
+): { name: string; email: string; userId?: string } & ProfileWrite {
   if (typeof body !== "object" || body === null || Array.isArray(body)) {
     throw new HttpError(400, "INVALID_INPUT", "Request body must be an object.");
   }
@@ -70,9 +73,18 @@ export function parseCreateProfileRequest(body: unknown): { name: string; email:
     throw new HttpError(400, "INVALID_INPUT", "email must be a valid email address.");
   }
 
+  let userId: string | undefined;
+  if (input.userId !== undefined) {
+    if (typeof input.userId !== "string" || !isUuid(input.userId)) {
+      throw new HttpError(400, "INVALID_ID", "userId must be a UUID when provided.");
+    }
+    userId = input.userId;
+  }
+
   return {
     name,
     email,
+    ...(userId === undefined ? {} : { userId }),
     educationLevel: asOptionalText(input.educationLevel, "educationLevel") ?? emptyWrite.educationLevel,
     fieldOfStudy: asOptionalText(input.fieldOfStudy, "fieldOfStudy") ?? emptyWrite.fieldOfStudy,
     graduationYear: asGraduationYear(input.graduationYear) ?? emptyWrite.graduationYear,

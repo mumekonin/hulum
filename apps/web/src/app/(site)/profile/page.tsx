@@ -6,7 +6,7 @@ import { EDUCATION_LABELS, EDUCATION_LEVELS, type EducationLevel, type LanguageC
 import { api, isNotFound, userFacingError } from "@/lib/api";
 import { ABEBA_DEMO } from "@/lib/demo-profile";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
-import { getLanguage, getUserId, setLanguage, setUserId } from "@/lib/storage";
+import { getLanguage, getUserId, setLanguage, setSessionToken, setUserId } from "@/lib/storage";
 import { Notice } from "@/components/Notice";
 import { StatusPanel } from "@/components/StatusPanel";
 
@@ -47,10 +47,12 @@ export default function ProfilePage() {
   const [extracting, setExtracting] = useState(false);
   const [extractNotice, setExtractNotice] = useState<string | null>(null);
   const [proposal, setProposal] = useState<ProfileExtractResult | null>(null);
+  const [hasProfile, setHasProfile] = useState(false);
 
   useEffect(() => {
     const userId = getUserId();
     if (!userId || !/^[0-9a-f-]{36}$/i.test(userId)) {
+      setHasProfile(false);
       setBoot("ready");
       return;
     }
@@ -76,10 +78,13 @@ export default function ProfilePage() {
           documentsHeld: "",
           preferredLanguage: getLanguage(),
         });
+        if (view.sessionToken) setSessionToken(view.sessionToken);
+        setHasProfile(true);
         setBoot("ready");
       })
       .catch((err: unknown) => {
         if (isNotFound(err)) {
+          setHasProfile(false);
           setBoot("ready");
           return;
         }
@@ -95,9 +100,11 @@ export default function ProfilePage() {
     try {
       const storedId = getUserId();
       const userId = storedId !== null && /^[0-9a-f-]{36}$/i.test(storedId) ? storedId : null;
-      const view = await api<ProfileView>(userId ? `/api/profile/${userId}` : "/api/profile", {
-        method: userId ? "PATCH" : "POST",
+      const usePatch = hasProfile && userId !== null;
+      const view = await api<ProfileView>(usePatch ? `/api/profile/${userId}` : "/api/profile", {
+        method: usePatch ? "PATCH" : "POST",
         body: JSON.stringify({
+          ...(usePatch || userId === null ? {} : { userId }),
           name: form.name,
           email: form.email,
           educationLevel: form.educationLevel,
@@ -112,6 +119,8 @@ export default function ProfilePage() {
         }),
       });
       setUserId(view.profile.userId);
+      setSessionToken(view.sessionToken);
+      setHasProfile(true);
       setLanguage(form.preferredLanguage);
       setSaved(true);
       router.push("/opportunities");
@@ -131,6 +140,8 @@ export default function ProfilePage() {
         body: JSON.stringify(ABEBA_DEMO),
       });
       setUserId(view.profile.userId);
+      setSessionToken(view.sessionToken);
+      setHasProfile(true);
       setLanguage("en");
       router.push("/opportunities");
     } catch (err) {

@@ -10,7 +10,7 @@ export type StoredProfile = {
 };
 
 export type ProfileStore = {
-  create(input: { name: string; email: string } & ProfileWrite): Promise<StoredProfile>;
+  create(input: { name: string; email: string; userId?: string } & ProfileWrite): Promise<StoredProfile>;
   getByUserId(userId: string): Promise<StoredProfile | undefined>;
   update(userId: string, patch: PatchProfileRequest): Promise<StoredProfile | undefined>;
 };
@@ -57,14 +57,20 @@ export function createPgProfileStore(): ProfileStore {
   }
 
   return {
-    async create(input: { name: string; email: string } & ProfileWrite): Promise<StoredProfile> {
+    async create(input: { name: string; email: string; userId?: string } & ProfileWrite): Promise<StoredProfile> {
       const client = await getPool().connect();
       try {
         await client.query("begin");
-        const user = await client.query<UserRow>(
-          "insert into users (name, email) values ($1, $2) returning id, name, email",
-          [input.name, input.email],
-        );
+        const user =
+          input.userId === undefined
+            ? await client.query<UserRow>(
+                "insert into users (name, email) values ($1, $2) returning id, name, email",
+                [input.name, input.email],
+              )
+            : await client.query<UserRow>(
+                "insert into users (id, name, email) values ($1, $2, $3) returning id, name, email",
+                [input.userId, input.name, input.email],
+              );
         const userId = user.rows[0]?.id;
         if (userId === undefined) {
           throw new Error("Failed to persist user");
@@ -99,7 +105,7 @@ export function createPgProfileStore(): ProfileStore {
       } catch (error) {
         await client.query("rollback");
         if (isPgError(error) && error.code === "23505") {
-          throw new HttpError(409, "EMAIL_TAKEN", "A user with this email already exists.");
+          throw new HttpError(409, "CONFLICT", "A user with this email or id already exists.");
         }
         throw error;
       } finally {

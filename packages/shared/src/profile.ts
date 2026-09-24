@@ -34,6 +34,8 @@ export type ProfileWrite = {
 export type CreateProfileRequest = {
   name: string;
   email: string;
+  /** Optional client UUID (e.g. gateway local session) so POST does not orphan a prior id. */
+  userId?: string;
 } & Partial<ProfileWrite>;
 
 export type PatchProfileRequest = Partial<ProfileWrite>;
@@ -63,6 +65,8 @@ export type ProfileView = {
   email: string;
   profile: Profile;
   completeness: ProfileCompleteness;
+  /** Present when the API has SESSION_SECRET and issues X-Hulum-Session tokens. */
+  sessionToken?: string;
 };
 
 function isMissingText(value: string | null | undefined): boolean {

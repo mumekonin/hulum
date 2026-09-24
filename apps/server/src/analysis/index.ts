@@ -12,6 +12,7 @@ import { systemClock } from "../services/common/clock.js";
 import { createAnalysisService, type AnalysisService } from "./service.js";
 import { createPgAnalysisStore } from "./store.js";
 import { parseAnalyzeRequest } from "./validate.js";
+import { assertRequestSession } from "../security/session.js";
 
 function optionalChat(): ChatClient | undefined {
   const env = loadEnv();
@@ -43,6 +44,7 @@ export function createAnalyzeRouter(service?: AnalysisService): Router {
         throw new HttpError(400, "INVALID_ID", "Opportunity id must be a UUID.");
       }
       const input = parseAnalyzeRequest(req.body);
+      assertRequestSession(req, input.userId);
       const analysis = await getService().analyze(id, input.userId);
       res.status(201).json(ok(analysis));
     } catch (error) {
@@ -63,6 +65,11 @@ export function createAnalysisRouter(service?: AnalysisService): Router {
       if (id === undefined || !isUuid(id)) {
         throw new HttpError(400, "INVALID_ID", "Analysis id must be a UUID.");
       }
+      const stored = await getService().getById(id);
+      if (stored === undefined) {
+        throw new HttpError(404, "NOT_FOUND", "Analysis not found.");
+      }
+      assertRequestSession(req, stored.userId);
       const input = parseExplainRequest(req.body);
       const explanation = await getService().explain(id, input.language);
       res.status(200).json(ok(explanation));
@@ -77,6 +84,11 @@ export function createAnalysisRouter(service?: AnalysisService): Router {
       if (id === undefined || !isUuid(id)) {
         throw new HttpError(400, "INVALID_ID", "Analysis id must be a UUID.");
       }
+      const stored = await getService().getById(id);
+      if (stored === undefined) {
+        throw new HttpError(404, "NOT_FOUND", "Analysis not found.");
+      }
+      assertRequestSession(req, stored.userId);
       const readiness = await getService().getReadiness(id);
       if (readiness === undefined) {
         throw new HttpError(404, "NOT_FOUND", "Analysis not found.");
@@ -93,6 +105,11 @@ export function createAnalysisRouter(service?: AnalysisService): Router {
       if (id === undefined || !isUuid(id)) {
         throw new HttpError(400, "INVALID_ID", "Analysis id must be a UUID.");
       }
+      const stored = await getService().getById(id);
+      if (stored === undefined) {
+        throw new HttpError(404, "NOT_FOUND", "Analysis not found.");
+      }
+      assertRequestSession(req, stored.userId);
       const input = parseExplainRequest(req.body);
       const plan = await getService().personalizedReadinessPlan(id, input.language);
       res.status(200).json(ok(plan));
@@ -111,6 +128,7 @@ export function createAnalysisRouter(service?: AnalysisService): Router {
       if (analysis === undefined) {
         throw new HttpError(404, "NOT_FOUND", "Analysis not found.");
       }
+      assertRequestSession(req, analysis.userId);
       res.status(200).json(ok(analysis));
     } catch (error) {
       next(error);

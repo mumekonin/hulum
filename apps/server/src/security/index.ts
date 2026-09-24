@@ -7,3 +7,11 @@ export {
   explainRateLimitMiddleware,
 } from "./rate-limit.js";
 export type { RateLimiter } from "./rate-limit.js";
+export {
+  SESSION_HEADER,
+  assertRequestSession,
+  isSessionEnforced,
+  issueSessionToken,
+  maybeIssueSessionToken,
+  verifySessionToken,
+} from "./session.js";

@@ -26,6 +26,7 @@ import { decide } from "../decision/decide.js";
 import { getPool } from "../db/pool.js";
 import { HttpError } from "../http/errors.js";
 import { isUuid } from "../http/ids.js";
+import { assertRequestSession } from "../security/session.js";
 import { createOpportunityService, type OpportunityService } from "../opportunities/service.js";
 import { createPgOpportunityStore } from "../opportunities/store.js";
 import { timeOps } from "../ops/metrics.js";
@@ -387,6 +388,9 @@ export function createVoiceRouter(service?: VoiceService): Router {
     try {
       const userId =
         typeof req.body?.userId === "string" && req.body.userId.trim() ? req.body.userId.trim() : "anonymous";
+      if (userId !== "anonymous") {
+        assertRequestSession(req, userId);
+      }
       const language: LanguageCode =
         req.body?.language === "am" || req.body?.language === "om" ? req.body.language : "en";
       const session = await timeOps("session", "voice.session", () =>
@@ -405,6 +409,7 @@ export function createVoiceRouter(service?: VoiceService): Router {
         throw new HttpError(422, "INVALID_VOICE", "Voice action needs text and a user id.");
       }
       const { text, language = "en", userId, opportunityId, analysisId } = parsed.data;
+      assertRequestSession(req, userId);
       const result = await timeOps(
         "voice",
         "voice.action",

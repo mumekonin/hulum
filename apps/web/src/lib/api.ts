@@ -1,4 +1,5 @@
 import { isNetworkFetchError, NETWORK_MESSAGE } from "./client-failures";
+import { getSessionToken } from "./storage";
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
@@ -34,12 +35,14 @@ export function userFacingError(error: unknown): string {
 }
 
 export async function api<T>(path: string, init?: RequestInit): Promise<T> {
+  const session = typeof window !== "undefined" ? getSessionToken() : null;
   let response: Response;
   try {
     response = await fetch(`${API_URL}${path}`, {
       ...init,
       headers: {
         "Content-Type": "application/json",
+        ...(session ? { "X-Hulum-Session": session } : {}),
         ...(init?.headers ?? {}),
       },
     });

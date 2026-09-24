@@ -22,6 +22,8 @@ export type AppEnv = {
   JOB_OPPORTUNITIES_API_URL: string | undefined;
   INVESTIGATE_ADMIN_SECRET: string | undefined;
   SCHOLARXIV_API_KEY: string | undefined;
+  /** HMAC secret for X-Hulum-Session. Required in production; optional in local demo. */
+  SESSION_SECRET: string | undefined;
 };
 
 export type LoadEnvOptions = {
@@ -92,6 +94,9 @@ export function loadEnv(options: LoadEnvOptions = {}): AppEnv {
   if (NODE_ENV === "production" && optionalString(process.env.CLIENT_URL) === undefined) {
     throw new Error("CLIENT_URL is required in production");
   }
+  if (NODE_ENV === "production" && optionalString(process.env.SESSION_SECRET) === undefined) {
+    throw new Error("SESSION_SECRET is required in production");
+  }
 
   return {
     NODE_ENV,
@@ -110,5 +115,6 @@ export function loadEnv(options: LoadEnvOptions = {}): AppEnv {
     JOB_OPPORTUNITIES_API_URL: optionalString(process.env.JOB_OPPORTUNITIES_API_URL),
     INVESTIGATE_ADMIN_SECRET: optionalString(process.env.INVESTIGATE_ADMIN_SECRET),
     SCHOLARXIV_API_KEY: optionalString(process.env.SCHOLARXIV_API_KEY),
+    SESSION_SECRET: optionalString(process.env.SESSION_SECRET),
   };
 }

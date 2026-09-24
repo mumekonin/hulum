@@ -17,7 +17,7 @@ describe("parseClientUrl", () => {
   });
 });
 
-const KEYS = ["NODE_ENV", "PORT", "CLIENT_URL"] as const;
+const KEYS = ["NODE_ENV", "PORT", "CLIENT_URL", "SESSION_SECRET"] as const;
 
 describe("loadEnv", () => {
   const previous: Partial<Record<(typeof KEYS)[number], string | undefined>> = {};
@@ -51,19 +51,25 @@ describe("loadEnv", () => {
     expect(env.CLIENT_URL).toBeUndefined();
   });
 
-  it("requires a CLIENT_URL origin in production", () => {
+  it("requires CLIENT_URL and SESSION_SECRET in production", () => {
     process.env.NODE_ENV = "production";
     expect(() => loadEnv({ fromFile: false })).toThrow(/CLIENT_URL is required in production/);
 
+    process.env.SESSION_SECRET = "prod-test-session-secret";
     process.env.CLIENT_URL = "not-a-url";
     expect(() => loadEnv({ fromFile: false })).toThrow(/http\(s\) origin/);
 
     process.env.CLIENT_URL = "https://hulum.example/app";
     expect(() => loadEnv({ fromFile: false })).toThrow(/origin only/);
 
+    delete process.env.SESSION_SECRET;
     process.env.CLIENT_URL = "https://hulum.example";
+    expect(() => loadEnv({ fromFile: false })).toThrow(/SESSION_SECRET is required in production/);
+
+    process.env.SESSION_SECRET = "prod-test-session-secret";
     const env = loadEnv({ fromFile: false });
     expect(env.NODE_ENV).toBe("production");
     expect(env.CLIENT_URL).toBe("https://hulum.example");
+    expect(env.SESSION_SECRET).toBe("prod-test-session-secret");
   });
 });
