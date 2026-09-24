@@ -211,13 +211,13 @@ hulum/
 
 - [-] Barriers to applying for eligible opportunities among Ethiopian students.
 - [-] Causes of opportunity application failure among African youth.
-- [-] Responsible AI eligibility uncertainty.
-- [-] Opportunity matching and decision-support systems.
+- [x] Responsible AI eligibility uncertainty.
+- [x] Opportunity matching and decision-support systems.
 - [-] Voice-first design for non-English speakers.
 - [-] Multilingual interaction for English/Amharic/Afaan Oromo users.
-- [-] Readiness support for scholarship/internship/job applications.
-- [-] Trust and verification of opportunity requirements.
-- [-] Human oversight when AI assists eligibility decisions.
+- [x] Readiness support for scholarship/internship/job applications.
+- [x] Trust and verification of opportunity requirements.
+- [x] Human oversight when AI assists eligibility decisions.
 
 ---
 
@@ -672,8 +672,8 @@ AI is an assistant, not the eligibility authority.
 - [x] Explain requirement gaps.
 - [x] Generate readiness plans.
 - [x] Answer contextual product questions.
-- [ ] Assist multilingual interaction.
-- [ ] Rephrase explanations for the user's language.
+- [x] Assist multilingual interaction.
+- [x] Rephrase explanations for the user's language.
 
 ## AI must not
 
@@ -745,7 +745,7 @@ It must perform meaningful HULUM actions and must not be decorative.
 - [x] **P0** Ask "What am I missing?"
 - [x] **P0** Ask "What should I prepare?"
 - [x] **P0** Filter/show opportunities by decision.
-- [-] **P1** Create/update profile by voice.
+- [x] **P1** Create/update profile by voice.
 - [x] **P1** Handle recognition failure.
 - [x] **P1** Handle silence/timeouts.
 - [x] **P1** Support repeat requests.

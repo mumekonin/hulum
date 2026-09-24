@@ -1,6 +1,8 @@
 import { describe, expect, it } from "vitest";
 import type { AnalysisContract } from "@hulum/shared";
-import { validateClaudeOutput } from "./validate.js";
+import { Language } from "@hulum/shared";
+import { HttpError } from "../http/errors.js";
+import { parseExplainRequest, validateClaudeOutput } from "./validate.js";
 
 const contract: AnalysisContract = {
   decision: "MAYBE",
@@ -22,6 +24,19 @@ const contract: AnalysisContract = {
   gaps: [{ requirement: "Field accepted by the programme", status: "UNCERTAIN", remediation: "Confirm on the official source." }],
   readiness: [],
 };
+
+describe("parseExplainRequest", () => {
+  it("defaults to English and accepts am / om for rephrasing", () => {
+    expect(parseExplainRequest(undefined).language).toBe(Language.ENGLISH);
+    expect(parseExplainRequest({}).language).toBe(Language.ENGLISH);
+    expect(parseExplainRequest({ language: "am" }).language).toBe(Language.AMHARIC);
+    expect(parseExplainRequest({ language: "om" }).language).toBe(Language.AFAAN_OROMO);
+  });
+
+  it("rejects invalid language codes", () => {
+    expect(() => parseExplainRequest({ language: "fr" })).toThrow(HttpError);
+  });
+});
 
 describe("validateClaudeOutput", () => {
   it("accepts JSON that matches the engine decision", () => {

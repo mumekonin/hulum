@@ -2,6 +2,17 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Ask HULUM language + profile-by-voice honesty
+
+### Changed
+- Ask HULUM explain / readiness-plan calls use the selected UI language (`en` / `am` / `om`), not hard-coded English.
+- Marked AI may multilingual assist + rephrase (API language path); profile extract via Ask HULUM text/voice tools with confirm-before-save.
+- Marked product-implemented Phase 1 research questions; left ScholarXIV/empirical voice questions open.
+- Demo rehearsal note: local Postgres, not file-store.
+
+### Why
+Wire the language selector into explanations and close remaining items that already ship without a host or live mic.
+
 ## 2026-09-24 — Voxide integration checkbox + mixed-language text tests
 
 ### Added

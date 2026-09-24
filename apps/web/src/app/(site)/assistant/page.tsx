@@ -126,7 +126,13 @@ function AssistantInner() {
 
     setPending(true);
     try {
-      const response = await runTextAction({ userId, text: value, opportunityId, analysisId });
+      const response = await runTextAction({
+        userId,
+        text: value,
+        opportunityId,
+        analysisId,
+        language: getLanguage(),
+      });
       if (response.opportunityId) setSessionOpportunityId(response.opportunityId);
       if (response.analysisId) setSessionAnalysisId(response.analysisId);
       setMessages((current) => [...current, { role: "hulum", text: response.reply }]);
