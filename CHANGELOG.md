@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Auth gateway landing (UI only)
+
+### Added
+- Dark `/` gateway screen (EB Garamond + JetBrains Mono) matching the auth mock layout.
+- Continue starts/continues a local UUID session and opens Profile; Google / password / create-account show an honest “not wired in v0.1” notice.
+- Former home journey content moved to `/journey` under the existing paper product shell.
+
+### Why
+Port the entry visual without inventing OAuth, password accounts, encryption claims, or fake precision metrics. Auth remains Phase 16 P1.
+
 ## 2026-09-23 — Phase 20 failure tests
 
 ### Added

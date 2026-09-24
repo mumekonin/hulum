@@ -9,6 +9,20 @@
   --color-apply: #146c44;
   --color-maybe: #8a5410;
   --color-skip: #8a1f1f;
+
+  --color-gw-bg: #131313;
+  --color-gw-surface: #201f1f;
+  --color-gw-surface-low: #1c1b1b;
+  --color-gw-surface-lowest: #0e0e0e;
+  --color-gw-surface-high: #2a2a2a;
+  --color-gw-surface-highest: #353534;
+  --color-gw-on: #e5e2e1;
+  --color-gw-muted: #c4c7c5;
+  --color-gw-secondary: #c7c7c0;
+  --color-gw-outline: #8e928f;
+  --color-gw-outline-var: #444846;
+  --color-gw-primary: #ffffff;
+  --color-gw-on-primary: #2f3130;
 }
 
 html,
@@ -30,9 +44,28 @@ h3,
   font-optical-sizing: auto;
 }
 
+.gateway {
+  background: var(--color-gw-bg);
+  color: var(--color-gw-on);
+  font-family: var(--font-gateway-mono), "JetBrains Mono", ui-monospace, monospace;
+}
+
+.gateway .font-gw-serif {
+  font-family: var(--font-gateway-serif), "EB Garamond", Georgia, serif;
+}
+
+.gateway .font-gw-mono {
+  font-family: var(--font-gateway-mono), "JetBrains Mono", ui-monospace, monospace;
+}
+
 :focus-visible {
   outline: 3px solid var(--color-ink);
   outline-offset: 3px;
+}
+
+.gateway :focus-visible {
+  outline: 2px solid var(--color-gw-primary);
+  outline-offset: 2px;
 }
 
 .sr-only {
