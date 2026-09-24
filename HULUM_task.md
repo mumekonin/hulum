@@ -214,7 +214,7 @@ ScholarXIV is part of the STARK ideation requirement.
 - [x] **P0** Explain why HULUM was selected.
 - [x] **P1** Explore ScholarXIV MCP integration.
 - [x] **P1** Explore ScholarXIV Papers API.
-- [-] **P1** Link research findings to product decisions.
+- [x] **P1** Link research findings to product decisions.
 - [x] **P1** Preserve research evidence in repository documentation.
 
 ## Required ideation narrative
@@ -248,7 +248,7 @@ Final MVP
 - [x] **P0** Research Ethiopian opportunity platforms.
 - [x] **P0** Research global scholarship/opportunity platforms.
 - [x] **P1** Research AI opportunity-matching products.
-- [-] **P1** Research voice-enabled opportunity systems.
+- [x] **P1** Research voice-enabled opportunity systems.
 - [x] **P1** Research African opportunity platforms.
 - [x] **P1** Record competitor capabilities.
 - [x] **P1** Record relevant gaps/differences.
@@ -497,23 +497,23 @@ AI is an assistant, not the eligibility authority.
 
 ## AI may
 
-- [ ] Understand natural language.
-- [ ] Extract structured profile information.
-- [ ] Explain an existing decision.
-- [ ] Explain requirement gaps.
+- [x] Understand natural language.
+- [x] Extract structured profile information.
+- [x] Explain an existing decision.
+- [x] Explain requirement gaps.
 - [x] Generate readiness plans.
-- [ ] Answer contextual product questions.
+- [x] Answer contextual product questions.
 - [ ] Assist multilingual interaction.
 - [ ] Rephrase explanations for the user's language.
 
 ## AI must not
 
-- [ ] Invent official opportunity requirements.
-- [ ] Invent deadlines.
-- [ ] Override deterministic decision rules.
-- [ ] Convert uncertainty into false certainty.
-- [ ] Claim official eligibility confirmation.
-- [ ] Replace the official opportunity source.
+- [x] Invent official opportunity requirements.
+- [x] Invent deadlines.
+- [x] Override deterministic decision rules.
+- [x] Convert uncertainty into false certainty.
+- [x] Claim official eligibility confirmation.
+- [x] Replace the official opportunity source.
 
 ## Tasks
 
@@ -635,7 +635,7 @@ Do not trade reliability for language count.
 
 - [x] **P0** Server foundation.
 - [x] **P0** Environment configuration.
-- [-] **P0** Database connection.
+- [x] **P0** Database connection.
 - [x] **P0** Profile service.
 - [x] **P0** Opportunity service.
 - [x] **P0** Requirement matching service.
@@ -1262,7 +1262,7 @@ However, STARK-required research and ideation documentation must be maintained t
 ## Gate 1 — Concept
 
 - [x] Problem documented.
-- [-] Research documented.
+- [x] Research documented.
 - [x] Alternatives documented.
 - [x] Rejected ideas documented.
 - [x] HULUM concept selected.
@@ -1309,7 +1309,7 @@ However, STARK-required research and ideation documentation must be maintained t
 - [x] Demo scenario is stable.
 - [ ] Voice works.
 - [x] Backup mode exists.
-- [ ] Documentation is complete.
+- [x] Documentation is complete.
 - [x] Git history is truthful.
 - [x] STARK evidence is ready.
 
