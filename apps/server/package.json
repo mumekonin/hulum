@@ -8,7 +8,7 @@
     "start": "tsx src/index.ts",
     "build": "tsc",
     "typecheck": "tsc --noEmit",
-    "test": "tsx --test src/decision/engine.test.ts src/opportunities/search.test.ts src/shared-failure-messages.test.ts src/http/error-handler.node.test.ts && vitest run --exclude src/shared-failure-messages.test.ts --exclude src/http/error-handler.node.test.ts",
+    "test": "tsx --test src/decision/engine.node.test.ts src/opportunities/search.node.test.ts src/shared-failure-messages.node.test.ts src/http/error-handler.node.test.ts && vitest run",
     "db:migrate": "tsx src/db/run-migrate.ts",
     "db:seed": "tsx src/db/run-seed.ts",
     "db:smoke": "tsx src/db/run-smoke.ts"
