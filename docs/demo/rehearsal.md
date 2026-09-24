@@ -5,7 +5,7 @@
 **Backup:** `docs/demo/backup.md`  
 **Persona:** Abeba Tesfaye
 
-This is a freeze rehearsal against the **file-store** demo (`createApp`, `npm run dev`). It is not a live judge session and not a browser click-through.
+This is a freeze rehearsal against the **local Postgres** demo (`npm run dev` → `createApp({ store: "postgres" })`). It is not a live judge session and not a browser click-through.
 
 ---
 

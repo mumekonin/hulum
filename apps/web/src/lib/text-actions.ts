@@ -1,11 +1,13 @@
 import {
   type Analysis,
+  type LanguageCode,
   type Opportunity,
   type OpportunityType,
   type ProfileView,
   type ReadinessItem,
 } from "@hulum/shared";
 import { api } from "./api";
+import { getLanguage } from "./storage";
 
 export type TextActionResult = {
   reply: string;
@@ -66,8 +68,10 @@ export async function runTextAction(input: {
   userId: string;
   opportunityId?: string;
   analysisId?: string;
+  language?: LanguageCode;
 }): Promise<TextActionResult> {
   const value = input.text.trim();
+  const language: LanguageCode = input.language ?? getLanguage();
   const typeHit = TYPE_WORDS.find(([pattern]) => pattern.test(value));
 
   if (/(show|list|filter)/i.test(value) && decisionWord(value)) {
@@ -110,7 +114,7 @@ export async function runTextAction(input: {
     try {
       const explained = await api<{ decision: string; explanation: string }>(
         `/api/analyses/${input.analysisId}/explain`,
-        { method: "POST", body: JSON.stringify({ language: "en" }) },
+        { method: "POST", body: JSON.stringify({ language }) },
       );
       return {
         reply: `${explained.decision}. ${explained.explanation}`,
@@ -180,7 +184,7 @@ export async function runTextAction(input: {
     try {
       const plan = await api<{ plan: string; decision: string }>(
         `/api/analyses/${input.analysisId}/readiness/plan`,
-        { method: "POST", body: JSON.stringify({ language: "en" }) },
+        { method: "POST", body: JSON.stringify({ language }) },
       );
       return {
         reply: `${plan.decision}. ${plan.plan}`,

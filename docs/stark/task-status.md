@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-09-24 — Language wiring + research/product honesty
+
+- Explain / readiness plan use selected language; profile extract via Ask HULUM counted as profile-by-voice (text/widget path).
+- Product-rule research questions marked done; ScholarXIV/empirical items stay open.
+
+Still open: deploy, live mic/demonstrate voice, second/third language e2e, CI branch protection, browser tests, backup video.
+
+---
+
 ## 2026-09-24 — Voxide widget integration + mixed-language text
 
 - Days 10–12 Voxide integration marked done (widget behind key; text fallback).

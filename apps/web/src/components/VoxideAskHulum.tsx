@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef } from "react";
 import { VoxideClient, VoxideWidget, type VoxideStatus } from "@voxide/react";
-import { getUserId } from "@/lib/storage";
+import { getUserId, getLanguage } from "@/lib/storage";
 import { runTextAction } from "@/lib/text-actions";
 import { recognitionFailureMessage, TEXT_FALLBACK_HINT } from "@/lib/client-failures";
 
@@ -126,6 +126,7 @@ export function VoxideAskHulum({
               text: utterance,
               opportunityId: current.opportunityId,
               analysisId: current.analysisId,
+              language: getLanguage(),
             });
             onSessionUpdateRef.current({
               opportunityId: response.opportunityId,
