@@ -52,6 +52,14 @@ describe("parseVoiceIntent", () => {
     }
   });
 
+  it("maps mixed English + Amharic keywords without inventing a second e2e language", () => {
+    // Text path only (ADR 004). Does not claim live Amharic STT.
+    expect(parseVoiceIntent("Why ለምን did you say that?", "en").intent).toBe("EXPLAIN_DECISION");
+    expect(parseVoiceIntent("What am I missing ምን ጎድሎኛል?", "en").intent).toBe("SHOW_MISSING_REQUIREMENTS");
+    expect(parseVoiceIntent("Should I apply ለዚህ እድል ማመልከት?", "en").intent).toBe("ANALYZE_OPPORTUNITY");
+    expect(parseVoiceIntent("What's the weather in Addis?", "en").intent).toBe("UNSUPPORTED");
+  });
+
   it("does not treat analyze-this as a catalog APPLY filter", () => {
     expect(parseVoiceIntent("Should I apply for this?").intent).toBe("ANALYZE_OPPORTUNITY");
     expect(parseVoiceIntent("Show me opportunities I should apply for.").intent).toBe("FILTER_BY_DECISION");

@@ -792,7 +792,7 @@ Actual support depends on Voxide capabilities and quality.
 - [x] **P0** Ensure core voice interaction works.
 - [ ] **P1** Add second language.
 - [ ] **P1** Add third language if stable.
-- [ ] **P1** Test mixed-language input.
+- [x] **P1** Test mixed-language input.
 - [x] **P1** Test opportunity terminology.
 - [x] **P1** Test decision explanations.
 
@@ -1246,7 +1246,7 @@ Never manufacture commits, dates, research activity, or progress.
 
 ## Days 10–12 — Voice
 
-- [ ] Voxide integration.
+- [x] Voxide integration.
 - [x] Voice session.
 - [x] Voice intent mapping.
 - [x] Voice → analysis.
