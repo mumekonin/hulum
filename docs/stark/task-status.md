@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-09-24 — Voxide widget integration + mixed-language text
+
+- Days 10–12 Voxide integration marked done (widget behind key; text fallback).
+- Mixed-language **text** intent tests; Amharic STT / second language e2e still open.
+- STARK evidence index updated for Postgres + session auth.
+
+Still open: deploy, live mic/demonstrate voice, Amharic/Oromo UX, CI branch protection, browser tests, backup video.
+
+---
+
 ## 2026-09-24 — English tests + configure docs
 
 - Phase 13 English terminology / decision-explanation tests.

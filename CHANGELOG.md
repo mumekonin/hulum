@@ -2,6 +2,19 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Voxide integration checkbox + mixed-language text tests
+
+### Added
+- Mixed English + Amharic keyword intent tests (text path only; no STT claim).
+
+### Changed
+- Marked Days 10–12 **Voxide integration** done (widget + study; mic still open).
+- Marked Phase 13 **Test mixed-language input** for the text intent path.
+- Refreshed `docs/stark/evidence.md` (Postgres, session auth, optional Voxide widget).
+
+### Why
+Close integration/docs that already ship without inventing a live mic demo.
+
 ## 2026-09-24 — English product tests + production config docs
 
 ### Added
