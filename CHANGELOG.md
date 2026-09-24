@@ -6,6 +6,7 @@ HULUM records actual work. Do not invent history.
 
 ### Fixed
 - Vitest no longer discovers `shared-failure-messages.test.ts` and `error-handler.node.test.ts` (they run only under `tsx --test` / `node:test`).
+- `npm test` also passes Vitest `--exclude` for those paths (belt-and-suspenders with `vitest.config.ts`).
 
 ### Why
 CI failed with “No test suite found” when Vitest re-scanned Node-runner files that import `describe`/`it` from `node:test`.
