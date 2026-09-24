@@ -5,7 +5,7 @@
 **Backup:** `docs/demo/backup.md`  
 **Persona:** Abeba Tesfaye
 
-This is a freeze rehearsal against the **local Postgres** demo (`npm run dev` → `createApp({ store: "postgres" })`). It is not a live judge session and not a browser click-through.
+This is a freeze rehearsal against the **local Postgres** demo (`npm run dev` → `createApp({ store: "postgres" })`). It is not a live judge session. Automated Chromium click-through: `npm run smoke:browser` (requires web+API up).
 
 ---
 
@@ -20,6 +20,7 @@ This is a freeze rehearsal against the **local Postgres** demo (`npm run dev` �
 | UCT → MAYBE | `failures.test.ts` | Pass |
 | Chevening → SKIP | `failures.test.ts` | Pass |
 | Ask HULUM text: apply / why / missing / prepare | `voice.action.test.ts`, `flow.test.ts` | Pass |
+| Gateway → demo → A2SV APPLY → Ask HULUM | `npm run smoke:browser` | Automated Chromium (CI) |
 | Voice unavailable / text-fallback | assistant UI + session `provider` | Present |
 | Official source | analysis UI + tests | Present |
 
@@ -29,12 +30,11 @@ This is a freeze rehearsal against the **local Postgres** demo (`npm run dev` �
 
 ## What was not run
 
-- Clean-browser click-through on localhost
 - Microphone / Voxide
 - Production host
-- Recorded video
+- Recorded video / PNG screenshot pack
 
-If the live UI is down, use Path C in `docs/demo/backup.md` or `npm test`.
+Clean-browser click-through is covered by `npm run smoke:browser` (CI + local). If the live UI is down, use Path C in `docs/demo/backup.md` or `npm test`.
 
 ---
 

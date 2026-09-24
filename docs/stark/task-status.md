@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-09-24 — Browser smoke (demo click-through)
+
+- `smoke:browser` + CI Chromium pass: gateway → Abeba demo → A2SV APPLY → Ask HULUM text fallback.
+- Marked clean browser/device testing for that localhost automation (not mic / not prod).
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
+
+---
+
 ## 2026-09-24 — Demo-triangle smoke + Amharic second language
 
 - `smoke:local` / CI: APPLY + MAYBE + SKIP for Abeba.

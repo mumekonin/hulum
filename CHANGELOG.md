@@ -2,6 +2,18 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Browser smoke (demo click-through)
+
+### Added
+- `npm run smoke:browser` — Playwright Chromium: gateway Continue → demo profile → A2SV Analyze → APPLY → Ask HULUM text fallback.
+- CI: install Chromium, start web after build, run browser smoke (local only — not production).
+
+### Changed
+- Marked **Test clean browser/device** / **Browser/device testing** for this automated localhost pass (not mic, not a physical device matrix).
+
+### Why
+Lock the STARK demo path in a clean browser without inventing a deploy or live Voxide.
+
 ## 2026-09-24 — Demo-triangle smoke + Amharic as second language
 
 ### Changed

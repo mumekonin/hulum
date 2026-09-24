@@ -1159,7 +1159,7 @@ Interest: AI
 - [x] **P1** Demonstrate a MAYBE case.
 - [x] **P1** Demonstrate a SKIP case.
 - [x] **P0** Prepare backup mode for external-service failure.
-- [ ] **P0** Test clean browser/device.
+- [x] **P0** Test clean browser/device.
 - [ ] **P0** Test microphone.
 - [ ] **P0** Test production deployment.
 - [ ] **P1** Prepare backup video/screenshots.
@@ -1280,7 +1280,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [ ] Production voice test.
 - [x] E2E testing.
 - [x] Failure testing.
-- [ ] Browser/device testing.
+- [x] Browser/device testing.
 - [x] Fix critical bugs.
 
 ## Day 19 — Demo + Documentation

@@ -29,7 +29,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Voice UX | ADR 003, ADR 004, `docs/demo/script.md`, `docs/research/voxide-integration.md` | Text/quick-action fallback; `@voxide/react` widget behind `NEXT_PUBLIC_VOXIDE_KEY` (no mic claim without a live key) |
 | Auth / session | `apps/server/src/security/session.ts` | HMAC `X-Hulum-Session` when `SESSION_SECRET` set; required in production |
 | Implementation | `apps/web`, `apps/server`, `packages/shared` | Present |
-| Testing | `npm test`, `npm run smoke:local`, CI seed+smoke | Engine, API, voice-text, English product tests; CI Abeba→APPLY/MAYBE/SKIP smoke |
+| Testing | `npm test`, `npm run smoke:local`, `npm run smoke:browser`, CI | Engine, API, demo-triangle smoke; Chromium demo click-through (localhost) |
 | Iteration | `CHANGELOG.md`, `docs/stark/narrative.md` | Present; Day 20 narrative; do not rewrite history |
 | Deployment | `docs/stark/deployment.md` | **Not deployed**; local + config docs only |
 | Demo | `docs/demo/script.md`, `docs/demo/backup.md`, `docs/demo/rehearsal.md`, `docs/demo/screenshots/README.md` | Abeba Tesfaye; Amharic text demo step; screenshot shot list (no PNGs yet); text/API backup; **no video** |
