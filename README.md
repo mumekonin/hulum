@@ -31,7 +31,7 @@ A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that deci
 - **Explanation** — engine summary; optional Claude on the file-store demo; Groq on `POST /api/analyses/:id/explain` (Postgres path). Neither model changes the decision.
 - **Gaps and readiness** — MET / NOT_MET / UNCERTAIN, then a TODO checklist.
 - **Official source** — stored `sourceUrl` / `applicationUrl` on opportunity and analysis screens.
-- **Ask HULUM** — text and quick actions (ADR 003). Voxide STT/TTS is not wired.
+- **Ask HULUM** — text and quick actions (ADR 003). Optional `@voxide/react` widget when `NEXT_PUBLIC_VOXIDE_KEY` is set; no live mic claim without a keyed test.
 - **Backup mode** — Voice unavailable keeps typing and the rest of the UI.
 
 Out of v0.1: auto-apply, payments, native mobile, scraping unverified lists, live ScholarXIV in the API.

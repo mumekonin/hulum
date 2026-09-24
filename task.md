@@ -214,7 +214,7 @@ hulum/
 - [x] Responsible AI eligibility uncertainty.
 - [x] Opportunity matching and decision-support systems.
 - [-] Voice-first design for non-English speakers.
-- [-] Multilingual interaction for English/Amharic/Afaan Oromo users.
+- [x] Multilingual interaction for English/Amharic/Afaan Oromo users.
 - [x] Readiness support for scholarship/internship/job applications.
 - [x] Trust and verification of opportunity requirements.
 - [x] Human oversight when AI assists eligibility decisions.
@@ -1151,7 +1151,7 @@ Interest: AI
 - [x] **P0** Show matched requirements.
 - [x] **P0** Show missing/uncertain requirements.
 - [x] **P0** Show readiness checklist.
-- [ ] **P0** Demonstrate voice.
+- [x] **P0** Demonstrate voice.
 - [x] **P0** Demonstrate English.
 - [ ] **P1** Demonstrate Amharic if stable.
 - [x] **P0** Open official opportunity source.

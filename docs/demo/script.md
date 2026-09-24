@@ -2,8 +2,8 @@
 
 **Owner:** Kidist  
 **Persona:** Abeba Tesfaye (already in the app)  
-**Runtime:** local `npm run dev` — web `:3000`, API `:4000`  
-**Voice:** text + quick actions. Do not claim live Voxide or a microphone.
+**Runtime:** local `npm run dev` — web `:3000`, API `:3001`  
+**Voice:** Ask HULUM text + quick actions (ADR 003). Do not claim live Voxide or a microphone.
 
 Target length: about 6 minutes. One story, not a feature tour.
 
@@ -27,7 +27,7 @@ Do say: the engine decides; Claude only explains if a key is set; always open th
 
 1. From the repo root: `npm install` then `npm run dev`.
 2. Open http://localhost:3000 in a clean browser profile.
-3. Confirm http://localhost:4000/api/health returns `{ "data": { "status": "ok" }, "error": null }`.
+3. Confirm http://localhost:3001/api/health returns `{ "data": { "status": "ok" }, "error": null }`.
 4. Optional Claude key is not required.
 
 ---

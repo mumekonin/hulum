@@ -74,6 +74,8 @@ describe("profile routes", () => {
       createTestApp({
         create: async () => view,
         getByUserId: async () => view,
+        getByEmail: async () => undefined,
+        ensureDemo: async () => view,
         update: async () => view,
       }),
     );
@@ -96,6 +98,8 @@ describe("profile routes", () => {
       createTestApp({
         create: async () => view,
         getByUserId: async () => view,
+        getByEmail: async () => undefined,
+        ensureDemo: async () => view,
         update: async () => view,
       }),
     );
@@ -112,6 +116,8 @@ describe("profile routes", () => {
       createTestApp({
         create: async () => view,
         getByUserId: async () => undefined,
+        getByEmail: async () => undefined,
+        ensureDemo: async () => view,
         update: async () => undefined,
       }),
     );
@@ -124,5 +130,21 @@ describe("profile routes", () => {
       data: null,
       error: { code: "NOT_FOUND", message: "Profile not found." },
     });
+  });
+
+  it("creates the Abeba demo profile", async () => {
+    const port = await listen(
+      createTestApp({
+        create: async () => view,
+        getByUserId: async () => view,
+        getByEmail: async () => undefined,
+        ensureDemo: async () => view,
+        update: async () => view,
+      }),
+    );
+    const response = await fetch(`http://127.0.0.1:${port}/api/profile/demo`, { method: "POST" });
+    const body: unknown = await response.json();
+    expect(response.status).toBe(201);
+    expect(body).toEqual({ data: view, error: null });
   });
 });
