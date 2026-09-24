@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — Failure suites run under Vitest only
+
+### Fixed
+- Moved Phase 20 failure-message tests to Vitest (`shared-failure-messages.test.ts`).
+- Removed duplicate `error-handler.node.test.ts` (coverage already in `error-handler.test.ts`).
+- `tsx --test` now only runs `engine.node.test.ts` and `search.node.test.ts`.
+
+### Why
+CI still failed when Vitest collected Node-runner copies of the same suites. One runner per file removes “No test suite found”.
+
 ## 2026-09-24 — Node-runner tests use *.node.test.ts
 
 ### Fixed
