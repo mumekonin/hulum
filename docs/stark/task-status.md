@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-09-24 — CI smoke + Amharic demo text
+
+- CI runs `db:seed` + `smoke:local` after tests.
+- Demo script Amharic text step; screenshot shot list (no images yet).
+
+Still open: deploy, live mic/STT, Oromo, CI require-check (admin), browser click-through, backup video/PNG files.
+
+---
+
 ## 2026-09-24 — Amharic text UX + smoke:local
 
 - Ask HULUM Amharic chrome/quick actions (text only).

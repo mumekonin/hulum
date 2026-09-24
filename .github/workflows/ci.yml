@@ -62,6 +62,9 @@ jobs:
       - name: Run database migrations
         run: npm run db:migrate --workspace @hulum/server
 
+      - name: Seed opportunity catalog
+        run: npm run db:seed --workspace @hulum/server
+
       - name: Typecheck shared contracts
         run: npm run typecheck:shared
 
@@ -73,6 +76,26 @@ jobs:
 
       - name: Test
         run: npm test
+
+      - name: Local API smoke (Abeba → A2SV APPLY)
+        run: |
+          npm run start -w @hulum/server > /tmp/hulum-api.log 2>&1 &
+          ready=0
+          for i in $(seq 1 40); do
+            if curl -sf http://127.0.0.1:3001/api/health >/dev/null; then
+              ready=1
+              break
+            fi
+            sleep 1
+          done
+          if [ "$ready" != "1" ]; then
+            echo "API did not become healthy"
+            cat /tmp/hulum-api.log || true
+            exit 1
+          fi
+          npm run smoke:local
+        env:
+          API_URL: http://127.0.0.1:3001
 
       - name: Build server
         run: npm run build:server
