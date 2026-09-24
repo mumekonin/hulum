@@ -32,7 +32,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Testing | `npm test` in `apps/server` | Engine, API, voice-text, failures, English product tests |
 | Iteration | `CHANGELOG.md`, `docs/stark/narrative.md` | Present; Day 20 narrative; do not rewrite history |
 | Deployment | `docs/stark/deployment.md` | **Not deployed**; local + config docs only |
-| Demo | `docs/demo/script.md`, `docs/demo/backup.md`, `docs/demo/rehearsal.md` | Abeba Tesfaye; text/API backup; rehearsal via tests, **no video** |
+| Demo | `docs/demo/script.md`, `docs/demo/backup.md`, `docs/demo/rehearsal.md`, `docs/demo/screenshots/README.md` | Abeba Tesfaye; Amharic text demo step; screenshot shot list (no PNGs yet); text/API backup; **no video** |
 | Changelog | `CHANGELOG.md`, `docs/stark/changelog-review.md`, `docs/stark/changelog-final.md` | Present; Day 20 freeze pass 2026-09-19 |
 | Git history | this GitHub repo, `docs/stark/git-history.md`, `docs/stark/milestones.md` | Real commits; `milestone/*` tags on real SHAs; no invented SemVer product release |
 | Team | `team_assignments.md`, `git-workflow.md` | Present |
