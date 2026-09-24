@@ -10,7 +10,7 @@ const journey = [
   { n: "07", title: "Open the official source", href: "/opportunities", detail: "Always confirm eligibility and deadlines with the organization." },
 ];
 
-export default function HomePage() {
+export default function JourneyPage() {
   return (
     <section className="max-w-4xl">
       <p className="text-sm uppercase tracking-[0.2em] text-forest">Your AI opportunity decision agent</p>
