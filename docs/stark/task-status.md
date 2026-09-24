@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-09-24 — Amharic text UX + smoke:local
+
+- Ask HULUM Amharic chrome/quick actions (text only).
+- `npm run smoke:local` for local Abeba→A2SV APPLY check.
+
+Still open: deploy, live mic, Amharic STT / second-language e2e, CI require-check, browser tests, backup video.
+
+---
+
 ## 2026-09-24 — Demo backup Postgres path
 
 - `POST /api/profile/demo` on Postgres; backup/script ports fixed to `:3001`.
