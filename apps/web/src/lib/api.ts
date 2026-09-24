@@ -1,8 +1,9 @@
+import { isNetworkFetchError, NETWORK_MESSAGE } from "./client-failures";
+
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:3001";
 
 type Envelope<T> = { data: T | null; error: { message: string; code?: string } | null };
 
-const NETWORK_MESSAGE = "We couldn't reach HULUM. Check your connection and try again.";
 const FALLBACK_MESSAGE = "Something went wrong. Try again.";
 
 export class ApiClientError extends Error {
@@ -24,7 +25,7 @@ export function isNotFound(error: unknown): boolean {
 export function userFacingError(error: unknown): string {
   if (error instanceof ApiClientError) return error.message;
   if (error instanceof Error) {
-    if (/failed to fetch|networkerror|econnrefused|load failed/i.test(error.message)) {
+    if (isNetworkFetchError(error)) {
       return NETWORK_MESSAGE;
     }
     return error.message || FALLBACK_MESSAGE;
@@ -64,4 +65,4 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   return payload.data;
 }
 
-export { API_URL };
+export { API_URL, NETWORK_MESSAGE };

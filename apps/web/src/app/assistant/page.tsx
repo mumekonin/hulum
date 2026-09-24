@@ -9,6 +9,7 @@ import { Notice } from "@/components/Notice";
 import { StatusPanel } from "@/components/StatusPanel";
 import { hasVoxidePublicKey } from "@/components/VoxideAskHulum";
 import { api, userFacingError } from "@/lib/api";
+import { MIC_UNAVAILABLE_BODY, MIC_UNAVAILABLE_TITLE } from "@/lib/client-failures";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
 import { getLanguage, getUserId, setLanguage } from "@/lib/storage";
 import { runTextAction } from "@/lib/text-actions";
@@ -180,12 +181,11 @@ function AssistantInner() {
         <div id="voice-unavailable" className="mt-6">
           <StatusPanel
             variant="empty"
-            title="Voice unavailable"
+            title={MIC_UNAVAILABLE_TITLE}
             primary={{ label: "Type a request", onClick: () => requestInput.current?.focus() }}
             secondary={{ label: "Browse opportunities", href: "/opportunities" }}
           >
-            Voxide is not connected (missing or invalid NEXT_PUBLIC_VOXIDE_KEY). Type a request or use a
-            quick action. The buttons call the Postgres API.
+            {MIC_UNAVAILABLE_BODY} Voxide key missing or invalid (`NEXT_PUBLIC_VOXIDE_KEY`).
           </StatusPanel>
         </div>
       ) : (
