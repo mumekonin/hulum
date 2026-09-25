@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-25 — README + recovery copy match JWT product
+
+### Changed
+- Root README: JWT auth, investigator catalog, screenshot analyze, smokes; removed `POST /api/profile/demo`.
+- Forgot-password UI copy no longer claims browser UUID Continue sessions.
+
+### Why
+Judges reading README or `/forgot-password` must see the same product as Create account / Sign in.
+
 ## 2026-09-25 — Demo walkthrough matches JWT product
 
 ### Changed

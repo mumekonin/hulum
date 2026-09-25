@@ -6,6 +6,14 @@
 
 ---
 
+## 2026-09-25 — README + recovery match JWT
+
+- README and forgot-password copy aligned with JWT / investigator / screenshot (no demo profile endpoint).
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
+
+---
+
 ## 2026-09-25 — Demo docs match JWT + investigator
 
 - Rewrote `docs/demo/script.md`, `backup.md`, `rehearsal.md`, and screenshot shot list for Create account / typed Abeba / investigator catalog / `/screenshot` backup.
