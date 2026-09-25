@@ -30,6 +30,23 @@ The field was a text box and was not saved. People need to upload a photo of a C
 ### Why
 People see posts outside the catalog. HULUM should analyze the photo they already have, without inventing apply links.
 
+## 2026-09-25 — Browser smoke Ask HULUM locator
+
+### Fixed
+- `smoke:browser` clicks Ask HULUM via Primary nav (`exact: true`) so Playwright does not hit strict-mode duplicates with in-page CTAs.
+
+## 2026-09-25 — Browser smoke on JWT gateway
+
+### Added
+- `npm run smoke:browser` — Playwright: Create account → save profile → Opportunities → Ask HULUM text fallback.
+- CI Chromium install + browser smoke after web build (localhost only).
+
+### Changed
+- Marked **Test clean browser/device** / **Browser/device testing** for this automated pass (not mic, not seed APPLY).
+
+### Why
+Replaces the pre-auth Continue/demo/A2SV smoke after JWT + closed catalog seed landed on main.
+
 ## 2026-09-24 — JWT session and Google OAuth
 
 ### Added

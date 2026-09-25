@@ -25,7 +25,8 @@
     "db:migrate": "npm run db:migrate -w @hulum/server",
     "db:seed": "npm run db:seed -w @hulum/server",
     "db:smoke": "npm run db:smoke -w @hulum/server",
-    "smoke:local": "node scripts/smoke-local.mjs"
+    "smoke:local": "node scripts/smoke-local.mjs",
+    "smoke:browser": "node scripts/smoke-browser.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
@@ -33,6 +34,7 @@
     "eslint": "^9.39.5",
     "eslint-config-prettier": "^10.1.8",
     "globals": "^17.12.0",
+    "playwright": "^1.55.0",
     "prettier": "^3.9.8",
     "typescript-eslint": "^8.70.1"
   },
