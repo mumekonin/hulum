@@ -4,7 +4,6 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { EDUCATION_LABELS, EDUCATION_LEVELS, type EducationLevel, type LanguageCode, type ProfileExtractResult, type ProfileView } from "@hulum/shared";
 import { api, isNotFound, userFacingError } from "@/lib/api";
-import { ABEBA_DEMO } from "@/lib/demo-profile";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
 import { getLanguage, getUserId, setLanguage, setSessionToken, setUserId } from "@/lib/storage";
 import { Notice } from "@/components/Notice";
@@ -135,10 +134,8 @@ export default function ProfilePage() {
     setSaving(true);
     setError(null);
     try {
-      const view = await api<ProfileView>("/api/profile", {
-        method: "POST",
-        body: JSON.stringify(ABEBA_DEMO),
-      });
+      // Idempotent Abeba endpoint (same as API smoke / ensureDemo).
+      const view = await api<ProfileView>("/api/profile/demo", { method: "POST" });
       setUserId(view.profile.userId);
       setSessionToken(view.sessionToken);
       setHasProfile(true);

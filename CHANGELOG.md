@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-25 — Idempotent demo profile for browser smoke
+
+### Fixed
+- Profile create upserts on `users.email` / `profiles.user_id` so CI API smoke + browser “Use demo profile” can share Abeba.
+- Profile page demo button calls `POST /api/profile/demo` (already idempotent).
+- `smoke:browser` asserts demo/analyze HTTP responses so API errors surface before URL timeouts.
+
+### Why
+Browser smoke failed after local API smoke had already inserted `abeba.tesfaye@example.invalid`.
+
 ## 2026-09-24 — Fix demo-triangle seed vs decide() contract
 
 ### Fixed
