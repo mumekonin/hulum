@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import { OPPORTUNITY_TYPES, TYPE_LABELS, type Opportunity, type OpportunityType } from "@hulum/shared";
 import { OpportunityCard } from "@/components/OpportunityCard";
 import { StatusPanel } from "@/components/StatusPanel";
@@ -73,7 +74,11 @@ export default function OpportunitiesPage() {
         <div>
           <h1 className="font-display text-4xl">Opportunities</h1>
           <p className="mt-2 max-w-2xl text-muted">
-            Curated records with official sources. HULUM does not scrape unverified Telegram posts in v0.1.
+            Catalog records with official sources. If you saw a post on Telegram or LinkedIn,{" "}
+            <Link href="/screenshot" className="underline">
+              upload a screenshot
+            </Link>{" "}
+            — HULUM reads the photo and analyzes it. It does not invent a deadline or apply link.
           </p>
         </div>
         <div className="flex flex-wrap items-end gap-3">

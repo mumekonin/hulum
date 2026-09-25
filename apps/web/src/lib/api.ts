@@ -68,4 +68,29 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
   return payload.data;
 }
 
+export async function apiBlob(path: string): Promise<Blob> {
+  const session = typeof window !== "undefined" ? getSessionToken() : null;
+  let response: Response;
+  try {
+    response = await fetch(`${API_URL}${path}`, {
+      headers: session ? { "X-Hulum-Session": session } : {},
+    });
+  } catch {
+    throw new ApiClientError(NETWORK_MESSAGE, 0, "NETWORK");
+  }
+
+  if (!response.ok) {
+    let message = FALLBACK_MESSAGE;
+    try {
+      const payload = (await response.json()) as Envelope<unknown>;
+      message = payload.error?.message ?? FALLBACK_MESSAGE;
+    } catch {
+      message = FALLBACK_MESSAGE;
+    }
+    throw new ApiClientError(message, response.status, "FILE");
+  }
+
+  return response.blob();
+}
+
 export { API_URL, NETWORK_MESSAGE };

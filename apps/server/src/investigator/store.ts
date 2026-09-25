@@ -132,12 +132,16 @@ export async function saveExtracted(input: {
   countryEligibility: string[];
   applicationUrl: string | null;
   sourceUrl: string;
+  requirementEvidence?: string;
 }): Promise<string> {
+  const otherRequirements = input.requirementEvidence?.trim()
+    ? [input.requirementEvidence.trim()]
+    : [];
   const result = await getPool().query<{ id: string }>(
     `insert into opportunities (
        title, organization, type, description, deadline, country_eligibility,
-       application_url, source_url, verification_status, investigated_at
-     ) values ($1,$2,$3,$4,$5,$6,$7,$8,'AI_EXTRACTED', now())
+       other_requirements, application_url, source_url, verification_status, investigated_at
+     ) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,'AI_EXTRACTED', now())
      returning id`,
     [
       input.title,
@@ -146,6 +150,7 @@ export async function saveExtracted(input: {
       input.description,
       input.deadline,
       input.countryEligibility,
+      otherRequirements,
       input.applicationUrl,
       input.sourceUrl,
     ],

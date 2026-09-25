@@ -17,6 +17,8 @@ export type AppEnv = {
   CLAUDE_MODEL: string | undefined;
   GROQ_API_KEY: string | undefined;
   GROQ_MODEL: string | undefined;
+  /** Vision model for screenshot extract. Text GROQ_MODEL is often not vision-capable. */
+  GROQ_VISION_MODEL: string | undefined;
   VOXIDE_API_KEY: string | undefined;
   JOB_OPPORTUNITIES_API_KEY: string | undefined;
   JOB_OPPORTUNITIES_API_URL: string | undefined;
@@ -112,6 +114,7 @@ export function loadEnv(options: LoadEnvOptions = {}): AppEnv {
     CLAUDE_MODEL: optionalString(process.env.CLAUDE_MODEL) ?? optionalString(process.env.ANTHROPIC_MODEL),
     GROQ_API_KEY: optionalString(process.env.GROQ_API_KEY),
     GROQ_MODEL: optionalString(process.env.GROQ_MODEL),
+    GROQ_VISION_MODEL: optionalString(process.env.GROQ_VISION_MODEL),
     VOXIDE_API_KEY: optionalString(process.env.VOXIDE_API_KEY),
     JOB_OPPORTUNITIES_API_KEY: optionalString(process.env.JOB_OPPORTUNITIES_API_KEY),
     JOB_OPPORTUNITIES_API_URL: optionalString(process.env.JOB_OPPORTUNITIES_API_URL),

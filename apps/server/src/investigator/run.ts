@@ -194,6 +194,7 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
           countryEligibility: item.countryEligibility,
           applicationUrl: item.applicationUrl,
           sourceUrl,
+          requirementEvidence: item.requirementEvidence,
         });
         const host = hostnameOf(sourceUrl);
         if (host !== undefined && !isLeadHost(host, leadHosts)) {

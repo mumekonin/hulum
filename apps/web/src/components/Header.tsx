@@ -7,6 +7,7 @@ import { clearSession } from "@/lib/storage";
 const links = [
   { href: "/journey", label: "Journey" },
   { href: "/opportunities", label: "Opportunities" },
+  { href: "/screenshot", label: "Screenshot" },
   { href: "/profile", label: "Profile" },
   { href: "/assistant", label: "Ask HULUM" },
   { href: "/research", label: "Research" },

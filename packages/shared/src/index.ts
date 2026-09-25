@@ -26,7 +26,10 @@ export {
   isNetworkFetchError,
   recognitionFailureMessage,
 } from "./failureMessages.js";
+export type { ProfileDocument } from "./documents.js";
 export type { AuthSession } from "./auth.js";
+export { SCREENSHOT_ANALYZE_NOTICE } from "./screenshot.js";
+export type { ScreenshotAnalyzeResult, ScreenshotDecisionView, ScreenshotExtracted } from "./screenshot.js";
 export { PROFILE_COMPLETENESS_FIELDS, profileCompleteness } from "./profile.js";
 export type {
   CreateProfileRequest,

@@ -8,7 +8,7 @@ import { Notice } from "@/components/Notice";
 import { ExternalLink } from "@/components/ExternalLink";
 import { StatusPanel } from "@/components/StatusPanel";
 import { api, isNotFound, userFacingError } from "@/lib/api";
-import { formatDeadline } from "@/lib/format";
+import { formatDeadline, requirementLines } from "@/lib/format";
 import { getUserId } from "@/lib/storage";
 
 export default function OpportunityDetailPage() {
@@ -98,6 +98,14 @@ export default function OpportunityDetailPage() {
   }
 
   const needsProfile = error?.toLowerCase().includes("profile");
+  const listedRequirements = [
+    ...requirementLines(opportunity.educationRequirements),
+    ...requirementLines(opportunity.fieldRequirements),
+    ...requirementLines(opportunity.experienceRequirements),
+    ...requirementLines(opportunity.languageRequirements),
+    ...requirementLines(opportunity.documentRequirements),
+    ...requirementLines(opportunity.otherRequirements),
+  ];
 
   return (
     <article className="max-w-3xl">
@@ -122,19 +130,22 @@ export default function OpportunityDetailPage() {
         </div>
         <div>
           <dt className="text-muted">Education</dt>
-          <dd>{opportunity.educationRequirements}</dd>
+          <dd>{requirementLines(opportunity.educationRequirements).join(", ") || "Not listed"}</dd>
         </div>
       </dl>
       <h2 className="mt-10 font-display text-2xl">Requirements</h2>
-      <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6">
-        <li>{opportunity.educationRequirements}</li>
-        <li>{opportunity.fieldRequirements}</li>
-        <li>{opportunity.experienceRequirements}</li>
-        <li>{opportunity.languageRequirements}</li>
-        {opportunity.documentRequirements.map((doc) => (
-          <li key={doc}>{doc}</li>
-        ))}
-      </ul>
+      {listedRequirements.length === 0 ? (
+        <p className="mt-3 text-sm text-muted">
+          No structured requirements were stored for this listing. Confirm eligibility on the official
+          source.
+        </p>
+      ) : (
+        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6">
+          {listedRequirements.map((line) => (
+            <li key={line}>{line}</li>
+          ))}
+        </ul>
+      )}
       <div className="mt-8 flex flex-wrap gap-3">
         <button onClick={() => void analyze()} disabled={analyzing} className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
           {analyzing ? "Analyzing…" : "Analyze for me"}
