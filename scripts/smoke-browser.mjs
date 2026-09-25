@@ -76,6 +76,15 @@ async function main() {
     await page.waitForURL(/\/opportunities/);
     await page.getByRole("heading", { name: "Opportunities" }).waitFor();
 
+    await page
+      .getByRole("navigation", { name: "Primary" })
+      .getByRole("link", { name: "Screenshot", exact: true })
+      .click();
+    await page.waitForURL(/\/screenshot/);
+    await page.getByRole("heading", { name: /Analyze a screenshot/i }).waitFor();
+    await page.locator("#screenshot").waitFor();
+    await page.getByText(/does not invent a deadline or apply link/i).first().waitFor();
+
     // Prefer Primary nav — page-wide "Ask HULUM" can match header + in-page CTAs (strict mode).
     await page
       .getByRole("navigation", { name: "Primary" })
@@ -85,7 +94,7 @@ async function main() {
     await page.getByRole("heading", { name: /Ask HULUM|ሁሉምን ጠይቅ/i }).waitFor();
     await page.getByText(/Microphone unavailable|Type or use a quick action|ማይክሮፎን/i).first().waitFor();
 
-    console.log("ok: register → profile → opportunities → Ask HULUM text fallback");
+    console.log("ok: register → profile → opportunities → screenshot → Ask HULUM text fallback");
   } finally {
     await browser.close();
   }

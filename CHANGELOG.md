@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-25 — Deployment guide + screenshot smoke
+
+### Changed
+- `docs/stark/deployment.md`: JWT secrets, migrations through `009`, investigator (no seed), CI smokes.
+- `smoke:browser` opens `/screenshot` and checks the upload UI (no Groq / no fake analyze).
+
+### Why
+Keep deploy docs honest after auth/catalog changes, and lock the screenshot backup route in CI.
+
 ## 2026-09-25 — README + recovery copy match JWT product
 
 ### Changed

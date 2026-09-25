@@ -20,8 +20,10 @@ npm run dev
 | Web | `http://localhost:3000` |
 | API | `http://localhost:3001` |
 | Store | Postgres via `DATABASE_URL` (local or team Supabase project — not a public demo URL) |
+| Catalog | Investigator worker (evidenced pages). **No** baked `db:seed` opportunity cards. |
+| Auth | Email/password JWT (+ optional Google). Password-reset email is not wired. |
 
-Optional: `GROQ_API_KEY` for explanation wording; `NEXT_PUBLIC_VOXIDE_KEY` (`vox_pub_…`) for the Ask HULUM widget. APPLY / MAYBE / SKIP still come from `decide()`.
+Optional: `GROQ_API_KEY` for explain / extract / screenshot vision; `NEXT_PUBLIC_VOXIDE_KEY` (`vox_pub_…`) for the Ask HULUM widget. APPLY / MAYBE / SKIP still come from `decide()`.
 
 ## Why not EthioDeploy yet
 
@@ -35,9 +37,9 @@ These Phase 23 rows mean **configuration exists in code/docs**, not that a publi
 
 1. Provision Postgres (local Docker or team Supabase).
 2. Set `DATABASE_URL` in the server environment (never commit it).
-3. Run `npm run db:migrate --workspace @hulum/server` (applies `001`–`004`, including RLS policies).
+3. Run `npm run db:migrate --workspace @hulum/server` (applies `001`–`009`: init, investigator, audit, RLS, worker, close seed, password hash, Google sub, profile documents).
 4. Optional: `npm run db:smoke` (transactional insert/rollback).
-5. Seed only curated official-source opportunities — do not invent listings.
+5. Do **not** rely on `db:seed` for the live catalog — migration `006` closed curated seed inserts. The investigator fills opportunities from evidenced pages when Groq + worker env are set.
 
 ### Configure production secrets
 
@@ -47,9 +49,12 @@ Required before any public host:
 |---|---|
 | `DATABASE_URL` | Postgres |
 | `CLIENT_URL` | CORS origin (required in `NODE_ENV=production`) |
-| `SESSION_SECRET` | HMAC for `X-Hulum-Session` (required in production) |
-| `GROQ_API_KEY` / `GROQ_MODEL` | Optional explanation wording |
+| `SESSION_SECRET` | JWT for `X-Hulum-Session` (required in production) |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | Optional Google OAuth |
+| `GROQ_API_KEY` / `GROQ_MODEL` | Optional explain / extract / investigator |
+| `GROQ_VISION_MODEL` | Optional screenshot vision |
 | `NEXT_PUBLIC_VOXIDE_KEY` | Optional Ask HULUM widget (`vox_pub_…`) |
+| `INVESTIGATE_WORKER` / interval / on-start | Optional background investigator |
 | `INVESTIGATE_ADMIN_SECRET` | Optional investigator admin header |
 | `SCHOLARXIV_API_KEY` | Optional research API (server only) |
 
@@ -62,7 +67,7 @@ Names live in `.env.example` / `apps/server/.env.example`. Real values stay in t
 
 ## Deployment workflow (CI)
 
-GitHub Actions CI (`.github/workflows/ci.yml`) already runs install, migrations, typecheck, lint, tests, and web/server builds on every push and pull request.
+GitHub Actions CI (`.github/workflows/ci.yml`) runs install, migrations, typecheck, lint, tests, `smoke:local`, web/server builds, Playwright Chromium, and `smoke:browser` on every push and pull request.
 
 **Configure deployment workflow:** not appropriate for v0.1 — there is no production host to deploy to. Do not add a deploy job that invents a URL.
 
@@ -70,7 +75,7 @@ GitHub Actions CI (`.github/workflows/ci.yml`) already runs install, migrations,
 
 ## What judges should run
 
-Follow the root `README.md`. Demo backup path: `docs/demo/backup.md` (text-only if voice fails). Research evidence index: `docs/stark/research-evidence.md`.
+Follow the root `README.md`. Demo walkthrough: `docs/demo/script.md`. Backup path: `docs/demo/backup.md`. Checks: `npm run smoke:local` and `npm run smoke:browser`. Research evidence index: `docs/stark/research-evidence.md`.
 
 ## What is still open (honest)
 
@@ -78,3 +83,4 @@ Follow the root `README.md`. Demo backup path: `docs/demo/backup.md` (text-only 
 - Production analysis and voice verification on that host
 - Org admin enabling required status checks on `main`
 - Live Voxide mic / Amharic STT
+- Checked-in backup video / screenshot PNG pack
