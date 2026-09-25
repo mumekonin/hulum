@@ -1,11 +1,11 @@
-# Demo rehearsal (Day 20)
+# Demo rehearsal
 
-**Date:** 2026-09-19  
+**Date:** 2026-09-25 (post JWT + closed catalog seed)  
 **Script:** `docs/demo/script.md`  
 **Backup:** `docs/demo/backup.md`  
-**Persona:** Abeba Tesfaye
+**Persona:** Abeba Tesfaye (typed / pre-saved account)
 
-This is a freeze rehearsal against the **local Postgres** demo (`npm run dev` → `createApp({ store: "postgres" })`). It is not a live judge session and not a browser click-through.
+This rehearsal matches the **running product**: Postgres + JWT auth + investigator catalog. It is not a live judge session.
 
 ---
 
@@ -13,33 +13,30 @@ This is a freeze rehearsal against the **local Postgres** demo (`npm run dev` �
 
 | Step in the script | Check | Result |
 |---|---|---|
-| Landing APPLY / MAYBE / SKIP + Create your profile | `apps/web/src/app/page.tsx` | Present |
-| Use demo profile (Abeba Tesfaye) | profile page button | Present |
-| Open A2SV → Analyze for me | opportunity detail | Present |
-| Abeba + A2SV → APPLY | `npm test` (`flow.test.ts`) | Pass |
-| UCT → MAYBE | `failures.test.ts` | Pass |
-| Chevening → SKIP | `failures.test.ts` | Pass |
-| Ask HULUM text: apply / why / missing / prepare | `voice.action.test.ts`, `flow.test.ts` | Pass |
-| Voice unavailable / text-fallback | assistant UI + session `provider` | Present |
-| Official source | analysis UI + tests | Present |
-
-`npm test` on 2026-09-19: 22 files, 85 tests, all pass.
+| Gateway Sign in / Create account | `AuthGateway` / `AuthInduction` | Present |
+| Save Abeba profile facts | profile page `#profile-*` fields | Present |
+| Document photo upload | profile documents API | Present (optional in timed demo) |
+| Opportunities list | investigator catalog (may be empty) | Present |
+| Analyze → decision | analysis UI + `decide()` | Present |
+| Screenshot analyze | `/screenshot` | Present (backup when catalog empty) |
+| Ask HULUM text / quick actions | assistant + voice action tests | Present |
+| Voice unavailable / text-fallback | assistant UI | Present |
+| Clean-browser click-through | `npm run smoke:browser` (CI) | Automated on localhost |
+| Local API smoke | `npm run smoke:local` (register + catalog list) | Automated |
 
 ---
 
-## What was not run
+## What was not run / not claimed
 
-- Clean-browser click-through on localhost
-- Microphone / Voxide
+- Microphone / Voxide STT
 - Production host
-- Recorded video
+- Recorded video / checked-in PNG pack
+- Seeded A2SV / UCT / Chevening cards or `POST /api/profile/demo`
 
-If the live UI is down, use Path C in `docs/demo/backup.md` or `npm test`.
+If the live UI is down, use Path C in `docs/demo/backup.md`, `npm run smoke:local`, or `npm test`.
 
 ---
 
 ## What to say (unchanged)
 
-Engine decides. Claude explains only if a key is set. Official source last. Do not claim deploy, ScholarXIV papers, or live speech.
-
-Postgres routers from Mulualem PRs #5–#10 are **not** this walkthrough. Demo Abeba still uses `user_demo_abeba` and seed ids `opp-a2sv`, `opp-mastercard-uct`, `opp-chevening`.
+Engine decides. Claude explains only if a key is set. Official source (or screenshot evidence) last. Do not claim deploy, ScholarXiv papers, live speech, or a one-click demo profile.

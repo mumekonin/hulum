@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-25 — Demo walkthrough matches JWT product
+
+### Changed
+- Judge script, backup paths, rehearsal, and screenshot shot list: Create account / typed Abeba, investigator catalog, `/screenshot` when the list is empty.
+- Removed Continue UUID, Use demo profile, and seeded A2SV/UCT/Chevening from demo docs.
+
+### Why
+STARK honesty — the walkthrough must match the running JWT + investigator product.
+
 ## 2026-09-25 — Profile form accessible labels
 
 ### Fixed
