@@ -2,6 +2,11 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-25 — Browser smoke Ask HULUM locator
+
+### Fixed
+- `smoke:browser` clicks Ask HULUM via Primary nav (`exact: true`) so Playwright does not hit strict-mode duplicates with in-page CTAs.
+
 ## 2026-09-25 — Browser smoke on JWT gateway
 
 ### Added

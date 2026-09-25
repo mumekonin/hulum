@@ -76,7 +76,11 @@ async function main() {
     await page.waitForURL(/\/opportunities/);
     await page.getByRole("heading", { name: "Opportunities" }).waitFor();
 
-    await page.getByRole("link", { name: "Ask HULUM" }).click();
+    // Prefer Primary nav — page-wide "Ask HULUM" can match header + in-page CTAs (strict mode).
+    await page
+      .getByRole("navigation", { name: "Primary" })
+      .getByRole("link", { name: "Ask HULUM", exact: true })
+      .click();
     await page.waitForURL(/\/assistant/);
     await page.getByRole("heading", { name: /Ask HULUM|ሁሉምን ጠይቅ/i }).waitFor();
     await page.getByText(/Microphone unavailable|Type or use a quick action|ማይክሮፎን/i).first().waitFor();
