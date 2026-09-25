@@ -2,6 +2,72 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-24 — JWT session and Google OAuth
+
+### Added
+- Email/password register and login (`POST /api/auth/register`, `POST /api/auth/login`, `GET /api/auth/me`).
+- HS256 JWT in `X-Hulum-Session` (7 days). Passwords stored as scrypt hashes.
+- Google OAuth (`GET /api/auth/google` → callback). Same-email Google and password accounts are linked.
+- Product pages require a signed-in session. Sign out is in the header.
+- Migrations `007_user_password_hash.sql` and `008_user_google_sub.sql`.
+
+### Removed
+- Gateway UUID continue, Abeba demo fill on Profile, and `POST /api/profile/demo` on the Postgres API.
+
+### Why
+The gateway looked like login but was a local UUID. Production sign-in is JWT plus Google, not a demo credential.
+
+### Evidence
+Auth unit tests (password, service, routes, JWT). Live `GET /api/auth/google` redirects to Google accounts.
+
+## 2026-09-24 — Investigator 15s catalog budget
+
+### Changed
+- Each investigate run stops at 15 seconds.
+- Pages fetch 8 at a time; Groq extract runs 3 at a time. No 800ms gap. Fetch timeout 4s.
+- Worker starts immediately (no 15s boot delay).
+
+### Why
+A sequential 80-page crawl was too slow. The catalog must fill within 15 seconds without inventing listings.
+
+## 2026-09-24 — Catalog seed closed
+
+### Removed
+- `db:seed` no longer inserts A2SV / Chevening / other curated cards.
+- Mapper no longer overlays seed requirement matchers onto Postgres rows.
+- Migration `006_close_catalog_seed.sql` deletes those VERIFIED seed rows from existing databases.
+
+### Changed
+- `smoke:local` and CI check health + demo profile + catalog list. They do not require seeded A2SV APPLY.
+
+### Why
+The live list is the investigator. A baked-in seed catalog is closed.
+
+## 2026-09-24 — Investigator follows aggregator listings
+
+### Changed
+- Worker follows internship/scholarship links on aggregator pages (scholarship.et and others), not only pre-listed official hosts.
+- An evidenced listing may be saved with the official org URL, or with the aggregator listing URL if that is the page we fetched.
+- Extract pulls every evidenced opportunity on the page (up to 20). Fetch budget is 80 pages per run.
+- `official_domains` is no longer a save gate. Invented deadlines/URLs and private hosts are still rejected.
+
+### Why
+The catalog never grew because new hosts were dropped before extract. Production discovery has to follow real posts. It still must not invent them.
+
+## 2026-09-24 — Background investigator worker
+
+### Added
+- Investigate worker starts with the API: interval (default 6 hours) plus an optional run after boot.
+- Duplicate official listings refresh `investigated_at` instead of being rejected.
+- AI-extracted rows not seen again for 3 days become `NEEDS_REVIEW`.
+- Migration `005_investigator_worker.sql` adds official catalog hosts/sources (not aggregators).
+
+### Why
+The opportunities list was a static seed. Production needs a scheduled fetch/extract pass, not a person reseeding or Groq inventing posts.
+
+### Decision
+`decide()` is unchanged. The worker only stores evidenced official pages. Seed stays a demo fallback.
+
 ## 2026-09-24 — Demo-triangle smoke + Amharic as second language
 
 ### Changed

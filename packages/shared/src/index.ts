@@ -26,6 +26,7 @@ export {
   isNetworkFetchError,
   recognitionFailureMessage,
 } from "./failureMessages.js";
+export type { AuthSession } from "./auth.js";
 export { PROFILE_COMPLETENESS_FIELDS, profileCompleteness } from "./profile.js";
 export type {
   CreateProfileRequest,
