@@ -74,7 +74,7 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Local API smoke (health + demo profile + catalog)
+      - name: Local API smoke (health + register + catalog)
         run: |
           npm run start -w @hulum/server > /tmp/hulum-api.log 2>&1 &
           ready=0

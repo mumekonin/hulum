@@ -2,6 +2,7 @@
 /**
  * Local API smoke (not a browser pass, not production).
  * Catalog seed is closed — does not require A2SV / UCT / Chevening cards.
+ * Uses register, not POST /api/profile/demo.
  *
  *   npm run db:migrate
  *   npm run dev:server
@@ -28,14 +29,27 @@ async function json(path, init) {
 async function main() {
   console.log(`smoke:local → ${API}`);
   await json("/api/health");
-  const demo = await json("/api/profile/demo", { method: "POST" });
-  const userId = demo.profile?.userId ?? demo.userId;
-  if (!userId) throw new Error("demo profile missing userId");
+  const session = await json("/api/auth/register", {
+    method: "POST",
+    body: JSON.stringify({
+      name: "CI Smoke",
+      email: `ci.smoke.${String(Date.now())}@example.invalid`,
+      password: "strong-pass",
+    }),
+  });
+  if (typeof session.userId !== "string" || session.userId === "") {
+    throw new Error("register did not return userId");
+  }
+  if (typeof session.sessionToken !== "string" || session.sessionToken.split(".").length !== 3) {
+    throw new Error("register did not return a JWT");
+  }
   const opportunities = await json("/api/opportunities");
   if (!Array.isArray(opportunities)) {
     throw new Error("opportunities list is not an array");
   }
-  console.log(`ok: health, demo profile ${userId}, catalog ${String(opportunities.length)} (investigator, not seed)`);
+  console.log(
+    `ok: health, registered ${session.userId}, catalog ${String(opportunities.length)} (investigator, not seed)`,
+  );
 }
 
 main().catch((error) => {
