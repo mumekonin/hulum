@@ -64,3 +64,21 @@ export function isAllowedFetchUrl(raw: string, fetchHosts: string[]): boolean {
     return false;
   }
 }
+
+/** Public http(s) only. Used for discovered listing pages, including aggregators. */
+export function isSafePublicHttpUrl(raw: string): boolean {
+  try {
+    assertSafeHttpUrl(raw);
+    return true;
+  } catch {
+    return false;
+  }
+}
+
+export function isLeadHost(host: string, leadHosts: string[]): boolean {
+  const normalized = host.replace(/^www\./, "").toLowerCase();
+  return leadHosts.some((domain) => {
+    const lead = domain.replace(/^www\./, "").toLowerCase();
+    return normalized === lead || normalized.endsWith(`.${lead}`);
+  });
+}

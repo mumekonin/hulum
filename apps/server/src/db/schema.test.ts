@@ -23,6 +23,28 @@ describe("003_analysis_decision_audit.sql", () => {
   });
 });
 
+describe("005_investigator_worker.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "005_investigator_worker.sql"), "utf8");
+
+  it("adds official catalog hosts and does not promote aggregators", () => {
+    expect(sql).toContain("a2sv.org");
+    expect(sql).toContain("chevening.org");
+    expect(sql).not.toContain("scholarship.et");
+    expect(sql).not.toContain("scholars4dev.com");
+    expect(sql).not.toContain("opportunitydesk.org");
+  });
+});
+
+describe("006_close_catalog_seed.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "006_close_catalog_seed.sql"), "utf8");
+
+  it("removes curated seed rows and does not insert replacements", () => {
+    expect(sql).toContain("delete from opportunities");
+    expect(sql).toContain("https://a2sv.org/");
+    expect(sql).not.toContain("insert into opportunities");
+  });
+});
+
 describe("001_init.sql", () => {
   const sql = fs.readFileSync(path.join(migrationsDir(), "001_init.sql"), "utf8");
 

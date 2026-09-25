@@ -62,9 +62,6 @@ jobs:
       - name: Run database migrations
         run: npm run db:migrate --workspace @hulum/server
 
-      - name: Seed opportunity catalog
-        run: npm run db:seed --workspace @hulum/server
-
       - name: Typecheck shared contracts
         run: npm run typecheck:shared
 
@@ -77,7 +74,7 @@ jobs:
       - name: Test
         run: npm test
 
-      - name: Local API smoke (Abeba → APPLY / MAYBE / SKIP)
+      - name: Local API smoke (health + demo profile + catalog)
         run: |
           npm run start -w @hulum/server > /tmp/hulum-api.log 2>&1 &
           ready=0

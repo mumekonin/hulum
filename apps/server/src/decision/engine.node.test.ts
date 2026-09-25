@@ -1,7 +1,7 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { Opportunity, Profile } from "@hulum/shared";
-import { demoProfileInput } from "../data/seedOpportunities.js";
+import { demoProfileInput } from "../data/demo-profile.js";
 import { analyzeOpportunity, decide, scoreRequirements } from "./engine.js";
 
 const profile: Profile = {

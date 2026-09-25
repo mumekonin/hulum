@@ -16,12 +16,14 @@ insert into sources (name, type, url, enabled, is_lead)
 values ('New lead', 'WEB_PAGE', 'https://example.org/', true, true);
 ```
 
-If that host may be saved as `sourceUrl`:
+Optional — remember a host as official after you verify it:
 
 ```sql
 insert into official_domains (domain, note)
 values ('example.org', 'Why this domain is official');
 ```
+
+The worker also follows listing links off aggregator pages. It does not need every new host in `official_domains` first.
 
 ## Add another API later
 
@@ -29,17 +31,33 @@ values ('example.org', 'Why this domain is official');
 2. Insert a `sources` row with `type = 'API'`, `api_key_env`, and `api_url_env`.
 3. Write a documented client. `JOB_OPPORTUNITIES_API_KEY` is reserved; the client is not called until `JOB_OPPORTUNITIES_API_URL` is a real documented URL.
 
-## Curated catalog (web cards)
+## Catalog (web cards)
 
-Investigator does not invent listings. To show official sourced cards locally:
+There is **no opportunity seed**. `npm run db:seed` does not insert listings.
+
+The list is empty until the investigator worker saves evidenced posts. Abeba Tesfaye is a demo **profile**, not a catalog.
+
+## Background worker
+
+`npm run dev:server` / `npm run start` starts a worker after the API listens.
 
 ```text
-npm run db:seed
+Timer → runInvestigation() → save new official posts → refresh seen posts → mark stale AI_EXTRACTED
 ```
 
-That loads `seedOpportunities` (already in the repo). It is not Groq output.
+- Default interval: 6 hours (`INVESTIGATE_INTERVAL_HOURS` or `INVESTIGATE_INTERVAL_MS`).
+- First run starts immediately. Each run stops at **15 seconds** (parallel fetch + extract).
+- Requires `GROQ_API_KEY` and `GROQ_MODEL`. Set `INVESTIGATE_WORKER=false` to disable.
+- Overlapping runs are skipped. Failures are logged and do not stop the API.
+- Aggregator listing pages are crawled and may be saved when the deadline and requirement sentences are on that page.
+- `sourceUrl` is the official organization URL when it appears on the page; otherwise it is the listing page we fetched.
+- Groq still cannot invent a deadline, requirement, or URL. Private/localhost fetch stays blocked.
+- AI-extracted rows not seen again for 3 days become `NEEDS_REVIEW` (`INVESTIGATE_STALE_AFTER_MS`).
+- Curated `VERIFIED` seed rows are not rewritten by stale marking.
 
-## Run
+Apply `005_investigator_worker.sql` with `npm run db:migrate` so official catalog hosts are in `official_domains` / `sources`.
+
+## Manual run
 
 ```text
 npm run db:migrate
@@ -47,4 +65,4 @@ npm run db:migrate
 
 `POST /api/investigate` with header `x-hulum-investigate` matching `INVESTIGATE_ADMIN_SECRET`.
 
-Groq extract uses a larger completion budget and `reasoning_effort=low` for `gpt-oss` models so reasoning tokens do not empty the reply. Official pages may follow a few same-domain listing links (for example HETRIIL internships). Aggregators stay leads. A page with no explicit deadline is saved as nothing.
+Groq extract uses a larger completion budget and `reasoning_effort=low` for `gpt-oss` models so reasoning tokens do not empty the reply. Listing links on official and aggregator pages are followed. A page with no explicit deadline is saved as nothing. A URL that is not on the fetched page is rejected.
