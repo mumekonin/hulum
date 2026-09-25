@@ -55,6 +55,28 @@ describe("investigator extract", () => {
     await expect(extractOpportunities(chat, "page")).resolves.toEqual([]);
   });
 
+  it("uses the listing page URL when officialSourceUrl is omitted", async () => {
+    const chat = {
+      complete: async () =>
+        JSON.stringify({
+          opportunities: [
+            {
+              title: "Posted internship",
+              organization: "Host org",
+              type: "internship",
+              description: "Listed on an aggregator.",
+              deadline: "2026-12-31",
+              countryEligibility: ["ET"],
+              deadlineEvidence: "Deadline 31 December 2026.",
+              requirementEvidence: "Open to enrolled students.",
+            },
+          ],
+        }),
+    };
+    const rows = await extractOpportunities(chat, "page", "https://scholarship.et/listing");
+    expect(rows[0]?.officialSourceUrl).toBe("https://scholarship.et/listing");
+  });
+
   it("returns no rows when the model reply is not JSON", async () => {
     const chat = {
       complete: async () => "I cannot extract anything useful.",

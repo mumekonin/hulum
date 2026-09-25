@@ -3,22 +3,36 @@ import type { AppEnv } from "../config/env.js";
 import { extractOpportunities, type ExtractedOpportunity } from "./extract.js";
 import { pageContainsEvidence, stripHtml } from "./evidence.js";
 import { fetchPageText } from "./fetch-page.js";
-import { officialListingUrls } from "./official-links.js";
-import { hostnameOf, isAllowedOfficialUrl } from "./safety.js";
+import { listingUrls } from "./official-links.js";
+import {
+  EXTRACT_CONCURRENCY,
+  FETCH_CONCURRENCY,
+  INVESTIGATE_BUDGET_MS,
+  budgetDeadline,
+  budgetExpired,
+  mapPool,
+  takeBatch,
+} from "./pool.js";
+import { hostnameOf, isLeadHost, isSafePublicHttpUrl } from "./safety.js";
+import { KNOWN_LEAD_HOSTS, resolveSourceUrl, urlGroundedOnPage } from "./source-url.js";
 import {
   createRun,
   findDuplicate,
+  findExistingByTitle,
   finishRun,
   listEnabledSources,
   listOfficialDomains,
   logEvent,
+  rememberOfficialDomain,
   saveExtracted,
+  touchInvestigatedAt,
   type InvestigationSummary,
   type SourceRow,
 } from "./store.js";
 
-const MAX_PAGES = 16;
-const EXTRACT_GAP_MS = 1200;
+export type { InvestigationSummary };
+
+const MAX_PAGES = 40;
 
 function envValue(env: AppEnv, name: string | null): string | undefined {
   if (name === null) {
@@ -36,15 +50,6 @@ function deadlineIsFuture(deadline: string, now: Date): boolean {
   return parsed.getTime() >= new Date(Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate())).getTime();
 }
 
-function sameOfficialDomain(applicationUrl: string | null, sourceUrl: string): boolean {
-  if (applicationUrl === null) {
-    return true;
-  }
-  const apply = hostnameOf(applicationUrl);
-  const source = hostnameOf(sourceUrl);
-  return apply !== undefined && source !== undefined && (apply === source || apply.endsWith(`.${source}`) || source.endsWith(`.${apply}`));
-}
-
 function normalizeVisitUrl(raw: string): string | undefined {
   try {
     const parsed = new URL(raw);
@@ -55,18 +60,20 @@ function normalizeVisitUrl(raw: string): string | undefined {
   }
 }
 
-function wait(ms: number): Promise<void> {
-  return new Promise((resolve) => {
-    setTimeout(resolve, ms);
-  });
-}
-
 export async function runInvestigation(env: AppEnv, now: Date = new Date()): Promise<InvestigationSummary> {
   const notes: string[] = [];
   const officialDomains = await listOfficialDomains();
   const sources = await listEnabledSources();
+  const leadHosts = [
+    ...KNOWN_LEAD_HOSTS,
+    ...sources
+      .filter((row) => row.is_lead)
+      .map((row) => hostnameOf(row.url))
+      .filter((host): host is string => host !== undefined),
+  ];
   const fetchHosts = [
     ...officialDomains,
+    ...leadHosts,
     ...sources
       .map((row) => hostnameOf(row.url === "env:JOB_OPPORTUNITIES_API_URL" ? env.JOB_OPPORTUNITIES_API_URL ?? "" : row.url))
       .filter((host): host is string => host !== undefined),
@@ -76,7 +83,9 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
   let checked = 0;
   let saved = 0;
   let rejected = 0;
-  let extractCalls = 0;
+  let refreshed = 0;
+  const startedAt = Date.now();
+  const deadlineAt = budgetDeadline(startedAt, INVESTIGATE_BUDGET_MS);
 
   const chat =
     env.GROQ_API_KEY !== undefined && env.GROQ_MODEL !== undefined
@@ -88,7 +97,7 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
 
   const enqueue = (sourceName: string, url: string): void => {
     const key = normalizeVisitUrl(url);
-    if (key === undefined || seen.has(key)) {
+    if (key === undefined || seen.has(key) || !isSafePublicHttpUrl(key)) {
       return;
     }
     seen.add(key);
@@ -109,85 +118,101 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
     enqueue(source.name, source.url);
   }
 
-  while (queue.length > 0 && checked < MAX_PAGES) {
-    const page = queue.shift();
-    if (page === undefined) {
-      break;
-    }
-    if (chat === undefined) {
-      await logEvent(runId, page.sourceName, "skip", "GROQ_API_KEY and GROQ_MODEL are required to extract.");
-      notes.push(`${page.sourceName}: Groq is not configured.`);
-      continue;
-    }
+  if (chat === undefined) {
+    notes.push("GROQ_API_KEY and GROQ_MODEL are required to extract.");
+    await logEvent(runId, "worker", "skip", "GROQ_API_KEY and GROQ_MODEL are required to extract.");
+  }
 
-    let html: string;
-    try {
-      html = await fetchPageText(page.url, fetchHosts);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Fetch failed.";
-      rejected += 1;
-      await logEvent(runId, page.sourceName, "reject", `${page.url}: ${message}`);
-      notes.push(`${page.sourceName}: ${message}`);
-      continue;
-    }
-
-    const pageText = stripHtml(html);
-    checked += 1;
-
-    for (const listing of officialListingUrls(html, page.url, officialDomains)) {
-      enqueue(page.sourceName, listing);
-    }
-
-    if (extractCalls > 0) {
-      await wait(EXTRACT_GAP_MS);
-    }
-    extractCalls += 1;
-
-    let extracted: ExtractedOpportunity[];
-    try {
-      extracted = await extractOpportunities(chat, pageText);
-    } catch (error) {
-      const message = error instanceof Error ? error.message : "Extract failed.";
-      rejected += 1;
-      await logEvent(runId, page.sourceName, "reject", `${page.url}: ${message}`);
-      notes.push(`${page.sourceName}: ${message}`);
-      continue;
-    }
-
-    for (const item of extracted) {
-      if (isAllowedOfficialUrl(item.officialSourceUrl, officialDomains)) {
-        enqueue(page.sourceName, item.officialSourceUrl);
+  while (chat !== undefined && queue.length > 0 && checked < MAX_PAGES && !budgetExpired(deadlineAt)) {
+    const batch = takeBatch(queue, FETCH_CONCURRENCY);
+    const fetched = await mapPool(batch, FETCH_CONCURRENCY, async (page) => {
+      try {
+        const html = await fetchPageText(page.url, fetchHosts);
+        return { page, html, error: undefined as string | undefined };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Fetch failed.";
+        return { page, html: undefined, error: message };
       }
+    });
 
-      const why = evaluateExtracted(item, pageText, officialDomains, now);
-      if (why !== undefined) {
+    const ready: Array<{ sourceName: string; url: string; pageText: string; html: string }> = [];
+    for (const row of fetched) {
+      if (row.error !== undefined || row.html === undefined) {
         rejected += 1;
-        await logEvent(runId, page.sourceName, "reject", `${item.title}: ${why}`);
+        await logEvent(runId, row.page.sourceName, "reject", `${row.page.url}: ${row.error ?? "Fetch failed."}`);
+        notes.push(`${row.page.sourceName}: ${row.error ?? "Fetch failed."}`);
         continue;
       }
-      if (await findDuplicate(item.title, item.officialSourceUrl)) {
+      const pageText = stripHtml(row.html);
+      checked += 1;
+      for (const listing of listingUrls(row.html, row.page.url)) {
+        enqueue(row.page.sourceName, listing);
+      }
+      ready.push({ sourceName: row.page.sourceName, url: row.page.url, pageText, html: row.html });
+    }
+
+    const extractedRows = await mapPool(ready, EXTRACT_CONCURRENCY, async (page) => {
+      try {
+        const extracted = await extractOpportunities(chat, page.pageText, page.url);
+        return { page, extracted, error: undefined as string | undefined };
+      } catch (error) {
+        const message = error instanceof Error ? error.message : "Extract failed.";
+        return { page, extracted: [] as ExtractedOpportunity[], error: message };
+      }
+    });
+
+    for (const row of extractedRows) {
+      if (row.error !== undefined) {
         rejected += 1;
-        await logEvent(runId, page.sourceName, "reject", `${item.title}: duplicate title and source URL.`);
+        await logEvent(runId, row.page.sourceName, "reject", `${row.page.url}: ${row.error}`);
+        notes.push(`${row.page.sourceName}: ${row.error}`);
         continue;
       }
-      await saveExtracted({
-        title: item.title,
-        organization: item.organization,
-        type: item.type,
-        description: item.description,
-        deadline: item.deadline,
-        countryEligibility: item.countryEligibility,
-        applicationUrl: item.applicationUrl,
-        sourceUrl: item.officialSourceUrl,
-      });
-      saved += 1;
-      await logEvent(runId, page.sourceName, "save", `${item.title} → ${item.officialSourceUrl}`);
+      for (const item of row.extracted) {
+        if (isSafePublicHttpUrl(item.officialSourceUrl)) {
+          enqueue(row.page.sourceName, item.officialSourceUrl);
+        }
+        const why = evaluateExtracted(item, row.page.pageText, row.page.url, now);
+        if (why !== undefined) {
+          rejected += 1;
+          await logEvent(runId, row.page.sourceName, "reject", `${item.title}: ${why}`);
+          continue;
+        }
+        const sourceUrl = resolveSourceUrl(item.officialSourceUrl, row.page.url, leadHosts);
+        if ((await findDuplicate(item.title, sourceUrl)) || (await findExistingByTitle(item.title))) {
+          await touchInvestigatedAt(item.title);
+          refreshed += 1;
+          await logEvent(runId, row.page.sourceName, "refresh", `${item.title} still present.`);
+          continue;
+        }
+        await saveExtracted({
+          title: item.title,
+          organization: item.organization,
+          type: item.type,
+          description: item.description,
+          deadline: item.deadline,
+          countryEligibility: item.countryEligibility,
+          applicationUrl: item.applicationUrl,
+          sourceUrl,
+        });
+        const host = hostnameOf(sourceUrl);
+        if (host !== undefined && !isLeadHost(host, leadHosts)) {
+          await rememberOfficialDomain(host, `Discovered from ${row.page.sourceName}`);
+        }
+        saved += 1;
+        await logEvent(runId, row.page.sourceName, "save", `${item.title} → ${sourceUrl}`);
+      }
     }
   }
 
-  const noteText = notes.join(" ");
+  if (budgetExpired(deadlineAt) && queue.length > 0) {
+    notes.push(`Stopped at ${String(INVESTIGATE_BUDGET_MS)}ms budget with ${String(queue.length)} pages left.`);
+  }
+
+  const elapsedMs = Date.now() - startedAt;
+  const noteText = [`elapsedMs ${String(elapsedMs)}.`, `refreshed ${String(refreshed)}.`, ...notes].join(" ");
   await finishRun(runId, checked, saved, rejected, noteText);
-  return { runId, checked, saved, rejected, notes };
+  return { runId, checked, saved, rejected, refreshed, notes };
 }
 
 export function evaluateExtracted(
@@ -200,7 +225,7 @@ export function evaluateExtracted(
     requirementEvidence: string;
   },
   pageText: string,
-  officialDomains: string[],
+  fetchedPageUrl: string,
   now: Date,
 ): string | undefined {
   if (!pageContainsEvidence(pageText, item.deadlineEvidence)) {
@@ -212,11 +237,11 @@ export function evaluateExtracted(
   if (!deadlineIsFuture(item.deadline, now)) {
     return "deadline is missing or not in the future.";
   }
-  if (!isAllowedOfficialUrl(item.officialSourceUrl, officialDomains)) {
-    return "officialSourceUrl is not on official_domains. Aggregators stay leads.";
+  if (!urlGroundedOnPage(item.officialSourceUrl, pageText, fetchedPageUrl)) {
+    return "source URL was not on the fetched page.";
   }
-  if (!sameOfficialDomain(item.applicationUrl, item.officialSourceUrl)) {
-    return "applicationUrl is not on the same official domain.";
+  if (item.applicationUrl !== null && !urlGroundedOnPage(item.applicationUrl, pageText, fetchedPageUrl)) {
+    return "application URL was not on the fetched page.";
   }
   return undefined;
 }

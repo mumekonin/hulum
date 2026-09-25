@@ -3,7 +3,6 @@ import {
   VerificationStatus,
   type Opportunity,
 } from "@hulum/shared";
-import { seedOpportunities } from "../data/seedOpportunities.js";
 
 export type OpportunityRow = {
   id: string;
@@ -78,11 +77,5 @@ export function mapOpportunityRow(row: OpportunityRow): Opportunity {
     createdAt: toIsoDateTime(row.created_at),
     updatedAt: toIsoDateTime(row.updated_at),
   };
-  const seed = seedOpportunities.find(
-    (item) => item.title === mapped.title && item.sourceUrl === mapped.sourceUrl,
-  );
-  if (seed?.requirements !== undefined) {
-    return { ...mapped, requirements: seed.requirements };
-  }
   return mapped;
 }

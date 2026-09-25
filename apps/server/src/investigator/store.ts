@@ -16,6 +16,7 @@ export type InvestigationSummary = {
   checked: number;
   saved: number;
   rejected: number;
+  refreshed: number;
   notes: string[];
 };
 
@@ -72,6 +73,54 @@ export async function findDuplicate(title: string, sourceUrl: string): Promise<b
     [title, sourceUrl],
   );
   return (result.rowCount ?? 0) > 0;
+}
+
+export async function findExistingByTitle(title: string): Promise<boolean> {
+  const result = await getPool().query("select 1 from opportunities where lower(title) = lower($1) limit 1", [
+    title,
+  ]);
+  return (result.rowCount ?? 0) > 0;
+}
+
+export async function rememberOfficialDomain(domain: string, note: string): Promise<void> {
+  await getPool().query(
+    "insert into official_domains (domain, note) values ($1, $2) on conflict (domain) do nothing",
+    [domain.toLowerCase(), note],
+  );
+}
+
+/** Seen again on a later run. Does not invent a new listing. */
+export async function touchInvestigatedAt(title: string, sourceUrl?: string): Promise<boolean> {
+  const result =
+    sourceUrl === undefined
+      ? await getPool().query(
+          `update opportunities
+           set investigated_at = now(), updated_at = now()
+           where lower(title) = lower($1)`,
+          [title],
+        )
+      : await getPool().query(
+          `update opportunities
+           set investigated_at = now(), updated_at = now()
+           where lower(title) = lower($1) and source_url = $2`,
+          [title, sourceUrl],
+        );
+  return (result.rowCount ?? 0) > 0;
+}
+
+/**
+ * AI-extracted rows that the worker has not refreshed since `cutoff`
+ * become NEEDS_REVIEW. Curated VERIFIED seed rows are left alone.
+ */
+export async function markStaleExtracts(cutoff: Date): Promise<number> {
+  const result = await getPool().query(
+    `update opportunities
+     set verification_status = 'NEEDS_REVIEW', updated_at = now()
+     where verification_status = 'AI_EXTRACTED'
+       and (investigated_at is null or investigated_at < $1)`,
+    [cutoff.toISOString()],
+  );
+  return result.rowCount ?? 0;
 }
 
 export async function saveExtracted(input: {

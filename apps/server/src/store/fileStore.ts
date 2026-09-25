@@ -9,7 +9,7 @@ import type {
   RequirementResult,
   User,
 } from "@hulum/shared";
-import { seedOpportunities } from "../data/seedOpportunities.js";
+import { testOpportunities } from "../data/test-opportunities.js";
 
 export type VoiceSessionRecord = {
   id: string;
@@ -39,7 +39,7 @@ function emptyStore(): StoreShape {
   return {
     users: [],
     profiles: [],
-    opportunities: [...seedOpportunities],
+    opportunities: process.env.NODE_ENV === "test" ? [...testOpportunities] : [],
     analyses: [],
     requirementResults: [],
     readinessItems: [],
@@ -52,7 +52,10 @@ export async function loadStore(): Promise<StoreShape> {
   try {
     const raw = await readFile(getStorePath(), "utf8");
     const parsed = JSON.parse(raw) as StoreShape;
-    parsed.opportunities = seedOpportunities;
+    parsed.opportunities = Array.isArray(parsed.opportunities) ? parsed.opportunities : [];
+    if (process.env.NODE_ENV === "test" && parsed.opportunities.length === 0) {
+      parsed.opportunities = [...testOpportunities];
+    }
     parsed.voiceSessions = Array.isArray(parsed.voiceSessions) ? parsed.voiceSessions : [];
     memory = parsed;
   } catch {

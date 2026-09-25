@@ -16,10 +16,9 @@ describe("investigator safety", () => {
     expect(() => assertSafeHttpUrl("file:///etc/passwd")).toThrow(/http/);
   });
 
-  it("saves only official domains, not aggregator leads", () => {
+  it("allow-lists known official hosts when asked", () => {
     const official = ["hetriil.moe.gov.et"];
     expect(isAllowedOfficialUrl("https://hetriil.moe.gov.et/internships", official)).toBe(true);
     expect(isAllowedOfficialUrl("https://scholarship.et/some-listing", official)).toBe(false);
-    expect(isAllowedOfficialUrl("https://www.scholars4dev.com/chevening", official)).toBe(false);
   });
 });

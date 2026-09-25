@@ -22,8 +22,10 @@ export type AppEnv = {
   JOB_OPPORTUNITIES_API_URL: string | undefined;
   INVESTIGATE_ADMIN_SECRET: string | undefined;
   SCHOLARXIV_API_KEY: string | undefined;
-  /** HMAC secret for X-Hulum-Session. Required in production; optional in local demo. */
+  /** JWT signing secret for X-Hulum-Session. Required in production; optional in local demo. */
   SESSION_SECRET: string | undefined;
+  GOOGLE_CLIENT_ID: string | undefined;
+  GOOGLE_CLIENT_SECRET: string | undefined;
 };
 
 export type LoadEnvOptions = {
@@ -116,5 +118,7 @@ export function loadEnv(options: LoadEnvOptions = {}): AppEnv {
     INVESTIGATE_ADMIN_SECRET: optionalString(process.env.INVESTIGATE_ADMIN_SECRET),
     SCHOLARXIV_API_KEY: optionalString(process.env.SCHOLARXIV_API_KEY),
     SESSION_SECRET: optionalString(process.env.SESSION_SECRET),
+    GOOGLE_CLIENT_ID: optionalString(process.env.GOOGLE_CLIENT_ID),
+    GOOGLE_CLIENT_SECRET: optionalString(process.env.GOOGLE_CLIENT_SECRET),
   };
 }

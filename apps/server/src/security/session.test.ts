@@ -48,6 +48,8 @@ describe("session tokens", () => {
         INVESTIGATE_ADMIN_SECRET: undefined,
         SCHOLARXIV_API_KEY: undefined,
         SESSION_SECRET: undefined,
+        GOOGLE_CLIENT_ID: undefined,
+        GOOGLE_CLIENT_SECRET: undefined,
       }),
     ).not.toThrow();
   });
@@ -75,6 +77,8 @@ describe("session tokens", () => {
         INVESTIGATE_ADMIN_SECRET: undefined,
         SCHOLARXIV_API_KEY: undefined,
         SESSION_SECRET: secret,
+        GOOGLE_CLIENT_ID: undefined,
+        GOOGLE_CLIENT_SECRET: undefined,
       }),
     ).toThrow(/does not match/);
   });

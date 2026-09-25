@@ -5,7 +5,7 @@
 
 ## How to capture
 
-1. `npm run db:migrate && npm run db:seed && npm run dev`
+1. `npm run db:migrate && npm run dev` (catalog comes from the investigator, not seed)
 2. Open http://localhost:3000 in a clean browser window (full desktop width).
 3. Save PNGs into this folder with the names below.
 4. Do not crop out the HULUM brand or the official-source control.

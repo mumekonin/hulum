@@ -65,7 +65,7 @@ If the assistant session fails, keep typing; the UI is already in backup mode wh
 
 ## Path C — Browser UI is unusable (API)
 
-Judges can still see the engine. From the repo root, with `npm run dev` (API on `:3001`) and a seeded catalog (`npm run db:seed`):
+Judges can still see the engine. From the repo root, with `npm run dev` (API on `:3001`). The catalog is investigator-filled, not seeded:
 
 ```powershell
 Invoke-RestMethod http://localhost:3001/api/health

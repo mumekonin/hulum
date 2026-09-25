@@ -1,13 +1,11 @@
-import { closePool } from "./pool.js";
 import { seedCatalog } from "./seed-catalog.js";
 
 seedCatalog()
-  .then((result) => {
-    console.log(`Catalog seed inserted ${String(result.inserted)}, skipped ${String(result.skipped)}.`);
+  .then(() => {
+    console.log("Catalog seed is closed. Opportunities come from the investigator, not db:seed.");
   })
   .catch((error: unknown) => {
-    const message = error instanceof Error ? error.message : "Catalog seed failed";
+    const message = error instanceof Error ? error.message : "Seed command failed";
     console.error(message);
-    process.exitCode = 1;
-  })
-  .finally(() => closePool());
+    process.exit(1);
+  });

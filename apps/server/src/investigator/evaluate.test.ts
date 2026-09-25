@@ -16,23 +16,34 @@ const valid = {
 
 describe("evaluateExtracted", () => {
   it("accepts an evidenced official row", () => {
-    expect(evaluateExtracted(valid, page, ["hetriil.moe.gov.et"], now)).toBeUndefined();
+    expect(evaluateExtracted(valid, page, "https://hetriil.moe.gov.et/internships", now)).toBeUndefined();
   });
 
-  it("rejects an aggregator as sourceUrl", () => {
+  it("accepts an evidenced aggregator listing page", () => {
     expect(
       evaluateExtracted(
-        { ...valid, officialSourceUrl: "https://scholarship.et/listing" },
+        { ...valid, officialSourceUrl: "https://scholarship.et/listing", applicationUrl: null },
         page,
-        ["hetriil.moe.gov.et"],
+        "https://scholarship.et/listing",
         now,
       ),
-    ).toMatch(/official_domains/);
+    ).toBeUndefined();
+  });
+
+  it("rejects a URL that was not on the fetched page", () => {
+    expect(
+      evaluateExtracted(valid, page, "https://scholarship.et/listing", now),
+    ).toMatch(/source URL was not on the fetched page/);
   });
 
   it("rejects invented deadline evidence", () => {
     expect(
-      evaluateExtracted({ ...valid, deadlineEvidence: "Deadline 1 January 2025." }, page, ["hetriil.moe.gov.et"], now),
+      evaluateExtracted(
+        { ...valid, deadlineEvidence: "Deadline 1 January 2025." },
+        page,
+        "https://hetriil.moe.gov.et/internships",
+        now,
+      ),
     ).toMatch(/deadline evidence/);
   });
 });

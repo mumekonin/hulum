@@ -1,6 +1,6 @@
 import { afterEach, describe, expect, it, vi } from "vitest";
 import type { AnalysisContract, Profile } from "@hulum/shared";
-import { demoProfileInput } from "../data/seedOpportunities.js";
+import { demoProfileInput } from "../data/demo-profile.js";
 import { explainDecision, sanitizeExplanation } from "./explain.js";
 
 const profile: Profile = {
