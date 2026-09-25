@@ -45,6 +45,17 @@ describe("006_close_catalog_seed.sql", () => {
   });
 });
 
+describe("009_profile_documents.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "009_profile_documents.sql"), "utf8");
+
+  it("stores labeled document photos for a user", () => {
+    expect(sql).toContain("create table if not exists profile_documents");
+    expect(sql).toContain("image/jpeg");
+    expect(sql).toContain("application/pdf");
+    expect(sql).toContain("bytea");
+  });
+});
+
 describe("001_init.sql", () => {
   const sql = fs.readFileSync(path.join(migrationsDir(), "001_init.sql"), "utf8");
 

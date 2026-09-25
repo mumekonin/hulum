@@ -29,7 +29,7 @@ function toIsoDateTime(value: Date | string): string {
   return new Date(value).toISOString();
 }
 
-export function mapProfileRow(row: ProfileRow): Profile {
+export function mapProfileRow(row: ProfileRow, documentsHeld: string[] = []): Profile {
   return {
     id: row.id,
     userId: row.user_id,
@@ -42,6 +42,7 @@ export function mapProfileRow(row: ProfileRow): Profile {
     skills: row.skills,
     experience: row.experience,
     interests: row.interests,
+    documentsHeld,
     createdAt: toIsoDateTime(row.created_at),
     updatedAt: toIsoDateTime(row.updated_at),
   };

@@ -2,6 +2,34 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-25 — List stored requirements
+
+### Fixed
+- Opportunity and screenshot pages no longer show empty requirement bullets.
+- Investigator saves the page’s requirement sentence into `other_requirements` so later analysis can list it.
+
+### Why
+Extracted listings left education/field/experience/language empty, and the UI still drew four blank bullets.
+
+## 2026-09-25 — Profile document photos
+
+### Added
+- Profile “Documents you already have” accepts a JPEG, PNG, WebP, or PDF photo (up to 8 files, 4 MB each).
+- `POST/GET/DELETE /api/profile/:userId/documents` stores the file. Labels become `documentsHeld` for matching.
+
+### Why
+The field was a text box and was not saved. People need to upload a photo of a CV or transcript they already have.
+
+## 2026-09-25 — Screenshot analysis
+
+### Added
+- Users can upload a Telegram/LinkedIn (or other) screenshot. Groq vision extracts visible facts only.
+- `POST /api/ai/screenshot-analyze` then `decide()` against the signed-in profile. Not saved to the catalog.
+- `/screenshot` page. Missing deadline or URL stays unknown.
+
+### Why
+People see posts outside the catalog. HULUM should analyze the photo they already have, without inventing apply links.
+
 ## 2026-09-25 — Browser smoke Ask HULUM locator
 
 ### Fixed

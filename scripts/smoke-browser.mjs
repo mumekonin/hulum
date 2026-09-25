@@ -56,7 +56,7 @@ async function main() {
     await page.getByLabel(/Field of study/).fill("Computer Science");
     await page.getByLabel(/^Country$/).fill("Ethiopia");
     await page.getByLabel(/^City$/).fill("Addis Ababa");
-    await page.getByLabel(/^Languages$/).fill("English, Amharic");
+    await page.getByLabel(/^Languages(?: \(comma separated\))?$/).fill("English, Amharic");
     await page.getByLabel(/^Skills$/).fill("Python, React");
     await page.getByLabel(/^Experience$/).fill("One software internship.");
     await page.getByLabel(/^Interests$/).fill("AI, scholarships");

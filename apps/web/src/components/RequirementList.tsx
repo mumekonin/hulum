@@ -59,7 +59,9 @@ export function RequirementList({
                 {marks[item.status]}
               </span>
               <div className="min-w-0 flex-1">
-                <p className="font-medium">{item.requirementText ?? item.text ?? item.key}</p>
+                <p className="font-medium">
+                  {item.requirementText?.trim() || item.text?.trim() || item.key}
+                </p>
                 <p className="mt-1 text-sm text-muted">{labels[item.status]}</p>
                 <p className="mt-2 text-sm leading-6">
                   <span className="font-medium">Why. </span>
