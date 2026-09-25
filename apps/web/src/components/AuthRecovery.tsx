@@ -88,7 +88,7 @@ export function AuthRecovery() {
             <div className="flex items-center gap-3">
               <span className="flex items-center gap-1">
                 <span className="h-1.5 w-1.5 bg-gw-primary" aria-hidden />
-                <span>Local session only · v0.1</span>
+                <span>Local gateway · v0.1</span>
               </span>
               <span className="text-gw-outline-var">|</span>
               <span>No email dispatch</span>

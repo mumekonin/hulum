@@ -26,15 +26,18 @@ A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that deci
 
 ## What v0.1 actually does
 
-- **Structured profile** — form plus Abeba Tesfaye demo persona. Not voice-extracted facts.
-- **APPLY / MAYBE / SKIP** — one verdict per opportunity; fit 0–100 does not override the rules.
-- **Explanation** — engine summary; optional Claude on the file-store demo; Groq on `POST /api/analyses/:id/explain` (Postgres path). Neither model changes the decision.
+- **Sign in** — email/password register + login (JWT in `X-Hulum-Session`). Optional Google OAuth when client id/secret are set.
+- **Structured profile** — form facts you type and save. Optional document photo uploads. No one-click Abeba demo button.
+- **Opportunity catalog** — investigator-filled from evidenced pages (not a baked seed list). May be empty until the worker runs.
+- **APPLY / MAYBE / SKIP** — one verdict per opportunity or screenshot analyze; fit 0–100 does not override the rules.
+- **Screenshot analyze** — `/screenshot` extracts visible facts (Groq vision when keyed) then `decide()` against your profile.
+- **Explanation** — engine summary; optional Groq on `POST /api/analyses/:id/explain`. Models never change the decision.
 - **Gaps and readiness** — MET / NOT_MET / UNCERTAIN, then a TODO checklist.
-- **Official source** — stored `sourceUrl` / `applicationUrl` on opportunity and analysis screens.
-- **Ask HULUM** — text and quick actions (ADR 003). Optional `@voxide/react` widget when `NEXT_PUBLIC_VOXIDE_KEY` is set; no live mic claim without a keyed test.
+- **Official source** — stored `sourceUrl` / `applicationUrl` when present.
+- **Ask HULUM** — text and quick actions (ADR 003). Optional `@voxide/react` when `NEXT_PUBLIC_VOXIDE_KEY` is set; no live mic claim without a keyed test.
 - **Backup mode** — Voice unavailable keeps typing and the rest of the UI.
 
-Out of v0.1: auto-apply, payments, native mobile, scraping unverified lists, live ScholarXIV in the API.
+Out of v0.1: auto-apply, payments, native mobile, inventing listings, live ScholarXiv papers in the product, password-reset email, production deploy.
 
 ---
 
@@ -59,10 +62,10 @@ Out of v0.1: auto-apply, payments, native mobile, scraping unverified lists, liv
 
 ```
 hulum/
-├── apps/web/          # Next.js: /, /profile, /opportunities, /analysis/[id], /assistant
-├── apps/server/       # Express API (Postgres default + optional file-store)
+├── apps/web/          # Next.js: /, /profile, /opportunities, /analysis/[id], /assistant, /screenshot
+├── apps/server/       # Express API (Postgres + JWT auth + investigator worker)
 ├── packages/shared/   # Zod + Task 22 contracts
-├── database/          # Postgres migration
+├── database/          # Postgres migrations
 ├── docs/              # Product, research, ADRs, demo script, STARK evidence
 └── CHANGELOG.md
 ```
@@ -76,6 +79,7 @@ Judges: start at `docs/stark/README.md` (submission package), then `docs/demo/sc
 ```bash
 npm install
 copy .env.example .env
+npm run db:migrate
 npm run dev
 ```
 
@@ -84,13 +88,13 @@ npm run dev
 
 Never put real keys in chat or in Git. `.env.example` is names only.
 
-Set `DATABASE_URL` and `CLIENT_URL=http://localhost:3000` in local `.env` before `npm run dev`. Optional: `GROQ_API_KEY` + `GROQ_MODEL` for explanation wording only (never decides APPLY / MAYBE / SKIP).
+Set `DATABASE_URL` and `CLIENT_URL=http://localhost:3000` in local `.env` before `npm run dev`. Optional: `SESSION_SECRET` (required in production), `GROQ_API_KEY` + `GROQ_MODEL` for explain / extract / investigator wording (never decides APPLY / MAYBE / SKIP).
 
-`npm test` / `npm run test:server` runs matching, APPLY / MAYBE / SKIP, API flows, and failure cases. `npm run lint` / `npm run format:check` use ESLint and Prettier. GitHub Actions runs typecheck, lint, and test on push/PR (`.github/workflows/ci.yml`).
+`npm test` / `npm run test:server` runs matching, APPLY / MAYBE / SKIP, API flows, and failure cases. `npm run smoke:local` checks health + register + catalog list. `npm run smoke:browser` is the Chromium click-through. `npm run lint` / `npm run format:check` use ESLint and Prettier. GitHub Actions runs typecheck, lint, test, and smokes on push/PR (`.github/workflows/ci.yml`).
 
 API-only: `cp apps/server/.env.example apps/server/.env` then `npm run db:migrate` and `npm run dev:server`.
 
-See `database/README.md` for migrate/smoke.
+See `database/README.md` for migrate/smoke. Judge walkthrough: `docs/demo/script.md`.
 
 ---
 
@@ -104,10 +108,14 @@ Web and server import types from `@hulum/shared`. Task 22 lock notes are in `pac
 
 ```http
 GET    /api/health
+POST   /api/auth/register
+POST   /api/auth/login
+GET    /api/auth/me
+GET    /api/auth/google
 POST   /api/profile
-POST   /api/profile/demo
 GET    /api/profile/:userId
 PATCH  /api/profile/:userId
+POST   /api/profile/:userId/documents
 GET    /api/opportunities
 GET    /api/opportunities/:id
 POST   /api/opportunities/:id/analyze
@@ -115,11 +123,12 @@ GET    /api/analyses/:id
 POST   /api/analyses/:id/explain
 GET    /api/analyses/:id/readiness
 PATCH  /api/readiness/:id
+POST   /api/ai/screenshot-analyze
 POST   /api/voice/session
 POST   /api/voice/action
 ```
 
-Envelope: `{ data, error }`. Auth is a local `userId` (full login is P1).
+Envelope: `{ data, error }`. Browser sends `X-Hulum-Session` (JWT) when signed in. `SESSION_SECRET` is required in production.
 
 Set `CLIENT_URL` in `apps/server/.env` to the web origin (`http://localhost:3000`). The API does not send CORS `*` and does not put secrets in error bodies.
 
@@ -141,8 +150,10 @@ v0.1 is **not deployed**. When a host exists:
 | `VOXIDE_API_KEY` | no | Leftover; widget uses public web key |
 | `NEXT_PUBLIC_VOXIDE_PUBLIC_KEY` | no | Optional `vox_pub_…` for `@voxide/react` on `/assistant` |
 | `DATABASE_URL` / `SUPABASE_*` | yes for `npm run dev` | Postgres for the default API |
+| `SESSION_SECRET` | yes in production | JWT signing for `X-Hulum-Session` |
+| `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | no | Optional Google OAuth |
 
-The API refuses to start in production without `CLIENT_URL`.
+The API refuses to start in production without `CLIENT_URL` and `SESSION_SECRET`.
 
 ---
 
