@@ -24,12 +24,33 @@ const PROFILE_COLUMNS = `
 
 type JoinedRow = ProfileRow & UserRow;
 
-function toStored(row: JoinedRow): StoredProfile {
+function toStored(row: JoinedRow, documentsHeld: string[] = []): StoredProfile {
   return {
     name: row.name,
     email: row.email,
-    profile: mapProfileRow(row),
+    profile: mapProfileRow(row, documentsHeld),
   };
+}
+
+async function documentLabels(userId: string): Promise<string[]> {
+  try {
+    const result = await getPool().query<{ label: string }>(
+      `select label from profile_documents where user_id = $1 order by created_at asc`,
+      [userId],
+    );
+    const out: string[] = [];
+    for (const row of result.rows) {
+      if (!out.includes(row.label)) {
+        out.push(row.label);
+      }
+    }
+    return out;
+  } catch (error) {
+    if (isPgError(error) && error.code === "42P01") {
+      return [];
+    }
+    throw error;
+  }
 }
 
 function isPgError(error: unknown): error is { code: string } {
@@ -54,7 +75,7 @@ export function createPgProfileStore(): ProfileStore {
     if (row === undefined) {
       return undefined;
     }
-    return toStored(row);
+    return toStored(row, await documentLabels(userId));
   }
 
   return {
@@ -123,7 +144,11 @@ export function createPgProfileStore(): ProfileStore {
           throw new Error("Failed to persist profile");
         }
         await client.query("commit");
-        return { name: userRow.name, email: userRow.email, profile: mapProfileRow(profileRow) };
+        return {
+          name: userRow.name,
+          email: userRow.email,
+          profile: mapProfileRow(profileRow, await documentLabels(userId)),
+        };
       } catch (error) {
         await client.query("rollback");
         if (isPgError(error) && error.code === "23505") {
@@ -151,7 +176,7 @@ export function createPgProfileStore(): ProfileStore {
       if (row === undefined) {
         return undefined;
       }
-      return toStored(row);
+      return toStored(row, await documentLabels(row.user_id));
     },
 
     async update(userId: string, patch: PatchProfileRequest): Promise<StoredProfile | undefined> {

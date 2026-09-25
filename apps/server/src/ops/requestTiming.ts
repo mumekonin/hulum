@@ -6,6 +6,7 @@ function routeFamily(path: string): string {
   if (path.startsWith("/api/health") || path === "/api/health") return "health";
   if (path.startsWith("/api/ops")) return "ops";
   if (path.startsWith("/api/auth")) return "auth";
+  if (path.startsWith("/api/ai")) return "ai";
   if (path.startsWith("/api/profile")) return "profile";
   if (path.startsWith("/api/opportunities")) return "opportunities";
   if (path.startsWith("/api/analyses")) return "analyses";

@@ -1,9 +1,18 @@
 "use client";
 
-import { FormEvent, useEffect, useState } from "react";
+import { FormEvent, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { EDUCATION_LABELS, EDUCATION_LEVELS, type AuthSession, type EducationLevel, type LanguageCode, type ProfileExtractResult, type ProfileView } from "@hulum/shared";
-import { api, isNotFound, userFacingError } from "@/lib/api";
+import {
+  EDUCATION_LABELS,
+  EDUCATION_LEVELS,
+  type AuthSession,
+  type EducationLevel,
+  type LanguageCode,
+  type ProfileDocument,
+  type ProfileExtractResult,
+  type ProfileView,
+} from "@hulum/shared";
+import { api, apiBlob, isNotFound, userFacingError } from "@/lib/api";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
 import { getLanguage, getUserId, setLanguage, setSessionToken, setUserId } from "@/lib/storage";
 import { Notice } from "@/components/Notice";
@@ -22,9 +31,49 @@ const emptyForm = {
   experience: "",
   yearsExperience: 0,
   interests: "",
-  documentsHeld: "",
   preferredLanguage: "en" as LanguageCode,
 };
+
+const DOCUMENT_MIMES = new Set(["image/jpeg", "image/png", "image/webp", "application/pdf"]);
+const MAX_DOCUMENT_BYTES = 4 * 1024 * 1024;
+
+function mimeFromFile(file: File): "image/jpeg" | "image/png" | "image/webp" | "application/pdf" | null {
+  if (file.type === "image/jpeg" || file.type === "image/png" || file.type === "image/webp" || file.type === "application/pdf") {
+    return file.type;
+  }
+  const name = file.name.toLowerCase();
+  if (name.endsWith(".jpg") || name.endsWith(".jpeg")) return "image/jpeg";
+  if (name.endsWith(".png")) return "image/png";
+  if (name.endsWith(".webp")) return "image/webp";
+  if (name.endsWith(".pdf")) return "application/pdf";
+  return null;
+}
+
+function fileToDocumentPayload(file: File): Promise<{
+  mimeType: "image/jpeg" | "image/png" | "image/webp" | "application/pdf";
+  fileBase64: string;
+}> {
+  return new Promise((resolve, reject) => {
+    const mimeType = mimeFromFile(file);
+    if (mimeType === null) {
+      reject(new Error("Use a JPEG, PNG, WebP photo, or a PDF."));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onerror = () => reject(new Error("Could not read that file."));
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : "";
+      const comma = result.indexOf(",");
+      const fileBase64 = comma >= 0 ? result.slice(comma + 1) : "";
+      if (fileBase64.trim() === "") {
+        reject(new Error("Could not read that file."));
+        return;
+      }
+      resolve({ mimeType, fileBase64 });
+    };
+    reader.readAsDataURL(file);
+  });
+}
 
 function splitList(value: string): string[] {
   return value
@@ -47,6 +96,12 @@ export default function ProfilePage() {
   const [extractNotice, setExtractNotice] = useState<string | null>(null);
   const [proposal, setProposal] = useState<ProfileExtractResult | null>(null);
   const [hasProfile, setHasProfile] = useState(false);
+  const [documents, setDocuments] = useState<ProfileDocument[]>([]);
+  const [documentLabel, setDocumentLabel] = useState("");
+  const [documentUploading, setDocumentUploading] = useState(false);
+  const [documentError, setDocumentError] = useState<string | null>(null);
+  const [previews, setPreviews] = useState<Record<string, string>>({});
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const userId = getUserId();
@@ -74,15 +129,20 @@ export default function ProfilePage() {
           experience: profile.experience ?? "",
           yearsExperience: 0,
           interests: profile.interests.join(", "),
-          documentsHeld: "",
           preferredLanguage: getLanguage(),
         });
         if (view.sessionToken) setSessionToken(view.sessionToken);
         setHasProfile(true);
         setBoot("ready");
+        void api<ProfileDocument[]>(`/api/profile/${userId}/documents`)
+          .then(setDocuments)
+          .catch(() => setDocuments([]));
       })
       .catch((err: unknown) => {
         if (isNotFound(err)) {
+          void api<ProfileDocument[]>(`/api/profile/${userId}/documents`)
+            .then(setDocuments)
+            .catch(() => setDocuments([]));
           void api<AuthSession>("/api/auth/me")
             .then((me) => {
               setForm((current) => ({ ...current, name: me.name, email: me.email }));
@@ -98,6 +158,43 @@ export default function ProfilePage() {
         setBoot("error");
       });
   }, [reloadKey]);
+
+  useEffect(() => {
+    const userId = getUserId();
+    if (!userId || documents.length === 0) {
+      setPreviews((current) => {
+        Object.values(current).forEach((url) => URL.revokeObjectURL(url));
+        return {};
+      });
+      return;
+    }
+    let cancelled = false;
+    const urls: string[] = [];
+    void Promise.all(
+      documents
+        .filter((doc) => doc.mimeType.startsWith("image/"))
+        .map(async (doc) => {
+          const blob = await apiBlob(`/api/profile/${userId}/documents/${doc.id}`);
+          const url = URL.createObjectURL(blob);
+          urls.push(url);
+          return [doc.id, url] as const;
+        }),
+    )
+      .then((entries) => {
+        if (cancelled) {
+          urls.forEach((url) => URL.revokeObjectURL(url));
+          return;
+        }
+        setPreviews((current) => {
+          Object.values(current).forEach((url) => URL.revokeObjectURL(url));
+          return Object.fromEntries(entries);
+        });
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [documents]);
 
   async function submit(event: FormEvent) {
     event.preventDefault();
@@ -176,6 +273,63 @@ export default function ProfilePage() {
       "Proposed fields were copied into the form. Review them, then save — nothing was stored yet.",
     );
     setProposal(null);
+  }
+
+  async function uploadDocument(event: FormEvent) {
+    event.preventDefault();
+    const userId = getUserId();
+    if (userId === null || !/^[0-9a-f-]{36}$/i.test(userId)) {
+      setDocumentError("Sign in first, then upload a photo of a document you already have.");
+      return;
+    }
+    const file = fileInputRef.current?.files?.[0];
+    const label = documentLabel.trim();
+    if (label === "") {
+      setDocumentError("Name the document first — for example CV or Transcript.");
+      return;
+    }
+    if (file === undefined) {
+      setDocumentError("Choose a photo or PDF first.");
+      return;
+    }
+    if (file.size > MAX_DOCUMENT_BYTES || mimeFromFile(file) === null || !DOCUMENT_MIMES.has(mimeFromFile(file) ?? "")) {
+      setDocumentError("Use a JPEG, PNG, WebP, or PDF under 4 MB.");
+      return;
+    }
+    setDocumentUploading(true);
+    setDocumentError(null);
+    try {
+      const payload = await fileToDocumentPayload(file);
+      const created = await api<ProfileDocument>(`/api/profile/${userId}/documents`, {
+        method: "POST",
+        body: JSON.stringify({ userId, label, ...payload }),
+      });
+      setDocuments((current) => [created, ...current]);
+      setDocumentLabel("");
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
+      }
+    } catch (err) {
+      setDocumentError(userFacingError(err));
+    } finally {
+      setDocumentUploading(false);
+    }
+  }
+
+  async function removeDocument(documentId: string) {
+    const userId = getUserId();
+    if (userId === null) {
+      return;
+    }
+    setDocumentError(null);
+    try {
+      await api<{ deleted: boolean }>(`/api/profile/${userId}/documents/${documentId}`, {
+        method: "DELETE",
+      });
+      setDocuments((current) => current.filter((item) => item.id !== documentId));
+    } catch (err) {
+      setDocumentError(userFacingError(err));
+    }
   }
 
   return (
@@ -350,15 +504,80 @@ export default function ProfilePage() {
               Interests
               <input value={form.interests} onChange={(e) => setForm({ ...form, interests: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
             </label>
-            <label className="grid gap-1 text-sm">
-              Documents you already have
-              <input value={form.documentsHeld} onChange={(e) => setForm({ ...form, documentsHeld: e.target.value })} placeholder="CV, Transcript" className="min-h-11 border border-line bg-white px-3 py-2" />
-              <span className="text-muted">Not stored in Postgres v1. Readiness still comes from the analysis.</span>
-            </label>
             <button disabled={saving} className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
               {saving ? "Saving…" : "Save profile"}
             </button>
           </form>
+
+          <div className="mt-8 grid gap-3 border-t border-line pt-8">
+            <h2 className="font-display text-2xl">Documents you already have</h2>
+            <p className="text-sm text-muted">
+              Upload a photo or PDF of a document you hold — CV, transcript, passport. The name you
+              give it is what HULUM compares when an opportunity lists required documents.
+            </p>
+            {documentError ? (
+              <StatusPanel variant="error" title="We couldn't store that document">
+                {documentError}
+              </StatusPanel>
+            ) : null}
+            <form className="grid gap-3" onSubmit={(event) => void uploadDocument(event)}>
+              <label className="grid gap-1 text-sm">
+                Document name
+                <input
+                  value={documentLabel}
+                  onChange={(e) => setDocumentLabel(e.target.value)}
+                  placeholder="CV, Transcript, Passport"
+                  maxLength={80}
+                  className="min-h-11 border border-line bg-white px-3 py-2"
+                />
+              </label>
+              <label className="grid gap-1 text-sm">
+                Photo or PDF
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf"
+                  className="min-h-11 border border-line bg-white px-3 py-2 file:mr-3 file:border-0 file:bg-ink file:px-3 file:py-2 file:text-paper"
+                />
+              </label>
+              <button
+                type="submit"
+                disabled={documentUploading}
+                className="min-h-11 border border-ink px-5 py-3 disabled:opacity-60"
+              >
+                {documentUploading ? "Uploading…" : "Add document photo"}
+              </button>
+            </form>
+            {documents.length === 0 ? (
+              <p className="text-sm text-muted">No document photos stored yet.</p>
+            ) : (
+              <ul className="grid gap-3">
+                {documents.map((doc) => (
+                  <li key={doc.id} className="grid gap-2 border border-line p-3 sm:grid-cols-[7rem_1fr_auto] sm:items-center">
+                    {previews[doc.id] ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={previews[doc.id]} alt="" className="h-24 w-28 object-cover" />
+                    ) : (
+                      <div className="flex h-24 w-28 items-center justify-center bg-line text-xs text-muted">
+                        {doc.mimeType === "application/pdf" ? "PDF" : "Photo"}
+                      </div>
+                    )}
+                    <div>
+                      <p className="font-medium">{doc.label}</p>
+                      <p className="text-xs text-muted">{doc.mimeType.replace("image/", "").toUpperCase()}</p>
+                    </div>
+                    <button
+                      type="button"
+                      onClick={() => void removeDocument(doc.id)}
+                      className="min-h-11 border border-line px-3 py-2 text-sm"
+                    >
+                      Remove
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </div>
         </>
       ) : null}
     </section>

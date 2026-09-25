@@ -47,7 +47,16 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
       next();
     });
     app.use(corsMiddleware(env));
-    app.use(express.json({ limit: "100kb" }));
+    app.use((req, res, next) => {
+      const isScreenshot = req.path === "/api/ai/screenshot-analyze";
+      const isDocumentUpload =
+        req.method === "POST" && /^\/api\/profile\/[^/]+\/documents$/.test(req.path);
+      if (isScreenshot || isDocumentUpload) {
+        express.json({ limit: "5mb" })(req, res, next);
+        return;
+      }
+      express.json({ limit: "100kb" })(req, res, next);
+    });
     app.use(opsRequestTimingMiddleware());
     app.use(explainRateLimitMiddleware(limiter));
     app.use("/api", createApiRouter());

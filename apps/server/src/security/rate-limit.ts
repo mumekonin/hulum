@@ -9,6 +9,7 @@ export const EXPLAIN_RATE_LIMIT_MAX = 10;
 const EXPLAIN_PATH = /^\/api\/analyses\/[^/]+\/explain\/?$/;
 const READINESS_PLAN_PATH = /^\/api\/analyses\/[^/]+\/readiness\/plan\/?$/;
 const PROFILE_EXTRACT_PATH = /^\/api\/ai\/profile-extract\/?$/;
+const SCREENSHOT_ANALYZE_PATH = /^\/api\/ai\/screenshot-analyze\/?$/;
 
 export type RateLimiter = {
   allow(key: string): boolean;
@@ -51,7 +52,8 @@ export function explainRateLimitMiddleware(limiter: RateLimiter): RequestHandler
       req.method !== "POST" ||
       (!EXPLAIN_PATH.test(req.path) &&
         !READINESS_PLAN_PATH.test(req.path) &&
-        !PROFILE_EXTRACT_PATH.test(req.path))
+        !PROFILE_EXTRACT_PATH.test(req.path) &&
+        !SCREENSHOT_ANALYZE_PATH.test(req.path))
     ) {
       next();
       return;
