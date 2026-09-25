@@ -427,17 +427,36 @@ export default function ProfilePage() {
 
           <form onSubmit={(event) => void submit(event)} className="mt-8 grid gap-4" aria-describedby={error ? "profile-save-error" : undefined}>
             {error ? <p id="profile-save-error" className="sr-only">{error}</p> : null}
-            <label className="grid gap-1 text-sm">
+            <label htmlFor="profile-name" className="grid gap-1 text-sm">
               Name
-              <input required value={form.name} onChange={(e) => setForm({ ...form, name: e.target.value })} autoComplete="name" className="min-h-11 border border-line bg-white px-3 py-2" />
+              <input
+                id="profile-name"
+                name="name"
+                required
+                value={form.name}
+                onChange={(e) => setForm({ ...form, name: e.target.value })}
+                autoComplete="name"
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              />
             </label>
-            <label className="grid gap-1 text-sm">
+            <label htmlFor="profile-email" className="grid gap-1 text-sm">
               Email
-              <input required type="email" value={form.email} onChange={(e) => setForm({ ...form, email: e.target.value })} autoComplete="email" className="min-h-11 border border-line bg-white px-3 py-2" />
+              <input
+                id="profile-email"
+                name="email"
+                required
+                type="email"
+                value={form.email}
+                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                autoComplete="email"
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              />
             </label>
-            <label className="grid gap-1 text-sm">
+            <label htmlFor="profile-education" className="grid gap-1 text-sm">
               Education
               <select
+                id="profile-education"
+                name="educationLevel"
                 value={form.educationLevel}
                 onChange={(e) => setForm({ ...form, educationLevel: e.target.value as EducationLevel })}
                 className="min-h-11 border border-line bg-white px-3 py-2"
@@ -449,38 +468,84 @@ export default function ProfilePage() {
                 ))}
               </select>
             </label>
-            <label className="grid gap-1 text-sm">
+            <label htmlFor="profile-field" className="grid gap-1 text-sm">
               Field of study
-              <input required value={form.fieldOfStudy} onChange={(e) => setForm({ ...form, fieldOfStudy: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+              <input
+                id="profile-field"
+                name="fieldOfStudy"
+                required
+                value={form.fieldOfStudy}
+                onChange={(e) => setForm({ ...form, fieldOfStudy: e.target.value })}
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              />
             </label>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="grid gap-1 text-sm">
+              <label htmlFor="profile-graduation-year" className="grid gap-1 text-sm">
                 Graduation year
-                <input type="number" value={form.graduationYear} onChange={(e) => setForm({ ...form, graduationYear: Number(e.target.value) })} className="min-h-11 border border-line bg-white px-3 py-2" />
+                <input
+                  id="profile-graduation-year"
+                  name="graduationYear"
+                  type="number"
+                  value={form.graduationYear}
+                  onChange={(e) => setForm({ ...form, graduationYear: Number(e.target.value) })}
+                  className="min-h-11 border border-line bg-white px-3 py-2"
+                />
               </label>
-            <label className="grid gap-1 text-sm">
-              Years of experience
-              <input type="number" min={0} step={0.5} value={form.yearsExperience} onChange={(e) => setForm({ ...form, yearsExperience: Number(e.target.value) })} className="min-h-11 border border-line bg-white px-3 py-2" />
-              <span className="text-muted">Shown here only. Postgres v1 stores the experience text, not this number.</span>
-            </label>
+              <label htmlFor="profile-years-experience" className="grid gap-1 text-sm">
+                Years of experience
+                <input
+                  id="profile-years-experience"
+                  name="yearsExperience"
+                  type="number"
+                  min={0}
+                  step={0.5}
+                  value={form.yearsExperience}
+                  onChange={(e) => setForm({ ...form, yearsExperience: Number(e.target.value) })}
+                  className="min-h-11 border border-line bg-white px-3 py-2"
+                />
+                <span className="text-muted">Shown here only. Postgres v1 stores the experience text, not this number.</span>
+              </label>
             </div>
             <div className="grid gap-4 md:grid-cols-2">
-              <label className="grid gap-1 text-sm">
+              <label htmlFor="profile-country" className="grid gap-1 text-sm">
                 Country
-                <input required value={form.country} onChange={(e) => setForm({ ...form, country: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+                <input
+                  id="profile-country"
+                  name="country"
+                  required
+                  value={form.country}
+                  onChange={(e) => setForm({ ...form, country: e.target.value })}
+                  className="min-h-11 border border-line bg-white px-3 py-2"
+                />
               </label>
-              <label className="grid gap-1 text-sm">
+              <label htmlFor="profile-city" className="grid gap-1 text-sm">
                 City
-                <input value={form.city} onChange={(e) => setForm({ ...form, city: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+                <input
+                  id="profile-city"
+                  name="city"
+                  value={form.city}
+                  onChange={(e) => setForm({ ...form, city: e.target.value })}
+                  className="min-h-11 border border-line bg-white px-3 py-2"
+                />
               </label>
             </div>
-            <label className="grid gap-1 text-sm">
-              Languages (comma separated)
-              <input required value={form.languages} onChange={(e) => setForm({ ...form, languages: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+            <label htmlFor="profile-languages" className="grid gap-1 text-sm">
+              Languages
+              <input
+                id="profile-languages"
+                name="languages"
+                required
+                value={form.languages}
+                onChange={(e) => setForm({ ...form, languages: e.target.value })}
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              />
+              <span className="text-muted">Comma separated.</span>
             </label>
-            <label className="grid gap-1 text-sm">
+            <label htmlFor="profile-hulum-language" className="grid gap-1 text-sm">
               HULUM language
               <select
+                id="profile-hulum-language"
+                name="preferredLanguage"
                 value={form.preferredLanguage}
                 onChange={(e) => setForm({ ...form, preferredLanguage: e.target.value as LanguageCode })}
                 className="min-h-11 border border-line bg-white px-3 py-2"
@@ -492,19 +557,37 @@ export default function ProfilePage() {
                 ))}
               </select>
             </label>
-            <label className="grid gap-1 text-sm">
+            <label htmlFor="profile-skills" className="grid gap-1 text-sm">
               Skills
-              <input value={form.skills} onChange={(e) => setForm({ ...form, skills: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+              <input
+                id="profile-skills"
+                name="skills"
+                value={form.skills}
+                onChange={(e) => setForm({ ...form, skills: e.target.value })}
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              />
             </label>
-            <label className="grid gap-1 text-sm">
+            <label htmlFor="profile-experience" className="grid gap-1 text-sm">
               Experience
-              <textarea value={form.experience} onChange={(e) => setForm({ ...form, experience: e.target.value })} className="min-h-24 border border-line bg-white px-3 py-2" />
+              <textarea
+                id="profile-experience"
+                name="experience"
+                value={form.experience}
+                onChange={(e) => setForm({ ...form, experience: e.target.value })}
+                className="min-h-24 border border-line bg-white px-3 py-2"
+              />
             </label>
-            <label className="grid gap-1 text-sm">
+            <label htmlFor="profile-interests" className="grid gap-1 text-sm">
               Interests
-              <input value={form.interests} onChange={(e) => setForm({ ...form, interests: e.target.value })} className="min-h-11 border border-line bg-white px-3 py-2" />
+              <input
+                id="profile-interests"
+                name="interests"
+                value={form.interests}
+                onChange={(e) => setForm({ ...form, interests: e.target.value })}
+                className="min-h-11 border border-line bg-white px-3 py-2"
+              />
             </label>
-            <button disabled={saving} className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
+            <button type="submit" disabled={saving} className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
               {saving ? "Saving…" : "Save profile"}
             </button>
           </form>

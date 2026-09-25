@@ -51,15 +51,15 @@ async function main() {
     await page.waitForURL(/\/profile/);
     await page.getByRole("heading", { name: /Your profile/i }).waitFor();
 
-    await page.getByLabel(/^Name$/).fill("Abeba Tesfaye");
-    await page.getByLabel(/^Email$/).fill(email);
-    await page.getByLabel(/Field of study/).fill("Computer Science");
-    await page.getByLabel(/^Country$/).fill("Ethiopia");
-    await page.getByLabel(/^City$/).fill("Addis Ababa");
-    await page.getByLabel(/^Languages(?: \(comma separated\))?$/).fill("English, Amharic");
-    await page.getByLabel(/^Skills$/).fill("Python, React");
-    await page.getByLabel(/^Experience$/).fill("One software internship.");
-    await page.getByLabel(/^Interests$/).fill("AI, scholarships");
+    await page.locator("#profile-name").fill("Abeba Tesfaye");
+    await page.locator("#profile-email").fill(email);
+    await page.locator("#profile-field").fill("Computer Science");
+    await page.locator("#profile-country").fill("Ethiopia");
+    await page.locator("#profile-city").fill("Addis Ababa");
+    await page.locator("#profile-languages").fill("English, Amharic");
+    await page.locator("#profile-skills").fill("Python, React");
+    await page.locator("#profile-experience").fill("One software internship.");
+    await page.locator("#profile-interests").fill("AI, scholarships");
 
     const savePromise = page.waitForResponse((response) => {
       const method = response.request().method();

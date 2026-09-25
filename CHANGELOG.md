@@ -2,6 +2,12 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-25 — Profile form accessible labels
+
+### Fixed
+- Profile fields use explicit `htmlFor` / `id` (including **Languages**). Helper text is no longer part of the accessible name.
+- `smoke:browser` fills profile fields by `#profile-*` ids.
+
 ## 2026-09-25 — List stored requirements
 
 ### Fixed
