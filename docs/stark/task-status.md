@@ -1,8 +1,17 @@
 # Task status (post Day 20 sync)
 
-**Date:** 2026-09-24  
+**Date:** 2026-09-25  
 **Files:** `task.md`, `HULUM_task.md`  
-**Rule:** mark what the running product and tests already do. Do not mark Voxide STT, a production host, ScholarXIV live papers, or a browser/device pass that was not run.
+**Rule:** mark what the running product and tests already do. Do not mark Voxide STT, a production host, ScholarXiv live papers, or a browser pass that was not run.
+
+---
+
+## 2026-09-25 — Demo docs match JWT + investigator
+
+- Rewrote `docs/demo/script.md`, `backup.md`, `rehearsal.md`, and screenshot shot list for Create account / typed Abeba / investigator catalog / `/screenshot` backup.
+- Removed Continue UUID, Use demo profile, and seeded A2SV/UCT/Chevening from the judge walkthrough.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
 
 ---
 

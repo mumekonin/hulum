@@ -1,13 +1,15 @@
 # HULUM demo script (STARK walkthrough)
 
 **Owner:** Kidist  
-**Persona:** Abeba Tesfaye (already in the app)  
+**Persona:** Abeba Tesfaye (typed facts — there is no “Use demo profile” button)  
 **Runtime:** local `npm run dev` — web `:3000`, API `:3001`  
+**Auth:** Create account / Sign in (JWT). Google optional if keys are set.  
+**Catalog:** investigator-filled (not `db:seed`). Cards may be empty until the worker has run.  
 **Voice:** Ask HULUM text + quick actions (ADR 003). Do not claim live Voxide or a microphone.
 
 Target length: about 6 minutes. One story, not a feature tour.
 
-If Analyze fails, stay on the opportunity and use Ask HULUM text. Do not improvise eligibility facts. Full backup paths (3-minute cut, Analyze failure, API-only): `docs/demo/backup.md`. Day 20 rehearsal notes: `docs/demo/rehearsal.md`.
+If Analyze fails or the catalog is empty, use `/screenshot` or Ask HULUM text. Do not improvise eligibility facts. Full backup paths: `docs/demo/backup.md`. Rehearsal notes: `docs/demo/rehearsal.md`.
 
 ---
 
@@ -16,73 +18,89 @@ If Analyze fails, stay on the opportunity and use Ask HULUM text. Do not improvi
 - HULUM is the official eligibility authority.
 - Claude chooses APPLY / MAYBE / SKIP.
 - Voice speech is live.
-- ScholarXIV papers are in the running product.
+- ScholarXiv papers are in the running product.
 - The app is deployed to production / EthioDeploy.
+- There is a one-click Abeba demo profile or a seeded A2SV / Chevening catalog.
 
-Do say: the engine decides; Claude only explains if a key is set; always open the official source.
+Do say: the engine decides; Claude only explains if a key is set; always open the official source; the list comes from evidenced pages the investigator fetched.
 
 ---
 
 ## Setup (before the judges)
 
-1. From the repo root: `npm install` then `npm run dev`.
-2. Open http://localhost:3000 in a clean browser profile.
-3. Confirm http://localhost:3001/api/health returns `{ "data": { "status": "ok" }, "error": null }`.
-4. Optional Claude key is not required.
+1. From the repo root: `npm install` then `npm run db:migrate` then `npm run dev`.
+2. Optional: set `GROQ_API_KEY` so explain / screenshot extract / investigator extract can run.
+3. Open http://localhost:3000 in a clean browser profile.
+4. Confirm http://localhost:3001/api/health returns `{ "data": { "status": "ok" }, "error": null }`.
+5. Pre-create an account and save Abeba’s profile once so the timed demo only signs in.
+
+### Abeba facts to type (or pre-save)
+
+| Field | Value |
+|---|---|
+| Name | Abeba Tesfaye |
+| Education | Bachelor in progress |
+| Field | Computer Science |
+| Graduation year | 2027 |
+| Country / city | Ethiopia / Addis Ababa |
+| Languages | English, Amharic |
+| Skills | Python, React |
+| Experience | One software internship. |
+| Interests | AI, scholarships, internships |
 
 ---
 
 ## Script
 
-### 0:00 — Problem (landing `/`)
+### 0:00 — Sign in (`/`)
 
-**Show:** headline and APPLY / MAYBE / SKIP cards.
+**Show:** HULUM gateway (email/password or Google).
 
 **Say:** Ethiopian students find opportunities. They still waste time on ones they cannot use. HULUM is a decision agent: one answer, then why, gaps, and what to prepare.
 
-**Click:** Create your profile.
+**Click:** Sign in (pre-created account) or Create account → fill name / email / password → Create account.
 
 ### 0:40 — Profile `/profile`
 
-**Click:** Use demo profile (Abeba Tesfaye).
+**Show:** Saved Abeba facts (or fill them now if this is the first run).
 
 **Say:** Abeba is a Computer Science student in Ethiopia, bachelor in progress, graduating 2027, Python and React, one internship, English and Amharic.
 
-Do not type a custom profile in the timed demo.
+**Optional:** upload a CV/transcript photo under Documents you already have.
 
 ### 1:10 — Catalog `/opportunities`
 
-**Say:** These records are curated with official URLs. HULUM is not a marketplace.
+**Say:** These records come from the investigator following official or aggregator pages. HULUM is not a marketplace. If the list is empty, say the worker has not filled it yet and go to Screenshot (next section).
 
-**Click:** A2SV — Africa to Silicon Valley.
+**Click:** One fellowship or scholarship that fits a CS student in Ethiopia (title varies). Prefer a card with an Official source link.
 
-### 1:40 — Analyze `/opportunities/opp-a2sv`
+### 1:40 — Analyze `/opportunities/[id]`
 
-**Show:** requirements, Official source, Official application.
+**Show:** requirements, Official source, Official application when present.
 
 **Click:** Analyze for me.
 
-**Say:** The same engine runs here and in Ask HULUM. Fit score is a signal only.
+**Say:** The same engine runs here and in Ask HULUM. Fit score is a signal only. Do not invent APPLY / MAYBE / SKIP before the result appears.
 
-### 2:10 — APPLY `/analysis/[id]`
+### 2:10 — Decision `/analysis/[id]`
 
-**Show:** APPLY (expected for Abeba + A2SV), Matched, Needs attention, Readiness, disclaimer.
+**Show:** APPLY, MAYBE, or SKIP as returned, Matched, Needs attention, Readiness, disclaimer.
 
 **Click:** Official source. Return to the tab.
 
 **Say:** Confirm eligibility and the deadline with the organization. HULUM is a decision aid.
 
-**Click:** Ask HULUM.
+**Click:** Ask HULUM (Primary nav or on-page CTA).
 
 ### 3:00 — Text “voice” `/assistant`
 
-**Show:** Voice unavailable. Type and quick actions still work.
+**Show:** Voice unavailable / text path. Type and quick actions still work.
 
 **Say:** Speech is not wired. Backup mode is text so the demo cannot die on a missing Voxide key.
 
 Type or click:
 
-1. Should I apply for this? — same APPLY/MAYBE/SKIP as the screen.
+1. Should I apply for this? — same decision as the screen when an opportunity is in session.
 2. Why did you say that?
 3. What am I missing?
 4. What should I prepare?
@@ -95,25 +113,19 @@ Type or click:
 
 **Click:** ምን ጎድሎኛል? or ምን ላዘጋጅ?
 
-**Say:** Same product actions; language selector also drives explain/readiness wording when Groq is set.
-
 **Afaan Oromo:** selecting it sets explain language only. Ask HULUM chrome stays English — do not demo invented Oromo UI copy.
 
-### 4:20 — MAYBE (optional, ~45s)
+### 4:20 — Screenshot path (if catalog empty or Analyze fails)
 
-Back to Opportunities. Open Mastercard Foundation Scholars Program at UCT. Analyze.
+**Click:** Screenshot in the Primary nav (`/screenshot`).
 
-**Say:** MAYBE because important facts are uncertain (field fit, financial need). That is not a yes.
+**Say:** Judges often see posts in Telegram or LinkedIn. Upload a real opportunity screenshot. Groq extracts only what is visible; `decide()` still runs on the server. Missing deadline or URL stays unknown.
 
-### 5:10 — SKIP (optional, ~45s)
+**Show:** APPLY / MAYBE / SKIP from the photo + profile. Not saved into the catalog.
 
-Open Chevening. Analyze.
+### 5:10 — Close
 
-**Say:** SKIP because critical requirements are not met for Abeba (completed bachelor’s, two years’ experience). Time is better spent on a closer match.
-
-### 5:50 — Close
-
-**Say:** One profile, three decisions, official source last. Judges can repeat this without a database admin.
+**Say:** One signed-in profile, engine decisions, official source or screenshot evidence last. Judges can repeat this without a database admin.
 
 ---
 
@@ -125,14 +137,15 @@ Use `docs/demo/backup.md`. Short version:
 |---|---|
 | Time or no speech | 3-minute text path in the backup doc. |
 | API down | Show `/api/health`. Restart `npm run dev`. |
-| Analyze error | Ask HULUM → Should I apply for this? |
+| Empty catalog | `/screenshot` with a real post photo, or Ask HULUM text. |
+| Analyze error | Ask HULUM → Should I apply for this? or Screenshot. |
 | Voice/session error | Stay on text and quick actions. |
 | Wrong decision | Do not override the engine. Open Official source. |
-| No profile | Create profile → demo Abeba. |
-| Browser UI dead | API Path C in the backup doc, or `npm test`. |
+| No account | Create account → save Abeba facts. |
+| Browser UI dead | API Path C in the backup doc, or `npm test` / `npm run smoke:local`. |
 
 ---
 
-## Timing without MAYBE/SKIP
+## Timing without screenshot / second cards
 
-If you only have five minutes, stop after Ask HULUM why / missing / prepare. Mention UCT MAYBE and Chevening SKIP in one sentence.
+If you only have five minutes, stop after Ask HULUM why / missing / prepare. Mention that MAYBE and SKIP appear when requirements are uncertain or critically unmet — do not invent specific seed titles if they are not in the list.

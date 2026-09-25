@@ -1,17 +1,17 @@
-# HULUM backup demo (Day 19)
+# HULUM backup demo
 
 **Owner:** Kidist  
 **Live walkthrough:** `docs/demo/script.md` (about 6 minutes)  
-**This file:** shorter path if speech, Analyze, or the browser UI fails.
+**This file:** shorter path if speech, Analyze, catalog, or the browser UI fails.
 
-There is **no recorded video and no screenshot pack** in this repository. Do not show a fake deploy or claim a microphone.
+There is **no recorded video and no screenshot PNG pack** in this repository. Do not show a fake deploy or claim a microphone.
 
-Stable inputs already in the product:
+**Current product facts (do not invent older paths):**
 
-- Profile: **Use demo profile** → Abeba Tesfaye (`user_demo_abeba`)
-- APPLY: A2SV (`opp-a2sv`)
-- MAYBE: Mastercard Foundation Scholars Program at UCT (`opp-mastercard-uct`)
-- SKIP: Chevening (`opp-chevening`)
+- Auth: Create account / Sign in (JWT). No gateway “Continue” UUID, no `POST /api/profile/demo`.
+- Profile: type Abeba’s facts (or a pre-saved account). Document photos are optional uploads.
+- Catalog: investigator-filled. No baked A2SV / UCT / Chevening seed ids.
+- Decision: `decide()` on the server. Screenshot analyze uses the same engine against the signed-in profile.
 
 ---
 
@@ -19,74 +19,81 @@ Stable inputs already in the product:
 
 - Live Voxide / STT
 - Claude chooses APPLY / MAYBE / SKIP
-- ScholarXIV papers in the running app
+- ScholarXiv papers in the running app
 - Production / EthioDeploy
+- One-click demo profile or seeded catalog cards
 
 ---
 
-## Path A — 3 minutes, text only (use this if time or voice is the problem)
+## Path A — 3 minutes, text only
 
-Setup is the same as `docs/demo/script.md`: `npm run dev`, http://localhost:3000, health at `:3001/api/health`.
+Setup: `npm run db:migrate`, `npm run dev`, http://localhost:3000, health at `:3001/api/health`. Sign in with a pre-created Abeba profile.
 
 | Time | Action | Show / say |
 |---|---|---|
-| 0:00 | `/` | Decision agent: APPLY / MAYBE / SKIP, then why and what to prepare. |
-| 0:20 | `/profile` → Use demo profile | Abeba, CS in Ethiopia, bachelor in progress. |
-| 0:40 | Open A2SV → Analyze for me | APPLY. Fit is a signal. Engine decides. |
+| 0:00 | `/` Sign in | Decision agent: APPLY / MAYBE / SKIP, then why and what to prepare. |
+| 0:20 | `/profile` | Abeba facts already saved. |
+| 0:40 | `/opportunities` → first real card → Analyze | Show whatever decision the engine returns. Fit is a signal. |
 | 1:20 | Official source, then back | Confirm with the organization. |
 | 1:40 | Ask HULUM | **Voice unavailable** is expected. Type or click the four commands below. |
-| 2:50 | Close | One profile, one decision, official source last. Mention UCT MAYBE and Chevening SKIP in one sentence if asked. |
+| 2:50 | Close | One profile, one decision, official source last. |
+
+If the catalog is empty at 0:40, open `/screenshot` instead and analyze one real post photo.
 
 ### Exact text / quick actions (English)
 
-Use these in order on `/assistant` after A2SV is the current opportunity:
+On `/assistant` after an opportunity (or screenshot session) is current:
 
 1. `Should I apply for this?`
 2. `Why did you say that?`
 3. `What am I missing?`
 4. `What should I prepare?`
 
-Optional catalog lines (not required in 3 minutes):
-
-- `Show me opportunities I should apply for`
-- `Show me maybe opportunities`
-
 Amharic quick actions exist (`ምን ጎድሎኛል?`, `ምን ላዘጋጅ?`). Do not claim live Amharic speech.
 
 ---
 
-## Path B — Analyze button fails
+## Path B — Analyze button fails or catalog empty
 
-Stay on A2SV. Open Ask HULUM. Run command 1 above. `ANALYZE_OPPORTUNITY` uses the same `runAnalysis` path as the button.
+1. Stay signed in with Abeba’s profile.
+2. Open `/screenshot`, upload a real opportunity screenshot, run analyze.
+3. Or open Ask HULUM and type `Should I apply for this?` when an opportunity id is in session.
 
-If the assistant session fails, keep typing; the UI is already in backup mode when the provider is not `voxide`.
+If the assistant session fails, keep typing; text fallback is the intended backup when Voxide is not keyed.
 
 ---
 
 ## Path C — Browser UI is unusable (API)
 
-Judges can still see the engine. From the repo root, with `npm run dev` (API on `:3001`). The catalog is investigator-filled, not seeded:
+Judges can still see register + catalog health. From the repo root, with the API on `:3001`:
 
 ```powershell
 Invoke-RestMethod http://localhost:3001/api/health
-$demo = Invoke-RestMethod -Method POST http://localhost:3001/api/profile/demo
-$userId = $demo.data.profile.userId
-$ops = Invoke-RestMethod http://localhost:3001/api/opportunities
-$a2sv = $ops.data | Where-Object { $_.title -match 'A2SV' } | Select-Object -First 1
-Invoke-RestMethod -Method POST "http://localhost:3001/api/opportunities/$($a2sv.id)/analyze" -ContentType application/json -Body (@{ userId = $userId } | ConvertTo-Json)
+$reg = Invoke-RestMethod -Method POST http://localhost:3001/api/auth/register -ContentType application/json -Body (@{
+  name = "Judge API"
+  email = ("judge." + [DateTimeOffset]::UtcNow.ToUnixTimeMilliseconds() + "@example.invalid")
+  password = "strong-pass"
+} | ConvertTo-Json)
+$reg.data.userId
+$reg.data.sessionToken
+Invoke-RestMethod http://localhost:3001/api/opportunities
 ```
 
-Expected: envelope `{ data, error }`, A2SV **APPLY** for Abeba.
+Expected: health ok, register returns `userId` + JWT, opportunities is an array (length may be 0 if the investigator has not filled yet).
 
-Find Mastercard / Chevening the same way by title → **MAYBE** / **SKIP**.
-
-Or run the automated local triangle (same expectations):
+Automated local check:
 
 ```powershell
 npm run smoke:local
 ```
 
-Automated coverage of the file-store twin path: `npm test` in `apps/server` (`flow.test.ts`, `failures.test.ts`, voice text-fallback tests).
+Browser click-through (Chromium):
+
+```powershell
+npm run smoke:browser
+```
+
+File-store twin coverage: `npm test` in `apps/server` (flow / failures / voice text-fallback).
 
 ---
 
@@ -95,16 +102,18 @@ Automated coverage of the file-store twin path: `npm test` in `apps/server` (`fl
 | Failure | Recovery |
 |---|---|
 | API down | Show `/api/health`. Restart `npm run dev`. |
-| No profile | Use demo profile. |
+| No profile | Create account → save Abeba facts. |
+| Empty catalog | `/screenshot` or wait for investigator; do not invent cards. |
 | Wrong or surprising decision | Do not override the engine. Open Official source. |
 | Microphone asked for | Say speech is not wired; use Path A. |
-| Need MAYBE / SKIP and time is gone | Say the expected labels; do not invent extra eligibility facts. |
+| Need a second decision and time is gone | Explain MAYBE vs SKIP in one sentence; do not invent seed titles. |
 
 ---
 
 ## Not in this backup
 
 - Recorded demo video
-- Screenshot folder
+- Checked-in screenshot PNG files
 - Production URL
 - Voxide key
+- Seeded `opp-a2sv` / demo profile endpoint
