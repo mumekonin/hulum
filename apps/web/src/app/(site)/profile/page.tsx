@@ -555,7 +555,6 @@ export default function ProfilePage() {
                 {documents.map((doc) => (
                   <li key={doc.id} className="grid gap-2 border border-line p-3 sm:grid-cols-[7rem_1fr_auto] sm:items-center">
                     {previews[doc.id] ? (
-                      // eslint-disable-next-line @next/next/no-img-element
                       <img src={previews[doc.id]} alt="" className="h-24 w-28 object-cover" />
                     ) : (
                       <div className="flex h-24 w-28 items-center justify-center bg-line text-xs text-muted">

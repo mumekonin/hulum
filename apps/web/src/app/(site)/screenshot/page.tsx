@@ -145,7 +145,6 @@ export default function ScreenshotPage() {
         </label>
         {fileName ? <p className="text-sm text-muted">{fileName}</p> : null}
         {preview ? (
-          // eslint-disable-next-line @next/next/no-img-element
           <img src={preview} alt="Selected screenshot preview" className="max-h-64 w-auto border border-line" />
         ) : null}
         <button
