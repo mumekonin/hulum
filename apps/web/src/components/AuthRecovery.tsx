@@ -174,7 +174,7 @@ export function AuthRecovery() {
                 </div>
                 <div className="flex justify-between">
                   <span>Fallback:</span>
-                  <span className="text-gw-muted">Continue on sign-in screen</span>
+                  <span className="text-gw-muted">Sign in or create account</span>
                 </div>
               </div>
             </section>
@@ -184,7 +184,7 @@ export function AuthRecovery() {
                 <div className="flex items-center gap-1">
                   <span className="h-2 w-2 bg-gw-primary" aria-hidden />
                   <span className="font-gw-mono uppercase tracking-widest text-gw-primary">
-                    Phase_02 // Local continue
+                    Phase_02 // Password UI
                   </span>
                 </div>
                 <div className="flex items-center gap-1 font-gw-mono text-gw-outline">
@@ -203,7 +203,8 @@ export function AuthRecovery() {
                 </div>
                 <h2 className="font-gw-serif text-[32px] leading-[38px] text-gw-primary">Set new password</h2>
                 <p className="mt-1 text-[13px] leading-5 text-gw-muted">
-                  Strength checks are UI-only. Passwords are not saved; Update opens Profile with a local session.
+                  Strength checks are UI-only. Password reset is not stored or emailed yet. Sign in with your
+                  existing password, or create a new account.
                 </p>
               </div>
 
@@ -309,13 +310,13 @@ export function AuthRecovery() {
             <div className="flex flex-col gap-1 bg-gw-surface-low p-4">
               <span className="font-gw-mono text-[9px] uppercase text-gw-muted">Honest policy</span>
               <p className="text-[11px] text-gw-muted">
-                Password changes are not implemented. HULUM v0.1 uses a browser UUID, not accounts.
+                Password reset email is not implemented. Accounts use email/password (hashed) or optional Google.
               </p>
             </div>
             <div className="flex flex-col gap-1 bg-gw-surface-low p-4">
               <span className="font-gw-mono text-[9px] uppercase text-gw-muted">No hardware auth</span>
               <p className="text-[11px] text-gw-muted">
-                YubiKey / institutional PKI are not claimed. Use Continue on the sign-in screen.
+                YubiKey / institutional PKI are not claimed. Use Sign in on the gateway.
               </p>
             </div>
             <div className="flex flex-col gap-1 bg-gw-surface-low p-4">
@@ -325,7 +326,11 @@ export function AuthRecovery() {
                 <Link href="/" className="text-gw-primary underline-offset-2 hover:underline">
                   sign in
                 </Link>{" "}
-                → Continue → Profile.
+                or{" "}
+                <Link href="/verify" className="text-gw-primary underline-offset-2 hover:underline">
+                  create account
+                </Link>
+                .
               </p>
             </div>
           </div>
