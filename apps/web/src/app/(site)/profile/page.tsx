@@ -2,9 +2,8 @@
 
 import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { EDUCATION_LABELS, EDUCATION_LEVELS, type EducationLevel, type LanguageCode, type ProfileExtractResult, type ProfileView } from "@hulum/shared";
+import { EDUCATION_LABELS, EDUCATION_LEVELS, type AuthSession, type EducationLevel, type LanguageCode, type ProfileExtractResult, type ProfileView } from "@hulum/shared";
 import { api, isNotFound, userFacingError } from "@/lib/api";
-import { ABEBA_DEMO } from "@/lib/demo-profile";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
 import { getLanguage, getUserId, setLanguage, setSessionToken, setUserId } from "@/lib/storage";
 import { Notice } from "@/components/Notice";
@@ -84,8 +83,15 @@ export default function ProfilePage() {
       })
       .catch((err: unknown) => {
         if (isNotFound(err)) {
-          setHasProfile(false);
-          setBoot("ready");
+          void api<AuthSession>("/api/auth/me")
+            .then((me) => {
+              setForm((current) => ({ ...current, name: me.name, email: me.email }));
+            })
+            .catch(() => undefined)
+            .finally(() => {
+              setHasProfile(false);
+              setBoot("ready");
+            });
           return;
         }
         setLoadError(userFacingError(err));
@@ -123,26 +129,6 @@ export default function ProfilePage() {
       setHasProfile(true);
       setLanguage(form.preferredLanguage);
       setSaved(true);
-      router.push("/opportunities");
-    } catch (err) {
-      setError(userFacingError(err));
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  async function loadDemo() {
-    setSaving(true);
-    setError(null);
-    try {
-      const view = await api<ProfileView>("/api/profile", {
-        method: "POST",
-        body: JSON.stringify(ABEBA_DEMO),
-      });
-      setUserId(view.profile.userId);
-      setSessionToken(view.sessionToken);
-      setHasProfile(true);
-      setLanguage("en");
       router.push("/opportunities");
     } catch (err) {
       setError(userFacingError(err));
@@ -198,8 +184,8 @@ export default function ProfilePage() {
       <p className="mt-3 text-muted">HULUM only compares what you declare here with structured opportunity requirements.</p>
       <div className="mt-6">
         <Notice>
-          Authentication is intentionally light in v0.1 so the decision loop is not blocked. Use the demo
-          Computer Science student if you want the STARK walkthrough.
+          You are signed in. Save your own facts for APPLY / MAYBE / SKIP. HULUM does not invent a demo
+          profile.
         </Notice>
       </div>
       {boot === "loading" ? (
@@ -225,9 +211,6 @@ export default function ProfilePage() {
             </StatusPanel>
           ) : null}
           {saved ? <p className="mt-4 text-apply">Profile saved.</p> : null}
-          <button type="button" onClick={() => void loadDemo()} disabled={saving} className="mt-6 min-h-11 border border-ink px-4 py-2 text-sm disabled:opacity-60">
-            {saving ? "Working…" : "Use demo profile (Abeba Tesfaye)"}
-          </button>
 
           <div className="mt-8 grid gap-3 border-t border-line pt-8">
             <h2 className="font-display text-2xl">Extract from a self-description</h2>

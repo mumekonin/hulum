@@ -29,11 +29,11 @@ npm run db:smoke
 
 `db:smoke` inserts sample rows in a transaction and rolls them back. It does not seed the catalog.
 
-`GET /api/opportunities` reads this table. Do not insert invented postings.
+`GET /api/opportunities` reads this table. Catalog seed is closed (`006_close_catalog_seed.sql`). Do not insert invented postings. Use the investigator.
 
 Task 48 adds `sources`, `official_domains`, and investigation logs (`002_investigator.sql`). Add a new website later with `insert into sources (...)`. Add an official apply domain with `insert into official_domains (domain, note) values (...)`. Env names only in `.env.example`.
 
-`POST /api/investigate` (header `x-hulum-investigate`) runs a fetch/extract pass. Saved rows are `AI_EXTRACTED` until a person marks `VERIFIED`.
+`POST /api/investigate` (header `x-hulum-investigate`) runs a fetch/extract pass. The same pass also runs on a timer when the API starts (`INVESTIGATE_WORKER`, default on if Groq is set). Saved rows are `AI_EXTRACTED` until a person marks `VERIFIED`. Aggregator listing pages may be stored as `sourceUrl` when that is the evidenced page; official org URLs are preferred when they appear on the page.
 
 Migration `004_rls_owner_policies.sql` adds owner-scoped RLS policies (and public opportunity read). The API still connects as the table owner (owner bypasses RLS unless `FORCE`). Use a non-owner role + `app.current_user_id` / `app.rls_bypass` when hardening further.
 

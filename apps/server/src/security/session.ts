@@ -1,8 +1,8 @@
-import { createHmac, timingSafeEqual } from "node:crypto";
 import type { Request } from "express";
 import type { AppEnv } from "../config/env.js";
 import { loadEnv } from "../config/env.js";
 import { HttpError } from "../http/errors.js";
+import { issueJwt, verifyJwt } from "./jwt.js";
 
 const HEADER = "x-hulum-session";
 
@@ -15,32 +15,15 @@ export function isSessionEnforced(env: Pick<AppEnv, "NODE_ENV" | "SESSION_SECRET
 }
 
 export function issueSessionToken(userId: string, secret: string): string {
-  const body = Buffer.from(userId, "utf8").toString("base64url");
-  const sig = createHmac("sha256", secret).update(userId).digest("base64url");
-  return `${body}.${sig}`;
+  return issueJwt({ sub: userId, typ: "session" }, secret);
 }
 
 export function verifySessionToken(token: string, secret: string): string {
-  const parts = token.split(".");
-  if (parts.length !== 2 || parts[0] === undefined || parts[1] === undefined) {
+  const claims = verifyJwt(token, secret);
+  if (claims.typ !== "session" || typeof claims.sub !== "string" || claims.sub.trim() === "") {
     throw new HttpError(401, "UNAUTHORIZED", "Session token is missing or invalid.");
   }
-  let userId: string;
-  try {
-    userId = Buffer.from(parts[0], "base64url").toString("utf8");
-  } catch {
-    throw new HttpError(401, "UNAUTHORIZED", "Session token is missing or invalid.");
-  }
-  if (userId.trim() === "") {
-    throw new HttpError(401, "UNAUTHORIZED", "Session token is missing or invalid.");
-  }
-  const expected = createHmac("sha256", secret).update(userId).digest("base64url");
-  const a = Buffer.from(parts[1]);
-  const b = Buffer.from(expected);
-  if (a.length !== b.length || !timingSafeEqual(a, b)) {
-    throw new HttpError(401, "UNAUTHORIZED", "Session token is missing or invalid.");
-  }
-  return userId;
+  return claims.sub;
 }
 
 /**
@@ -73,6 +56,21 @@ export function maybeIssueSessionToken(
     return undefined;
   }
   return issueSessionToken(userId, env.SESSION_SECRET);
+}
+
+/** Login/register always need a signing secret. Production still requires SESSION_SECRET. */
+export function authSigningSecret(env: AppEnv = loadEnv({ fromFile: false })): string {
+  if (env.SESSION_SECRET !== undefined) {
+    return env.SESSION_SECRET;
+  }
+  if (env.NODE_ENV === "production") {
+    throw new HttpError(500, "CONFIG", "SESSION_SECRET is required for authentication in production.");
+  }
+  return "hulum-dev-session-not-for-production";
+}
+
+export function issueAuthSessionToken(userId: string, env: AppEnv = loadEnv({ fromFile: false })): string {
+  return issueSessionToken(userId, authSigningSecret(env));
 }
 
 export const SESSION_HEADER = HEADER;

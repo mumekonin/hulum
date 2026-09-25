@@ -22,6 +22,8 @@ const env: AppEnv = {
   INVESTIGATE_ADMIN_SECRET: undefined,
   SCHOLARXIV_API_KEY: undefined,
   SESSION_SECRET: undefined,
+  GOOGLE_CLIENT_ID: undefined,
+  GOOGLE_CLIENT_SECRET: undefined,
 };
 
 describe("API security middleware", () => {

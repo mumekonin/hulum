@@ -1,16 +1,15 @@
 "use client";
 
 import Link from "next/link";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { requireUserId } from "@/lib/storage";
+import type { AuthSession } from "@hulum/shared";
+import { API_URL, api, userFacingError } from "@/lib/api";
+import { isSignedIn, persistAuthSession } from "@/lib/storage";
 
 type SimState = "idle" | "google-loading" | "submit-loading" | "error" | "notice";
 
 const EMAIL_KEY = "hulum.gatewayEmail";
-
-const NOT_WIRED =
-  "Google sign-in and password accounts are not connected in v0.1. Continue starts a local UUID session and opens Profile.";
 
 export function AuthGateway() {
   const router = useRouter();
@@ -21,47 +20,51 @@ export function AuthGateway() {
   const [notice, setNotice] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
 
+  useEffect(() => {
+    if (isSignedIn()) {
+      router.replace("/profile");
+      return;
+    }
+    const error = new URLSearchParams(window.location.search).get("auth_error");
+    if (error === "google_denied") {
+      setSim("error");
+      setNotice("Google sign-in was cancelled.");
+    } else if (error === "google_failed") {
+      setSim("error");
+      setNotice("Google sign-in failed. Try again, or use email and password.");
+    }
+  }, [router]);
+
   function selectSim(next: SimState) {
     setSim(next);
-    if (next === "error") {
-      setNotice("That email or password doesn't match our records — and password login is not wired yet. Use Continue for a local session.");
-    } else if (next === "google-loading") {
-      setNotice(null);
-    } else if (next === "idle") {
+    if (next === "idle") {
       setNotice(null);
     }
-  }
-
-  function showNotWired() {
-    setSim("notice");
-    setNotice(NOT_WIRED);
   }
 
   function triggerGoogle() {
     setSim("google-loading");
     setNotice(null);
-    window.setTimeout(() => {
-      setSim("notice");
-      setNotice(NOT_WIRED);
-    }, 900);
+    window.location.assign(`${API_URL}/api/auth/google`);
   }
 
-  function continueLocal(e?: FormEvent) {
-    e?.preventDefault();
+  async function signIn(e: FormEvent) {
+    e.preventDefault();
     setBusy(true);
     setSim("submit-loading");
     setNotice(null);
     try {
-      requireUserId();
-      const trimmed = email.trim();
-      if (trimmed) {
-        window.localStorage.setItem(EMAIL_KEY, trimmed);
-      }
+      const session = await api<AuthSession>("/api/auth/login", {
+        method: "POST",
+        body: JSON.stringify({ email, password }),
+      });
+      persistAuthSession(session);
+      window.localStorage.setItem(EMAIL_KEY, session.email);
       router.push("/profile");
-    } catch {
+    } catch (error) {
       setBusy(false);
       setSim("error");
-      setNotice("Could not start a local session. Try again, or open Profile from the product shell.");
+      setNotice(userFacingError(error));
     }
   }
 
@@ -232,7 +235,7 @@ export function AuthGateway() {
                         <div className="flex-1">
                           <p className="text-[11px] font-medium leading-4 text-gw-primary">{notice}</p>
                           <p className="mt-0.5 text-[9px] text-gw-muted">
-                            Auth is still P1. Local UUID session only — nothing is claimed as Google or password login.
+                            Google and email/password both issue a JWT. Password reset is not wired yet.
                           </p>
                         </div>
                       </div>
@@ -262,20 +265,21 @@ export function AuthGateway() {
                     </span>
                   </div>
 
-                  <form className="flex flex-col gap-4" onSubmit={continueLocal}>
+                  <form className="flex flex-col gap-4" onSubmit={signIn}>
                     <div className="flex flex-col gap-1">
                       <label
                         className="flex items-center justify-between text-[9px] uppercase tracking-widest text-gw-secondary"
                         htmlFor="gateway-email"
                       >
                         <span>Email address</span>
-                        <span className="font-gw-mono text-gw-outline-var">Optional</span>
+                        <span className="font-gw-mono text-gw-outline-var">Required</span>
                       </label>
                       <input
                         id="gateway-email"
                         name="email"
                         type="email"
                         autoComplete="email"
+                        required
                         placeholder="name@domain.com"
                         value={email}
                         onChange={(ev) => setEmail(ev.target.value)}
@@ -301,6 +305,8 @@ export function AuthGateway() {
                           name="password"
                           type={showPassword ? "text" : "password"}
                           autoComplete="current-password"
+                          required
+                          minLength={8}
                           placeholder="••••••••••••"
                           value={password}
                           onChange={(ev) => setPassword(ev.target.value)}
@@ -315,7 +321,7 @@ export function AuthGateway() {
                           {showPassword ? "Hide" : "Show"}
                         </button>
                       </div>
-                      <p className="text-[9px] text-gw-outline">Password is not verified in v0.1 — Continue ignores it.</p>
+                      <p className="text-[9px] text-gw-outline">At least 8 characters. Stored as a hash, never as plaintext.</p>
                     </div>
 
                     <button
@@ -326,7 +332,7 @@ export function AuthGateway() {
                       {sim === "submit-loading" && busy ? (
                         <span className="h-4 w-4 animate-pulse rounded-full border border-gw-on-primary border-t-transparent" />
                       ) : null}
-                      <span>{busy ? "Opening profile…" : "Continue"}</span>
+                      <span>{busy ? "Signing in…" : "Sign in"}</span>
                     </button>
                   </form>
 
@@ -341,7 +347,7 @@ export function AuthGateway() {
                   </div>
 
                   <div className="mt-4 flex items-center justify-between pt-1 text-[9px] uppercase tracking-widest text-gw-outline-var">
-                    <span>Local session · UUID userId · no password store</span>
+                    <span>Email + password · hashed · session token</span>
                     <span>Sys // v0.1</span>
                   </div>
 

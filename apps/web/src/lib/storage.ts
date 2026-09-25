@@ -36,6 +36,21 @@ export function requireUserId(): string {
   return userId;
 }
 
+export function persistAuthSession(session: { userId: string; sessionToken: string }): void {
+  setUserId(session.userId);
+  setSessionToken(session.sessionToken);
+}
+
+export function clearSession(): void {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(USER_KEY);
+  window.localStorage.removeItem(SESSION_KEY);
+}
+
+export function isSignedIn(): boolean {
+  return getSessionToken() !== null && getUserId() !== null;
+}
+
 export function getLanguage(): LanguageCode {
   if (typeof window === "undefined") return "en";
   const stored = window.localStorage.getItem(LANGUAGE_KEY);

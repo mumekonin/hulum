@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { profileInputSchema, profilePatchSchema, type Profile, type User } from "@hulum/shared";
-import { demoProfileInput } from "../data/seedOpportunities.js";
+import { demoProfileInput } from "../data/demo-profile.js";
 import { fail, ok } from "../lib/http.js";
 import { createId, nowIso } from "../lib/id.js";
 import { mutateStore } from "../store/fileStore.js";

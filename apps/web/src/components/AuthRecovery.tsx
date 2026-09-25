@@ -3,10 +3,9 @@
 import Link from "next/link";
 import { FormEvent, useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
-import { requireUserId } from "@/lib/storage";
 
 const NOT_WIRED =
-  "Password reset email is not connected in v0.1. No token is sent. Continue with a local UUID session instead, or return to sign in.";
+  "Password reset email is not connected yet. Return to sign in, or create a new account with email and password.";
 
 export function AuthRecovery() {
   const router = useRouter();
@@ -49,21 +48,11 @@ export function AuthRecovery() {
     e.preventDefault();
     if (newPassword !== confirmPassword) return;
     setResetBusy(true);
-    setNotice(
-      "Password update is not stored in v0.1. Opening Profile with a local UUID session — no credential was saved.",
-    );
-    try {
-      requireUserId();
-      if (email.trim()) {
-        window.localStorage.setItem("hulum.gatewayEmail", email.trim());
-      }
-      window.setTimeout(() => {
-        router.push("/profile");
-      }, 900);
-    } catch {
-      setResetBusy(false);
-      setNotice("Could not start a local session. Return to sign in and use Continue.");
-    }
+    setNotice("Password reset is not stored yet. Sign in with the password you already have, or create a new account.");
+    setResetBusy(false);
+    window.setTimeout(() => {
+      router.push("/");
+    }, 900);
   }
 
   return (

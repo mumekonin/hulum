@@ -62,18 +62,29 @@ export function createPgProfileStore(): ProfileStore {
       const client = await getPool().connect();
       try {
         await client.query("begin");
-        const user =
-          input.userId === undefined
-            ? await client.query<UserRow>(
-                "insert into users (name, email) values ($1, $2) returning id, name, email",
-                [input.name, input.email],
-              )
-            : await client.query<UserRow>(
-                "insert into users (id, name, email) values ($1, $2, $3) returning id, name, email",
-                [input.userId, input.name, input.email],
-              );
-        const userId = user.rows[0]?.id;
-        if (userId === undefined) {
+        let userRow: UserRow | undefined;
+        if (input.userId !== undefined) {
+          const existing = await client.query<UserRow>(
+            "select id, name, email from users where id = $1",
+            [input.userId],
+          );
+          userRow = existing.rows[0];
+        }
+        if (userRow === undefined) {
+          const user =
+            input.userId === undefined
+              ? await client.query<UserRow>(
+                  "insert into users (name, email) values ($1, $2) returning id, name, email",
+                  [input.name, input.email],
+                )
+              : await client.query<UserRow>(
+                  "insert into users (id, name, email) values ($1, $2, $3) returning id, name, email",
+                  [input.userId, input.name, input.email],
+                );
+          userRow = user.rows[0];
+        }
+        const userId = userRow?.id;
+        if (userId === undefined || userRow === undefined) {
           throw new Error("Failed to persist user");
         }
         const profile = await client.query<ProfileRow>(
@@ -81,6 +92,17 @@ export function createPgProfileStore(): ProfileStore {
              user_id, education_level, field_of_study, graduation_year, country, city,
              languages, skills, experience, interests
            ) values ($1,$2,$3,$4,$5,$6,$7,$8,$9,$10)
+           on conflict (user_id) do update set
+             education_level = excluded.education_level,
+             field_of_study = excluded.field_of_study,
+             graduation_year = excluded.graduation_year,
+             country = excluded.country,
+             city = excluded.city,
+             languages = excluded.languages,
+             skills = excluded.skills,
+             experience = excluded.experience,
+             interests = excluded.interests,
+             updated_at = now()
            returning id, user_id, education_level, field_of_study, graduation_year,
                      country, city, languages, skills, experience, interests, created_at, updated_at`,
           [
@@ -97,8 +119,7 @@ export function createPgProfileStore(): ProfileStore {
           ],
         );
         const profileRow = profile.rows[0];
-        const userRow = user.rows[0];
-        if (profileRow === undefined || userRow === undefined) {
+        if (profileRow === undefined) {
           throw new Error("Failed to persist profile");
         }
         await client.query("commit");

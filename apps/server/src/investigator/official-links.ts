@@ -1,8 +1,8 @@
-import { isAllowedOfficialUrl } from "./safety.js";
+import { isSafePublicHttpUrl } from "./safety.js";
 
-const LISTING_HINT = /intern|intership|opportunit|scholarship|fellowship|research-call|event|vacanc|\bjobs?\b|grant/i;
+const LISTING_HINT = /intern|intership|opportunit|scholarship|fellowship|research-call|event|vacanc|\bjobs?\b|grant|apply|deadline/i;
 const SKIP_EXT = /\.(css|js|mjs|png|jpe?g|gif|svg|webp|ico|woff2?|ttf|map|mp4|webm)(\?|#|$)/i;
-const MAX_LISTING_URLS = 5;
+const MAX_LISTING_URLS = 40;
 
 function normalizePageUrl(raw: string): string | undefined {
   try {
@@ -14,13 +14,11 @@ function normalizePageUrl(raw: string): string | undefined {
   }
 }
 
-/** Same-domain official listing links only. Aggregator hosts are ignored. */
-export function officialListingUrls(
-  html: string,
-  pageUrl: string,
-  officialDomains: string[],
-  limit: number = MAX_LISTING_URLS,
-): string[] {
+/**
+ * Follow listing links from the current page, including aggregator cards
+ * and official org pages. Assets and unsafe hosts are dropped.
+ */
+export function listingUrls(html: string, pageUrl: string, limit: number = MAX_LISTING_URLS): string[] {
   const base = normalizePageUrl(pageUrl);
   if (base === undefined) {
     return [];
@@ -47,7 +45,7 @@ export function officialListingUrls(
     }
     resolved.hash = "";
     const next = resolved.toString();
-    if (seen.has(next) || !isAllowedOfficialUrl(next, officialDomains)) {
+    if (seen.has(next) || !isSafePublicHttpUrl(next)) {
       continue;
     }
     seen.add(next);
@@ -58,4 +56,14 @@ export function officialListingUrls(
   }
 
   return found;
+}
+
+/** @deprecated Use listingUrls. Kept so older imports keep compiling. */
+export function officialListingUrls(
+  html: string,
+  pageUrl: string,
+  _officialDomains?: string[],
+  limit: number = MAX_LISTING_URLS,
+): string[] {
+  return listingUrls(html, pageUrl, limit);
 }
