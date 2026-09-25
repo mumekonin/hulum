@@ -2,6 +2,18 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-25 — Browser smoke on JWT gateway
+
+### Added
+- `npm run smoke:browser` — Playwright: Create account → save profile → Opportunities → Ask HULUM text fallback.
+- CI Chromium install + browser smoke after web build (localhost only).
+
+### Changed
+- Marked **Test clean browser/device** / **Browser/device testing** for this automated pass (not mic, not seed APPLY).
+
+### Why
+Replaces the pre-auth Continue/demo/A2SV smoke after JWT + closed catalog seed landed on main.
+
 ## 2026-09-24 — JWT session and Google OAuth
 
 ### Added
