@@ -52,11 +52,13 @@ function AssistantInner() {
     if (stored.analysisId) setSessionAnalysisId(stored.analysisId);
     const onVoiceReply = (event: Event) => {
       const detail = (event as CustomEvent<{ userText?: string; reply?: string }>).detail;
-      if (!detail?.reply) return;
+      const reply = detail?.reply?.trim() ?? "";
+      if (reply === "") return;
+      const userText = detail.userText?.trim() ?? "";
       setMessages((current) => [
         ...current,
-        ...(detail.userText ? [{ role: "user" as const, text: detail.userText }] : []),
-        { role: "hulum" as const, text: detail.reply },
+        ...(userText === "" ? [] : [{ role: "user" as const, text: userText }]),
+        { role: "hulum" as const, text: reply },
       ]);
     };
     window.addEventListener(HULUM_VOICE_REPLY_EVENT, onVoiceReply);
