@@ -1,23 +1,18 @@
 "use client";
 
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react";
-import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import type { LanguageCode, ProfileView } from "@hulum/shared";
+import { detectAskedLanguage, type LanguageCode, type ProfileView } from "@hulum/shared";
 import { Notice } from "@/components/Notice";
 import { StatusPanel } from "@/components/StatusPanel";
-import { hasVoxidePublicKey } from "@/components/VoxideAskHulum";
+import { hasVoxidePublicKey } from "@/lib/voxide";
 import { api, userFacingError } from "@/lib/api";
 import { assistantCopy, assistantQuickActions } from "@/lib/assistant-copy";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
 import { getLanguage, getUserId, setLanguage } from "@/lib/storage";
 import { runTextAction } from "@/lib/text-actions";
-
-const VoxideAskHulum = dynamic(
-  () => import("@/components/VoxideAskHulum").then((mod) => mod.VoxideAskHulum),
-  { ssr: false },
-);
+import { HULUM_VOICE_REPLY_EVENT, readVoiceSession, writeVoiceSession } from "@/lib/voice-session";
 
 export default function AssistantPage() {
   return (
@@ -44,13 +39,29 @@ function AssistantInner() {
   const [sessionAnalysisId, setSessionAnalysisId] = useState<string | undefined>();
   const [language, setLanguageState] = useState<LanguageCode>(getLanguage);
   const [voxideReady] = useState(() => hasVoxidePublicKey());
-  const [voiceIssue, setVoiceIssue] = useState<string | null>(null);
   const requestInput = useRef<HTMLInputElement>(null);
   const opportunityId = sessionOpportunityId ?? search.get("opportunityId") ?? undefined;
   const analysisId = sessionAnalysisId ?? search.get("analysisId") ?? undefined;
   const needsProfile = Boolean(error?.toLowerCase().includes("profile"));
   const copy = useMemo(() => assistantCopy(language), [language]);
   const quickActions = useMemo(() => assistantQuickActions(language), [language]);
+
+  useEffect(() => {
+    const stored = readVoiceSession();
+    if (stored.opportunityId) setSessionOpportunityId(stored.opportunityId);
+    if (stored.analysisId) setSessionAnalysisId(stored.analysisId);
+    const onVoiceReply = (event: Event) => {
+      const detail = (event as CustomEvent<{ userText?: string; reply?: string }>).detail;
+      if (!detail?.reply) return;
+      setMessages((current) => [
+        ...current,
+        ...(detail.userText ? [{ role: "user" as const, text: detail.userText }] : []),
+        { role: "hulum" as const, text: detail.reply },
+      ]);
+    };
+    window.addEventListener(HULUM_VOICE_REPLY_EVENT, onVoiceReply);
+    return () => window.removeEventListener(HULUM_VOICE_REPLY_EVENT, onVoiceReply);
+  }, []);
 
   useEffect(() => {
     const userId = getUserId();
@@ -110,15 +121,21 @@ function AssistantInner() {
 
     setPending(true);
     try {
+      const asked = detectAskedLanguage(value, getLanguage());
+      chooseLanguage(asked, false);
       const response = await runTextAction({
         userId,
         text: value,
         opportunityId,
         analysisId,
-        language: getLanguage(),
+        language: asked,
       });
       if (response.opportunityId) setSessionOpportunityId(response.opportunityId);
       if (response.analysisId) setSessionAnalysisId(response.analysisId);
+      writeVoiceSession({
+        opportunityId: response.opportunityId,
+        analysisId: response.analysisId,
+      });
       setMessages((current) => [...current, { role: "hulum", text: response.reply }]);
     } catch (err) {
       setLastFailed(value);
@@ -177,36 +194,6 @@ function AssistantInner() {
           <StatusPanel variant="empty" title={copy.voxideReadyTitle}>
             {copy.voxideReadyBody}
           </StatusPanel>
-          {voiceIssue ? (
-            <div className="mt-4">
-              <StatusPanel
-                variant="error"
-                title={copy.voiceIssueTitle}
-                primary={{ label: copy.typeRequest, onClick: () => requestInput.current?.focus() }}
-                secondary={{ label: copy.showInternships, onClick: () => void send("Show me internships") }}
-              >
-                {voiceIssue}
-              </StatusPanel>
-            </div>
-          ) : null}
-          <VoxideAskHulum
-            session={{ opportunityId, analysisId }}
-            onSessionUpdate={(next) => {
-              if (next.opportunityId) setSessionOpportunityId(next.opportunityId);
-              if (next.analysisId) setSessionAnalysisId(next.analysisId);
-            }}
-            onReply={(userText, reply) => {
-              setMessages((current) => [
-                ...current,
-                { role: "user", text: userText },
-                { role: "hulum", text: reply },
-              ]);
-              setError(null);
-              setVoiceIssue(null);
-            }}
-            onError={(message) => setError(message)}
-            onVoiceIssue={(message) => setVoiceIssue(message)}
-          />
         </div>
       )}
       {error ? (

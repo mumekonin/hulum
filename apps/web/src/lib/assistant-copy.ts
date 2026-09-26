@@ -1,8 +1,6 @@
 import type { LanguageCode } from "@hulum/shared";
 
-/** Ask HULUM chrome copy. Amharic is text UX only — not a live STT claim (ADR 004).
- * Afaan Oromo selects explain/readiness language; chrome stays English until reviewed copy exists.
- */
+/** Ask HULUM chrome copy. Replies follow the asked language. Live Amharic/Oromo STT is not claimed (ADR 004). */
 export type AssistantCopy = {
   title: string;
   intro: string;
@@ -27,15 +25,16 @@ const EN: AssistantCopy = {
     "Voice must perform real product actions. Text and quick actions always work. The Voxide widget, when keyed, calls the same actions — it never invents APPLY / MAYBE / SKIP.",
   languageLegend: "Language",
   languageHint:
-    "English is the stable v0.1 path. Amharic text intents and explanations use this selector; live Amharic STT is not claimed.",
+    "Ask in English, Amharic, or Afaan Oromo. Replies follow the language of this request. Live Amharic/Oromo speech recognition is not claimed.",
   quickLegend: "Quick actions",
   typePlaceholder: "Ask HULUM…",
   send: "Send",
   micMissingTitle: "Microphone unavailable",
-  micMissingBody: "Type or use a quick action. Voxide key missing or invalid (`NEXT_PUBLIC_VOXIDE_KEY`).",
+  micMissingBody:
+    "Type or use a quick action. Set NEXT_PUBLIC_VOXIDE_KEY to a publishable vox_pub_… key and whitelist http://localhost:3000 in the Voxide dashboard.",
   voxideReadyTitle: "Voxide widget ready",
   voxideReadyBody:
-    "Use the Ask HULUM launcher (bottom-right) for voice or widget text. Tools call the same product actions as the quick buttons. APPLY / MAYBE / SKIP still come from decide() on the server. If the mic fails or goes silent, type or use a quick action.",
+    "The Ask HULUM launcher stays on every page after login. Say show me scholarships, then analyze for me. APPLY / MAYBE / SKIP still come from decide(). If the mic fails, type or use a quick action.",
   voiceIssueTitle: "Voice issue",
   typeRequest: "Type a request",
   browseOpportunities: "Browse opportunities",
@@ -53,7 +52,8 @@ const AM: AssistantCopy = {
   typePlaceholder: "ሁሉምን ጠይቅ…",
   send: "ላክ",
   micMissingTitle: "ማይክሮፎን አይገኝም",
-  micMissingBody: "ይጻፉ ወይም ፈጣን እርምጃ ይጠቀሙ። የVoxide ቁልፍ የለም ወይም ልክ አይደለም (`NEXT_PUBLIC_VOXIDE_KEY`)።",
+  micMissingBody:
+    "ይጻፉ ወይም ፈጣን እርምጃ ይጠቀሙ። NEXT_PUBLIC_VOXIDE_KEY (vox_pub_…) ያስቀምጡ እና http://localhost:3000 በVoxide dashboard ያስገቡ።",
   voxideReadyTitle: "የVoxide መግብር ዝግጁ ነው",
   voxideReadyBody:
     "ለድምጽ ወይም ለጽሑፍ የAsk HULUM ማስጀመሪያውን (ታች-ቀኝ) ይጠቀሙ። APPLY / MAYBE / SKIP ከአገልጋዩ decide() ብቻ ይመጣሉ። ማይክ ካልሰራ ይጻፉ።",
@@ -93,18 +93,47 @@ const QUICK_AM = [
   "ድገም",
 ];
 
+const QUICK_OM = [
+  "Scholarshipwwan natti agarsiisi",
+  "Carraa kana madaali",
+  "Carraa kana ibsi",
+  "Maalif?",
+  "Maal dhabe?",
+  "Maal qopheessuu qaba?",
+  "Should I apply for this?",
+  "Tell me about this opportunity",
+];
+
+const OM: AssistantCopy = {
+  title: "HULUM gaafadhu",
+  intro:
+    "Sagaleen tarkaanfii HULUM dhugaa ta'e hojjechuu qaba. Barreeffamaafi tarkaanfii saffisaa yeroo hunda ni hojjeta. APPLY / MAYBE / SKIP hin uumamu.",
+  languageLegend: "Afaan",
+  languageHint:
+    "Afaan Ingilizii, Amaaraa, ykn Afaan Oromootiin gaafadhu. Deebiin afaan gaaffii keessanii hordofa. STT Voxide amma hin mirkanaa'u.",
+  quickLegend: "Tarkaanfii saffisaa",
+  typePlaceholder: "HULUM gaafadhu…",
+  send: "Ergi",
+  micMissingTitle: "Maayikiroofoonii hin jiru",
+  micMissingBody:
+    "Barreessi ykn tarkaanfii saffisaa fayyadami. NEXT_PUBLIC_VOXIDE_KEY (vox_pub_…) kaa'i.",
+  voxideReadyTitle: "Voxide qophaa'eera",
+  voxideReadyBody:
+    "Gaafannoo sagalee ykn barreeffamaaf launcher Ask HULUM (gadi-mirga) fayyadami. APPLY / MAYBE / SKIP decide() irraa qofa dhufa.",
+  voiceIssueTitle: "Rakkoo sagalee",
+  typeRequest: "Gaaffii barreessi",
+  browseOpportunities: "Carraawwan ilaali",
+  showInternships: "Internshipwwan agarsiisi",
+};
+
 export function assistantCopy(language: LanguageCode): AssistantCopy {
   if (language === "am") return AM;
-  if (language === "om") {
-    return {
-      ...EN,
-      languageHint:
-        "Afaan Oromo selects explain/readiness language when Groq is set. Ask HULUM chrome stays English — no invented Oromo UI copy (ADR 004).",
-    };
-  }
+  if (language === "om") return OM;
   return EN;
 }
 
 export function assistantQuickActions(language: LanguageCode): string[] {
-  return language === "am" ? QUICK_AM : QUICK_EN;
+  if (language === "am") return QUICK_AM;
+  if (language === "om") return QUICK_OM;
+  return QUICK_EN;
 }

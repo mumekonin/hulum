@@ -2,6 +2,7 @@ import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import {
   RequirementStatus,
+  detectAskedLanguage,
   voiceActionSchema,
   type Analysis,
   type AnalysisDetail,
@@ -35,12 +36,27 @@ import { createPgProfileStore } from "../profiles/store.js";
 import type { Clock } from "../services/common/clock.js";
 import { systemClock } from "../services/common/clock.js";
 import {
-  formatOpportunityContext,
-  formatOpportunityList,
   formatProfileGaps,
   parseVoiceIntent,
   stripProfileExtractDescription,
+  wantsListWithAnalyze,
 } from "./intents.js";
+import {
+  replyAnalysis,
+  replyDecisionFilter,
+  replyDetails,
+  replyExplain,
+  replyGaps,
+  replyListThenAnalysis,
+  replyNeedAnalysis,
+  replyNeedDecisionWord,
+  replyNeedOpportunity,
+  replyNeedProfile,
+  replyOpportunityList,
+  replyReadiness,
+  replyUnsupported,
+} from "./replies.js";
+import { speakInAskedLanguage } from "./speak.js";
 
 export type VoiceSessionView = {
   id: string;
@@ -136,22 +152,28 @@ export function createVoiceService(deps: {
     },
 
     async handleAction(input) {
-      const language = input.language;
+      const language = detectAskedLanguage(input.text, input.language);
+      const spoken = (reply: string) => speakInAskedLanguage(deps.chat, language, reply);
       const intent = parseVoiceIntent(input.text, language);
       const opportunities = await deps.opportunities.list();
       const analysis = input.analysisId
         ? await deps.analyses.getById(input.analysisId)
         : undefined;
-      const opportunity = input.opportunityId
+      const analyzePool =
+        intent.type !== undefined ? opportunities.filter((item) => item.type === intent.type) : opportunities;
+      let opportunity = input.opportunityId
         ? await deps.opportunities.getById(input.opportunityId)
         : analysis
           ? await deps.opportunities.getById(analysis.opportunityId)
           : undefined;
+      if (opportunity === undefined && intent.intent === "ANALYZE_OPPORTUNITY") {
+        opportunity = analyzePool[0];
+      }
 
       if (intent.intent === "SHOW_OPPORTUNITIES") {
         return {
           intent: intent.intent,
-          reply: `Here are current opportunities: ${formatOpportunityList(opportunities)}`,
+          reply: await spoken(replyOpportunityList(language, opportunities)),
           opportunities,
         };
       }
@@ -160,9 +182,7 @@ export function createVoiceService(deps: {
         const filtered = intent.type ? opportunities.filter((item) => item.type === intent.type) : opportunities;
         return {
           intent: intent.intent,
-          reply: filtered.length
-            ? `Filtered to ${intent.type}: ${formatOpportunityList(filtered)}`
-            : "No opportunities matched that filter.",
+          reply: await spoken(replyOpportunityList(language, filtered, intent.type)),
           opportunities: filtered,
         };
       }
@@ -172,7 +192,7 @@ export function createVoiceService(deps: {
         if (!decision) {
           return {
             intent: intent.intent,
-            reply: "Say APPLY, MAYBE, or SKIP when filtering opportunities by decision.",
+            reply: await spoken(replyNeedDecisionWord(language)),
           };
         }
         const profileView = await deps.profiles.getByUserId(input.userId);
@@ -184,9 +204,7 @@ export function createVoiceService(deps: {
         );
         return {
           intent: intent.intent,
-          reply: filtered.length
-            ? `${decision} opportunities: ${formatOpportunityList(filtered)}`
-            : `No ${decision} opportunities for your profile.`,
+          reply: await spoken(replyDecisionFilter(language, decision, filtered)),
           opportunities: filtered,
         };
       }
@@ -195,14 +213,14 @@ export function createVoiceService(deps: {
         if (!opportunity) {
           return {
             intent: intent.intent,
-            reply: "Choose an opportunity first, then I can tell you about it from the stored record.",
+            reply: await spoken(replyNeedOpportunity(language)),
           };
         }
         const storedDecision =
           analysis && analysis.opportunityId === opportunity.id ? analysis.decision : undefined;
         return {
           intent: intent.intent,
-          reply: formatOpportunityContext(opportunity, storedDecision),
+          reply: await spoken(replyDetails(language, opportunity, storedDecision)),
           opportunity,
         };
       }
@@ -213,14 +231,13 @@ export function createVoiceService(deps: {
           if (profileView === undefined) {
             return {
               intent: intent.intent,
-              reply:
-                "Create a profile first on the Profile page. Voice cannot invent stored facts.",
+              reply: await spoken(replyNeedProfile(language)),
             };
           }
           const missing = profileView.completeness?.missing ?? [];
           return {
             intent: intent.intent,
-            reply: formatProfileGaps(missing),
+            reply: await spoken(formatProfileGaps(missing)),
           };
         }
         if (intent.replyHint === "profile_extract") {
@@ -249,7 +266,7 @@ export function createVoiceService(deps: {
         if (!opportunity) {
           return {
             intent: intent.intent,
-            reply: "Choose an opportunity first, then ask whether you should apply.",
+            reply: await spoken(replyNeedOpportunity(language)),
           };
         }
         try {
@@ -259,11 +276,38 @@ export function createVoiceService(deps: {
             throw new HttpError(404, "PROFILE_NOT_FOUND", "Create a profile before asking HULUM to analyze.");
           }
           const detail = toAnalysisDetail(created, opportunity, profileView.profile);
+          const includeList = wantsListWithAnalyze(input.text);
+          const gaps = detail.gaps.map((item) => `${item.requirement} (${item.status})`);
+          const extra = {
+            summary: detail.summary,
+            gaps,
+            sourceUrl: opportunity.sourceUrl,
+          };
+          const reply = includeList
+            ? replyListThenAnalysis(
+                language,
+                analyzePool,
+                intent.type,
+                opportunity.title,
+                detail.decision,
+                detail.fitScore,
+                detail.nextAction,
+                extra,
+              )
+            : replyAnalysis(
+                language,
+                opportunity.title,
+                detail.decision,
+                detail.fitScore,
+                detail.nextAction,
+                extra,
+              );
           return {
             intent: intent.intent,
-            reply: `${detail.decision} for ${opportunity.title}. Fit ${detail.fitScore}%. ${detail.nextAction}`,
+            reply: await spoken(reply),
             analysis: detail,
             opportunity,
+            ...(includeList ? { opportunities: analyzePool } : {}),
           };
         } catch (error) {
           if (error instanceof HttpError && error.code === "PROFILE_NOT_FOUND") {
@@ -297,7 +341,7 @@ export function createVoiceService(deps: {
         if (intent.intent === "EXPLAIN_DECISION") {
           return {
             intent: intent.intent,
-            reply: `${analysis.decision}. ${analysis.summary}`,
+            reply: await spoken(replyExplain(language, analysis.decision, analysis.summary)),
             analysis: detail,
             opportunity: relatedOpportunity,
           };
@@ -305,9 +349,7 @@ export function createVoiceService(deps: {
         if (intent.intent === "SHOW_MISSING_REQUIREMENTS") {
           return {
             intent: intent.intent,
-            reply: gaps.length
-              ? `Missing or uncertain: ${gaps.join("; ")}`
-              : "No missing or uncertain requirements are stored for this analysis.",
+            reply: await spoken(replyGaps(language, gaps)),
             analysis: detail,
             opportunity: relatedOpportunity,
           };
@@ -318,7 +360,7 @@ export function createVoiceService(deps: {
             : "No readiness checklist is stored yet.";
           return {
             intent: intent.intent,
-            reply: readiness.length ? `${analysis.nextAction} Prepare: ${list}` : `${analysis.nextAction} ${list}`,
+            reply: await spoken(replyReadiness(language, analysis.nextAction, list)),
             analysis: detail,
             opportunity: relatedOpportunity,
           };
@@ -332,14 +374,13 @@ export function createVoiceService(deps: {
       ) {
         return {
           intent: intent.intent,
-          reply: "Analyze an opportunity first, then I can explain the decision, gaps, or readiness plan.",
+          reply: await spoken(replyNeedAnalysis(language)),
         };
       }
 
       return {
         intent: "UNSUPPORTED" as VoiceIntent,
-        reply:
-          "I can show opportunities, filter internships or scholarships, filter APPLY MAYBE or SKIP, analyze a selected opportunity, explain a decision, or list what to prepare. You can also type instead of speaking.",
+        reply: await spoken(replyUnsupported(language)),
       };
     },
   };

@@ -23,7 +23,7 @@ Voxide is a **browser** Voice AI SDK. It is not an Express STT/TTS client.
 
 1. `@voxide/react` in `apps/web`.
 2. `NEXT_PUBLIC_VOXIDE_KEY` / `NEXT_PUBLIC_VOXIDE_PUBLIC_KEY` (`vox_pub_…`) in `.env.example`.
-3. `VoxideAskHulum` on `/assistant` — mounts only when the key is set; tools call the same Ask HULUM text-action path.
+3. `VoxideAskHulum` on `/assistant` — mounts only when the key is set; tools call `POST /api/voice/action` through `runTextAction`.
 4. Postgres Ask HULUM routes on `/api/voice/session` and `/api/voice/action` (text fallback works without Voxide).
 
 Still required from the dashboard (not in this repo): a real publishable key and domain whitelist for `localhost:3000`. Without that key the UI stays text/quick-action only (ADR 003).
