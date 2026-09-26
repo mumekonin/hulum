@@ -320,7 +320,6 @@ export function VoxideAskHulum({
     }));
 
     return ai;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [publicKey, router]);
 
   useEffect(() => {
@@ -421,7 +420,6 @@ export function VoxideAskHulum({
       unsubStatus();
       client.destroy();
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [client]);
 
   if (client === null) {
