@@ -11,12 +11,13 @@ HULUM is a **decision-support** product. It is not an official eligibility autho
 Browser (Next.js :3000)
         ↓  REST  { data, error }  →  http://localhost:3001
 Express API (:3001)
+        ├── JWT auth (`/api/auth/*`, `X-Hulum-Session`)
         ├── security headers + CORS (CLIENT_URL required in production)
         ├── packages/shared contracts
         ├── decide() + requirements/match  (APPLY / MAYBE / SKIP)
-        ├── PostgreSQL (DATABASE_URL)
-        ├── Groq explain() on stored analyses only
-        └── Voxide            not wired; text intents + backup UI
+        ├── PostgreSQL (DATABASE_URL) + investigator worker
+        ├── Groq explain() / screenshot vision on stored or uploaded evidence only
+        └── Voxide            optional widget; text intents remain the reliable path
 ```
 
 A JSON file-store router (`createApp({ store: "file" })` + `decision/engine.ts`) remains for existing file-store tests. It is **not** what `npm run dev` starts.
@@ -27,10 +28,12 @@ ScholarXIV is **not** on this path. See `docs/research/`.
 
 | Concern | Owner | v0.1 fact |
 |---|---|---|
+| Auth / session | `apps/server/src/auth/`, `security/session.ts` | Email/password JWT (+ optional Google); `SESSION_SECRET` required in production. Password-reset email not wired. |
 | APPLY / MAYBE / SKIP | `apps/server/src/decision/decide.ts` | Deterministic. No model writes this. |
 | Requirement MET / NOT_MET / UNCERTAIN | `requirements/match.ts` | Never guess MET. |
 | Plain-language “why” | Groq, then guards | Must match the stored decision. |
 | Official deadline / eligibility | `sourceUrl` on the opportunity | HULUM analysis is secondary. |
+| Catalog | Investigator + verification | No baked `db:seed` opportunity cards. |
 | Voice | Ask HULUM text/quick actions + optional `VoxideAskHulum` | Widget needs `NEXT_PUBLIC_VOXIDE_KEY`; Postgres `/api/voice/*` call `decide()`. |
 | Research trail | ScholarXIV `/research` + Papers API | Not a production opportunity API; does not set APPLY / MAYBE / SKIP. |
 
@@ -49,10 +52,10 @@ Shared TypeScript types live in `packages/shared`. Web, mobile, and server must 
 
 ## What is on `main` today
 
-- `apps/web` — Next.js Abeba Tesfaye demo
-- `apps/server` — Express, Vitest, `{ data, error }` envelope; Postgres default
+- `apps/web` — Next.js site (JWT Create account / Sign in, profile, opportunities, screenshot, Ask HULUM)
+- `apps/server` — Express, Vitest, `{ data, error }` envelope; Postgres default; auth + investigator
 - `packages/shared` — contracts
-- `database/migrations` — PostgreSQL
+- `database/migrations` — PostgreSQL through current migrations (seed closed)
 
 Do not put Groq or `decide()` in the browser.
 
@@ -69,7 +72,7 @@ Do not put Groq or `decide()` in the browser.
 
 | Path | Role |
 |---|---|
-| `apps/web` | Next.js App Router: `/`, `/profile`, `/opportunities`, `/analysis/[id]`, `/assistant` |
+| `apps/web` | Next.js App Router: auth gateway, `/profile`, `/opportunities`, `/analysis/[id]`, `/assistant`, `/screenshot` |
 | `apps/server` | Express routes, matching, decision, readiness, optional model wording, voice-text |
 | `packages/shared` | Profile, Opportunity, Decision, RequirementStatus, Analysis, ReadinessItem, VoiceIntent, Zod schemas |
 | `database/migrations/001_init.sql` | Postgres/Supabase schema for when credentials exist |

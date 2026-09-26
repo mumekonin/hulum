@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-09-25 — STARK narrative: `main` is the product
+
+- `docs/stark/README.md`, `narrative.md`, `git-history.md`: tip of `main` is SoT (no “clone main = no web / file-store demo”).
+- Architecture overview + retention: JWT auth row and localStorage session token.
+- Older task-status rows that say HMAC-only / gateway UI-preview / Local UUID are **historical** — superseded by JWT + Create account on `main`.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
+
+---
+
 ## 2026-09-25 — STARK evidence + API docs match JWT
 
 - Evidence index, STARK README, architecture API/exposure, product-links, and database README aligned with JWT + investigator (no seed APPLY).

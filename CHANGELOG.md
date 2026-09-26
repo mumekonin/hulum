@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-25 — STARK narrative: main is the product
+
+### Changed
+- `docs/stark/README.md`, `narrative.md`, `git-history.md`: tip of `main` is the running product (Postgres, JWT, investigator).
+- `docs/architecture/overview.md` + `retention.md`: JWT auth and session token in localStorage.
+
+### Why
+Judge entry still told people to ignore `main` for the web demo after that work had landed.
+
 ## 2026-09-25 — STARK evidence + API docs match JWT
 
 ### Changed

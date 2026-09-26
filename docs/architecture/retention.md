@@ -8,7 +8,7 @@
 | Profiles, opportunities, analyses, requirement results, readiness | Until deleted from the database | No automated purge job in v0.1 |
 | Voice sessions | Session metadata only (`user_id`, `language`, timestamps) | **No audio, no transcript** columns |
 | Groq explain calls | Not stored as raw model logs in HULUM | Only the analysis row's summary/decision persists |
-| Client `userId` in `localStorage` | Browser-local | Not a server session cookie |
+| Client `userId` + JWT (`hulum.sessionToken`) in `localStorage` | Browser-local | Sent as `X-Hulum-Session`; not an HttpOnly cookie |
 
 ## Principles
 

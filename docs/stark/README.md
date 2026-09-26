@@ -6,7 +6,7 @@
 
 This folder is the judge entry. It does not invent ScholarXIV papers, a production URL, or live Voxide.
 
-**Look at GitHub branches, not only `main`.** Kidist’s web app, demo docs, and file-store API tests live on stacked `feat/*` until they are reviewed into `main`. `main` has Mulualem PRs #1–#10 (scaffold, schema, contracts, Postgres services).
+**Source of truth:** tip of `main` (Postgres + JWT + Next.js + investigator catalog). Open stacked `feat/*` only for unmerged work — do not treat early Mulualem PRs #1–#10 as the whole product.
 
 ---
 
