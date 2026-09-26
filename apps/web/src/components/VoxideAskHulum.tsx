@@ -15,9 +15,12 @@ import {
   type VoiceSessionIds,
 } from "@/lib/voice-session";
 import {
+  isEchoOfReply,
   isHulumProductRequest,
+  isSpokenHulumResult,
   isVoxideRefusal,
   readVoxidePublicKey,
+  voxideSpeakOnly,
   VOXIDE_STARTERS,
 } from "@/lib/voxide";
 
@@ -107,7 +110,9 @@ export function VoxideAskHulum({
   const onVoiceIssueRef = useRef(onVoiceIssue);
   onVoiceIssueRef.current = onVoiceIssue;
   const lastUserRef = useRef("");
+  const lastReplyRef = useRef("");
   const recoveringRef = useRef(false);
+  const spokeForRef = useRef("");
   const publicKey = readVoxidePublicKey();
 
   const persistSession = (next: VoiceSessionIds) => {
@@ -136,6 +141,7 @@ export function VoxideAskHulum({
       opportunityId: response.opportunityId,
       analysisId: response.analysisId,
     });
+    lastReplyRef.current = response.reply;
     onReplyRef.current?.(utterance, response.reply);
     publishVoiceReply(utterance, response.reply);
     return response.reply;
@@ -185,14 +191,14 @@ export function VoxideAskHulum({
 
     ai.setFallback({
       message:
-        "I can show opportunities, analyze against your profile, open Profile or Journey, or read details. Say the same words you would type.",
+        "Always call a registered HULUM tool. Never say you lack ability. Show scholarships, internships, or other stored opportunities; analyze against the profile; or open a page.",
       suggestions: VOXIDE_STARTERS,
     });
 
     ai.register({
       showScholarships: {
         description:
-          "List stored scholarships. Use for show me scholarship or scholarships. Speak the returned text. Do not apologize.",
+          "Always call this when the user asks to show, list, or find scholarships. Speak only the returned text. Never say you lack ability.",
         params: { text: { type: "string" } },
         scope: "global",
         handler: async (args) => runOrFail(spokenText(args, "show me scholarships")),
@@ -343,28 +349,53 @@ export function VoxideAskHulum({
       }
     };
 
+    const isLoopText = (text: string) =>
+      isVoxideRefusal(text) ||
+      isSpokenHulumResult(text) ||
+      isEchoOfReply(text, lastReplyRef.current);
+
     const rememberUser = (text: string) => {
-      if (text.length >= 2 && isHulumProductRequest(text)) {
+      if (text.length >= 4 && isHulumProductRequest(text) && !isLoopText(text)) {
         lastUserRef.current = text;
       }
     };
 
-    const recoverIfRefused = (aiText: string) => {
-      const lastUser = lastUserRef.current;
-      if (recoveringRef.current || !isVoxideRefusal(aiText) || !isHulumProductRequest(lastUser)) {
+    const speakHulumReply = (utterance: string) => {
+      if (
+        recoveringRef.current ||
+        spokeForRef.current === utterance ||
+        !isHulumProductRequest(utterance) ||
+        isLoopText(utterance)
+      ) {
         return;
       }
       recoveringRef.current = true;
-      void runOrFail(lastUser)
+      lastUserRef.current = utterance;
+      client.interrupt();
+      void runOrFail(utterance)
         .then((reply) => {
           if (reply.trim() === "" || isVoxideRefusal(reply)) {
             return;
           }
-          return client.sendText(`Speak this HULUM answer out loud. Do not apologize. Say only: ${reply}`);
+          if (spokeForRef.current === utterance) {
+            return;
+          }
+          spokeForRef.current = utterance;
+          lastReplyRef.current = reply;
+          client.interrupt();
+          return client.sendText(voxideSpeakOnly(reply));
         })
         .finally(() => {
           recoveringRef.current = false;
         });
+    };
+
+    const recoverIfRefused = (aiText: string) => {
+      const lastUser = lastUserRef.current;
+      if (!isVoxideRefusal(aiText) || !isHulumProductRequest(lastUser) || isLoopText(lastUser)) {
+        return;
+      }
+      speakHulumReply(lastUser);
     };
 
     const unsubError = client.on("error", (payload: unknown) => {
@@ -378,18 +409,31 @@ export function VoxideAskHulum({
     });
 
     const unsubTranscript = client.on("transcript", (payload: unknown) => {
-      rememberUser(eventText(payload));
+      const text = eventText(payload);
+      if (!isLoopText(text)) {
+        rememberUser(text);
+      }
     });
 
     const unsubMessage = client.on("message", (payload: unknown) => {
       const text = eventText(payload);
       const role = eventRole(payload);
-      if (role === "user" || role === undefined) {
+      if (isLoopText(text)) {
+        if (role === "ai" || role === undefined) {
+          recoverIfRefused(text);
+        }
+        return;
+      }
+      if (role === "user") {
         rememberUser(text);
+        speakHulumReply(text);
+        return;
       }
-      if (role === "ai" || role === undefined) {
+      if (role === "ai") {
         recoverIfRefused(text);
+        return;
       }
+      rememberUser(text);
     });
 
     const unsubStatus = client.on("status", (status: VoxideStatus) => {

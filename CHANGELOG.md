@@ -2,6 +2,24 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-26 — Voice does not loop one scholarship question
+
+### Fixed
+- One spoken request now runs HULUM once. Partial speech and HULUM’s own list/SKIP reply are not treated as new questions.
+- “I can’t analyze…” from Gemini is a refusal, not Analyze.
+
+### Why
+The widget re-sent its own spoken answer as the next user utterance, so Ask HULUM flooded with the same scholarships and SKIP result.
+
+## 2026-09-26 — Voice does not apologize before the HULUM result
+
+### Fixed
+- Asking by voice for scholarships (or any website action) no longer speaks “I’m sorry, I don’t have the ability” first.
+- The widget cuts that refusal off and speaks the same `POST /api/voice/action` result as typed Ask HULUM.
+
+### Why
+Gemini Live sometimes refused before calling a tool. Recovery already ran HULUM, but the apology was spoken first.
+
 ## 2026-09-25 — STARK evidence + API docs match JWT
 
 ### Changed
