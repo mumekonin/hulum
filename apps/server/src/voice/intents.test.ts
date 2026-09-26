@@ -75,6 +75,22 @@ describe("parseVoiceIntent", () => {
     expect(wantsListWithAnalyze("show me scholarship and analysis based on my profile")).toBe(true);
     expect(wantsListWithAnalyze("Should I apply for this?")).toBe(false);
   });
+
+  it("does not treat spoken HULUM results or Gemini refusals as analyze", () => {
+    expect(parseVoiceIntent("I can't analyze anything right now, but I'm here to help").intent).toBe(
+      "UNSUPPORTED",
+    );
+    expect(
+      parseVoiceIntent(
+        "SKIP for Gotoh Tokyu Group Scholarship 2027 in Turkey (Fully Funded). Fit 65%.",
+      ).intent,
+    ).toBe("UNSUPPORTED");
+    expect(
+      parseVoiceIntent(
+        "Scholarships: Gotoh Tokyu Group Scholarship 2027 in Turkey (Fully Funded) — Tokyo City University",
+      ).intent,
+    ).toBe("UNSUPPORTED");
+  });
 });
 
 describe("formatProfileGaps", () => {

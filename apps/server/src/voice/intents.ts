@@ -43,6 +43,13 @@ export function wantsListWithAnalyze(text: string): boolean {
 export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): ParsedIntent {
   const value = text.trim();
 
+  if (/i can'?t analyze|cannot analyze|can not analyze|not able to analyze/i.test(value)) {
+    return { intent: "UNSUPPORTED" };
+  }
+  if (/^(scholarships|internships|fellowships|apply for |maybe for |skip for )\b/i.test(value)) {
+    return { intent: "UNSUPPORTED" };
+  }
+
   if (/(show|list|filter)/i.test(value)) {
     const decision = decisionFromUtterance(value);
     if (decision) {
@@ -50,7 +57,7 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
     }
   }
   if (
-    /ለዚህ እድል ማመልከት|should i apply|analy[sz]e?|anlysis|analysis|fit\b|አወዳድር|ትንተና|madaali|madaaluu|apply gochuu|nan apply/i.test(
+    /ለዚህ እድል ማመልከት|should i apply|analy[sz]e?|anlysis|analysis|fit score|what'?s (my |the )?fit|አወዳድር|ትንተና|madaali|madaaluu|apply gochuu|nan apply/i.test(
       value,
     )
   ) {
