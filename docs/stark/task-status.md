@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-09-25 — STARK evidence + API docs match JWT
+
+- Evidence index, STARK README, architecture API/exposure, product-links, and database README aligned with JWT + investigator (no seed APPLY).
+- Forgot-password copy no longer claims passwords are not stored.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
+
+---
+
+
 ## 2026-09-25 — Deployment guide + screenshot smoke
 
 - Deployment guide matches JWT + investigator + migrations through `009`.

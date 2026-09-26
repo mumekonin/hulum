@@ -27,9 +27,9 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Decision engine | `apps/server/src/decision/`, ADR 002 | Present + tests |
 | AI responsibility | ADR 001/002, Groq validation in `apps/server/src/ai/` | Engine decides; Groq explains stored analysis only |
 | Voice UX | ADR 003, ADR 004, `docs/demo/script.md`, `docs/research/voxide-integration.md` | Text/quick-action fallback; `@voxide/react` widget behind `NEXT_PUBLIC_VOXIDE_KEY` (no mic claim without a live key) |
-| Auth / session | `apps/server/src/security/session.ts` | HMAC `X-Hulum-Session` when `SESSION_SECRET` set; required in production |
+| Auth / session | `apps/server/src/auth/`, `apps/server/src/security/session.ts` | Email/password JWT (+ optional Google) in `X-Hulum-Session` (HS256 via `SESSION_SECRET`; required in production). Password-reset email is not wired. |
 | Implementation | `apps/web`, `apps/server`, `packages/shared` | Present |
-| Testing | `npm test`, `npm run smoke:local`, CI seed+smoke | Engine, API, voice-text, English product tests; CI Abeba→APPLY/MAYBE/SKIP smoke |
+| Testing | `npm test`, `npm run smoke:local`, `npm run smoke:browser`, CI | Engine, API, auth, voice-text tests; CI register + catalog list + Chromium click-through (no `db:seed` APPLY) |
 | Iteration | `CHANGELOG.md`, `docs/stark/narrative.md` | Present; Day 20 narrative; do not rewrite history |
 | Deployment | `docs/stark/deployment.md` | **Not deployed**; local + config docs only |
 | Demo | `docs/demo/script.md`, `docs/demo/backup.md`, `docs/demo/rehearsal.md`, `docs/demo/screenshots/README.md` | JWT Create account; typed Abeba; investigator catalog; `/screenshot` backup; shot list (no PNGs); **no video** |
@@ -53,7 +53,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 Walkthrough: `docs/demo/script.md`.  
 Backup if speech, Analyze, or the UI fails: `docs/demo/backup.md`.  
 Rehearsal (tests + copy, not a live browser pass): `docs/demo/rehearsal.md`.  
-Persona: Abeba Tesfaye — A2SV APPLY, UCT MAYBE, Chevening SKIP.
+Persona: Abeba Tesfaye (typed profile). Catalog is investigator-filled — do not expect seeded A2SV / UCT / Chevening cards. Empty list → `/screenshot` backup.
 
 ---
 
