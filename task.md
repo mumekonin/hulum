@@ -27,6 +27,8 @@ This is the master implementation checklist for HULUM.
 | 29 | Readiness engine | Mulualem | DONE |
 | 30 | Groq AI orchestration | Mulualem | DONE |
 | 31 | AI output validation | Mulualem | DONE |
+| 32 | Voxide widget (no Express STT) | Mulualem | DONE |
+| 33 | Voice intent/action service | Mulualem | DONE |
 | 34 | Opportunity verification | Mulualem | DONE |
 | 35 | API security and validation | Mulualem | DONE |
 | 36 | Integration testing | Mulualem + Kidist | DONE |
@@ -551,6 +553,7 @@ User-facing explanation
 
 ### Task 32 — Voxide backend integration (Days 10–14)
 **Depends on:** Task 30 and shared voice contract.
+**Status:** DONE as a browser widget (2026-09-25). No Express STT/TTS. Live mic still needs a local `vox_pub_…` key and dashboard whitelist for `http://localhost:3000`.
 
 > Integrate voice processing and supported language handling.
 
@@ -558,6 +561,7 @@ User-facing explanation
 
 ### Task 33 — Voice intent/action service (Days 11–14)
 **Depends on:** Task 32.
+**Status:** DONE (2026-09-25). Typed Ask HULUM and the Voxide widget both call `POST /api/voice/action`.
 
 > Map voice requests to existing HULUM services for analysis, explanation, missing
 > requirements, readiness, filtering, opening opportunities, and profile updates.

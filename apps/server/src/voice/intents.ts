@@ -16,12 +16,13 @@ export type ParsedIntent = {
 };
 
 const TYPE_WORDS: Array<[RegExp, OpportunityType]> = [
-  [/\binternship/i, "internship"],
-  [/\bscholarship/i, "scholarship"],
-  [/\bfellowship/i, "fellowship"],
-  [/\bgrant/i, "grant"],
-  [/\bjob|remote job/i, "job"],
-  [/\bcompetition/i, "competition"],
+  [/\binternship|ኢንተርንሺፕ|internshipwwan|hojii barumsaa/i, "internship"],
+  [/\bscholarship|ስኮላርሺፕ|ስኮለርሺፕ|scholarshipwwan|carraa barumsaa|barumsaa/i, "scholarship"],
+  // fellowship — am: ፌሎሺፕ / fellowshipwwan (Oromo plural)
+  [/\bfellowship|ፌሎሺፕ|fellowshipwwan|carraa qorannoo/i, "fellowship"],
+  [/\bgrant|grantii/i, "grant"],
+  [/\bjob|remote job|hojii/i, "job"],
+  [/\bcompetition|dorgommii/i, "competition"],
 ];
 
 function decisionFromUtterance(value: string): Decision | undefined {
@@ -29,6 +30,14 @@ function decisionFromUtterance(value: string): Decision | undefined {
   if (/\bskip\b/i.test(value)) return "SKIP";
   if (/\bapply\b/i.test(value)) return "APPLY";
   return undefined;
+}
+
+/** True when the user asked to list and analyze in one utterance. */
+export function wantsListWithAnalyze(text: string): boolean {
+  return (
+    /show|list|filter|አሳይ|አሳየኝ|agarsiisi|carraawwan|እድሎች/i.test(text) &&
+    /analy[sz]|analysis|ትንተና|madaali|madaaluu|አወዳድር/i.test(text)
+  );
 }
 
 export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): ParsedIntent {
@@ -40,10 +49,18 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
       return { intent: "FILTER_BY_DECISION", decision };
     }
   }
-  if (/ለዚህ እድል ማመልከት|should i apply|analyze|analyse|fit\b/i.test(value)) {
-    return { intent: "ANALYZE_OPPORTUNITY" };
+  if (
+    /ለዚህ እድል ማመልከት|should i apply|analy[sz]e?|anlysis|analysis|fit\b|አወዳድር|ትንተና|madaali|madaaluu|apply gochuu|nan apply/i.test(
+      value,
+    )
+  ) {
+    const typeHit = TYPE_WORDS.find(([pattern]) => pattern.test(value));
+    return {
+      intent: "ANALYZE_OPPORTUNITY",
+      ...(typeHit === undefined ? {} : { type: typeHit[1] }),
+    };
   }
-  if (/ለምን|why (apply|maybe|skip|did you)|explain|^why\b/i.test(value)) {
+  if (/ለምን|why (apply|maybe|skip|did you)|explain|^why\b|maalif|maaliif/i.test(value)) {
     return { intent: "EXPLAIN_DECISION" };
   }
   // Profile gaps before generic "what am I missing" (opportunity requirements).
@@ -61,10 +78,10 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
   ) {
     return { intent: "SHOW_MISSING_REQUIREMENTS", replyHint: "clarify_uncertain" };
   }
-  if (/ምን ጎድሎኛል|what am i missing|gaps?|missing/i.test(value)) {
+  if (/ምን ጎድሎኛል|what am i missing|gaps?|missing|maal dhabe|hanqina/i.test(value)) {
     return { intent: "SHOW_MISSING_REQUIREMENTS" };
   }
-  if (/ምን ላዘጋጅ|what should i prepare|readiness|checklist|prepare/i.test(value)) {
+  if (/ምን ላዘጋጅ|what should i prepare|readiness|checklist|prepare|qopheessuu|qopheessi/i.test(value)) {
     return { intent: "SHOW_READINESS" };
   }
   if (
@@ -79,13 +96,22 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
   }
 
   const typeHit = TYPE_WORDS.find(([pattern]) => pattern.test(value));
-  if (typeHit && /show|list|find|filter|internships|scholarships/i.test(value)) {
+  // Widen trigger: include singular type names (fellowship, scholarship, internship, grant, job,
+  // competition) so "show me the fellowship" / "show me a scholarship" all route here.
+  if (
+    typeHit &&
+    /show|list|find|filter|internships?|scholarships?|fellowships?|grants?|jobs?|competitions?|\u12a2\u1295\u1270\u122d\u1295\u123a\u1355|\u1235\u12ae\u120b\u122d\u123a\u1355|\u134c\u120e\u123a\u1355|agarsiisi|natti agarsiisi/i.test(value)
+  ) {
     return { intent: "FILTER_OPPORTUNITIES", type: typeHit[1] };
   }
-  if (/show|list|opportunities|እድሎች/i.test(value)) {
+  if (/show|list|opportunities|እድሎች|carraawwan|carraa agarsiisi/i.test(value)) {
     return { intent: "SHOW_OPPORTUNITIES" };
   }
-  if (/open|details|tell me about this|about this opportunity|current opportunity/i.test(value)) {
+  if (
+    /open|details|tell me about this|about this opportunity|current opportunity|ዝርዝር|ስለዚህ እድል|ንገረኝ|ibsi|natti himi|naaf himi/i.test(
+      value,
+    )
+  ) {
     return { intent: "OPEN_OPPORTUNITY" };
   }
 

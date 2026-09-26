@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { formatProfileGaps, parseVoiceIntent, stripProfileExtractDescription } from "./intents.js";
+import { formatProfileGaps, parseVoiceIntent, stripProfileExtractDescription, wantsListWithAnalyze } from "./intents.js";
 
 describe("parseVoiceIntent", () => {
   it("maps documented English and Amharic utterances to product intents", () => {
@@ -44,6 +44,12 @@ describe("parseVoiceIntent", () => {
         replyHint: "clarify_uncertain",
       },
       { text: "What's the weather in Addis?", intent: "UNSUPPORTED" },
+      { text: "show me scholarship and analysis", intent: "ANALYZE_OPPORTUNITY", type: "scholarship" },
+      { text: "analysis for me", intent: "ANALYZE_OPPORTUNITY" },
+      { text: "anlysis", intent: "ANALYZE_OPPORTUNITY" },
+      { text: "scholarshipwwan natti agarsiisi", intent: "FILTER_OPPORTUNITIES", type: "scholarship" },
+      { text: "carraa kana madaali", intent: "ANALYZE_OPPORTUNITY" },
+      { text: "carraa kana ibsi", intent: "OPEN_OPPORTUNITY" },
     ];
 
     for (const example of cases) {
@@ -63,6 +69,11 @@ describe("parseVoiceIntent", () => {
   it("does not treat analyze-this as a catalog APPLY filter", () => {
     expect(parseVoiceIntent("Should I apply for this?").intent).toBe("ANALYZE_OPPORTUNITY");
     expect(parseVoiceIntent("Show me opportunities I should apply for.").intent).toBe("FILTER_BY_DECISION");
+  });
+
+  it("treats show-plus-analysis as one analyze request", () => {
+    expect(wantsListWithAnalyze("show me scholarship and analysis based on my profile")).toBe(true);
+    expect(wantsListWithAnalyze("Should I apply for this?")).toBe(false);
   });
 });
 

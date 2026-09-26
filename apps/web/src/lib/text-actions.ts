@@ -1,10 +1,12 @@
 import {
+  detectAskedLanguage,
   type Analysis,
   type LanguageCode,
   type Opportunity,
   type OpportunityType,
   type ProfileView,
   type ReadinessItem,
+  type VoiceActionResponse,
 } from "@hulum/shared";
 import { api } from "./api";
 import { getLanguage } from "./storage";
@@ -16,12 +18,13 @@ export type TextActionResult = {
 };
 
 const TYPE_WORDS: Array<[RegExp, OpportunityType]> = [
-  [/\binternship/i, "internship"],
-  [/\bscholarship/i, "scholarship"],
-  [/\bfellowship/i, "fellowship"],
-  [/\bgrant/i, "grant"],
-  [/\bjob|remote job/i, "job"],
-  [/\bcompetition/i, "competition"],
+  [/\binternship|ኢንተርንሺፕ|internshipwwan|hojii barumsaa/i, "internship"],
+  [/\bscholarship|ስኮላርሺፕ|ስኮለርሺፕ|scholarshipwwan|carraa barumsaa/i, "scholarship"],
+  // fellowship — am: ፌሎሺፕ, om: fellowshipwwan / carraa qorannoo
+  [/\bfellowship|ፌሎሺፕ|fellowshipwwan|carraa qorannoo/i, "fellowship"],
+  [/\bgrant|grantii/i, "grant"],
+  [/\bjob|remote job|hojii/i, "job"],
+  [/\bcompetition|dorgommii/i, "competition"],
 ];
 
 const PROFILE_FIELD_LABELS: Record<string, string> = {
@@ -51,12 +54,34 @@ function decisionWord(value: string): "APPLY" | "MAYBE" | "SKIP" | undefined {
   return undefined;
 }
 
-function listReply(items: Opportunity[]): string {
-  if (items.length === 0) return "No stored opportunities matched. HULUM does not invent listings.";
-  return items
+function listReply(items: Opportunity[], language: LanguageCode = "en", type?: string): string {
+  if (items.length === 0) {
+    if (language === "am") return "መታወፅ እድል አልተገኘም። HULUM እድል አይፈጥርም።";
+    if (language === "om") return "Carraan kuufame hin argamne. HULUM carraa hin uumne.";
+    return "No stored opportunities matched. HULUM does not invent listings.";
+  }
+  const titles = items
     .slice(0, 5)
     .map((item) => `${item.title} — ${item.organization}`)
     .join("; ");
+  if (type === "fellowship") {
+    if (language === "am") return `ፌሎሺፕ: ${titles}`;
+    if (language === "om") return `Fellowshipwwan: ${titles}`;
+    return `Fellowships: ${titles}`;
+  }
+  if (type === "scholarship") {
+    if (language === "am") return `ስኮላርሺፕ: ${titles}`;
+    if (language === "om") return `Scholarshipwwan: ${titles}`;
+    return `Scholarships: ${titles}`;
+  }
+  if (type === "internship") {
+    if (language === "am") return `ኢንተርንሺፕ: ${titles}`;
+    if (language === "om") return `Internshipwwan: ${titles}`;
+    return `Internships: ${titles}`;
+  }
+  if (language === "am") return `የአሁን እድሎች: ${titles}`;
+  if (language === "om") return `Carraawwan amma jiran: ${titles}`;
+  return `Here are current opportunities: ${titles}`;
 }
 
 function requirementLine(item: { text?: string; status: string; reason: string | null }): string {
@@ -71,8 +96,45 @@ export async function runTextAction(input: {
   language?: LanguageCode;
 }): Promise<TextActionResult> {
   const value = input.text.trim();
-  const language: LanguageCode = input.language ?? getLanguage();
+  const language: LanguageCode = detectAskedLanguage(value, input.language ?? getLanguage());
   const typeHit = TYPE_WORDS.find(([pattern]) => pattern.test(value));
+
+  if (
+    !/personalized readiness|personalize.*(plan|readiness|checklist)|readiness plan/i.test(value) &&
+    !/clarif(y|ication)|which requirements.*(uncertain|unclear)|explain.*(uncertain|unclear).*requirement/i.test(
+      value,
+    )
+  ) {
+    try {
+      const voice = await api<VoiceActionResponse>("/api/voice/action", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: input.userId,
+          text: value,
+          language,
+          ...(input.opportunityId === undefined ? {} : { opportunityId: input.opportunityId }),
+          ...(input.analysisId === undefined ? {} : { analysisId: input.analysisId }),
+        }),
+      });
+      if (voice.intent !== "UNSUPPORTED") {
+        return {
+          reply: voice.reply,
+          // When the server returns a list (FILTER_OPPORTUNITIES / SHOW_OPPORTUNITIES),
+          // voice.opportunity is undefined but voice.opportunities[0] exists.
+          // Pin opportunities[0].id as the working context so the next utterance
+          // ("analyze this" / "madaali" / "ለዛህ እድል ምስከረስ") has an opportunityId.
+          opportunityId:
+            voice.opportunity?.id ??
+            voice.analysis?.opportunityId ??
+            voice.opportunities?.[0]?.id ??
+            input.opportunityId,
+          analysisId: voice.analysis?.id ?? input.analysisId,
+        };
+      }
+    } catch {
+      // API down: keep the local product-action fallbacks below.
+    }
+  }
 
   if (/(show|list|filter)/i.test(value) && decisionWord(value)) {
     if (!input.analysisId) {
@@ -92,7 +154,7 @@ export async function runTextAction(input: {
     };
   }
 
-  if (/ለዚህ እድል ማመልከት|should i apply|analyze|analyse|\bfit\b/i.test(value)) {
+  if (/ለዚህ እድል ምስከረስ|should i apply|analyze|analyse|\bfit\b|madaali|madaaluu|apply gochuu|nan apply|አወዳድር|ትንተና/i.test(value)) {
     if (!input.opportunityId) {
       return { reply: "Open an opportunity first, then ask whether to apply." };
     }
@@ -107,7 +169,7 @@ export async function runTextAction(input: {
     };
   }
 
-  if (/ለምን|why (apply|maybe|skip|did you)|explain|^why\b/i.test(value)) {
+  if (/ለምን|why (apply|maybe|skip|did you)|explain|^why\b|maalif|maaliif/i.test(value)) {
     if (!input.analysisId) {
       return { reply: "Analyze an opportunity first. Explanation follows a stored decision." };
     }
@@ -164,7 +226,7 @@ export async function runTextAction(input: {
     };
   }
 
-  if (/ምን ጎድሎኛል|what am i missing|gaps?|missing/i.test(value)) {
+  if (/ምን ጎድሎኛል|what am i missing|gaps?|missing|maal dhabe|hanqina/i.test(value)) {
     if (!input.analysisId) {
       return { reply: "Analyze an opportunity first, then ask what is missing." };
     }
@@ -204,7 +266,7 @@ export async function runTextAction(input: {
     }
   }
 
-  if (/ምን ላዘጋጅ|what should i prepare|readiness|checklist|prepare/i.test(value)) {
+  if (/ምን ላዘጋጅ|what should i prepare|readiness|checklist|prepare|qopheessuu|qopheessi/i.test(value)) {
     if (!input.analysisId) {
       return { reply: "Analyze an opportunity first, then ask what to prepare." };
     }
@@ -267,15 +329,15 @@ export async function runTextAction(input: {
     return { reply: "Open your profile and save the facts there. Voice does not write profile facts." };
   }
 
-  if (typeHit && /show|list|find|filter|internships|scholarships/i.test(value)) {
+  if (typeHit && /show|list|find|filter|internships|scholarships|ኢንተርንሺፕ|ስኮላርሺፕ|ፌሎሺፕ|agarsiisi|natti agarsiisi/i.test(value)) {
     const opportunities = await api<Opportunity[]>("/api/opportunities");
     const filtered = opportunities.filter((item) => item.type === typeHit[1]);
-    return { reply: listReply(filtered), opportunityId: filtered[0]?.id };
+    return { reply: listReply(filtered, language, typeHit[1]), opportunityId: filtered[0]?.id };
   }
 
-  if (/show|list|opportunities|እድሎች/i.test(value)) {
+  if (/show|list|opportunities|እድሎች|carraawwan|carraa agarsiisi/i.test(value)) {
     const opportunities = await api<Opportunity[]>("/api/opportunities");
-    return { reply: listReply(opportunities), opportunityId: opportunities[0]?.id };
+    return { reply: listReply(opportunities, language), opportunityId: opportunities[0]?.id };
   }
 
   if (/open|details|tell me about this|about this opportunity|current opportunity/i.test(value)) {

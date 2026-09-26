@@ -46,6 +46,54 @@ STARK honesty — the walkthrough must match the running JWT + investigator prod
 - Profile fields use explicit `htmlFor` / `id` (including **Languages**). Helper text is no longer part of the accessible name.
 - `smoke:browser` fills profile fields by `#profile-*` ids.
 
+## 2026-09-25 — Site-wide voice after login
+
+### Changed
+- Voxide mounts on every page after login (Journey, Opportunities, Profile, Ask HULUM, Screenshot, Research).
+- “Analyze for me” / “analysis” runs `decide()` on the current or first matching opportunity and speaks the full result (decision, fit, summary, next step, gaps, official source).
+- Voice can open the same pages a signed-in user can click. Profile facts are still not saved by voice.
+
+### Why
+Voice lived only on Ask HULUM, and “analysis for me” did not attach an opportunity or read the full analysis.
+
+## 2026-09-25 — Voxide speaks the HULUM reply
+
+### Fixed
+- Widget tools return a plain string so Gemini Live can speak the HULUM result. Voice stays `en-US` (public Voxide docs do not list Amharic/Oromo TTS). If the agent says “I’m sorry”, HULUM still runs the request and asks the widget to read that answer.
+
+### Why
+Typing worked. Voice apologized because the tool returned a complex object and the widget asked for unsupported speech locales.
+
+## 2026-09-25 — Voxide named capabilities
+
+### Fixed
+- The Ask HULUM widget registers `showScholarships`, `showInternships`, and the other product actions as separate Voxide capabilities. Gemini matches “show me scholarship” to a real tool instead of saying it has no ability.
+- If the agent still refuses, HULUM runs the last product request on the same `runTextAction` path.
+
+### Why
+Voxide is capability-first. One generic `runHulumAction` tool did not look like a scholarship listing capability.
+
+## 2026-09-25 — Ask HULUM replies in the asked language
+
+### Changed
+- Ask HULUM detects English, Amharic (Ge'ez), or Afaan Oromo from the current request and answers in that language.
+- “Show me scholarship and analysis” lists stored scholarships, then `decide()` on the first one against the signed-in profile.
+- Details / explain / gaps / readiness use the same asked language. Groq may rewrite the reply when set; APPLY / MAYBE / SKIP stay from `decide()`.
+- Voxide widget sends `en-US`, `am-ET`, or `om-ET` as a locale hint. Public Voxide docs still do not list Amharic/Oromo STT.
+
+### Why
+Voice was English-only even when the user asked in Amharic or Afaan Oromo.
+
+## 2026-09-25 — Voxide widget uses the same voice actions
+
+### Changed
+- Ask HULUM text and the Voxide widget call `POST /api/voice/action` first. APPLY / MAYBE / SKIP still come from `decide()`.
+- Widget accepts `NEXT_PUBLIC_VOXIDE_KEY` or `NEXT_PUBLIC_VOXIDE_PUBLIC_KEY` (`vox_pub_…` only).
+- Speech locale stays `en-US`. The selected HULUM language is sent on the action for explain/readiness.
+
+### Why
+Task 32/33: a real voice request must run the same product actions as text. Voxide stays a browser widget, not an Express STT server.
+
 ## 2026-09-25 — List stored requirements
 
 ### Fixed

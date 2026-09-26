@@ -15,6 +15,7 @@ Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), back
 
 ---
 
+
 ## 2026-09-25 — Deployment guide + screenshot smoke
 
 - Deployment guide matches JWT + investigator + migrations through `009`.

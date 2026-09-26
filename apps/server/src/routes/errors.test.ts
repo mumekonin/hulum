@@ -121,6 +121,7 @@ describe("API error envelope", () => {
     expect(unsupported.status).toBe(200);
     expect(unsupportedBody.error).toBeNull();
     expect(unsupportedBody.data.intent).toBe("UNSUPPORTED");
-    expect(unsupportedBody.data.reply).toMatch(/type instead of speaking/i);
+    expect(unsupportedBody.data.reply).toMatch(/I can show fellowships, scholarships, internships/i);
+    expect(unsupportedBody.data.reply).not.toMatch(/stack|internal error/i);
   });
 });

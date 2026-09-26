@@ -214,4 +214,92 @@ describe("createVoiceService", () => {
     expect(result.reply).toContain("skills");
     expect(result.reply).toContain("Voice cannot silently change stored facts");
   });
+
+  it("lists scholarships then analyzes the first one against the profile", async () => {
+    const scholarship: Opportunity = {
+      ...opportunity,
+      id: "55555555-5555-4555-8555-555555555555",
+      title: "Dawn scholarship",
+      type: OpportunityType.SCHOLARSHIP,
+    };
+    const created: Analysis = {
+      id: "66666666-6666-4666-8666-666666666666",
+      userId: profile.userId,
+      opportunityId: scholarship.id,
+      decision: Decision.MAYBE,
+      fitScore: 62,
+      summary: "Some requirements are still uncertain.",
+      nextAction: "Confirm the official source before applying.",
+      requirements: [],
+      readiness: [],
+      createdAt: "2026-09-21T00:00:00.000Z",
+      updatedAt: "2026-09-21T00:00:00.000Z",
+    };
+    const service = createVoiceService({
+      profiles: { getByUserId: async () => profileView },
+      opportunities: {
+        list: async () => [opportunity, scholarship],
+        getById: async (id) => (id === scholarship.id ? scholarship : opportunity),
+      },
+      analyses: {
+        analyze: async (id) => {
+          expect(id).toBe(scholarship.id);
+          return created;
+        },
+        getById: async () => undefined,
+      },
+      clock,
+    });
+
+    const result = await service.handleAction({
+      userId: profile.userId,
+      text: "show me scholarship and analysis based on my profile",
+      language: "en",
+    });
+    expect(result.intent).toBe("ANALYZE_OPPORTUNITY");
+    expect(result.opportunity?.id).toBe(scholarship.id);
+    expect(result.opportunities?.some((item) => item.type === OpportunityType.SCHOLARSHIP)).toBe(true);
+    expect(result.reply).toMatch(/Scholarship/i);
+    expect(result.reply).toMatch(/MAYBE/);
+    expect(result.reply).toMatch(/Dawn scholarship/);
+    expect(result.reply).toMatch(/Some requirements are still uncertain/);
+  });
+
+  it("answers details in Afaan Oromo when the user asks in Oromo", async () => {
+    const created: Analysis = {
+      id: "77777777-7777-4777-8777-777777777777",
+      userId: profile.userId,
+      opportunityId: opportunity.id,
+      decision: Decision.APPLY,
+      fitScore: 90,
+      summary: "You meet the key known requirements.",
+      nextAction: "Prepare your application materials.",
+      requirements: [],
+      readiness: [],
+      createdAt: "2026-09-21T00:00:00.000Z",
+      updatedAt: "2026-09-21T00:00:00.000Z",
+    };
+    const service = createVoiceService({
+      profiles: { getByUserId: async () => profileView },
+      opportunities: {
+        list: async () => [opportunity],
+        getById: async () => opportunity,
+      },
+      analyses: {
+        analyze: async () => created,
+        getById: async () => created,
+      },
+      clock,
+    });
+
+    const result = await service.handleAction({
+      userId: profile.userId,
+      text: "carraa kana ibsi",
+      language: "en",
+      opportunityId: opportunity.id,
+      analysisId: created.id,
+    });
+    expect(result.intent).toBe("OPEN_OPPORTUNITY");
+    expect(result.reply).toMatch(/Gosa|Guyyaa xumuraa|Madda|Murteen kuufame/);
+  });
 });
