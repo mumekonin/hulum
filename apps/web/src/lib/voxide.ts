@@ -28,14 +28,47 @@ export function voxideSpeechLocale(language: LanguageCode): "en-US" | "am-ET" | 
 
 /** Gemini refused or apologized instead of speaking the HULUM tool result. */
 export function isVoxideRefusal(text: string): boolean {
-  return /no (ability|tool|capability)|don'?t have (the )?(necessary )?(tools?|ability|capabilities)|cannot (help|do that|show|list)|i('m| am) (not |un)able|lack(s)? (the )?(necessary )?(tools?|ability)|i have no ability|i('m| am) sorry|sorry[,.]? i/i.test(
+  return /no (ability|tool|capability)|don'?t have (the )?(necessary )?(tools?|ability|capabilities)|do not have (the )?(necessary )?(tools?|ability)|cannot (help|do that|show|list|analyze)|i can'?t analyze|i('m| am) (not |un)able|lack(s)? (the )?(necessary )?(tools?|ability)|i have no ability|i('m| am) sorry|sorry[,.]? i|here to help with your next/i.test(
     text,
   );
 }
 
+/** Spoken or pasted HULUM result — never treat as a new user question. */
+export function isSpokenHulumResult(text: string): boolean {
+  const value = text.trim();
+  if (value.length > 160) {
+    return true;
+  }
+  return /^(scholarships|internships|fellowships|grants|jobs|competitions|here are current opportunities|apply for |maybe for |skip for |speak only this hulum|missing or uncertain:|official source:)/i.test(
+    value,
+  ) || /fit \d+%|always verify final eligibility|confirm eligibility there/i.test(value);
+}
+
+export function isEchoOfReply(text: string, reply: string): boolean {
+  const spoken = text.trim();
+  const stored = reply.trim();
+  if (spoken.length < 8 || stored.length < 8) {
+    return false;
+  }
+  return stored.startsWith(spoken) || spoken.startsWith(stored.slice(0, 48)) || stored.includes(spoken);
+}
+
+/** Ask Gemini Live to read the stored HULUM result and nothing else. */
+export function voxideSpeakOnly(reply: string): string {
+  return `Speak only this HULUM answer. Do not apologize. Do not say you lack ability. Say only: ${reply}`;
+}
+
+/** True only for a short user command, not a list/result/apology echo. */
 export function isHulumProductRequest(text: string): boolean {
-  return /show|list|find|filter|scholarship|internship|fellowship|grant|job|competition|opportunit|analy|anlysis|detail|apply|missing|prepare|readiness|why|profile|journey|screenshot|research|agarsiisi|madaali|ibsi|carraa|[\u1200-\u137F]/i.test(
-    text,
+  const value = text.trim();
+  if (value.length < 4 || value.length > 160) {
+    return false;
+  }
+  if (isSpokenHulumResult(value) || isVoxideRefusal(value)) {
+    return false;
+  }
+  return /\b(show|list|find|filter|open|analyze|analysis|anlysis|tell me|why |what (am|should)|prepare|extract|update profile|should i apply)\b|agarsiisi|madaali|ibsi|carraa|[\u1200-\u137F]/i.test(
+    value,
   );
 }
 
