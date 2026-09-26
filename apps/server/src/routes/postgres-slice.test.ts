@@ -118,6 +118,11 @@ describe.skipIf(!hasDatabaseUrl)("postgres vertical slice", () => {
     expect(created.status).toBe(201);
     expect(createdBody.data?.profile.userId).toBeTruthy();
     userId = createdBody.data?.profile.userId;
+    const sessionToken = createdBody.data?.sessionToken;
+    const sessionHeaders: Record<string, string> = { "content-type": "application/json" };
+    if (typeof sessionToken === "string" && sessionToken.trim() !== "") {
+      sessionHeaders["X-Hulum-Session"] = sessionToken;
+    }
 
     const loaded = await fetch(`${baseUrl}/api/opportunities/${opportunityId}`);
     const loadedBody = (await loaded.json()) as Envelope<Opportunity>;
@@ -126,7 +131,7 @@ describe.skipIf(!hasDatabaseUrl)("postgres vertical slice", () => {
 
     const analyzed = await fetch(`${baseUrl}/api/opportunities/${opportunityId}/analyze`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: sessionHeaders,
       body: JSON.stringify({ userId }),
     });
     const analyzedBody = (await analyzed.json()) as Envelope<Analysis>;
@@ -157,7 +162,9 @@ describe.skipIf(!hasDatabaseUrl)("postgres vertical slice", () => {
     );
     expect(Number(requirementCount.rows[0]?.count)).toBeGreaterThan(0);
 
-    const readiness = await fetch(`${baseUrl}/api/analyses/${analysis.id}/readiness`);
+    const readiness = await fetch(`${baseUrl}/api/analyses/${analysis.id}/readiness`, {
+      headers: sessionHeaders,
+    });
     const readinessBody = (await readiness.json()) as Envelope<ReadinessItem[]>;
     expect(readiness.status).toBe(200);
     const item = readinessBody.data?.[0];
@@ -165,20 +172,22 @@ describe.skipIf(!hasDatabaseUrl)("postgres vertical slice", () => {
 
     const patched = await fetch(`${baseUrl}/api/readiness/${item?.id}`, {
       method: "PATCH",
-      headers: { "content-type": "application/json" },
+      headers: sessionHeaders,
       body: JSON.stringify({ status: "DONE" }),
     });
     const patchedBody = (await patched.json()) as Envelope<ReadinessItem>;
     expect(patched.status).toBe(200);
     expect(patchedBody.data?.status).toBe("DONE");
 
-    const readinessAgain = await fetch(`${baseUrl}/api/analyses/${analysis.id}/readiness`);
+    const readinessAgain = await fetch(`${baseUrl}/api/analyses/${analysis.id}/readiness`, {
+      headers: sessionHeaders,
+    });
     const readinessAgainBody = (await readinessAgain.json()) as Envelope<ReadinessItem[]>;
     expect(readinessAgainBody.data?.find((row) => row.id === item?.id)?.status).toBe("DONE");
 
     const explained = await fetch(`${baseUrl}/api/analyses/${analysis.id}/explain`, {
       method: "POST",
-      headers: { "content-type": "application/json" },
+      headers: sessionHeaders,
       body: JSON.stringify({ language: "en" }),
     });
     const explainedBody = (await explained.json()) as Envelope<{ decision: string }>;
