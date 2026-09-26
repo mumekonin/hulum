@@ -2,6 +2,17 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-25 — STARK evidence + API docs match JWT
+
+### Changed
+- `docs/stark/evidence.md` / `README.md`: JWT auth, investigator catalog, CI smokes (no seed APPLY).
+- `docs/architecture/api.md` + `data-exposure.md`: `/api/auth/*`, JWT session, screenshot analyze.
+- `docs/research/product-links.md`, `database/README.md`: JWT + closed seed.
+- Forgot-password copy no longer claims passwords are not stored.
+
+### Why
+Judge-facing evidence and API docs still described HMAC UUID demo auth after JWT landed.
+
 ## 2026-09-25 — Deployment guide + screenshot smoke
 
 ### Changed

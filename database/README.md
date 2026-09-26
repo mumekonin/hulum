@@ -6,9 +6,9 @@ PostgreSQL schema for v0.1. `npm run dev` defaults the API to Postgres (`createA
 
 | Table | Purpose |
 |---|---|
-| `users` | App user record (HMAC session auth is optional locally; required in production via `SESSION_SECRET`) |
+| `users` | App user record (email/password hash and/or `google_sub`; JWT via `SESSION_SECRET`, required in production) |
 | `profiles` | Structured applicant facts used by matching |
-| `opportunities` | Curated official-source opportunities |
+| `opportunities` | Investigator / verified official-source opportunities (curated seed closed) |
 | `analyses` | Stored APPLY / MAYBE / SKIP result (+ optional `decision_audit` jsonb from migration 003) |
 | `requirement_results` | Per-requirement status for one analysis |
 | `readiness_items` | Checklist produced from an analysis |

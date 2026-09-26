@@ -33,9 +33,9 @@ Backup if the UI fails: `docs/demo/backup.md`. Rehearsal notes: `docs/demo/rehea
 
 ## What v0.1 proves
 
-A student can create a profile (or load Abeba), open a curated opportunity, get **APPLY / MAYBE / SKIP** from a TypeScript engine, see why / gaps / readiness, and open the official source. Ask HULUM uses the same engine over text.
+A student can **Create account** (JWT), type a profile (e.g. Abeba facts), browse investigator-filled opportunities (list may be empty until the worker runs), get **APPLY / MAYBE / SKIP** from a TypeScript engine when a card exists, see why / gaps / readiness, and open the official source — or use `/screenshot` when the catalog is empty. Ask HULUM uses the same engine over text.
 
-Expected demo labels: A2SV **APPLY**, UCT **MAYBE**, Chevening **SKIP**.
+Do **not** expect a one-click demo profile or seeded A2SV / UCT / Chevening cards.
 
 ---
 
@@ -43,8 +43,8 @@ Expected demo labels: A2SV **APPLY**, UCT **MAYBE**, Chevening **SKIP**.
 
 - Retrieved ScholarXIV papers (`docs/research/scholarxiv.md` is empty on purpose)
 - Production / EthioDeploy
-- Microphone or Voxide speech
-- That `main` alone is the full product
+- Microphone or Voxide speech without a live keyed pass
+- Seeded catalog APPLY / MAYBE / SKIP labels
 - A recorded demo video
 
 ---

@@ -116,8 +116,8 @@ export function AuthRecovery() {
                 <span className="text-[9px] uppercase tracking-widest text-gw-muted">Credential retrieval</span>
                 <h1 className="font-gw-serif text-[32px] leading-[38px] text-gw-primary">Forgot your password?</h1>
                 <p className="mt-1 text-[13px] leading-5 text-gw-muted">
-                  Enter an email if you want it stored locally for display. v0.1 does not send reset links or store
-                  passwords.
+                  Enter an email if you want it stored locally for display. v0.1 does not send reset links. Sign-in
+                  accounts keep a password hash on the server; this page does not change it.
                 </p>
               </div>
 
