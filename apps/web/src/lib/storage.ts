@@ -1,5 +1,6 @@
 import type { LanguageCode } from "@hulum/shared";
 import { isLanguageCode } from "./languages";
+import { RECENT_QUESTIONS_PREFIX } from "./recent-questions";
 
 const USER_KEY = "hulum.userId";
 const SESSION_KEY = "hulum.sessionToken";
@@ -43,8 +44,14 @@ export function persistAuthSession(session: { userId: string; sessionToken: stri
 
 export function clearSession(): void {
   if (typeof window === "undefined") return;
+  const userId = window.localStorage.getItem(USER_KEY);
+  if (userId !== null) window.localStorage.removeItem(`${RECENT_QUESTIONS_PREFIX}${userId}`);
   window.localStorage.removeItem(USER_KEY);
   window.localStorage.removeItem(SESSION_KEY);
+  // Opportunity, analysis, and search context from this browser session belong to the signed-out user.
+  Object.keys(window.sessionStorage)
+    .filter((key) => key.startsWith("hulum."))
+    .forEach((key) => window.sessionStorage.removeItem(key));
 }
 
 export function isSignedIn(): boolean {

@@ -3,23 +3,80 @@
 import { FormEvent, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
-import { detectAskedLanguage, type LanguageCode, type ProfileView } from "@hulum/shared";
-import { Notice } from "@/components/Notice";
+import {
+  detectAskedLanguage,
+  type Analysis,
+  type LanguageCode,
+  type Opportunity,
+  type ProfileDocument,
+  type ProfileView,
+} from "@hulum/shared";
+import { ChatMessageView } from "@/components/assistant/ChatMessageView";
+import { FrequentlyAsked, RecentQuestions } from "@/components/assistant/AssistantSidebar";
 import { StatusPanel } from "@/components/StatusPanel";
 import { hasVoxidePublicKey } from "@/lib/voxide";
-import { api, userFacingError } from "@/lib/api";
+import { api, isNotFound, userFacingError } from "@/lib/api";
 import { assistantCopy, assistantQuickActions } from "@/lib/assistant-copy";
+import {
+  hulumMessageFrom,
+  messageId,
+  type BatchCard,
+  type ChatMessage,
+  type ChatPrompt,
+  type HulumMessage,
+} from "@/lib/chat";
+import { readDiscoverContext, type DiscoverContext } from "@/lib/discover-context";
+import type { FaqEntry } from "@/lib/faq";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
+import { readRecentQuestions, rememberQuestion, type RecentQuestion } from "@/lib/recent-questions";
 import { getLanguage, getUserId, setLanguage } from "@/lib/storage";
-import { runTextAction } from "@/lib/text-actions";
-import { HULUM_VOICE_REPLY_EVENT, readVoiceSession, writeVoiceSession } from "@/lib/voice-session";
+import { PROFILE_FIELD_LABELS, runTextAction } from "@/lib/text-actions";
+import {
+  clearVoiceSession,
+  HULUM_VOICE_REPLY_EVENT,
+  readVoiceSession,
+  writeVoiceSession,
+} from "@/lib/voice-session";
+
+const PROFILE_FIELD_COUNT = 9;
+
+const DEFAULT_PROMPTS: ChatPrompt[] = [
+  { label: "Should I apply?", text: "Should I apply for this?" },
+  { label: "What am I missing?", text: "What am I missing?" },
+  { label: "Find opportunities for me", text: "Show me opportunities I should apply for" },
+  { label: "What should I prepare?", text: "What should I prepare?" },
+];
+
+const OPPORTUNITY_PROMPTS: ChatPrompt[] = [
+  { label: "Should I apply?", text: "Should I apply for this?" },
+  { label: "What am I missing?", text: "What am I missing?" },
+  { label: "What should I prepare?", text: "What should I prepare?" },
+  { label: "Explain the requirements", text: "Tell me about this opportunity" },
+];
+
+const BATCH_PROMPT: ChatPrompt = {
+  label: "Which of these should I apply for?",
+  text: "Which of these should I apply for?",
+};
+
+const REPEAT_PATTERN = /repeat|say (that|it) again|again please|ድገም/i;
+const BATCH_PATTERN = /which (ones?|of these|of them)|these results|from my search/i;
+const PROFILE_ADVICE_PATTERN =
+  /improve my profile|what should i add|complete my profile|profile (tips|advice)/i;
+const CV_PATTERN = /\b(cv|resume|résumé)\b/i;
+
+type ProfileState =
+  | { status: "loading" }
+  | { status: "missing" }
+  | { status: "error" }
+  | { status: "ready"; missing: string[]; hasCv: boolean };
 
 export default function AssistantPage() {
   return (
     <Suspense
       fallback={
-        <StatusPanel variant="loading" title="Loading assistant">
-          Preparing text and quick actions. Voice is not connected yet.
+        <StatusPanel variant="loading" title="Loading Ask HULUM">
+          Preparing your conversation.
         </StatusPanel>
       }
     >
@@ -30,26 +87,38 @@ export default function AssistantPage() {
 
 function AssistantInner() {
   const search = useSearchParams();
+  const [userId] = useState(() => getUserId());
   const [text, setText] = useState("");
-  const [messages, setMessages] = useState<Array<{ role: "user" | "hulum"; text: string }>>([]);
+  const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [error, setError] = useState<string | null>(null);
-  const [pending, setPending] = useState(false);
+  const [pending, setPending] = useState<string | null>(null);
   const [lastFailed, setLastFailed] = useState<string | null>(null);
-  const [sessionOpportunityId, setSessionOpportunityId] = useState<string | undefined>();
-  const [sessionAnalysisId, setSessionAnalysisId] = useState<string | undefined>();
+  const [opportunityId, setOpportunityId] = useState<string | undefined>(
+    () => search.get("opportunityId") ?? readVoiceSession().opportunityId,
+  );
+  const [analysisId, setAnalysisId] = useState<string | undefined>(
+    () => search.get("analysisId") ?? readVoiceSession().analysisId,
+  );
+  const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
+  const [discover] = useState<DiscoverContext | null>(() =>
+    search.get("from") === "discover" ? readDiscoverContext() : null,
+  );
+  const [profile, setProfile] = useState<ProfileState>({ status: "loading" });
+  const [recent, setRecent] = useState<RecentQuestion[]>(() =>
+    userId ? readRecentQuestions(userId) : [],
+  );
   const [language, setLanguageState] = useState<LanguageCode>(getLanguage);
   const [voxideReady] = useState(() => hasVoxidePublicKey());
-  const requestInput = useRef<HTMLInputElement>(null);
-  const opportunityId = sessionOpportunityId ?? search.get("opportunityId") ?? undefined;
-  const analysisId = sessionAnalysisId ?? search.get("analysisId") ?? undefined;
+  const input = useRef<HTMLInputElement>(null);
+  const threadEnd = useRef<HTMLDivElement>(null);
   const needsProfile = Boolean(error?.toLowerCase().includes("profile"));
   const copy = useMemo(() => assistantCopy(language), [language]);
-  const quickActions = useMemo(() => assistantQuickActions(language), [language]);
+  const quickPrompts = useMemo<ChatPrompt[]>(() => {
+    if (language === "en") return opportunity ? OPPORTUNITY_PROMPTS : DEFAULT_PROMPTS;
+    return assistantQuickActions(language).map((action) => ({ label: action, text: action }));
+  }, [language, opportunity]);
 
   useEffect(() => {
-    const stored = readVoiceSession();
-    if (stored.opportunityId) setSessionOpportunityId(stored.opportunityId);
-    if (stored.analysisId) setSessionAnalysisId(stored.analysisId);
     const onVoiceReply = (event: Event) => {
       const detail = (event as CustomEvent<{ userText?: string; reply?: string }>).detail;
       const reply = detail?.reply?.trim() ?? "";
@@ -57,8 +126,8 @@ function AssistantInner() {
       const userText = detail.userText?.trim() ?? "";
       setMessages((current) => [
         ...current,
-        ...(userText === "" ? [] : [{ role: "user" as const, text: userText }]),
-        { role: "hulum" as const, text: reply },
+        ...(userText === "" ? [] : [{ id: messageId(), role: "user" as const, text: userText }]),
+        { id: messageId(), role: "hulum" as const, text: reply },
       ]);
     };
     window.addEventListener(HULUM_VOICE_REPLY_EVENT, onVoiceReply);
@@ -66,37 +135,145 @@ function AssistantInner() {
   }, []);
 
   useEffect(() => {
-    const userId = getUserId();
-    if (!userId) return;
+    if (!userId) {
+      setProfile({ status: "missing" });
+      return;
+    }
     let cancelled = false;
-    void api<ProfileView>(`/api/profile/${userId}`)
-      .then(() => {
-        if (!cancelled) chooseLanguage(getLanguage(), false);
+    void Promise.all([
+      api<ProfileView>(`/api/profile/${userId}`),
+      api<ProfileDocument[]>(`/api/profile/${userId}/documents`).catch(
+        () => [] as ProfileDocument[],
+      ),
+    ])
+      .then(([view, documents]) => {
+        if (cancelled) return;
+        setProfile({
+          status: "ready",
+          missing: view.completeness.missing,
+          hasCv: documents.some((doc) => CV_PATTERN.test(doc.label)),
+        });
       })
-      .catch(() => {
-        // Keep the stored or default language.
+      .catch((err: unknown) => {
+        if (!cancelled) setProfile({ status: isNotFound(err) ? "missing" : "error" });
       });
     return () => {
       cancelled = true;
     };
-  }, []);
+  }, [userId]);
 
-  function chooseLanguage(next: LanguageCode, _persistProfile: boolean) {
+  useEffect(() => {
+    if (!opportunityId) {
+      setOpportunity(null);
+      return;
+    }
+    let cancelled = false;
+    void api<Opportunity>(`/api/opportunities/${opportunityId}`)
+      .then((item) => {
+        if (!cancelled) setOpportunity(item);
+      })
+      .catch(() => {
+        if (!cancelled) setOpportunity(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [opportunityId]);
+
+  useEffect(() => {
+    if (messages.length > 0)
+      threadEnd.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+  }, [messages.length, pending]);
+
+  function chooseLanguage(next: LanguageCode) {
     setLanguageState(next);
     setLanguage(next);
   }
 
-  const contextLabel = useMemo(() => {
-    const voiceNote = voxideReady
-      ? " Voxide widget tools call the same Postgres actions as text."
-      : " Text actions call the Postgres API. Set NEXT_PUBLIC_VOXIDE_KEY (vox_pub_…) for the widget.";
-    if (analysisId) return `This conversation is attached to your latest analysis.${voiceNote}`;
-    if (opportunityId) return `This conversation is attached to a selected opportunity.${voiceNote}`;
-    return `No analysis selected yet. You can still browse stored opportunities.${voiceNote}`;
-  }, [analysisId, opportunityId, voxideReady]);
+  function append(...next: ChatMessage[]) {
+    setMessages((current) => [...current, ...next]);
+  }
 
-  async function send(value: string, echo = true) {
-    const userId = getUserId();
+  function clearOpportunityContext() {
+    setOpportunityId(undefined);
+    setAnalysisId(undefined);
+    clearVoiceSession();
+  }
+
+  function profileAdvice(): HulumMessage {
+    if (profile.status !== "ready") {
+      return {
+        id: messageId(),
+        role: "hulum",
+        text: "You don't have a HULUM profile yet. Create one so HULUM can compare opportunities with your background.",
+        links: [{ label: "Create profile", href: "/profile" }],
+      };
+    }
+    const fields = profile.missing.map((field) => PROFILE_FIELD_LABELS[field] ?? field);
+    if (fields.length === 0 && profile.hasCv) {
+      return {
+        id: messageId(),
+        role: "hulum",
+        text: "Your profile has every field HULUM matches on, and a CV. Keep it current as your education and experience change.",
+        links: [{ label: "Edit profile", href: "/profile" }],
+      };
+    }
+    const gaps = [...fields, ...(profile.hasCv ? [] : ["a CV"])];
+    return {
+      id: messageId(),
+      role: "hulum",
+      text: `Your profile is missing ${gaps.join(", ")}. Adding ${gaps.length === 1 ? "it" : "them"} helps HULUM understand which opportunities fit you — anything left out is treated as uncertain, never guessed.`,
+      links: [
+        { label: "Complete profile", href: "/profile" },
+        ...(profile.hasCv ? [] : [{ label: "Upload CV", href: "/profile" }]),
+      ],
+    };
+  }
+
+  async function analyzeDiscoverResults(
+    context: DiscoverContext,
+    currentUser: string,
+  ): Promise<HulumMessage> {
+    const rows: BatchCard["rows"] = [];
+    const failed: string[] = [];
+    for (const item of context.items) {
+      setPending(`Analyzing ${rows.length + failed.length + 1} of ${context.items.length}…`);
+      try {
+        const result = await api<Analysis>(`/api/opportunities/${item.id}/analyze`, {
+          method: "POST",
+          body: JSON.stringify({ userId: currentUser }),
+        });
+        rows.push({
+          opportunityId: item.id,
+          analysisId: result.id,
+          title: item.title,
+          decision: result.decision,
+        });
+      } catch (err) {
+        if (
+          rows.length === 0 &&
+          isNotFound(err) &&
+          userFacingError(err).toLowerCase().includes("profile")
+        )
+          throw err;
+        failed.push(item.title);
+      }
+    }
+    const count = (decision: string) => rows.filter((row) => row.decision === decision).length;
+    const partial =
+      context.total > context.items.length
+        ? ` I checked the first ${context.items.length} of ${context.total} results.`
+        : "";
+    return {
+      id: messageId(),
+      role: "hulum",
+      text: `I compared ${rows.length} ${rows.length === 1 ? "opportunity" : "opportunities"} from your search with your profile: ${count("APPLY")} APPLY, ${count("MAYBE")} MAYBE, ${count("SKIP")} SKIP.${partial}`,
+      card: { kind: "batch", rows, failed },
+    };
+  }
+
+  async function send(value: string, options: { echo?: boolean; label?: string } = {}) {
+    const { echo = true, label } = options;
     if (!userId) {
       setError("Create a profile first so HULUM knows who you are.");
       setLastFailed(value);
@@ -104,27 +281,50 @@ function AssistantInner() {
     }
     setError(null);
     setLastFailed(null);
-    if (echo) {
-      setMessages((current) => [...current, { role: "user", text: value }]);
-    }
+    if (echo) append({ id: messageId(), role: "user", text: label ?? value });
 
-    // Last assistant reply only — never stores user utterances beyond the on-screen thread.
-    if (/repeat|say (that|it) again|again please|ድገም/i.test(value.trim())) {
+    // Repeats only the on-screen reply; utterances are never stored server-side.
+    if (REPEAT_PATTERN.test(value.trim())) {
       setMessages((current) => {
         const last = [...current].reverse().find((message) => message.role === "hulum");
-        const reply =
-          last === undefined
-            ? "Nothing to repeat yet. Ask a HULUM question first."
-            : last.text;
-        return [...current, { role: "hulum", text: reply }];
+        return [
+          ...current,
+          last
+            ? { ...last, id: messageId() }
+            : {
+                id: messageId(),
+                role: "hulum",
+                text: "Nothing to repeat yet. Ask a HULUM question first.",
+              },
+        ];
       });
       return;
     }
 
-    setPending(true);
+    if (echo) {
+      setRecent(
+        rememberQuestion(userId, {
+          text: label ?? value,
+          ...(opportunityId ? { opportunityId } : {}),
+          ...(analysisId ? { analysisId } : {}),
+        }),
+      );
+    }
+
+    if (PROFILE_ADVICE_PATTERN.test(value)) {
+      append(profileAdvice());
+      return;
+    }
+
+    const batchContext = BATCH_PATTERN.test(value) ? (discover ?? readDiscoverContext()) : null;
+    setPending("HULUM is checking…");
     try {
+      if (batchContext && batchContext.items.length > 0) {
+        append(await analyzeDiscoverResults(batchContext, userId));
+        return;
+      }
       const asked = detectAskedLanguage(value, getLanguage());
-      chooseLanguage(asked, false);
+      chooseLanguage(asked);
       const response = await runTextAction({
         userId,
         text: value,
@@ -132,19 +332,40 @@ function AssistantInner() {
         analysisId,
         language: asked,
       });
-      if (response.opportunityId) setSessionOpportunityId(response.opportunityId);
-      if (response.analysisId) setSessionAnalysisId(response.analysisId);
-      writeVoiceSession({
-        opportunityId: response.opportunityId,
-        analysisId: response.analysisId,
-      });
-      setMessages((current) => [...current, { role: "hulum", text: response.reply }]);
+      if (response.opportunityId) setOpportunityId(response.opportunityId);
+      if (response.analysisId) setAnalysisId(response.analysisId);
+      writeVoiceSession({ opportunityId: response.opportunityId, analysisId: response.analysisId });
+      append(hulumMessageFrom(response, asked));
     } catch (err) {
       setLastFailed(value);
       setError(userFacingError(err));
     } finally {
-      setPending(false);
+      setPending(null);
     }
+  }
+
+  function ask(prompt: ChatPrompt) {
+    if (pending) return;
+    void send(prompt.text, { label: prompt.label === prompt.text ? undefined : prompt.label });
+  }
+
+  function showFaq(entry: FaqEntry) {
+    append(
+      { id: messageId(), role: "user", text: entry.question },
+      {
+        id: messageId(),
+        role: "hulum",
+        text: entry.answer,
+        ...(entry.links ? { links: entry.links } : {}),
+      },
+    );
+  }
+
+  function askAgain(item: RecentQuestion) {
+    if (pending) return;
+    if (item.opportunityId) setOpportunityId(item.opportunityId);
+    if (item.analysisId) setAnalysisId(item.analysisId);
+    void send(item.text);
   }
 
   function submit(event: FormEvent) {
@@ -155,122 +376,212 @@ function AssistantInner() {
     void send(value);
   }
 
+  const completion =
+    profile.status === "ready"
+      ? Math.round(((PROFILE_FIELD_COUNT - profile.missing.length) / PROFILE_FIELD_COUNT) * 100)
+      : null;
+  const emptyPrompts =
+    discover && discover.items.length > 0 ? [BATCH_PROMPT, ...quickPrompts] : quickPrompts;
+
   return (
-    <section className="max-w-2xl" lang={language}>
-      <h1 className="font-display text-4xl">{copy.title}</h1>
-      <p className="mt-3 text-muted">{copy.intro}</p>
-      <div className="mt-6">
-        <Notice>{contextLabel}</Notice>
-      </div>
-      <fieldset className="mt-6 border-0 p-0">
-        <legend className="text-sm font-medium">{copy.languageLegend}</legend>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {LANGUAGE_OPTIONS.map((option) => (
-            <label key={option.code} className="inline-flex min-h-11 items-center gap-2 border border-line px-3 py-2 text-sm">
-              <input
-                type="radio"
-                name="assistant-language"
-                value={option.code}
-                checked={language === option.code}
-                onChange={() => chooseLanguage(option.code, true)}
-              />
-              {option.label}
-            </label>
-          ))}
+    <section lang={language}>
+      <header className="flex flex-wrap items-end justify-between gap-4 border-b border-line pb-6">
+        <div>
+          <h1 className="font-display text-4xl">{copy.title}</h1>
+          <p className="mt-2 text-muted">Your opportunity decision assistant.</p>
         </div>
-        <p className="mt-2 text-sm text-muted">{copy.languageHint}</p>
-      </fieldset>
-      {!voxideReady ? (
-        <div id="voice-unavailable" className="mt-6">
-          <StatusPanel
-            variant="empty"
-            title={copy.micMissingTitle}
-            primary={{ label: copy.typeRequest, onClick: () => requestInput.current?.focus() }}
-            secondary={{ label: copy.browseOpportunities, href: "/opportunities" }}
+        <label className="flex items-center gap-2 text-sm text-muted">
+          Reply in
+          <select
+            value={language}
+            onChange={(event) => chooseLanguage(event.target.value as LanguageCode)}
+            className="min-h-10 border border-line bg-surface px-2 text-ink"
           >
-            {copy.micMissingBody}
-          </StatusPanel>
-        </div>
-      ) : (
-        <div className="mt-6">
-          <StatusPanel variant="empty" title={copy.voxideReadyTitle}>
-            {copy.voxideReadyBody}
-          </StatusPanel>
-        </div>
-      )}
-      {error ? (
-        <StatusPanel
-          variant="error"
-          title={needsProfile ? "Profile needed" : "We couldn't complete that request"}
-          primary={
-            needsProfile
-              ? { label: "Open profile", href: "/profile" }
-              : lastFailed
-                ? { label: "Try again", onClick: () => void send(lastFailed, false) }
-                : undefined
-          }
-        >
-          {error}
-        </StatusPanel>
-      ) : null}
-      <fieldset className="mt-6 border-0 p-0">
-        <legend className="text-sm font-medium">{copy.quickLegend}</legend>
-        <div className="mt-2 flex flex-wrap gap-2">
-          {quickActions.map((action) => (
-            <button
-              key={action}
-              type="button"
-              disabled={pending}
-              onClick={() => void send(action)}
-              lang={/[\u1200-\u137F]/.test(action) ? "am" : undefined}
-              className="min-h-11 border border-line px-3 py-2 text-sm disabled:opacity-60"
-            >
-              {action}
-            </button>
-          ))}
-        </div>
-      </fieldset>
-      <div className="mt-6 min-h-48 space-y-3" aria-live="polite" aria-relevant="additions">
-        {messages.length === 0 && !pending && !error ? (
-          <StatusPanel variant="empty" title="No question yet" primary={{ label: copy.showInternships, onClick: () => void send("Show me internships") }}>
-            Type a request or use a quick action.
-          </StatusPanel>
-        ) : null}
-        {messages.map((message, index) => (
-          <p key={`${message.role}-${index}`} className={message.role === "hulum" ? "border border-line bg-surface p-4" : "text-muted"}>
-            <span className="block text-xs uppercase tracking-wide">{message.role === "hulum" ? "HULUM" : "You"}</span>
-            {message.text}
+            {LANGUAGE_OPTIONS.map((option) => (
+              <option key={option.code} value={option.code}>
+                {option.label}
+              </option>
+            ))}
+          </select>
+        </label>
+      </header>
+
+      <div className="mt-4 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+        {profile.status === "ready" ? (
+          <p className="text-muted">
+            <span
+              aria-hidden
+              className="mr-2 inline-block h-1.5 w-1.5 rounded-full bg-apply align-middle"
+            />
+            Using your HULUM profile · {completion}% complete{" "}
+            <Link href="/profile" className="text-ink underline underline-offset-4">
+              View profile
+            </Link>
           </p>
-        ))}
-        {pending ? (
-          <StatusPanel variant="loading" title="HULUM is responding">
-            Running the same product actions as the screens, not a free-form chatbot.
-          </StatusPanel>
+        ) : null}
+        {profile.status === "missing" ? (
+          <p className="text-muted">
+            No profile yet — answers can't be personal.{" "}
+            <Link href="/profile" className="text-ink underline underline-offset-4">
+              Create profile
+            </Link>
+          </p>
+        ) : null}
+        {profile.status === "error" ? (
+          <p className="text-muted">Couldn't load your profile right now.</p>
         ) : null}
       </div>
-      {analysisId ? (
-        <p className="mt-4 text-sm">
-          <Link href={`/analysis/${analysisId}`} className="underline">
-            Open the APPLY / MAYBE / SKIP result
-          </Link>
-        </p>
+
+      {opportunity ? (
+        <div className="mt-4 flex flex-wrap items-center justify-between gap-3 border-l-2 border-ink bg-surface-muted px-4 py-3 text-sm">
+          <p>
+            <span className="text-muted">Talking about </span>
+            <Link
+              href={`/opportunities/${opportunity.id}${analysisId ? `?analysisId=${analysisId}` : ""}`}
+              className="underline underline-offset-4"
+            >
+              {opportunity.title}
+            </Link>
+          </p>
+          <button
+            type="button"
+            onClick={clearOpportunityContext}
+            className="min-h-9 text-muted underline underline-offset-4 hover:text-ink"
+          >
+            Clear context
+          </button>
+        </div>
       ) : null}
-      <form onSubmit={submit} className="mt-6 flex flex-wrap gap-2">
-        <label className="min-w-[12rem] flex-1 text-sm">
-          Your request
-          <input
-            ref={requestInput}
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder={copy.typePlaceholder}
-            className="mt-1 min-h-11 w-full border border-line bg-surface px-3 py-3"
-            disabled={pending}
-          />
-        </label>
-        <button disabled={pending} className="mt-auto min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
-          {pending ? "…" : copy.send}
-        </button>
-      </form>
+
+      <div className="mt-8 grid gap-12 lg:grid-cols-[minmax(0,1fr)_16rem]">
+        <div className="min-w-0">
+          {messages.length === 0 ? (
+            <div className="py-6">
+              <p className="font-display text-2xl leading-snug">
+                {opportunity
+                  ? `Ask me anything about ${opportunity.title}.`
+                  : discover
+                    ? `You're looking at ${discover.total} ${discover.total === 1 ? "result" : "results"}${discover.query ? ` for “${discover.query}”` : ""}. Ask which ones are worth applying for.`
+                    : "Ask me anything about opportunities, eligibility, or what you should prepare."}
+              </p>
+              <div className="mt-6 flex flex-wrap gap-2">
+                {emptyPrompts.map((prompt) => (
+                  <button
+                    key={prompt.label}
+                    type="button"
+                    disabled={Boolean(pending)}
+                    onClick={() => ask(prompt)}
+                    lang={/[\u1200-\u137F]/.test(prompt.label) ? "am" : undefined}
+                    className="min-h-11 border border-line-strong px-4 text-sm transition-colors hover:border-ink disabled:opacity-60"
+                  >
+                    {prompt.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          ) : (
+            <ol className="divide-y divide-line" aria-live="polite" aria-relevant="additions">
+              {messages.map((message) => (
+                <ChatMessageView
+                  key={message.id}
+                  message={message}
+                  onPrompt={ask}
+                  disabled={Boolean(pending)}
+                />
+              ))}
+            </ol>
+          )}
+
+          {pending ? (
+            <p className="flex items-center gap-2 py-4 text-sm text-muted" role="status">
+              <span
+                aria-hidden
+                className="inline-block h-1.5 w-1.5 animate-pulse rounded-full bg-ink"
+              />
+              {pending}
+            </p>
+          ) : null}
+
+          {error ? (
+            <div className="py-4">
+              <StatusPanel
+                variant="error"
+                title={needsProfile ? "Profile needed" : "We couldn't complete that request"}
+                primary={
+                  needsProfile
+                    ? { label: "Open profile", href: "/profile" }
+                    : lastFailed
+                      ? {
+                          label: "Try again",
+                          onClick: () => void send(lastFailed, { echo: false }),
+                        }
+                      : undefined
+                }
+              >
+                {error}
+              </StatusPanel>
+            </div>
+          ) : null}
+
+          <div ref={threadEnd} />
+
+          <form
+            onSubmit={submit}
+            className="sticky bottom-0 mt-4 border-t border-line bg-paper pb-4 pt-4"
+          >
+            {messages.length > 0 ? (
+              <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
+                {quickPrompts.map((prompt) => (
+                  <button
+                    key={prompt.label}
+                    type="button"
+                    disabled={Boolean(pending)}
+                    onClick={() => ask(prompt)}
+                    lang={/[\u1200-\u137F]/.test(prompt.label) ? "am" : undefined}
+                    className="min-h-9 shrink-0 border border-line px-3 text-sm text-muted transition-colors hover:border-ink hover:text-ink disabled:opacity-60"
+                  >
+                    {prompt.label}
+                  </button>
+                ))}
+              </div>
+            ) : null}
+            <div className="flex gap-2">
+              <label className="sr-only" htmlFor="ask-input">
+                Ask HULUM
+              </label>
+              <input
+                id="ask-input"
+                ref={input}
+                value={text}
+                onChange={(event) => setText(event.target.value)}
+                placeholder={
+                  language === "en" ? "Ask HULUM about an opportunity…" : copy.typePlaceholder
+                }
+                className="min-h-12 min-w-0 flex-1 border border-line-strong bg-surface px-4 focus:border-ink"
+                disabled={Boolean(pending)}
+                autoComplete="off"
+              />
+              <button
+                disabled={Boolean(pending) || text.trim() === ""}
+                className="min-h-12 bg-ink px-5 text-paper disabled:opacity-60"
+              >
+                {copy.send}
+              </button>
+            </div>
+            <p className="mt-2 text-xs text-muted">
+              {voxideReady
+                ? `${copy.voxideReadyTitle}. Voice answers use the same HULUM actions as text.`
+                : `${copy.micMissingTitle} — type or use a quick prompt.`}{" "}
+              HULUM explains decisions; it never submits applications for you.
+            </p>
+          </form>
+        </div>
+
+        <aside className="space-y-10 lg:border-l lg:border-line lg:pl-8">
+          <RecentQuestions items={recent} onSelect={askAgain} disabled={Boolean(pending)} />
+          <FrequentlyAsked onSelect={showFaq} disabled={Boolean(pending)} />
+        </aside>
+      </div>
     </section>
   );
 }

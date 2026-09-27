@@ -1,20 +1,27 @@
 import {
   detectAskedLanguage,
   type Analysis,
+  type AnalysisDetail,
   type LanguageCode,
   type Opportunity,
   type OpportunityType,
   type ProfileView,
   type ReadinessItem,
   type VoiceActionResponse,
+  type VoiceIntent,
 } from "@hulum/shared";
 import { api } from "./api";
 import { getLanguage } from "./storage";
 
+/** Structured fields are passed through from the server so the chat can render them; never computed here. */
 export type TextActionResult = {
   reply: string;
   opportunityId?: string;
   analysisId?: string;
+  intent?: VoiceIntent;
+  analysis?: Analysis | AnalysisDetail;
+  opportunity?: Opportunity;
+  opportunities?: Opportunity[];
 };
 
 const TYPE_WORDS: Array<[RegExp, OpportunityType]> = [
@@ -27,7 +34,7 @@ const TYPE_WORDS: Array<[RegExp, OpportunityType]> = [
   [/\bcompetition|dorgommii/i, "competition"],
 ];
 
-const PROFILE_FIELD_LABELS: Record<string, string> = {
+export const PROFILE_FIELD_LABELS: Record<string, string> = {
   educationLevel: "education level",
   fieldOfStudy: "field of study",
   graduationYear: "graduation year",
@@ -129,6 +136,10 @@ export async function runTextAction(input: {
             voice.opportunities?.[0]?.id ??
             input.opportunityId,
           analysisId: voice.analysis?.id ?? input.analysisId,
+          intent: voice.intent,
+          ...(voice.analysis === undefined ? {} : { analysis: voice.analysis }),
+          ...(voice.opportunity === undefined ? {} : { opportunity: voice.opportunity }),
+          ...(voice.opportunities === undefined ? {} : { opportunities: voice.opportunities }),
         };
       }
     } catch {
@@ -166,6 +177,7 @@ export async function runTextAction(input: {
       reply: `${analysis.decision}. ${analysis.summary} Next: ${analysis.nextAction}`,
       analysisId: analysis.id,
       opportunityId: analysis.opportunityId,
+      analysis,
     };
   }
 

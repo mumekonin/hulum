@@ -32,6 +32,14 @@ export function writeVoiceSession(next: VoiceSessionIds): void {
   }
 }
 
+export function clearVoiceSession(): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  window.sessionStorage.removeItem(OPPORTUNITY_KEY);
+  window.sessionStorage.removeItem(ANALYSIS_KEY);
+}
+
 export function publishVoiceReply(userText: string, reply: string): void {
   if (typeof window === "undefined") {
     return;

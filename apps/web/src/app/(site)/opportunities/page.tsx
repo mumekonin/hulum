@@ -19,6 +19,7 @@ import {
   type DiscoverFilters,
   type ExperienceFilter,
 } from "@/lib/discover";
+import { DISCOVER_CONTEXT_LIMIT, writeDiscoverContext } from "@/lib/discover-context";
 
 const EXAMPLE_QUERIES = [
   "AI scholarships for Ethiopian students",
@@ -97,6 +98,15 @@ export default function DiscoverPage() {
 
   const result = useMemo(() => discover(all, query, filters), [all, query, filters]);
   const options = useMemo(() => filterOptions(all), [all]);
+
+  useEffect(() => {
+    if (status !== "ready") return;
+    writeDiscoverContext({
+      query,
+      items: result.items.slice(0, DISCOVER_CONTEXT_LIMIT).map(({ id, title }) => ({ id, title })),
+      total: result.items.length,
+    });
+  }, [status, query, result]);
   const filtersActive =
     filters.deadline !== "any" ||
     filters.location !== "" ||
@@ -347,6 +357,14 @@ export default function DiscoverPage() {
                 No listing mentions {result.ignoredTerms.map((term) => `“${term}”`).join(", ")}, so{" "}
                 {result.ignoredTerms.length === 1 ? "it was" : "they were"} ignored.
               </p>
+            ) : null}
+            {count > 0 ? (
+              <Link
+                href="/assistant?from=discover"
+                className="text-sm text-ink underline decoration-line-strong underline-offset-4 hover:decoration-ink"
+              >
+                Which of these should I apply for?
+              </Link>
             ) : null}
           </div>
 
