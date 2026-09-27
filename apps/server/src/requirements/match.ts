@@ -5,6 +5,7 @@ import {
   type Profile,
   type RequirementMatch,
 } from "@hulum/shared";
+import { documentLabelCovers } from "../profiles/documentExtract.js";
 import type { Clock } from "../services/common/clock.js";
 
 function normalize(value: string): string {
@@ -193,6 +194,21 @@ function fieldStatus(
     requirement: "field",
   });
   if (required.length === 0 || base.status !== RequirementStatus.NOT_MET) {
+    if (
+      required.length > 0 &&
+      base.status === RequirementStatus.UNCERTAIN &&
+      !hasText(profile.fieldOfStudy)
+    ) {
+      const documentText = profile.documentText ?? "";
+      if (documentText.trim() !== "" && fieldOverlaps(documentText, required)) {
+        return {
+          status: RequirementStatus.UNCERTAIN,
+          evidence: "uploaded document text mentions listed field terms",
+          reason:
+            "Uploaded document text mentions field terms, but HULUM never marks field MET from OCR alone. Confirm the official field requirement.",
+        };
+      }
+    }
     return base;
   }
   const field = profile.fieldOfStudy ?? "";
@@ -230,10 +246,61 @@ function experienceStatus(
         "Years of experience conflict with the written experience description. Confirm before treating this as met.",
     };
   }
-  return unstructuredStatus(required, !hasText(profile.experience), {
+  if (hasText(experience)) {
+    return unstructuredStatus(required, false, {
+      name: "experience",
+      whyUncertain: "The profile has no experience text, so experience requirements cannot be confirmed.",
+    });
+  }
+  const documentText = profile.documentText ?? "";
+  if (documentText.trim() !== "" && fieldOverlaps(documentText, required)) {
+    return {
+      status: RequirementStatus.UNCERTAIN,
+      evidence: "uploaded document text mentions listed experience terms",
+      reason:
+        "Uploaded document text mentions experience terms, but HULUM never marks experience MET from OCR alone. Confirm on the official source.",
+    };
+  }
+  return unstructuredStatus(required, true, {
     name: "experience",
     whyUncertain: "The profile has no experience text, so experience requirements cannot be confirmed.",
   });
+}
+
+function documentsStatus(
+  profile: Profile,
+  required: string[],
+): Pick<RequirementMatch, "status" | "evidence" | "reason"> {
+  if (required.length === 0) {
+    return {
+      status: RequirementStatus.NOT_APPLICABLE,
+      evidence: null,
+      reason: "The opportunity does not list document requirements.",
+    };
+  }
+  const held = profile.documentsHeld ?? [];
+  const documentText = (profile.documentText ?? "").trim();
+  if (held.length === 0 && documentText === "") {
+    return {
+      status: RequirementStatus.UNCERTAIN,
+      evidence: null,
+      reason: "The profile has no document facts, so document requirements cannot be confirmed.",
+    };
+  }
+  const missing = required.filter((doc) => !documentLabelCovers(held, doc));
+  const textNote = documentText === "" ? "" : " Readable text is on file for uploaded documents.";
+  if (missing.length === 0) {
+    return {
+      status: RequirementStatus.MET,
+      evidence: `Documents held: ${held.join(", ") || "none"}.${textNote}`,
+      reason: "Required documents are already listed from your uploads.",
+    };
+  }
+  return {
+    status: RequirementStatus.UNCERTAIN,
+    evidence: `Documents held: ${held.join(", ") || "none"}.${textNote}`,
+    reason: `Still needed: ${missing.join(", ")}. Documents can usually be prepared before applying.`,
+  };
 }
 
 /**
@@ -254,10 +321,7 @@ export function matchRequirements(profile: Profile, opportunity: Opportunity, cl
   const field = fieldStatus(profile, fieldRequirements);
   const language = languageStatus(profile, languageRequirements);
   const experience = experienceStatus(profile, experienceRequirements);
-  const documents = unstructuredStatus(opportunity.documentRequirements, true, {
-    name: "document",
-    whyUncertain: "The profile has no document facts, so document requirements cannot be confirmed.",
-  });
+  const documents = documentsStatus(profile, opportunity.documentRequirements);
   const other = unstructuredStatus(opportunity.otherRequirements, true, {
     name: "other",
     whyUncertain: "Other requirements cannot be confirmed from structured profile facts.",

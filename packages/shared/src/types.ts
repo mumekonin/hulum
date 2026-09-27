@@ -56,6 +56,11 @@ export type Profile = {
   yearsExperience?: number;
   interests: string[];
   documentsHeld?: string[];
+  /**
+   * Concatenated readable text from uploaded profile documents (analyze-time only).
+   * Evidence for matching — never persisted as a profile field rewrite.
+   */
+  documentText?: string;
   preferredLanguage?: LanguageCode;
   createdAt: string;
   updatedAt: string;

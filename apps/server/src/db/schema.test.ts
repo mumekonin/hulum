@@ -56,6 +56,20 @@ describe("009_profile_documents.sql", () => {
   });
 });
 
+describe("010_profile_document_text.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "010_profile_document_text.sql"), "utf8");
+
+  it("caches extracted document text for decide() evidence", () => {
+    expect(sql).toContain("extracted_text");
+    expect(sql).toContain("extracted_at");
+    expect(sql).toContain("extract_status");
+    expect(sql).toContain("pending");
+    expect(sql).toContain("ready");
+    expect(sql).toContain("empty");
+    expect(sql).toContain("failed");
+  });
+});
+
 describe("001_init.sql", () => {
   const sql = fs.readFileSync(path.join(migrationsDir(), "001_init.sql"), "utf8");
 

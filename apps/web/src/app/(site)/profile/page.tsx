@@ -596,7 +596,9 @@ export default function ProfilePage() {
             <h2 className="font-display text-2xl">Documents you already have</h2>
             <p className="text-sm text-muted">
               Upload a photo or PDF of a document you hold — CV, transcript, passport. The name you
-              give it is what HULUM compares when an opportunity lists required documents.
+              give it is what HULUM compares for required documents. Readable text from the file
+              supports experience and field evidence during Analyze; it does not rewrite your saved
+              profile fields, and OCR alone never marks a requirement MET.
             </p>
             {documentError ? (
               <StatusPanel variant="error" title="We couldn't store that document">

@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-27 — Analyze uses profile facts and uploaded document content
+
+### Added
+- Uploaded profile documents extract readable text (PDF locally; images via Groq vision when configured) and cache it for Analyze.
+- Live `decide()` matches required documents from upload labels (CV ↔ resume synonyms) and uses document text as experience/field evidence only.
+
+### Why
+Document photos were stored but ignored by the postgres matcher, so Analyze could not see documents the user already held.
+
 ## 2026-09-26 — Voice does not loop one scholarship question
 
 ### Fixed

@@ -23,7 +23,7 @@ npm run dev
 | Catalog | Investigator worker (evidenced pages). **No** baked `db:seed` opportunity cards. |
 | Auth | Email/password JWT (+ optional Google). Password-reset email is not wired. |
 
-Optional: `GROQ_API_KEY` for explain / extract / screenshot vision; `NEXT_PUBLIC_VOXIDE_KEY` (`vox_pub_…`) for the Ask HULUM widget. APPLY / MAYBE / SKIP still come from `decide()`.
+Optional: `GROQ_API_KEY` for explain / extract / screenshot vision / profile-document image text; `NEXT_PUBLIC_VOXIDE_KEY` (`vox_pub_…`) for the Ask HULUM widget. APPLY / MAYBE / SKIP still come from `decide()`. PDF uploads extract text without Groq.
 
 ## Why not EthioDeploy yet
 
@@ -37,7 +37,7 @@ These Phase 23 rows mean **configuration exists in code/docs**, not that a publi
 
 1. Provision Postgres (local Docker or team Supabase).
 2. Set `DATABASE_URL` in the server environment (never commit it).
-3. Run `npm run db:migrate --workspace @hulum/server` (applies `001`–`009`: init, investigator, audit, RLS, worker, close seed, password hash, Google sub, profile documents).
+3. Run `npm run db:migrate --workspace @hulum/server` (applies `001`–`010`: init, investigator, audit, RLS, worker, close seed, password hash, Google sub, profile documents, document text cache).
 4. Optional: `npm run db:smoke` (transactional insert/rollback).
 5. Do **not** rely on `db:seed` for the live catalog — migration `006` closed curated seed inserts. The investigator fills opportunities from evidenced pages when Groq + worker env are set.
 

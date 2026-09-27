@@ -43,7 +43,10 @@ const service: ProfileService = {
 };
 
 function createMemoryDocuments(): DocumentStore {
-  const rows = new Map<string, { meta: ProfileDocument; bytes: Buffer; mimeType: string }>();
+  const rows = new Map<
+    string,
+    { meta: ProfileDocument; bytes: Buffer; mimeType: string; text: string | null; status: string }
+  >();
   return {
     async list(ownerId) {
       return [...rows.values()]
@@ -53,6 +56,14 @@ function createMemoryDocuments(): DocumentStore {
     async labels(ownerId) {
       return [...new Set((await this.list(ownerId)).map((row) => row.label))];
     },
+    async texts(ownerId) {
+      return [...rows.values()]
+        .filter((row) => row.meta.userId === ownerId && row.status === "ready" && row.text)
+        .map((row) => ({ label: row.meta.label, text: row.text as string }));
+    },
+    async ensureExtracted() {
+      // Memory fixture has no extract pipeline.
+    },
     async create(input) {
       const meta: ProfileDocument = {
         id: "33333333-3333-4333-8333-333333333333",
@@ -61,7 +72,7 @@ function createMemoryDocuments(): DocumentStore {
         mimeType: input.mimeType,
         createdAt: "2026-09-25T00:00:00.000Z",
       };
-      rows.set(meta.id, { meta, bytes: input.bytes, mimeType: input.mimeType });
+      rows.set(meta.id, { meta, bytes: input.bytes, mimeType: input.mimeType, text: null, status: "empty" });
       return meta;
     },
     async getFile(ownerId, documentId) {

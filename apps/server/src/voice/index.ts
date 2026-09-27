@@ -28,6 +28,8 @@ import { getPool } from "../db/pool.js";
 import { HttpError } from "../http/errors.js";
 import { isUuid } from "../http/ids.js";
 import { assertRequestSession } from "../security/session.js";
+import { profileForDecision } from "../profiles/documentContext.js";
+import { createPgDocumentStore } from "../profiles/documents.js";
 import { createOpportunityService, type OpportunityService } from "../opportunities/service.js";
 import { createPgOpportunityStore } from "../opportunities/store.js";
 import { timeOps } from "../ops/metrics.js";
@@ -199,8 +201,9 @@ export function createVoiceService(deps: {
         if (profileView === undefined) {
           throw new HttpError(404, "PROFILE_NOT_FOUND", "Create a profile before asking HULUM to analyze.");
         }
+        const profile = await profileForDecision(profileView.profile, createPgDocumentStore());
         const filtered = opportunities.filter(
-          (item) => decide(profileView.profile, item, clock).decision === decision,
+          (item) => decide(profile, item, clock).decision === decision,
         );
         return {
           intent: intent.intent,
@@ -401,11 +404,13 @@ function defaultVoiceService(): VoiceService {
   const chat = optionalChat();
   const profiles = createProfileService(createPgProfileStore());
   const opportunities = createOpportunityService(createPgOpportunityStore(), systemClock);
+  const documents = createPgDocumentStore();
   const analyses = createAnalysisService({
     profiles,
     opportunities,
     store: createPgAnalysisStore(),
     clock: systemClock,
+    documents,
     ...(chat === undefined ? {} : { chat }),
   });
   return createVoiceService({

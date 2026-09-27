@@ -2,6 +2,12 @@ import type { ProfileDocument } from "@hulum/shared";
 import { z } from "zod";
 import { getPool } from "../db/pool.js";
 import { HttpError } from "../http/errors.js";
+import {
+  extractDocumentText,
+  formatDocumentTextBag,
+  type DocumentTextRow,
+  type ExtractStatus,
+} from "./documentExtract.js";
 
 export const DOCUMENT_MIME_TYPES = ["image/jpeg", "image/png", "image/webp", "application/pdf"] as const;
 export const MAX_DOCUMENTS_PER_USER = 8;
@@ -14,11 +20,16 @@ export type ProfileDocumentRow = {
   mime_type: string;
   bytes: Buffer;
   created_at: Date | string;
+  extracted_text?: string | null;
+  extracted_at?: Date | string | null;
+  extract_status?: ExtractStatus;
 };
 
 export type DocumentStore = {
   list(userId: string): Promise<ProfileDocument[]>;
   labels(userId: string): Promise<string[]>;
+  texts(userId: string): Promise<DocumentTextRow[]>;
+  ensureExtracted(userId: string): Promise<void>;
   create(input: { userId: string; label: string; mimeType: string; bytes: Buffer }): Promise<ProfileDocument>;
   getFile(userId: string, documentId: string): Promise<{ mimeType: string; bytes: Buffer } | undefined>;
   remove(userId: string, documentId: string): Promise<boolean>;
@@ -33,6 +44,20 @@ function toView(row: Omit<ProfileDocumentRow, "bytes">): ProfileDocument {
     mimeType: row.mime_type,
     createdAt: created,
   };
+}
+
+async function saveExtract(
+  documentId: string,
+  result: { text: string | null; status: ExtractStatus },
+): Promise<void> {
+  await getPool().query(
+    `update profile_documents
+     set extracted_text = $2,
+         extracted_at = now(),
+         extract_status = $3
+     where id = $1`,
+    [documentId, result.text, result.status],
+  );
 }
 
 export function createPgDocumentStore(): DocumentStore {
@@ -62,6 +87,37 @@ export function createPgDocumentStore(): DocumentStore {
       return out;
     },
 
+    async texts(userId: string): Promise<DocumentTextRow[]> {
+      const result = await getPool().query<{ label: string; extracted_text: string }>(
+        `select label, extracted_text
+         from profile_documents
+         where user_id = $1
+           and extract_status = 'ready'
+           and extracted_text is not null
+           and length(trim(extracted_text)) > 0
+         order by created_at asc`,
+        [userId],
+      );
+      return result.rows.map((row) => ({ label: row.label, text: row.extracted_text }));
+    },
+
+    async ensureExtracted(userId: string): Promise<void> {
+      const result = await getPool().query<Pick<ProfileDocumentRow, "id" | "mime_type" | "bytes" | "extract_status">>(
+        `select id, mime_type, bytes, extract_status
+         from profile_documents
+         where user_id = $1
+           and extract_status in ('pending', 'failed')`,
+        [userId],
+      );
+      for (const row of result.rows) {
+        const extracted = await extractDocumentText({
+          mimeType: row.mime_type,
+          bytes: row.bytes,
+        });
+        await saveExtract(row.id, extracted);
+      }
+    },
+
     async create(input): Promise<ProfileDocument> {
       const count = await getPool().query<{ n: string }>(
         `select count(*)::text as n from profile_documents where user_id = $1`,
@@ -75,14 +131,23 @@ export function createPgDocumentStore(): DocumentStore {
       }
       try {
         const result = await getPool().query<Omit<ProfileDocumentRow, "bytes">>(
-          `insert into profile_documents (user_id, label, mime_type, bytes)
-           values ($1, $2, $3, $4)
+          `insert into profile_documents (user_id, label, mime_type, bytes, extract_status)
+           values ($1, $2, $3, $4, 'pending')
            returning id, user_id, label, mime_type, created_at`,
           [input.userId, input.label, input.mimeType, input.bytes],
         );
         const row = result.rows[0];
         if (row === undefined) {
           throw new Error("Failed to store document");
+        }
+        try {
+          const extracted = await extractDocumentText({
+            mimeType: input.mimeType,
+            bytes: input.bytes,
+          });
+          await saveExtract(row.id, extracted);
+        } catch {
+          await saveExtract(row.id, { text: null, status: "failed" });
         }
         return toView(row);
       } catch (error) {
@@ -158,3 +223,6 @@ export function parseDocumentUpload(body: unknown): {
   }
   return { label: parsed.data.label, mimeType: parsed.data.mimeType, bytes };
 }
+
+export { formatDocumentTextBag };
+export type { DocumentTextRow };
