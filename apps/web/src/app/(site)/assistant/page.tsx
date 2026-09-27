@@ -237,7 +237,7 @@ function AssistantInner() {
           </StatusPanel>
         ) : null}
         {messages.map((message, index) => (
-          <p key={`${message.role}-${index}`} className={message.role === "hulum" ? "border border-line bg-white/70 p-4" : "text-muted"}>
+          <p key={`${message.role}-${index}`} className={message.role === "hulum" ? "border border-line bg-surface p-4" : "text-muted"}>
             <span className="block text-xs uppercase tracking-wide">{message.role === "hulum" ? "HULUM" : "You"}</span>
             {message.text}
           </p>
@@ -263,7 +263,7 @@ function AssistantInner() {
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder={copy.typePlaceholder}
-            className="mt-1 min-h-11 w-full border border-line bg-white px-3 py-3"
+            className="mt-1 min-h-11 w-full border border-line bg-surface px-3 py-3"
             disabled={pending}
           />
         </label>

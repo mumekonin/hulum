@@ -44,7 +44,7 @@ export function ReadinessList({
       ) : null}
       <ul className="space-y-3">
         {items.map((item) => (
-          <li key={item.id} className="flex items-start gap-3 border border-line bg-white/60 p-4">
+          <li key={item.id} className="flex items-start gap-3 border border-line bg-surface p-4">
             <button
               type="button"
               onClick={() => void cycle(item)}

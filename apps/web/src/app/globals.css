@@ -1,39 +1,101 @@
 @import "tailwindcss";
 
-@theme {
-  --color-paper: #f3eee4;
-  --color-ink: #1c1915;
-  --color-muted: #4a453c;
-  --color-line: #d8cfc0;
-  --color-forest: #1f5c45;
-  --color-apply: #146c44;
-  --color-maybe: #8a5410;
-  --color-skip: #8a1f1f;
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
-  --color-gw-bg: #131313;
-  --color-gw-surface: #201f1f;
-  --color-gw-surface-low: #1c1b1b;
-  --color-gw-surface-lowest: #0e0e0e;
-  --color-gw-surface-high: #2a2a2a;
-  --color-gw-surface-highest: #353534;
-  --color-gw-on: #e5e2e1;
-  --color-gw-muted: #c4c7c5;
-  --color-gw-secondary: #c7c7c0;
-  --color-gw-outline: #8e928f;
-  --color-gw-outline-var: #444846;
-  --color-gw-primary: #ffffff;
-  --color-gw-on-primary: #2f3130;
+/*
+ * One theme system for the whole web app. Utilities (bg-paper, text-ink, border-line, …)
+ * read CSS variables, and [data-theme] on <html> swaps the values. The pre-paint script in
+ * app/layout.tsx sets data-theme before first render so there is no flash.
+ */
+:root {
+  --hulum-paper: #fafaf8;
+  --hulum-surface: #ffffff;
+  --hulum-surface-muted: #f3f2ef;
+  --hulum-ink: #141414;
+  --hulum-muted: #5c5a55;
+  --hulum-line: #e4e2dd;
+  --hulum-line-strong: #cfccc5;
+
+  --hulum-apply: #1e6b47;
+  --hulum-apply-soft: #eef5f0;
+  --hulum-maybe: #8a5a12;
+  --hulum-maybe-soft: #faf3e6;
+  --hulum-skip: #9b2c2c;
+  --hulum-skip-soft: #faeeee;
+
+  color-scheme: light;
+}
+
+[data-theme="dark"] {
+  --hulum-paper: #121211;
+  --hulum-surface: #1a1a19;
+  --hulum-surface-muted: #222220;
+  --hulum-ink: #ecebe7;
+  --hulum-muted: #a3a19b;
+  --hulum-line: #2c2b29;
+  --hulum-line-strong: #3d3c39;
+
+  --hulum-apply: #7cc49a;
+  --hulum-apply-soft: #16241c;
+  --hulum-maybe: #dcae5c;
+  --hulum-maybe-soft: #2a2215;
+  --hulum-skip: #e3938a;
+  --hulum-skip-soft: #2c1b19;
+
+  color-scheme: dark;
+}
+
+@theme inline {
+  --color-paper: var(--hulum-paper);
+  --color-surface: var(--hulum-surface);
+  --color-surface-muted: var(--hulum-surface-muted);
+  --color-ink: var(--hulum-ink);
+  --color-muted: var(--hulum-muted);
+  --color-line: var(--hulum-line);
+  --color-line-strong: var(--hulum-line-strong);
+  --color-forest: var(--hulum-apply);
+
+  --color-apply: var(--hulum-apply);
+  --color-apply-soft: var(--hulum-apply-soft);
+  --color-maybe: var(--hulum-maybe);
+  --color-maybe-soft: var(--hulum-maybe-soft);
+  --color-skip: var(--hulum-skip);
+  --color-skip-soft: var(--hulum-skip-soft);
+
+  /* Gateway (sign-in / sign-up) tokens follow the same theme. */
+  --color-gw-bg: var(--hulum-paper);
+  --color-gw-surface: var(--hulum-surface);
+  --color-gw-surface-low: var(--hulum-surface-muted);
+  --color-gw-surface-lowest: var(--hulum-paper);
+  --color-gw-surface-high: var(--hulum-surface-muted);
+  --color-gw-surface-highest: var(--hulum-line);
+  --color-gw-on: var(--hulum-ink);
+  --color-gw-muted: var(--hulum-muted);
+  --color-gw-secondary: var(--hulum-muted);
+  --color-gw-outline: var(--hulum-muted);
+  --color-gw-outline-var: var(--hulum-line-strong);
+  --color-gw-primary: var(--hulum-ink);
+  --color-gw-on-primary: var(--hulum-paper);
 }
 
 html,
 body {
-  background: var(--color-paper);
-  color: var(--color-ink);
+  background: var(--hulum-paper);
+  color: var(--hulum-ink);
 }
 
 body {
   font-family: var(--font-sans), "Source Sans 3", sans-serif;
   min-height: 100vh;
+  transition:
+    background-color 160ms ease,
+    color 160ms ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body {
+    transition: none;
+  }
 }
 
 h1,
@@ -59,13 +121,8 @@ h3,
 }
 
 :focus-visible {
-  outline: 3px solid var(--color-ink);
+  outline: 2px solid var(--hulum-ink);
   outline-offset: 3px;
-}
-
-.gateway :focus-visible {
-  outline: 2px solid var(--color-gw-primary);
-  outline-offset: 2px;
 }
 
 .sr-only {
@@ -85,8 +142,8 @@ h3,
   left: 1rem;
   top: -4rem;
   z-index: 50;
-  background: var(--color-ink);
-  color: var(--color-paper);
+  background: var(--hulum-ink);
+  color: var(--hulum-paper);
   padding: 0.75rem 1rem;
 }
 

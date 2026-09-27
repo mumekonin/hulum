@@ -74,7 +74,7 @@ export default function ResearchPage() {
             id="research-query"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="min-h-11 border border-ink bg-white px-3"
+            className="min-h-11 border border-ink bg-surface px-3"
           />
         </label>
         <button type="submit" className="mt-6 inline-flex min-h-11 items-center bg-ink px-5 text-paper">
@@ -116,7 +116,7 @@ export default function ResearchPage() {
       {!loading && papers.length > 0 ? (
         <ul className="mt-8 grid gap-4">
           {papers.map((paper) => (
-            <li key={paper.id} className="border border-line bg-white/80 p-5">
+            <li key={paper.id} className="border border-line bg-surface p-5">
               <p className="text-xs uppercase tracking-wide text-muted">{paper.primaryCategory}</p>
               <h2 className="mt-1 font-display text-2xl">{paper.title}</h2>
               <p className="mt-2 text-sm text-muted">

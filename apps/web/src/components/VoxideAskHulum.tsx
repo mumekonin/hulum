@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { VoxideClient, VoxideWidget, type VoxideStatus } from "@voxide/react";
 import { detectAskedLanguage, type LanguageCode } from "@hulum/shared";
 import { getLanguage, getUserId } from "@/lib/storage";
+import { currentTheme, useTheme } from "@/lib/theme";
 import { runTextAction } from "@/lib/text-actions";
 import { recognitionFailureMessage, TEXT_FALLBACK_HINT } from "@/lib/client-failures";
 import {
@@ -95,6 +96,7 @@ export function VoxideAskHulum({
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const theme = useTheme();
   const sessionRef = useRef<VoiceSessionIds>(session ?? readVoiceSession());
   if (session) {
     sessionRef.current = { ...readVoiceSession(), ...session };
@@ -172,7 +174,7 @@ export function VoxideAskHulum({
       language: "en-US",
       ui: {
         title: "Ask HULUM",
-        theme: "light",
+        theme: currentTheme(),
         position: "bottom-right",
         greeting:
           "I can open any HULUM page and run the same actions as the website. Say show me scholarships, then analyze for me.",
@@ -470,7 +472,7 @@ export function VoxideAskHulum({
     return null;
   }
 
-  return <VoxideWidget client={client} theme="light" title="Ask HULUM" position="bottom-right" />;
+  return <VoxideWidget client={client} theme={theme} title="Ask HULUM" position="bottom-right" />;
 }
 
 export { hasVoxidePublicKey } from "@/lib/voxide";

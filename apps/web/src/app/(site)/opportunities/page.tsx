@@ -90,7 +90,7 @@ export default function OpportunitiesPage() {
               value={queryInput}
               onChange={(e) => setQueryInput(e.target.value)}
               placeholder="A2SV, Chevening, internship…"
-              className="block min-h-11 w-56 border border-line bg-white px-3 py-2"
+              className="block min-h-11 w-56 border border-line bg-surface px-3 py-2"
               aria-controls="opportunity-results"
             />
           </label>
@@ -100,7 +100,7 @@ export default function OpportunitiesPage() {
               id="opportunity-type"
               value={type}
               onChange={(e) => setType(e.target.value as OpportunityType | "")}
-              className="min-h-11 border border-line bg-white px-3 py-2"
+              className="min-h-11 border border-line bg-surface px-3 py-2"
             >
               <option value="">All types</option>
               {OPPORTUNITY_TYPES.map((value) => (

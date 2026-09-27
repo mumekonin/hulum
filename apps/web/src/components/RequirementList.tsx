@@ -52,7 +52,7 @@ export function RequirementList({
         return (
           <li
             key={item.id ?? item.key}
-            className={`border border-line border-l-4 bg-white/60 p-4 ${borders[item.status]}`}
+            className={`border border-line border-l-4 bg-surface p-4 ${borders[item.status]}`}
           >
             <div className="flex items-start gap-3">
               <span aria-hidden="true" className="font-display text-xl">

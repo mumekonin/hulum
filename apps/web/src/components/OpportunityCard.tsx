@@ -10,7 +10,7 @@ export function OpportunityCard({ opportunity }: { opportunity: Opportunity }) {
   return (
     <Link
       href={`/opportunities/${opportunity.id}`}
-      className="block border border-line bg-white/70 p-5 transition hover:border-ink"
+      className="block border border-line bg-surface p-5 transition hover:border-ink"
     >
       <span className="sr-only">
         {expired ? "Deadline closed in stored data. " : remaining != null && remaining >= 0 ? `${remaining} days left. ` : ""}

@@ -1,9 +1,9 @@
 import type { Decision } from "@hulum/shared";
 
 const styles: Record<Decision, string> = {
-  APPLY: "border-apply bg-apply text-white",
-  MAYBE: "border-maybe bg-maybe text-white",
-  SKIP: "border-skip bg-skip text-white",
+  APPLY: "border-apply/40 bg-apply-soft text-apply",
+  MAYBE: "border-maybe/40 bg-maybe-soft text-maybe",
+  SKIP: "border-skip/40 bg-skip-soft text-skip",
 };
 
 const meanings: Record<Decision, string> = {
@@ -13,10 +13,11 @@ const meanings: Record<Decision, string> = {
 };
 
 export function DecisionBadge({ decision, size = "md" }: { decision: Decision; size?: "sm" | "md" | "lg" }) {
-  const sizing = size === "lg" ? "px-6 py-3 text-3xl md:text-5xl" : size === "sm" ? "px-3 py-2 text-xs" : "px-4 py-2 text-xl";
+  const sizing =
+    size === "lg" ? "px-5 py-2 text-3xl md:text-4xl" : size === "sm" ? "px-2 py-0.5 text-xs tracking-[0.12em]" : "px-3 py-1 text-lg";
   return (
     <span
-      className={`inline-flex border-2 font-display tracking-wide ${sizing} ${styles[decision]}`}
+      className={`inline-flex border font-display tracking-wide ${sizing} ${styles[decision]}`}
       aria-label={`Decision ${decision}. ${meanings[decision]}`}
     >
       {decision}

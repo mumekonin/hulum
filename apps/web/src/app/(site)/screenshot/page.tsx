@@ -131,7 +131,7 @@ export default function ScreenshotPage() {
             name="screenshot"
             type="file"
             accept="image/jpeg,image/png,image/webp"
-            className="min-h-11 border border-line bg-white px-3 py-2"
+            className="min-h-11 border border-line bg-surface px-3 py-2"
             onChange={(event) => {
               const file = event.target.files?.[0];
               setFileName(file?.name ?? null);

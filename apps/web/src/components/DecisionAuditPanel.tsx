@@ -18,7 +18,7 @@ export function DecisionAuditPanel({
   };
 }) {
   return (
-    <details className="mt-12 border border-line bg-white/40 p-4">
+    <details className="mt-12 border border-line bg-surface p-4">
       <summary className="cursor-pointer font-medium">Decision audit (debug)</summary>
       <p className="mt-3 text-sm text-muted">
         Engine trail only. Fit score is advisory. HULUM is not the official organization.

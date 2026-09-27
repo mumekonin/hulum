@@ -6,6 +6,7 @@ import { useRouter } from "next/navigation";
 import type { AuthSession } from "@hulum/shared";
 import { api, userFacingError } from "@/lib/api";
 import { isSignedIn, persistAuthSession } from "@/lib/storage";
+import { ThemeToggle } from "./ThemeToggle";
 
 const EMAIL_KEY = "hulum.gatewayEmail";
 
@@ -61,13 +62,14 @@ export function AuthInduction() {
               <span>Gateway active</span>
             </div>
             <span className="hidden sm:inline">9.0249° N, 38.7469° E</span>
+            <ThemeToggle />
           </div>
         </div>
       </header>
 
       <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center px-4 py-10 sm:px-8">
         <div className="mx-auto w-full max-w-md">
-          <div className="flex flex-col bg-gw-surface p-6 shadow-md sm:p-8">
+          <div className="flex flex-col border border-gw-outline-var/60 bg-gw-surface p-6 sm:p-8">
             <div className="mb-6 flex items-center justify-between pb-2 text-[9px] text-gw-muted">
               <span className="font-gw-mono font-medium text-gw-primary">REF: 849-AUTH</span>
               <span className="uppercase tracking-widest">Create account</span>

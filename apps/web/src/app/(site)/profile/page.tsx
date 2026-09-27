@@ -378,7 +378,7 @@ export default function ProfilePage() {
                 value={extractText}
                 onChange={(e) => setExtractText(e.target.value)}
                 rows={4}
-                className="border border-line bg-white px-3 py-2"
+                className="border border-line bg-surface px-3 py-2"
                 placeholder="I am a Computer Science student in Addis Ababa, Ethiopia. I speak English and Amharic…"
               />
             </label>
@@ -409,7 +409,7 @@ export default function ProfilePage() {
                   <button
                     type="button"
                     onClick={applyProposalToForm}
-                    className="min-h-11 border border-ink bg-ink px-4 py-2 text-sm text-white"
+                    className="min-h-11 border border-ink bg-ink px-4 py-2 text-sm text-paper"
                   >
                     Confirm into form
                   </button>
@@ -436,7 +436,7 @@ export default function ProfilePage() {
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 autoComplete="name"
-                className="min-h-11 border border-line bg-white px-3 py-2"
+                className="min-h-11 border border-line bg-surface px-3 py-2"
               />
             </label>
             <label htmlFor="profile-email" className="grid gap-1 text-sm">
@@ -449,7 +449,7 @@ export default function ProfilePage() {
                 value={form.email}
                 onChange={(e) => setForm({ ...form, email: e.target.value })}
                 autoComplete="email"
-                className="min-h-11 border border-line bg-white px-3 py-2"
+                className="min-h-11 border border-line bg-surface px-3 py-2"
               />
             </label>
             <label htmlFor="profile-education" className="grid gap-1 text-sm">
@@ -459,7 +459,7 @@ export default function ProfilePage() {
                 name="educationLevel"
                 value={form.educationLevel}
                 onChange={(e) => setForm({ ...form, educationLevel: e.target.value as EducationLevel })}
-                className="min-h-11 border border-line bg-white px-3 py-2"
+                className="min-h-11 border border-line bg-surface px-3 py-2"
               >
                 {EDUCATION_LEVELS.map((level) => (
                   <option key={level} value={level}>
@@ -476,7 +476,7 @@ export default function ProfilePage() {
                 required
                 value={form.fieldOfStudy}
                 onChange={(e) => setForm({ ...form, fieldOfStudy: e.target.value })}
-                className="min-h-11 border border-line bg-white px-3 py-2"
+                className="min-h-11 border border-line bg-surface px-3 py-2"
               />
             </label>
             <div className="grid gap-4 md:grid-cols-2">
@@ -488,7 +488,7 @@ export default function ProfilePage() {
                   type="number"
                   value={form.graduationYear}
                   onChange={(e) => setForm({ ...form, graduationYear: Number(e.target.value) })}
-                  className="min-h-11 border border-line bg-white px-3 py-2"
+                  className="min-h-11 border border-line bg-surface px-3 py-2"
                 />
               </label>
               <label htmlFor="profile-years-experience" className="grid gap-1 text-sm">
@@ -501,7 +501,7 @@ export default function ProfilePage() {
                   step={0.5}
                   value={form.yearsExperience}
                   onChange={(e) => setForm({ ...form, yearsExperience: Number(e.target.value) })}
-                  className="min-h-11 border border-line bg-white px-3 py-2"
+                  className="min-h-11 border border-line bg-surface px-3 py-2"
                 />
                 <span className="text-muted">Shown here only. Postgres v1 stores the experience text, not this number.</span>
               </label>
@@ -515,7 +515,7 @@ export default function ProfilePage() {
                   required
                   value={form.country}
                   onChange={(e) => setForm({ ...form, country: e.target.value })}
-                  className="min-h-11 border border-line bg-white px-3 py-2"
+                  className="min-h-11 border border-line bg-surface px-3 py-2"
                 />
               </label>
               <label htmlFor="profile-city" className="grid gap-1 text-sm">
@@ -525,7 +525,7 @@ export default function ProfilePage() {
                   name="city"
                   value={form.city}
                   onChange={(e) => setForm({ ...form, city: e.target.value })}
-                  className="min-h-11 border border-line bg-white px-3 py-2"
+                  className="min-h-11 border border-line bg-surface px-3 py-2"
                 />
               </label>
             </div>
@@ -537,7 +537,7 @@ export default function ProfilePage() {
                 required
                 value={form.languages}
                 onChange={(e) => setForm({ ...form, languages: e.target.value })}
-                className="min-h-11 border border-line bg-white px-3 py-2"
+                className="min-h-11 border border-line bg-surface px-3 py-2"
               />
               <span className="text-muted">Comma separated.</span>
             </label>
@@ -548,7 +548,7 @@ export default function ProfilePage() {
                 name="preferredLanguage"
                 value={form.preferredLanguage}
                 onChange={(e) => setForm({ ...form, preferredLanguage: e.target.value as LanguageCode })}
-                className="min-h-11 border border-line bg-white px-3 py-2"
+                className="min-h-11 border border-line bg-surface px-3 py-2"
               >
                 {LANGUAGE_OPTIONS.map((option) => (
                   <option key={option.code} value={option.code}>
@@ -564,7 +564,7 @@ export default function ProfilePage() {
                 name="skills"
                 value={form.skills}
                 onChange={(e) => setForm({ ...form, skills: e.target.value })}
-                className="min-h-11 border border-line bg-white px-3 py-2"
+                className="min-h-11 border border-line bg-surface px-3 py-2"
               />
             </label>
             <label htmlFor="profile-experience" className="grid gap-1 text-sm">
@@ -574,7 +574,7 @@ export default function ProfilePage() {
                 name="experience"
                 value={form.experience}
                 onChange={(e) => setForm({ ...form, experience: e.target.value })}
-                className="min-h-24 border border-line bg-white px-3 py-2"
+                className="min-h-24 border border-line bg-surface px-3 py-2"
               />
             </label>
             <label htmlFor="profile-interests" className="grid gap-1 text-sm">
@@ -584,7 +584,7 @@ export default function ProfilePage() {
                 name="interests"
                 value={form.interests}
                 onChange={(e) => setForm({ ...form, interests: e.target.value })}
-                className="min-h-11 border border-line bg-white px-3 py-2"
+                className="min-h-11 border border-line bg-surface px-3 py-2"
               />
             </label>
             <button type="submit" disabled={saving} className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
@@ -613,7 +613,7 @@ export default function ProfilePage() {
                   onChange={(e) => setDocumentLabel(e.target.value)}
                   placeholder="CV, Transcript, Passport"
                   maxLength={80}
-                  className="min-h-11 border border-line bg-white px-3 py-2"
+                  className="min-h-11 border border-line bg-surface px-3 py-2"
                 />
               </label>
               <label className="grid gap-1 text-sm">
@@ -622,7 +622,7 @@ export default function ProfilePage() {
                   ref={fileInputRef}
                   type="file"
                   accept="image/jpeg,image/png,image/webp,application/pdf,.jpg,.jpeg,.png,.webp,.pdf"
-                  className="min-h-11 border border-line bg-white px-3 py-2 file:mr-3 file:border-0 file:bg-ink file:px-3 file:py-2 file:text-paper"
+                  className="min-h-11 border border-line bg-surface px-3 py-2 file:mr-3 file:border-0 file:bg-ink file:px-3 file:py-2 file:text-paper"
                 />
               </label>
               <button

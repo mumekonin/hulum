@@ -31,15 +31,15 @@ export default function JourneyPage() {
       </div>
 
       <div className="mt-14 grid gap-3 md:grid-cols-3" role="list" aria-label="Decision meanings">
-        <div className="border border-line border-l-4 border-l-apply bg-white/70 p-4" role="listitem">
+        <div className="border border-line border-l-4 border-l-apply bg-surface p-4" role="listitem">
           <p className="font-display text-2xl text-ink">APPLY</p>
           <p className="mt-2 text-sm text-muted">Key known requirements are met. Prepare materials and confirm the official source.</p>
         </div>
-        <div className="border border-line border-l-4 border-l-maybe bg-white/70 p-4" role="listitem">
+        <div className="border border-line border-l-4 border-l-maybe bg-surface p-4" role="listitem">
           <p className="font-display text-2xl text-ink">MAYBE</p>
           <p className="mt-2 text-sm text-muted">Something important is uncertain or needs verification. Do not treat this as a yes.</p>
         </div>
-        <div className="border border-line border-l-4 border-l-skip bg-white/70 p-4" role="listitem">
+        <div className="border border-line border-l-4 border-l-skip bg-surface p-4" role="listitem">
           <p className="font-display text-2xl text-ink">SKIP</p>
           <p className="mt-2 text-sm text-muted">A critical requirement is not met. Spend time on a closer match.</p>
         </div>
@@ -48,7 +48,7 @@ export default function JourneyPage() {
       <h2 className="mt-16 font-display text-3xl">The HULUM journey</h2>
       <ol className="mt-6 grid gap-3">
         {journey.map((step) => (
-          <li key={step.n} className="border border-line bg-white/60 p-4 md:flex md:items-baseline md:gap-6">
+          <li key={step.n} className="border border-line bg-surface p-4 md:flex md:items-baseline md:gap-6">
             <span className="text-sm text-muted">{step.n}</span>
             <div className="mt-1 md:mt-0">
               <Link href={step.href} className="font-display text-xl hover:underline">
@@ -60,7 +60,7 @@ export default function JourneyPage() {
         ))}
       </ol>
 
-      <p className="mt-10 border border-line bg-white/80 px-4 py-3 text-sm leading-6 text-muted">
+      <p className="mt-10 border border-line bg-surface px-4 py-3 text-sm leading-6 text-muted">
         HULUM&apos;s analysis is based on the information available from the opportunity source and your
         profile. Always verify final eligibility and deadlines with the official organization. Voice uses
         text and quick actions until Voxide is connected; those actions must stay on this same path.
