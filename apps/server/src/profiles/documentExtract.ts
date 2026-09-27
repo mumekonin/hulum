@@ -23,7 +23,7 @@ Never invent degrees, dates, employers, or URLs that are not clearly readable.
 If nothing is readable, return {"text":""}.`;
 
 function clampText(value: string): string {
-  const trimmed = value.replace(/\u0000/g, "").trim();
+  const trimmed = value.split("\0").join("").trim();
   if (trimmed.length <= DOCUMENT_TEXT_MAX_CHARS) {
     return trimmed;
   }
