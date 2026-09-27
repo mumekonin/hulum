@@ -8,6 +8,7 @@ import { createOpportunityService } from "../opportunities/service.js";
 import { createPgOpportunityStore } from "../opportunities/store.js";
 import { createProfileService } from "../profiles/service.js";
 import { createPgProfileStore } from "../profiles/store.js";
+import { createPgDocumentStore } from "../profiles/documents.js";
 import { systemClock } from "../services/common/clock.js";
 import { createAnalysisService, type AnalysisService } from "./service.js";
 import { createPgAnalysisStore } from "./store.js";
@@ -29,6 +30,7 @@ function defaultService(): AnalysisService {
     opportunities: createOpportunityService(createPgOpportunityStore(), systemClock),
     store: createPgAnalysisStore(),
     clock: systemClock,
+    documents: createPgDocumentStore(),
     ...(chat === undefined ? {} : { chat }),
   });
 }

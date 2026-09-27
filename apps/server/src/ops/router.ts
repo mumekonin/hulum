@@ -7,6 +7,8 @@ import { createOpportunityService } from "../opportunities/service.js";
 import { createPgOpportunityStore } from "../opportunities/store.js";
 import { createProfileService } from "../profiles/service.js";
 import { createPgProfileStore } from "../profiles/store.js";
+import { profileForDecision } from "../profiles/documentContext.js";
+import { createPgDocumentStore } from "../profiles/documents.js";
 import { systemClock } from "../services/common/clock.js";
 import { loadStore } from "../store/fileStore.js";
 import { opsSummary, recordOpsEvent, timeOpsSync } from "./metrics.js";
@@ -111,8 +113,9 @@ export function createOpsRouter(mode: "file" | "postgres" = "file"): Router {
       if (opportunity === undefined) {
         throw new HttpError(404, "NOT_FOUND", "Opportunity not found.");
       }
+      const profile = await profileForDecision(profileView.profile, createPgDocumentStore());
       const result = timeOpsSync("decision", "decide", () =>
-        decide(profileView.profile, opportunity, systemClock),
+        decide(profile, opportunity, systemClock),
       );
       res.status(200).json(
         sharedOk({

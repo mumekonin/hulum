@@ -97,9 +97,44 @@ describe("matchRequirements", () => {
     expect(status(result, RequirementKey.EXPERIENCE)).toBe(RequirementStatus.UNCERTAIN);
   });
 
-  it("returns UNCERTAIN for document requirements because the profile has no document facts", () => {
+  it("returns UNCERTAIN for document requirements when no documents are held", () => {
     const result = matchRequirements(profile, { ...opportunity, documentRequirements: ["cv"] }, clock);
     expect(status(result, RequirementKey.DOCUMENTS)).toBe(RequirementStatus.UNCERTAIN);
+  });
+
+  it("returns MET for document requirements when upload labels cover the list", () => {
+    const result = matchRequirements(
+      { ...profile, documentsHeld: ["CV", "Transcript"] },
+      { ...opportunity, documentRequirements: ["resume", "Academic transcripts"] },
+      clock,
+    );
+    expect(status(result, RequirementKey.DOCUMENTS)).toBe(RequirementStatus.MET);
+  });
+
+  it("returns UNCERTAIN when some required documents are still missing", () => {
+    const result = matchRequirements(
+      { ...profile, documentsHeld: ["CV"] },
+      { ...opportunity, documentRequirements: ["CV", "Motivation statement"] },
+      clock,
+    );
+    expect(status(result, RequirementKey.DOCUMENTS)).toBe(RequirementStatus.UNCERTAIN);
+    const row = result.find((item) => item.key === RequirementKey.DOCUMENTS);
+    expect(row?.reason).toMatch(/Motivation statement/i);
+  });
+
+  it("never marks experience MET from document text alone", () => {
+    const result = matchRequirements(
+      {
+        ...profile,
+        experience: null,
+        documentText: "Label: CV\nSoftware engineer with 2 years of backend experience.",
+      },
+      { ...opportunity, experienceRequirements: ["2 years"] },
+      clock,
+    );
+    expect(status(result, RequirementKey.EXPERIENCE)).toBe(RequirementStatus.UNCERTAIN);
+    const row = result.find((item) => item.key === RequirementKey.EXPERIENCE);
+    expect(row?.evidence).toMatch(/uploaded document text/i);
   });
 
   it("returns NOT_MET when the deadline is before today", () => {

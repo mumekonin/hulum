@@ -18,6 +18,8 @@ import { decide } from "../decision/decide.js";
 import { HttpError } from "../http/errors.js";
 import { recordOpsEvent, timeOps, timeOpsSync } from "../ops/metrics.js";
 import type { OpportunityService } from "../opportunities/service.js";
+import { profileForDecision } from "../profiles/documentContext.js";
+import type { DocumentStore } from "../profiles/documents.js";
 import type { ProfileService } from "../profiles/service.js";
 import { matchRequirements } from "../requirements/match.js";
 import { buildReadinessItems } from "../readiness/build.js";
@@ -65,6 +67,7 @@ export function createAnalysisService(deps: {
   store: AnalysisStore;
   clock: Clock;
   chat?: ChatClient;
+  documents?: Pick<DocumentStore, "ensureExtracted" | "texts">;
 }): AnalysisService {
   return {
     async analyze(opportunityId: string, userId: string): Promise<Analysis> {
@@ -81,10 +84,15 @@ export function createAnalysisService(deps: {
             throw new HttpError(404, "NOT_FOUND", "Opportunity not found.");
           }
 
+          const profile =
+            deps.documents === undefined
+              ? profileView.profile
+              : await profileForDecision(profileView.profile, deps.documents);
+
           const result = timeOpsSync("decision", "decide", () =>
-            decide(profileView.profile, opportunity, deps.clock),
+            decide(profile, opportunity, deps.clock),
           );
-          const matches = matchRequirements(profileView.profile, opportunity, deps.clock);
+          const matches = matchRequirements(profile, opportunity, deps.clock);
           return deps.store.create({
             userId,
             opportunityId,
