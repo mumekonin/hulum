@@ -74,7 +74,7 @@ async function main() {
     await assertOk(await savePromise, "Save profile");
     // Save navigates to the catalog
     await page.waitForURL(/\/opportunities/);
-    await page.getByRole("heading", { name: "Opportunities" }).waitFor();
+    await page.getByRole("heading", { name: /Find opportunities worth your time/i }).waitFor();
 
     await page
       .getByRole("navigation", { name: "Primary" })
