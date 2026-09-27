@@ -81,7 +81,11 @@ export function AppNav() {
           </div>
         </div>
         {menuOpen ? (
-          <nav id="mobile-menu" aria-label="Primary" className="border-t border-line px-2 pb-4 pt-2">
+          <nav
+            id="mobile-menu"
+            aria-label="Primary"
+            className="border-t border-line px-2 pb-4 pt-2"
+          >
             <NavList links={primaryLinks} pathname={pathname} />
             <div className="my-3 border-t border-line" />
             <NavList links={[profileLink]} pathname={pathname} />
@@ -105,13 +109,25 @@ export function AppNav() {
 
 function Wordmark() {
   return (
-    <Link href="/opportunities" className="px-3 font-display text-2xl tracking-tight text-ink" aria-label="HULUM, go to Discover">
+    <Link
+      href="/opportunities"
+      className="px-3 font-display text-2xl tracking-tight text-ink"
+      aria-label="HULUM, go to Discover"
+    >
       HULUM
     </Link>
   );
 }
 
-function NavList({ links, pathname, small = false }: { links: NavLink[]; pathname: string; small?: boolean }) {
+function NavList({
+  links,
+  pathname,
+  small = false,
+}: {
+  links: NavLink[];
+  pathname: string;
+  small?: boolean;
+}) {
   return (
     <ul className="grid gap-0.5">
       {links.map((link) => {
@@ -147,11 +163,16 @@ function Avatar({ name }: { name: string }) {
 
 function AccountSummary({ account }: { account: Account | null }) {
   return (
-    <Link href="/profile" className="flex min-h-11 items-center gap-3 px-3 py-2 hover:bg-surface-muted">
+    <Link
+      href="/profile"
+      className="flex min-h-11 items-center gap-3 px-3 py-2 hover:bg-surface-muted"
+    >
       <Avatar name={account?.name ?? ""} />
       <span className="min-w-0">
         <span className="block truncate text-sm text-ink">{account?.name ?? "Your profile"}</span>
-        {account?.email ? <span className="block truncate text-xs text-muted">{account.email}</span> : null}
+        {account?.email ? (
+          <span className="block truncate text-xs text-muted">{account.email}</span>
+        ) : null}
       </span>
     </Link>
   );
@@ -162,7 +183,11 @@ function AccountBlock({ account, onSignOut }: { account: Account | null; onSignO
     <div className="border-t border-line pt-4">
       <AccountSummary account={account} />
       <div className="mt-2 flex items-center justify-between px-1">
-        <button type="button" onClick={onSignOut} className="inline-flex min-h-11 items-center px-2 text-sm text-muted hover:text-ink">
+        <button
+          type="button"
+          onClick={onSignOut}
+          className="inline-flex min-h-11 items-center px-2 text-sm text-muted hover:text-ink"
+        >
           Sign out
         </button>
         <ThemeToggle />
