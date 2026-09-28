@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { AuthSession } from "@hulum/shared";
 import { API_URL, api, userFacingError } from "@/lib/api";
+import { routeAfterAuth } from "@/lib/post-auth";
 import { isSignedIn, persistAuthSession } from "@/lib/storage";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -23,7 +24,7 @@ export function AuthGateway() {
 
   useEffect(() => {
     if (isSignedIn()) {
-      router.replace("/profile");
+      void routeAfterAuth(router);
       return;
     }
     const error = new URLSearchParams(window.location.search).get("auth_error");
@@ -54,7 +55,7 @@ export function AuthGateway() {
       });
       persistAuthSession(session);
       window.localStorage.setItem(EMAIL_KEY, session.email);
-      router.push("/profile");
+      await routeAfterAuth(router);
     } catch (error) {
       setBusy(false);
       setSim("error");

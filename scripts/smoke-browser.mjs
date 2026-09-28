@@ -48,31 +48,44 @@ async function main() {
     });
     await page.getByRole("button", { name: /Create account/i }).click();
     await assertOk(await registerPromise, "Register");
-    await page.waitForURL(/\/profile/);
-    await page.getByRole("heading", { name: /Your profile/i }).waitFor();
+    // New accounts go through onboarding; each step saves before moving on.
+    await page.waitForURL(/\/onboarding/);
+    const saveStep = async (label) => {
+      const savePromise = page.waitForResponse((response) => {
+        const method = response.request().method();
+        if (method !== "POST" && method !== "PATCH") return false;
+        try {
+          return /\/api\/profile(\/|$)/.test(new URL(response.url()).pathname);
+        } catch {
+          return false;
+        }
+      });
+      await page.getByRole("button", { name: /^Continue$/ }).click();
+      await assertOk(await savePromise, label);
+    };
 
-    await page.locator("#profile-name").fill("Abeba Tesfaye");
-    await page.locator("#profile-email").fill(email);
-    await page.locator("#profile-field").fill("Computer Science");
-    await page.locator("#profile-country").fill("Ethiopia");
-    await page.locator("#profile-city").fill("Addis Ababa");
-    await page.locator("#profile-languages").fill("English, Amharic");
-    await page.locator("#profile-skills").fill("Python, React");
-    await page.locator("#profile-experience").fill("One software internship.");
-    await page.locator("#profile-interests").fill("AI, scholarships");
+    await page.getByRole("heading", { name: /About you/i }).waitFor();
+    await page.locator("#onboarding-country").fill("Ethiopia");
+    await page.locator("#onboarding-city").fill("Addis Ababa");
+    await saveStep("Onboarding: about you");
 
-    const savePromise = page.waitForResponse((response) => {
-      const method = response.request().method();
-      if (method !== "POST" && method !== "PATCH") return false;
-      try {
-        return /\/api\/profile(\/|$)/.test(new URL(response.url()).pathname);
-      } catch {
-        return false;
-      }
-    });
-    await page.getByRole("button", { name: /Save profile/i }).click();
-    await assertOk(await savePromise, "Save profile");
-    // Save navigates to the catalog
+    await page.getByRole("heading", { name: /Education/i }).waitFor();
+    await page.locator("#onboarding-education").selectOption("bachelor_in_progress");
+    await page.locator("#onboarding-field").fill("Computer Science");
+    await page.locator("#onboarding-graduation").fill("2027");
+    await saveStep("Onboarding: education");
+
+    await page.getByRole("heading", { name: /Skills and experience/i }).waitFor();
+    await page.locator("#onboarding-languages").fill("English, Amharic");
+    await page.locator("#onboarding-skills").fill("Python, React");
+    await page.locator("#onboarding-experience").fill("One software internship.");
+    await page.locator("#onboarding-interests").fill("AI, scholarships");
+    await saveStep("Onboarding: skills");
+
+    await page.getByRole("heading", { name: /Your CV/i }).waitFor();
+    await page.getByRole("button", { name: /Skip for now/i }).click();
+    await page.getByRole("heading", { name: /You're set up/i }).waitFor();
+    await page.getByRole("link", { name: /Find opportunities/i }).click();
     await page.waitForURL(/\/opportunities/);
     await page.getByRole("heading", { name: /Find opportunities worth your time/i }).waitFor();
 
@@ -94,7 +107,7 @@ async function main() {
     await page.getByRole("heading", { name: /Ask HULUM|ሁሉምን ጠይቅ/i }).waitFor();
     await page.getByText(/Microphone unavailable|Type or use a quick action|ማይክሮፎን/i).first().waitFor();
 
-    console.log("ok: register → profile → opportunities → screenshot → Ask HULUM text fallback");
+    console.log("ok: register → onboarding → opportunities → screenshot → Ask HULUM text fallback");
   } finally {
     await browser.close();
   }

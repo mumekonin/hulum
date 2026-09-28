@@ -5,6 +5,7 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { AuthSession } from "@hulum/shared";
 import { api, userFacingError } from "@/lib/api";
+import { routeAfterAuth } from "@/lib/post-auth";
 import { isSignedIn, persistAuthSession } from "@/lib/storage";
 import { ThemeToggle } from "./ThemeToggle";
 
@@ -21,7 +22,7 @@ export function AuthInduction() {
 
   useEffect(() => {
     if (isSignedIn()) {
-      router.replace("/profile");
+      void routeAfterAuth(router);
     }
     const stored = window.localStorage.getItem(EMAIL_KEY)?.trim();
     if (stored) setEmail(stored);
@@ -38,7 +39,7 @@ export function AuthInduction() {
       });
       persistAuthSession(session);
       window.localStorage.setItem(EMAIL_KEY, session.email);
-      router.push("/profile");
+      await routeAfterAuth(router);
     } catch (error) {
       setBusy(false);
       setNotice(userFacingError(error));

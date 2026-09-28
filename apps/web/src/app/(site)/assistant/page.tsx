@@ -28,6 +28,7 @@ import {
 import { readDiscoverContext, type DiscoverContext } from "@/lib/discover-context";
 import type { FaqEntry } from "@/lib/faq";
 import { LANGUAGE_OPTIONS } from "@/lib/languages";
+import { completionPercent, isCvDocument } from "@/lib/profile-form";
 import { readRecentQuestions, rememberQuestion, type RecentQuestion } from "@/lib/recent-questions";
 import { getLanguage, getUserId, setLanguage } from "@/lib/storage";
 import { PROFILE_FIELD_LABELS, runTextAction } from "@/lib/text-actions";
@@ -40,8 +41,6 @@ import {
 } from "@/lib/voice-session";
 import { useVoxideClient, useVoxideStatus } from "@/lib/voxide-client";
 import { isVoiceLive, VoiceButton } from "@/components/assistant/VoiceButton";
-
-const PROFILE_FIELD_COUNT = 9;
 
 const DEFAULT_PROMPTS: ChatPrompt[] = [
   { label: "Should I apply?", text: "Should I apply for this?" },
@@ -66,8 +65,6 @@ const REPEAT_PATTERN = /repeat|say (that|it) again|again please|ድገም/i;
 const BATCH_PATTERN = /which (ones?|of these|of them)|these results|from my search/i;
 const PROFILE_ADVICE_PATTERN =
   /improve my profile|what should i add|complete my profile|profile (tips|advice)/i;
-const CV_PATTERN = /\b(cv|resume|résumé)\b/i;
-
 type ProfileState =
   | { status: "loading" }
   | { status: "missing" }
@@ -163,7 +160,7 @@ function AssistantInner() {
         setProfile({
           status: "ready",
           missing: view.completeness.missing,
-          hasCv: documents.some((doc) => CV_PATTERN.test(doc.label)),
+          hasCv: documents.some(isCvDocument),
         });
       })
       .catch((err: unknown) => {
@@ -388,10 +385,7 @@ function AssistantInner() {
     void send(value);
   }
 
-  const completion =
-    profile.status === "ready"
-      ? Math.round(((PROFILE_FIELD_COUNT - profile.missing.length) / PROFILE_FIELD_COUNT) * 100)
-      : null;
+  const completion = profile.status === "ready" ? completionPercent(profile.missing) : null;
   const voiceNote = !voxideReady
     ? `${copy.micMissingTitle} — type or use a quick prompt.`
     : voiceIssue
