@@ -36,7 +36,10 @@ import {
   HULUM_VOICE_REPLY_EVENT,
   readVoiceSession,
   writeVoiceSession,
+  type VoiceReplyDetail,
 } from "@/lib/voice-session";
+import { useVoxideClient, useVoxideStatus } from "@/lib/voxide-client";
+import { isVoiceLive, VoiceButton } from "@/components/assistant/VoiceButton";
 
 const PROFILE_FIELD_COUNT = 9;
 
@@ -109,6 +112,9 @@ function AssistantInner() {
   );
   const [language, setLanguageState] = useState<LanguageCode>(getLanguage);
   const [voxideReady] = useState(() => hasVoxidePublicKey());
+  const voiceClient = useVoxideClient();
+  const voice = useVoxideStatus(voiceClient);
+  const [voiceIssue, setVoiceIssue] = useState<string | null>(null);
   const input = useRef<HTMLInputElement>(null);
   const threadEnd = useRef<HTMLDivElement>(null);
   const needsProfile = Boolean(error?.toLowerCase().includes("profile"));
@@ -120,19 +126,25 @@ function AssistantInner() {
 
   useEffect(() => {
     const onVoiceReply = (event: Event) => {
-      const detail = (event as CustomEvent<{ userText?: string; reply?: string }>).detail;
+      const detail = (event as CustomEvent<Partial<VoiceReplyDetail>>).detail;
       const reply = detail?.reply?.trim() ?? "";
       if (reply === "") return;
       const userText = detail.userText?.trim() ?? "";
+      const result = detail.result;
+      if (result?.opportunityId) setOpportunityId(result.opportunityId);
+      if (result?.analysisId) setAnalysisId(result.analysisId);
+      if (userId && userText !== "") setRecent(rememberQuestion(userId, { text: userText }));
       setMessages((current) => [
         ...current,
         ...(userText === "" ? [] : [{ id: messageId(), role: "user" as const, text: userText }]),
-        { id: messageId(), role: "hulum" as const, text: reply },
+        result
+          ? hulumMessageFrom(result, detectAskedLanguage(userText, getLanguage()))
+          : { id: messageId(), role: "hulum" as const, text: reply },
       ]);
     };
     window.addEventListener(HULUM_VOICE_REPLY_EVENT, onVoiceReply);
     return () => window.removeEventListener(HULUM_VOICE_REPLY_EVENT, onVoiceReply);
-  }, []);
+  }, [userId]);
 
   useEffect(() => {
     if (!userId) {
@@ -380,6 +392,21 @@ function AssistantInner() {
     profile.status === "ready"
       ? Math.round(((PROFILE_FIELD_COUNT - profile.missing.length) / PROFILE_FIELD_COUNT) * 100)
       : null;
+  const voiceNote = !voxideReady
+    ? `${copy.micMissingTitle} — type or use a quick prompt.`
+    : voiceIssue
+      ? voiceIssue
+      : voice.status === "error"
+        ? voice.errorCode === "usage_limit"
+          ? "Voice is unavailable right now. Type your question instead."
+          : "The voice session stopped with an error. Type your question instead."
+        : isVoiceLive(voice.status)
+          ? "Voice is on. Ask your question out loud; answers appear here."
+          : voiceClient === null
+            ? "Voice is loading. You can type in the meantime."
+            : language === "en"
+              ? "Tap the mic to speak, or type."
+              : "Tap the mic to speak, or type. Speech recognition is most reliable in English; replies follow your language.";
   const emptyPrompts =
     discover && discover.items.length > 0 ? [BATCH_PROMPT, ...quickPrompts] : quickPrompts;
 
@@ -567,12 +594,17 @@ function AssistantInner() {
               >
                 {copy.send}
               </button>
+              {voiceClient ? (
+                <VoiceButton
+                  client={voiceClient}
+                  status={voice.status}
+                  disabled={Boolean(pending)}
+                  onIssue={setVoiceIssue}
+                />
+              ) : null}
             </div>
-            <p className="mt-2 text-xs text-muted">
-              {voxideReady
-                ? `${copy.voxideReadyTitle}. Voice answers use the same HULUM actions as text.`
-                : `${copy.micMissingTitle} — type or use a quick prompt.`}{" "}
-              HULUM explains decisions; it never submits applications for you.
+            <p className="mt-2 text-xs text-muted" role="status">
+              {voiceNote} HULUM explains decisions; it never submits applications for you.
             </p>
           </form>
         </div>

@@ -7,6 +7,7 @@ import { detectAskedLanguage, type LanguageCode } from "@hulum/shared";
 import { getLanguage, getUserId } from "@/lib/storage";
 import { currentTheme, useTheme } from "@/lib/theme";
 import { runTextAction } from "@/lib/text-actions";
+import { publishVoxideClient } from "@/lib/voxide-client";
 import { recognitionFailureMessage, TEXT_FALLBACK_HINT } from "@/lib/client-failures";
 import {
   HULUM_VOICE_ROUTES,
@@ -145,7 +146,7 @@ export function VoxideAskHulum({
     });
     lastReplyRef.current = response.reply;
     onReplyRef.current?.(utterance, response.reply);
-    publishVoiceReply(utterance, response.reply);
+    publishVoiceReply(utterance, response.reply, response);
     return response.reply;
   };
 
@@ -341,6 +342,7 @@ export function VoxideAskHulum({
       return;
     }
 
+    publishVoxideClient(client);
     let silenceTimer: ReturnType<typeof setTimeout> | undefined;
     let lastStatus: VoxideStatus | null = null;
 
@@ -464,6 +466,7 @@ export function VoxideAskHulum({
       unsubTranscript();
       unsubMessage();
       unsubStatus();
+      publishVoxideClient(null);
       client.destroy();
     };
   }, [client]);

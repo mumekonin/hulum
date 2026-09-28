@@ -1,3 +1,5 @@
+import type { TextActionResult } from "./text-actions";
+
 export const HULUM_VOICE_REPLY_EVENT = "hulum-voice-reply";
 
 const OPPORTUNITY_KEY = "hulum.voice.opportunityId";
@@ -40,11 +42,22 @@ export function clearVoiceSession(): void {
   window.sessionStorage.removeItem(ANALYSIS_KEY);
 }
 
-export function publishVoiceReply(userText: string, reply: string): void {
+export type VoiceReplyDetail = {
+  userText: string;
+  reply: string;
+  result?: TextActionResult;
+};
+
+export function publishVoiceReply(
+  userText: string,
+  reply: string,
+  result?: TextActionResult,
+): void {
   if (typeof window === "undefined") {
     return;
   }
-  window.dispatchEvent(new CustomEvent(HULUM_VOICE_REPLY_EVENT, { detail: { userText, reply } }));
+  const detail: VoiceReplyDetail = { userText, reply, ...(result ? { result } : {}) };
+  window.dispatchEvent(new CustomEvent(HULUM_VOICE_REPLY_EVENT, { detail }));
 }
 
 export const HULUM_VOICE_ROUTES: Array<{ path: string; description: string }> = [
