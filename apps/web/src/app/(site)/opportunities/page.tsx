@@ -58,6 +58,7 @@ export default function DiscoverPage() {
   const [queryInput, setQueryInput] = useState("");
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<DiscoverFilters>(EMPTY_FILTERS);
+  const [filtersOpen, setFiltersOpen] = useState(false);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -107,13 +108,15 @@ export default function DiscoverPage() {
       total: result.items.length,
     });
   }, [status, query, result]);
-  const filtersActive =
-    filters.deadline !== "any" ||
-    filters.location !== "" ||
-    filters.field !== "" ||
-    filters.education !== "" ||
-    filters.experience !== "any" ||
-    filters.includeClosed;
+  const activeFilterCount = [
+    filters.deadline !== "any",
+    filters.location !== "",
+    filters.field !== "",
+    filters.education !== "",
+    filters.experience !== "any",
+    filters.includeClosed,
+  ].filter(Boolean).length;
+  const filtersActive = activeFilterCount > 0;
 
   function update<K extends keyof DiscoverFilters>(key: K, value: DiscoverFilters[K]) {
     setFilters((current) => ({ ...current, [key]: value }));
@@ -181,7 +184,7 @@ export default function DiscoverPage() {
               key={example}
               type="button"
               onClick={() => runExample(example)}
-              className="min-h-8 underline decoration-line-strong underline-offset-4 hover:text-ink hover:decoration-ink"
+              className="min-h-11 text-left underline decoration-line-strong underline-offset-4 hover:text-ink hover:decoration-ink"
             >
               {example}
             </button>
@@ -189,7 +192,11 @@ export default function DiscoverPage() {
         </div>
       </form>
 
-      <div className="mt-8 flex flex-wrap gap-2" role="group" aria-label="Opportunity type">
+      <div
+        className="-mx-5 mt-8 flex gap-2 overflow-x-auto px-5 pb-1 sm:mx-0 sm:flex-wrap sm:overflow-visible sm:px-0"
+        role="group"
+        aria-label="Opportunity type"
+      >
         {(["", ...OPPORTUNITY_TYPES] as const).map((type) => {
           const active = filters.type === type;
           return (
@@ -198,7 +205,7 @@ export default function DiscoverPage() {
               type="button"
               aria-pressed={active}
               onClick={() => update("type", type)}
-              className={`min-h-10 border px-4 text-sm transition-colors ${
+              className={`min-h-11 shrink-0 border px-4 text-sm transition-colors ${
                 active
                   ? "border-ink bg-ink text-paper"
                   : "border-line text-muted hover:border-line-strong hover:text-ink"
@@ -210,7 +217,21 @@ export default function DiscoverPage() {
         })}
       </div>
 
-      <fieldset className="mt-6 border-0 p-0">
+      <button
+        type="button"
+        onClick={() => setFiltersOpen((open) => !open)}
+        aria-expanded={filtersOpen}
+        aria-controls="discover-filters"
+        className="mt-6 inline-flex min-h-11 items-center gap-2 border border-line-strong px-4 text-sm sm:hidden"
+      >
+        Filters{activeFilterCount > 0 ? ` (${activeFilterCount})` : ""}
+        <span aria-hidden>{filtersOpen ? "−" : "+"}</span>
+      </button>
+
+      <fieldset
+        id="discover-filters"
+        className={`mt-6 border-0 p-0 ${filtersOpen ? "" : "hidden sm:block"}`}
+      >
         <legend className="sr-only">Filters</legend>
         <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
           <label className="grid gap-1 text-xs uppercase tracking-[0.12em] text-muted">

@@ -5,7 +5,7 @@ import { FAQ, FAQ_PRIMARY_COUNT, type FaqEntry } from "@/lib/faq";
 import type { RecentQuestion } from "@/lib/recent-questions";
 
 const itemClass =
-  "block w-full py-2 text-left text-sm leading-6 text-ink underline-offset-4 hover:underline disabled:opacity-60";
+  "block min-h-11 w-full py-2.5 text-left text-sm leading-6 text-ink underline-offset-4 hover:underline disabled:opacity-60";
 
 export function RecentQuestions({
   items,
@@ -82,7 +82,7 @@ export function FrequentlyAsked({
           onClick={() => setExpanded((value) => !value)}
           aria-expanded={expanded}
           aria-controls="faq-list"
-          className="mt-2 min-h-10 text-sm text-muted underline underline-offset-4 hover:text-ink"
+          className="mt-2 min-h-11 text-sm text-muted underline underline-offset-4 hover:text-ink"
         >
           {expanded ? "Fewer questions" : `More questions (${FAQ.length - FAQ_PRIMARY_COUNT})`}
         </button>

@@ -471,7 +471,8 @@ export function VoxideAskHulum({
     };
   }, [client]);
 
-  if (client === null) {
+  // Ask HULUM has its own mic on this same client; the floating launcher would cover its input.
+  if (client === null || pathname === "/assistant") {
     return null;
   }
 

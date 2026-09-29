@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { initialsOf, useAccount, type Account } from "@/lib/account";
 import { clearSession } from "@/lib/storage";
@@ -31,6 +31,8 @@ export function AppNav() {
   const router = useRouter();
   const account = useAccount();
   const [menuOpen, setMenuOpen] = useState(false);
+  const menuButton = useRef<HTMLButtonElement>(null);
+  const menu = useRef<HTMLElement>(null);
 
   useEffect(() => {
     setMenuOpen(false);
@@ -38,8 +40,11 @@ export function AppNav() {
 
   useEffect(() => {
     if (!menuOpen) return;
+    menu.current?.querySelector<HTMLElement>("a, button")?.focus();
     const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenuOpen(false);
+      if (event.key !== "Escape") return;
+      setMenuOpen(false);
+      menuButton.current?.focus();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
@@ -70,6 +75,7 @@ export function AppNav() {
           <div className="flex items-center">
             <ThemeToggle />
             <button
+              ref={menuButton}
               type="button"
               onClick={() => setMenuOpen((open) => !open)}
               aria-expanded={menuOpen}
@@ -82,6 +88,7 @@ export function AppNav() {
         </div>
         {menuOpen ? (
           <nav
+            ref={menu}
             id="mobile-menu"
             aria-label="Primary"
             className="border-t border-line px-2 pb-4 pt-2"

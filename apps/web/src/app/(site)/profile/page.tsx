@@ -30,6 +30,7 @@ import {
 import { PROFILE_FIELD_LABELS } from "@/lib/text-actions";
 import { getLanguage, getUserId, setLanguage, setSessionToken } from "@/lib/storage";
 import { StatusPanel } from "@/components/StatusPanel";
+import { voiceLauncherClearance } from "@/lib/voxide";
 
 type Form = {
   educationLevel: string;
@@ -77,7 +78,7 @@ function patchFrom(form: Form): PatchProfileRequest {
 const inputClass =
   "min-h-11 w-full border border-line-strong bg-surface px-3 py-2 focus:border-ink";
 const secondaryButton =
-  "inline-flex min-h-10 items-center border border-line-strong px-3 text-sm transition-colors hover:border-ink disabled:opacity-60";
+  "inline-flex min-h-11 items-center border border-line-strong px-3 text-sm transition-colors hover:border-ink disabled:opacity-60";
 
 function extensionFor(mimeType: string): string {
   return mimeType === "application/pdf" ? "pdf" : mimeType.replace("image/", "");
@@ -532,7 +533,7 @@ export default function ProfilePage() {
                     <button
                       type="button"
                       onClick={applyProposal}
-                      className="min-h-10 bg-ink px-4 text-sm text-paper"
+                      className="min-h-11 bg-ink px-4 text-sm text-paper"
                     >
                       Use these in the form
                     </button>
@@ -687,7 +688,9 @@ export default function ProfilePage() {
             </label>
           </fieldset>
 
-          <div className="sticky bottom-0 flex flex-wrap items-center gap-3 border-t border-line bg-paper py-4">
+          <div
+            className={`sticky bottom-0 flex flex-wrap items-center gap-3 border-t border-line bg-paper pt-4 ${voiceLauncherClearance()}`}
+          >
             <button
               type="submit"
               disabled={saveState === "saving"}
@@ -792,7 +795,7 @@ export default function ProfilePage() {
               className={
                 cv
                   ? secondaryButton
-                  : "inline-flex min-h-10 items-center bg-ink px-4 text-sm text-paper disabled:opacity-60"
+                  : "inline-flex min-h-11 items-center bg-ink px-4 text-sm text-paper disabled:opacity-60"
               }
             >
               {documentBusy === "cv" ? "Uploading…" : cv ? "Replace" : "Upload CV"}
@@ -802,7 +805,7 @@ export default function ProfilePage() {
                 type="button"
                 disabled={documentBusy !== null}
                 onClick={() => void withDocument("cv-remove", () => remove(cv.id))}
-                className="min-h-10 px-2 text-sm text-muted underline underline-offset-4 hover:text-ink"
+                className="min-h-11 px-2 text-sm text-muted underline underline-offset-4 hover:text-ink"
               >
                 Remove
               </button>
@@ -836,7 +839,7 @@ export default function ProfilePage() {
                   type="button"
                   disabled={documentBusy !== null}
                   onClick={() => void withDocument(`remove-${doc.id}`, () => remove(doc.id))}
-                  className="min-h-10 px-2 text-sm text-muted underline underline-offset-4 hover:text-ink"
+                  className="min-h-11 px-2 text-sm text-muted underline underline-offset-4 hover:text-ink"
                 >
                   Remove
                 </button>

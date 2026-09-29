@@ -114,7 +114,7 @@ function BatchCardView({ card }: { card: BatchCard }) {
                 <li key={row.analysisId}>
                   <Link
                     href={opportunityHref(row.opportunityId, row.analysisId)}
-                    className="inline-flex min-h-9 items-center leading-6 underline decoration-line-strong underline-offset-4 hover:decoration-ink"
+                    className="inline-flex min-h-11 items-center leading-6 underline decoration-line-strong underline-offset-4 hover:decoration-ink"
                   >
                     {row.title}
                   </Link>
@@ -144,7 +144,7 @@ function Actions({
 }) {
   if (links.length === 0 && prompts.length === 0) return null;
   const className =
-    "inline-flex min-h-10 items-center border border-line-strong px-3 text-sm transition-colors hover:border-ink disabled:opacity-60";
+    "inline-flex min-h-11 items-center border border-line-strong px-3 text-sm transition-colors hover:border-ink disabled:opacity-60";
   return (
     <div className="mt-4 flex flex-wrap gap-2">
       {prompts.map((prompt) => (

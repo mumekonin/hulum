@@ -191,7 +191,10 @@ function AssistantInner() {
 
   useEffect(() => {
     if (messages.length > 0)
-      threadEnd.current?.scrollIntoView({ behavior: "smooth", block: "end" });
+      threadEnd.current?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "end",
+      });
   }, [messages.length, pending]);
 
   function chooseLanguage(next: LanguageCode) {
@@ -416,7 +419,7 @@ function AssistantInner() {
           <select
             value={language}
             onChange={(event) => chooseLanguage(event.target.value as LanguageCode)}
-            className="min-h-10 border border-line bg-surface px-2 text-ink"
+            className="min-h-11 border border-line bg-surface px-2 text-ink"
           >
             {LANGUAGE_OPTIONS.map((option) => (
               <option key={option.code} value={option.code}>
@@ -467,7 +470,7 @@ function AssistantInner() {
           <button
             type="button"
             onClick={clearOpportunityContext}
-            className="min-h-9 text-muted underline underline-offset-4 hover:text-ink"
+            className="min-h-11 text-muted underline underline-offset-4 hover:text-ink"
           >
             Clear context
           </button>
@@ -548,7 +551,7 @@ function AssistantInner() {
 
           <form
             onSubmit={submit}
-            className="sticky bottom-0 mt-4 border-t border-line bg-paper pb-4 pt-4"
+            className="sticky bottom-0 mt-4 border-t border-line bg-paper pb-[max(1rem,env(safe-area-inset-bottom))] pt-4"
           >
             {messages.length > 0 ? (
               <div className="mb-3 flex gap-2 overflow-x-auto pb-1">
@@ -559,7 +562,7 @@ function AssistantInner() {
                     disabled={Boolean(pending)}
                     onClick={() => ask(prompt)}
                     lang={/[\u1200-\u137F]/.test(prompt.label) ? "am" : undefined}
-                    className="min-h-9 shrink-0 border border-line px-3 text-sm text-muted transition-colors hover:border-ink hover:text-ink disabled:opacity-60"
+                    className="min-h-11 shrink-0 border border-line px-3 text-sm text-muted transition-colors hover:border-ink hover:text-ink disabled:opacity-60"
                   >
                     {prompt.label}
                   </button>

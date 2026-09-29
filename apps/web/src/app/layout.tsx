@@ -24,7 +24,7 @@ const gatewayMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "HULUM — AI opportunity decision agent",
+  title: { default: "HULUM — AI opportunity decision agent", template: "%s · HULUM" },
   description: "Decide whether to APPLY, MAYBE, or SKIP — then see why and what to do next.",
 };
 

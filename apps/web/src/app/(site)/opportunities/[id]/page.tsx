@@ -42,7 +42,9 @@ export default function OpportunityDetailPage() {
     setOpportunity(null);
     void api<Opportunity>(`/api/opportunities/${params.id}`)
       .then((data) => {
-        if (!cancelled) setOpportunity(data);
+        if (cancelled) return;
+        setOpportunity(data);
+        document.title = `${data.title} · HULUM`;
       })
       .catch((err: unknown) => {
         if (cancelled) return;

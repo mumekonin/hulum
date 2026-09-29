@@ -1,4 +1,7 @@
+import type { Metadata } from "next";
 import Link from "next/link";
+
+export const metadata: Metadata = { title: "How HULUM works" };
 
 const journey = [
   { n: "01", title: "Create profile", href: "/profile", detail: "Education, field, country, skills, languages, documents." },
