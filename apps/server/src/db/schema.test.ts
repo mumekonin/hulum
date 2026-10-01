@@ -70,6 +70,21 @@ describe("010_profile_document_text.sql", () => {
   });
 });
 
+describe("011_saved_opportunities.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "011_saved_opportunities.sql"), "utf8");
+
+  it("keys saves per user and opportunity with an owner policy", () => {
+    expect(sql).toContain("create table if not exists saved_opportunities");
+    expect(sql).toContain("primary key (user_id, opportunity_id)");
+    expect(sql).toContain("enable row level security");
+    expect(sql).toContain("user_id = app_current_user_id()");
+  });
+
+  it("does not store a decision", () => {
+    expect(sql).not.toMatch(/\bdecision\s+text/);
+  });
+});
+
 describe("001_init.sql", () => {
   const sql = fs.readFileSync(path.join(migrationsDir(), "001_init.sql"), "utf8");
 

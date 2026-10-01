@@ -5,6 +5,7 @@ import Link from "next/link";
 import {
   OPPORTUNITY_TYPES,
   TYPE_LABELS,
+  type Decision,
   type Opportunity,
   type OpportunityType,
 } from "@hulum/shared";
@@ -20,6 +21,13 @@ import {
   type ExperienceFilter,
 } from "@/lib/discover";
 import { DISCOVER_CONTEXT_LIMIT, writeDiscoverContext } from "@/lib/discover-context";
+import {
+  DECISION_FILTER_OPTIONS,
+  decisionsById,
+  fetchMyAnalyses,
+  matchesDecision,
+  type DecisionFilter,
+} from "@/lib/history";
 
 const EXAMPLE_QUERIES = [
   "AI scholarships for Ethiopian students",
@@ -59,6 +67,22 @@ export default function DiscoverPage() {
   const [query, setQuery] = useState("");
   const [filters, setFilters] = useState<DiscoverFilters>(EMPTY_FILTERS);
   const [filtersOpen, setFiltersOpen] = useState(false);
+  const [decisions, setDecisions] = useState<Map<string, Decision> | null>(null);
+  const [decisionFilter, setDecisionFilter] = useState<DecisionFilter>("");
+
+  useEffect(() => {
+    let cancelled = false;
+    void fetchMyAnalyses()
+      .then((rows) => {
+        if (!cancelled) setDecisions(decisionsById(rows));
+      })
+      .catch(() => {
+        if (!cancelled) setDecisions(null);
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
 
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
@@ -97,7 +121,14 @@ export default function DiscoverPage() {
     };
   }, [reloadKey]);
 
-  const result = useMemo(() => discover(all, query, filters), [all, query, filters]);
+  const result = useMemo(() => {
+    const found = discover(all, query, filters);
+    if (decisions === null || decisionFilter === "") return found;
+    return {
+      ...found,
+      items: found.items.filter((item) => matchesDecision(item.id, decisionFilter, decisions)),
+    };
+  }, [all, query, filters, decisions, decisionFilter]);
   const options = useMemo(() => filterOptions(all), [all]);
 
   useEffect(() => {
@@ -115,6 +146,7 @@ export default function DiscoverPage() {
     filters.education !== "",
     filters.experience !== "any",
     filters.includeClosed,
+    decisionFilter !== "",
   ].filter(Boolean).length;
   const filtersActive = activeFilterCount > 0;
 
@@ -139,6 +171,7 @@ export default function DiscoverPage() {
 
   function clearFilters() {
     setFilters((current) => ({ ...EMPTY_FILTERS, type: current.type }));
+    setDecisionFilter("");
   }
 
   const count = result.items.length;
@@ -307,6 +340,22 @@ export default function DiscoverPage() {
               ))}
             </select>
           </label>
+          {decisions !== null && decisions.size > 0 ? (
+            <label className="grid gap-1 text-xs uppercase tracking-[0.12em] text-muted">
+              Your decision
+              <select
+                value={decisionFilter}
+                onChange={(e) => setDecisionFilter(e.target.value as DecisionFilter)}
+                className={selectClass}
+              >
+                {DECISION_FILTER_OPTIONS.map((option) => (
+                  <option key={option.value || "any"} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </label>
+          ) : null}
         </div>
         <div className="mt-3 flex flex-wrap items-center gap-4 text-sm">
           <label className="inline-flex min-h-11 items-center gap-2 text-muted">
@@ -402,7 +451,10 @@ export default function DiscoverPage() {
                 query && (filtersActive || filters.type !== "")
                   ? {
                       label: "Show all types and filters",
-                      onClick: () => setFilters(EMPTY_FILTERS),
+                      onClick: () => {
+                        setFilters(EMPTY_FILTERS);
+                        setDecisionFilter("");
+                      },
                     }
                   : undefined
               }
@@ -413,7 +465,10 @@ export default function DiscoverPage() {
             <ul id="opportunity-results" className="divide-y divide-line">
               {result.items.map((opportunity) => (
                 <li key={opportunity.id}>
-                  <OpportunityRow opportunity={opportunity} />
+                  <OpportunityRow
+                    opportunity={opportunity}
+                    decision={decisions?.get(opportunity.id)}
+                  />
                 </li>
               ))}
             </ul>

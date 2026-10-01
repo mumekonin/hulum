@@ -22,9 +22,13 @@
 | `GET` | `/api/opportunities` | `?q=&type=` | Investigator / verified catalog; may be empty |
 | `GET` | `/api/opportunities/:id` | — | UUID |
 | `POST` | `/api/opportunities/:id/analyze` | `{ "userId" }` | `decide()` + readiness items |
+| `GET` | `/api/analyses` | `?opportunityId=` | Session user's latest analysis per opportunity (stored decision, fit score, readiness done/total). Always requires `X-Hulum-Session` |
 | `GET` | `/api/analyses/:id` | — | Stored analysis |
 | `POST` | `/api/analyses/:id/explain` | `{ "language"? }` | Groq wording only; **rate-limited** |
 | `GET` | `/api/analyses/:id/readiness` | — | Checklist for analysis |
+| `GET` | `/api/saved` | — | Session user's saved opportunity ids. Always requires `X-Hulum-Session` |
+| `POST` | `/api/saved` | `{ "opportunityId" }` | Save (idempotent); 404 if the opportunity is not stored |
+| `DELETE` | `/api/saved/:opportunityId` | — | Unsave; 404 if it was not saved |
 | `PATCH` | `/api/readiness/:id` | `{ "status" }` | `TODO` / `IN_PROGRESS` / `DONE` / `NOT_REQUIRED` |
 | `POST` | `/api/voice/session` | `{ "userId", "language"? }` | Metadata only; provider `text-fallback` until a Voxide key is set |
 | `POST` | `/api/voice/action` | `{ "userId", "text", ... }` | Same intents as Ask HULUM text; timed in ops; profile extract proposes only |

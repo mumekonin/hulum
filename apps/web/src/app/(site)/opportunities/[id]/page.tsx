@@ -9,8 +9,10 @@ import { StatusPanel } from "@/components/StatusPanel";
 import { DecisionSection } from "@/components/analysis/DecisionSection";
 import { OfficialSourcePanel } from "@/components/analysis/OfficialSourcePanel";
 import { ReadinessSection } from "@/components/analysis/ReadinessSection";
+import { SaveOpportunityButton } from "@/components/SaveOpportunityButton";
 import { api, isNotFound, userFacingError } from "@/lib/api";
 import { daysUntil, formatDeadline, requirementLines } from "@/lib/format";
+import { fetchMyAnalyses } from "@/lib/history";
 import { getUserId } from "@/lib/storage";
 import { readVoiceSession, writeVoiceSession } from "@/lib/voice-session";
 
@@ -59,17 +61,21 @@ export default function OpportunityDetailPage() {
     };
   }, [params.id, reloadKey]);
 
-  // Reopen a stored analysis for this opportunity (from a link or this browser session).
+  // Reopen a stored analysis: from a link, this browser session, or the user's latest one.
   useEffect(() => {
     const fromUrl = new URLSearchParams(window.location.search).get("analysisId");
     const session = readVoiceSession();
     const candidate =
       fromUrl ?? (session.opportunityId === params.id ? session.analysisId : undefined);
-    if (!candidate) return;
     let cancelled = false;
-    void api<Analysis>(`/api/analyses/${candidate}`)
+    const analysisId = candidate
+      ? Promise.resolve(candidate)
+      : fetchMyAnalyses(params.id).then((rows) => rows[0]?.analysisId);
+    void analysisId
+      .then((id) => (id && !cancelled ? api<Analysis>(`/api/analyses/${id}`) : undefined))
       .then((stored) => {
-        if (!cancelled && stored.opportunityId === params.id) setAnalysis(stored);
+        if (!stored || cancelled || stored.opportunityId !== params.id) return;
+        setAnalysis((current) => current ?? stored);
       })
       .catch(() => undefined);
     return () => {
@@ -330,6 +336,7 @@ export default function OpportunityDetailPage() {
             </div>
           </dl>
           <OfficialSourcePanel opportunity={opportunity} />
+          <SaveOpportunityButton opportunityId={opportunity.id} />
           <Link
             href={askHref}
             className="flex min-h-11 items-center justify-center border border-line-strong px-4 text-sm hover:border-ink"

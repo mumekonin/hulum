@@ -2,6 +2,49 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-09-29 — Product UI transformation, onboarding, and Ask HULUM redesign
+
+Contributor: Kidist (frontend). Branch `feat/product-ui-transformation`. Backend, migration, and shared-contract changes below were agreed with Mulualem. No `.env.example` changes.
+
+### Added
+- Light and dark mode: follows the OS setting until the user picks one, choice stored in the browser, no flash on load. The Voxide widget follows the theme.
+- Quiet left sidebar on desktop, compact top bar and menu on mobile, account block with initials avatar.
+- Discover (`/opportunities`): natural-language search over the stored catalog ("AI scholarships for Ethiopian students"), type chips, deadline / location / field / education / experience filters, closed listings hidden by default. Search is keyword matching on stored fields; words no listing contains are ignored and shown as ignored.
+- Opportunity detail: "Should you apply?" analyzes inline. Decision section shows Why / What to check / Not met, next step, and fit signal marked advisory. Readiness shows "X / Y ready". Official link uses the stored `applicationUrl`, else `sourceUrl`, and says HULUM does not submit applications. `/analysis/[id]` redirects to the opportunity page.
+- Ask HULUM (`/assistant`): conversation thread with decision, list, and batch cards built from server results; opportunity context bar; "Using your HULUM profile · N% complete"; recent questions (this browser only, per user, last 10, cleared on sign-out); 11 fixed FAQ answers (no AI call); "Which of these should I apply for?" from Discover runs the existing analyze endpoint on up to 10 results.
+- Mic button on Ask HULUM that starts and stops the same browser Voxide session as the widget. Spoken answers render the same cards. Voice status says when voice is unavailable, loading, live, or failed.
+- Onboarding (`/onboarding`, 4 steps: about you, education, skills and experience, CV). New accounts land here; others land on Discover.
+- Profile page: read-only view with derived headline and completion, edit mode with Saving… / Saved, private CV section (view, download, replace, remove), other documents.
+- Route error, loading, and not-found screens; page titles.
+- `GET /api/analyses` (optional `?opportunityId=`): the session user's latest analysis per opportunity with readiness done/total. Shared type `AnalysisSummary`.
+- Migration `011_saved_opportunities.sql` and `GET/POST /api/saved`, `DELETE /api/saved/:opportunityId`. Shared type `SavedOpportunity`. Both endpoints take the user from the verified session token and require it even in open local mode.
+- My opportunities (`/my-opportunities`): saved listings, then analyzed ones grouped APPLY / MAYBE / SKIP from stored results.
+- Readiness (`/readiness`): preparation progress per analyzed opportunity, soonest deadline first; closed ones folded away.
+- Discover: "Your decision" filter (Apply / Maybe / Skip / Not analyzed yet) and a "Your fit" badge on analyzed rows, both from stored analyses.
+- Opportunity detail: Save opportunity; reopens the user's latest stored analysis on any visit.
+
+### Changed
+- Sign-in, sign-up, and Google callback route by profile state instead of always opening `/profile`.
+- Profile edit no longer shows name and email as editable (`PATCH /api/profile/:userId` never saved them) or "years of experience" (never stored).
+- 44px minimum tap targets, no iOS input zoom, reduced-motion handling, sticky bars clear the voice launcher.
+- `smoke:browser` walks onboarding instead of the old profile form.
+- Registration creates the empty profile with `education_level` and `country` null instead of `bachelor_in_progress` / `Ethiopia`. Existing rows are not rewritten (a preset cannot be told apart from a real answer).
+
+### Removed
+- Fake "State simulation" bar on the sign-in screens; unused `Header`, `OpportunityCard`, `RequirementList`.
+
+### Why
+HULUM looked like a listing site with a form. The redesign makes the product question — should I apply? — the centre of every screen, keeps the decision engine as the only source of APPLY / MAYBE / SKIP, and gives new users a guided setup.
+
+### Decisions
+- APPLY / MAYBE / SKIP, summary, and next action are shown exactly as returned by `decide()`; the UI never recomputes them.
+- Missing profile facts stay uncertain; onboarding does not keep the registration placeholder's education and country.
+- Recent questions stay in the browser; `retention.md` is unchanged (no utterance text server-side).
+- Voice stays a Voxide browser widget; no Express STT/TTS.
+
+### Evidence
+Commits `06e356d`, `3f3ad2c`, `c42bbc4`, `aa349d1`, `def1a40`, `49cc35f`, `0543b69`, `311c797`. `npm run build` and `npx eslint apps/web/src` pass. Server: new `history.test.ts` (6) and the 011 schema test pass; 266 of 267 server tests pass. The one failure, `failures.test.ts` "returns MAYBE when a stored requirement is UNCERTAIN", is date-bound: its file-store fixture `opp-mastercard-uct` has deadline 2026-09-30, which has passed, so `decide()` correctly returns SKIP. Not yet verified: migration 011 applied to a live database, `smoke:browser` run, live mic with a `vox_pub_…` key.
+
 ## 2026-09-27 — Analyze uses profile facts and uploaded document content
 
 ### Added

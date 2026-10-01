@@ -33,6 +33,7 @@ This is the master implementation checklist for HULUM.
 | 35 | API security and validation | Mulualem | DONE |
 | 36 | Integration testing | Mulualem + Kidist | DONE |
 | 48 | AI Opportunity Investigator | Mulualem | DONE |
+| 49 | Product UI transformation, onboarding, profile, Ask HULUM redesign | Kidist | IN REVIEW (`feat/product-ui-transformation`) |
 | 39 | Problem definition | Kidist + Mulualem | DONE |
 | 42 | Architecture decision record | Mulualem + Kidist | DONE |
 
@@ -1546,3 +1547,4 @@ Cursor must not:
 | Version | Date | Change |
 |---|---|---|
 | 1.0 | 2026-09-18 | Adapted master task-management structure for HULUM |
+| 1.1 | 2026-09-29 | Added Task 49 (Kidist): product UI transformation |

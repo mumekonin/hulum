@@ -69,6 +69,18 @@ export function authSigningSecret(env: AppEnv = loadEnv({ fromFile: false })): s
   return "hulum-dev-session-not-for-production";
 }
 
+/**
+ * Identity for "my …" endpoints that carry no user id in the path or body.
+ * Always requires a session, even in open local mode, so one user can never list another's rows.
+ */
+export function requireSessionUserId(req: Request, env: AppEnv = loadEnv({ fromFile: false })): string {
+  const header = req.header(HEADER);
+  if (header === undefined || header.trim() === "") {
+    throw new HttpError(401, "UNAUTHORIZED", "Sign in to continue.");
+  }
+  return verifySessionToken(header.trim(), authSigningSecret(env));
+}
+
 export function issueAuthSessionToken(userId: string, env: AppEnv = loadEnv({ fromFile: false })): string {
   return issueSessionToken(userId, authSigningSecret(env));
 }

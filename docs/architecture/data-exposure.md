@@ -12,6 +12,8 @@
 | Profile | Structured profile fields for the session user | Other users' profiles (no cross-user listing) |
 | Opportunities | Catalog fields + effective verification status | Invented listings; empty until investigator/worker fills |
 | Analysis | Decision, fit score, summary, requirement statuses/reasons, readiness | Groq raw logs; model must not change `decision` |
+| Analysis list (`GET /api/analyses`) | Session user's latest decision per opportunity, opportunity title/org/type/deadline, readiness counts | Other users' analyses; the user comes from the verified JWT, never from a query parameter |
+| Saved (`/api/saved`) | Session user's saved opportunity ids and save time | Other users' saves; no decision stored on this table |
 | Screenshot analyze | Extracted fields + decision for the upload | Fake deadlines/apply links; does not write public catalog rows |
 | Research | ScholarXIV paper search results when a key is set | The `SCHOLARXIV_API_KEY` itself |
 | Investigate | Admin summary when secret header matches | The admin secret |
@@ -28,6 +30,8 @@
 ## Database
 
 - Owned routes require a matching JWT in `X-Hulum-Session` when `SESSION_SECRET` is set (required in production).
+- `GET /api/analyses` and `/api/saved` require the JWT even in open local mode, because they carry no user id to compare against.
+- New accounts start with `education_level` and `country` null (no placeholder values), so matching reports them UNCERTAIN until the user fills them in.
 - Passwords are stored hashed (`password_hash`); Google accounts use `google_sub`.
 - RLS policies in `004_rls_owner_policies.sql` scope user tables to `app.current_user_id` for non-owner DB roles; the v0.1 API still connects as table owner (owner bypasses RLS).
 - Server uses `DATABASE_URL` / service credentials; never returned to the browser.

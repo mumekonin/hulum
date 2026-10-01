@@ -27,6 +27,7 @@ export {
   recognitionFailureMessage,
 } from "./failureMessages.js";
 export type { ProfileDocument } from "./documents.js";
+export type { AnalysisSummary, SavedOpportunity } from "./history.js";
 export type { AuthSession } from "./auth.js";
 export { SCREENSHOT_ANALYZE_NOTICE } from "./screenshot.js";
 export type { ScreenshotAnalyzeResult, ScreenshotDecisionView, ScreenshotExtracted } from "./screenshot.js";

@@ -1,5 +1,6 @@
 import Link from "next/link";
-import { TYPE_LABELS, type Opportunity, type VerificationStatus } from "@hulum/shared";
+import { TYPE_LABELS, type Decision, type Opportunity, type VerificationStatus } from "@hulum/shared";
+import { DecisionBadge } from "./DecisionBadge";
 import { daysUntil, formatDeadline, requirementLines } from "@/lib/format";
 
 const VERIFICATION_LABELS: Record<VerificationStatus, string> = {
@@ -23,7 +24,14 @@ function eligibilitySummary(opportunity: Opportunity): string | null {
   return parts.length > 0 ? parts.join(" · ") : null;
 }
 
-export function OpportunityRow({ opportunity }: { opportunity: Opportunity }) {
+export function OpportunityRow({
+  opportunity,
+  decision,
+}: {
+  opportunity: Opportunity;
+  /** The user's stored decide() result, if they analyzed this listing. */
+  decision?: Decision;
+}) {
   const remaining = daysUntil(opportunity.deadline);
   const closed = remaining !== null && remaining < 0;
   const eligibility = eligibilitySummary(opportunity);
@@ -60,6 +68,11 @@ export function OpportunityRow({ opportunity }: { opportunity: Opportunity }) {
       </div>
       <p className="mt-4 line-clamp-2 max-w-3xl leading-7">{opportunity.description}</p>
       <div className="mt-4 flex flex-wrap items-center gap-x-4 gap-y-1 text-sm text-muted">
+        {decision ? (
+          <span className="inline-flex items-center gap-2">
+            Your fit <DecisionBadge decision={decision} size="sm" />
+          </span>
+        ) : null}
         {eligibility ? <span>{eligibility}</span> : null}
         <span className="inline-flex items-center gap-1.5">
           <span

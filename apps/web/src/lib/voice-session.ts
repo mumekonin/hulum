@@ -63,6 +63,8 @@ export function publishVoiceReply(
 export const HULUM_VOICE_ROUTES: Array<{ path: string; description: string }> = [
   { path: "/journey", description: "The HULUM journey after login" },
   { path: "/opportunities", description: "Browse stored opportunities" },
+  { path: "/my-opportunities", description: "Saved opportunities and past APPLY/MAYBE/SKIP decisions" },
+  { path: "/readiness", description: "Preparation progress for analyzed opportunities" },
   { path: "/profile", description: "View and edit the signed-in profile" },
   { path: "/assistant", description: "Ask HULUM with text and quick actions" },
   { path: "/screenshot", description: "Analyze an opportunity screenshot" },

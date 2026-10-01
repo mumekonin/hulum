@@ -11,6 +11,8 @@ type NavLink = { href: string; label: string };
 
 const primaryLinks: NavLink[] = [
   { href: "/opportunities", label: "Discover" },
+  { href: "/my-opportunities", label: "My opportunities" },
+  { href: "/readiness", label: "Readiness" },
   { href: "/assistant", label: "Ask HULUM" },
 ];
 

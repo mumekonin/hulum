@@ -3,6 +3,7 @@ import { analysisRouter, analyzeRouter } from "../analysis/index.js";
 import { profileExtractRouter } from "../ai/profileExtractRouter.js";
 import { screenshotRouter } from "../ai/screenshotRouter.js";
 import { authRouter } from "../auth/routes.js";
+import { analysisListRouter, savedRouter } from "../history/index.js";
 import { createOpsRouter } from "../ops/index.js";
 import { opportunityRouter } from "../opportunities/index.js";
 import { profileRouter } from "../profiles/index.js";
@@ -24,7 +25,9 @@ export function createApiRouter(): Router {
   router.use("/ai", screenshotRouter);
   router.use("/opportunities", analyzeRouter);
   router.use("/opportunities", opportunityRouter);
+  router.use("/analyses", analysisListRouter);
   router.use("/analyses", analysisRouter);
+  router.use("/saved", savedRouter);
   router.use("/readiness", readinessRouter);
   router.use("/voice", voiceRouter);
   return router;

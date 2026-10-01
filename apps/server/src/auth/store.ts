@@ -94,8 +94,9 @@ export function createPgAuthStore(): AuthStore {
 
     async createEmptyProfile(userId: string): Promise<void> {
       await getPool().query(
+        // Unknown facts stay null so matching treats them as UNCERTAIN, never guessed.
         `insert into profiles (user_id, education_level, country, languages, skills, interests)
-         values ($1, 'bachelor_in_progress', 'Ethiopia', '{}', '{}', '{}')
+         values ($1, null, null, '{}', '{}', '{}')
          on conflict (user_id) do nothing`,
         [userId],
       );
