@@ -29,6 +29,7 @@ Contributor: Kidist (frontend). Branch `feat/product-ui-transformation`. Backend
 - 44px minimum tap targets, no iOS input zoom, reduced-motion handling, sticky bars clear the voice launcher.
 - `smoke:browser` walks onboarding instead of the old profile form.
 - Registration creates the empty profile with `education_level` and `country` null instead of `bachelor_in_progress` / `Ethiopia`. Existing rows are not rewritten (a preset cannot be told apart from a real answer).
+- API CORS now allows `DELETE`. Browsers were blocking every `DELETE` preflight, so removing a saved opportunity, and removing or replacing a CV on the profile page, failed in the browser while server tests (no Origin header) passed.
 
 ### Removed
 - Fake "State simulation" bar on the sign-in screens; unused `Header`, `OpportunityCard`, `RequirementList`.
@@ -43,7 +44,9 @@ HULUM looked like a listing site with a form. The redesign makes the product que
 - Voice stays a Voxide browser widget; no Express STT/TTS.
 
 ### Evidence
-Commits `06e356d`, `3f3ad2c`, `c42bbc4`, `aa349d1`, `def1a40`, `49cc35f`, `0543b69`, `311c797`. `npm run build` and `npx eslint apps/web/src` pass. Server: new `history.test.ts` (6) and the 011 schema test pass; 266 of 267 server tests pass. The one failure, `failures.test.ts` "returns MAYBE when a stored requirement is UNCERTAIN", is date-bound: its file-store fixture `opp-mastercard-uct` has deadline 2026-09-30, which has passed, so `decide()` correctly returns SKIP. Not yet verified: migration 011 applied to a live database, `smoke:browser` run, live mic with a `vox_pub_…` key.
+Commits `06e356d`, `3f3ad2c`, `c42bbc4`, `aa349d1`, `def1a40`, `49cc35f`, `0543b69`, `311c797`. `npm run build` and `npx eslint apps/web/src` pass. Server: new `history.test.ts` (6) and the 011 schema test pass; 266 of 267 server tests pass. The one failure, `failures.test.ts` "returns MAYBE when a stored requirement is UNCERTAIN", is date-bound: its file-store fixture `opp-mastercard-uct` has deadline 2026-09-30, which has passed, so `decide()` correctly returns SKIP.
+
+End-to-end on a throwaway local Postgres 17 (migrations 001–011 applied clean, one `[TEST]` listing inserted, `example.invalid` source): 23 API checks (session required, forged token rejected, latest-per-opportunity, readiness counts, filter, user isolation for analyses and saves, idempotent save, unknown-opportunity 404); `smoke:browser` passes (run in Edge, Playwright's Chromium download failed); 17 browser checks of save, analyze, reopen, My opportunities, Readiness, the Discover decision filter, nav, and mobile dark layout. Only console error: missing `favicon.ico` (pre-existing). Not yet verified: live mic with a `vox_pub_…` key.
 
 ## 2026-09-27 — Analyze uses profile facts and uploaded document content
 

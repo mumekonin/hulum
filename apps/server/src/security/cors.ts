@@ -25,7 +25,7 @@ export function corsMiddleware(env: Pick<AppEnv, "NODE_ENV" | "CLIENT_URL">): Re
     if (typeof origin === "string" && allow.has(origin)) {
       res.setHeader("Access-Control-Allow-Origin", origin);
       res.setHeader("Vary", "Origin");
-      res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,OPTIONS");
+      res.setHeader("Access-Control-Allow-Methods", "GET,POST,PATCH,DELETE,OPTIONS");
       res.setHeader("Access-Control-Allow-Headers", "Content-Type, X-Hulum-Session, Authorization");
       res.setHeader("Access-Control-Max-Age", "600");
     }

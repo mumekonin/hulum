@@ -28,7 +28,9 @@ function ProgressRow({ row }: { row: AnalysisSummary }) {
         >
           {row.title}
         </Link>
-        <DecisionBadge decision={row.decision} size="sm" />
+        <span className="self-start sm:self-auto">
+          <DecisionBadge decision={row.decision} size="sm" />
+        </span>
       </div>
       <p className="mt-1 text-sm text-muted">
         {row.organization} · Deadline {formatDeadline(row.deadline)}

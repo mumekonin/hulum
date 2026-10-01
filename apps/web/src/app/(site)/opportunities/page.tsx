@@ -149,6 +149,7 @@ export default function DiscoverPage() {
     decisionFilter !== "",
   ].filter(Boolean).length;
   const filtersActive = activeFilterCount > 0;
+  const showDecisionFilter = decisions !== null && decisions.size > 0;
 
   function update<K extends keyof DiscoverFilters>(key: K, value: DiscoverFilters[K]) {
     setFilters((current) => ({ ...current, [key]: value }));
@@ -266,7 +267,11 @@ export default function DiscoverPage() {
         className={`mt-6 border-0 p-0 ${filtersOpen ? "" : "hidden sm:block"}`}
       >
         <legend className="sr-only">Filters</legend>
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 lg:grid-cols-5">
+        <div
+          className={`grid grid-cols-2 gap-3 sm:grid-cols-3 ${
+            showDecisionFilter ? "xl:grid-cols-6" : "lg:grid-cols-5"
+          }`}
+        >
           <label className="grid gap-1 text-xs uppercase tracking-[0.12em] text-muted">
             Deadline
             <select
@@ -340,7 +345,7 @@ export default function DiscoverPage() {
               ))}
             </select>
           </label>
-          {decisions !== null && decisions.size > 0 ? (
+          {showDecisionFilter ? (
             <label className="grid gap-1 text-xs uppercase tracking-[0.12em] text-muted">
               Your decision
               <select
