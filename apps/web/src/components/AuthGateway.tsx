@@ -82,14 +82,8 @@ export function AuthGateway() {
             <span className="font-gw-serif text-[19px] font-semibold tracking-wider text-gw-primary normal-case">
               HULUM
             </span>
-            <span className="text-gw-outline-var">/</span>
-            <span className="text-gw-muted tracking-widest">Decision system [AUTH_NODE_01]</span>
           </div>
           <div className="flex items-center gap-6 text-[9px] uppercase tracking-widest text-gw-muted">
-            <div className="flex items-center gap-1">
-              <span className="h-1.5 w-1.5 bg-gw-primary" aria-hidden />
-              <span>Gateway active</span>
-            </div>
             <span className="hidden sm:inline">9.0249° N, 38.7469° E</span>
             <ThemeToggle />
           </div>
@@ -102,11 +96,6 @@ export function AuthGateway() {
             <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
               <div className="flex flex-col justify-center lg:col-span-6 lg:pr-8">
                 <div className="mb-6 flex flex-col gap-4">
-                  <div className="flex items-center gap-2 text-[9px] uppercase tracking-widest text-gw-secondary">
-                    <span>Index: archive // 2025.1</span>
-                    <span className="text-gw-outline-var">/</span>
-                    <span>Verified access</span>
-                  </div>
                   <p className="font-gw-serif text-3xl font-semibold tracking-tight text-gw-primary">HULUM</p>
                 </div>
 
