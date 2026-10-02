@@ -45,6 +45,24 @@ describe("006_close_catalog_seed.sql", () => {
   });
 });
 
+describe("013_ethioscholarship_catalog.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "013_ethioscholarship_catalog.sql"), "utf8");
+
+  it("points EthioScholarship at the scholarships catalog", () => {
+    expect(sql).toContain("https://scholarship.et/scholarships");
+    expect(sql).toContain("EthioScholarship");
+  });
+});
+
+describe("012_afriwork_jobs_source.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "012_afriwork_jobs_source.sql"), "utf8");
+
+  it("adds Afriwork jobs as a lead source", () => {
+    expect(sql).toContain("https://afriworket.com/jobs");
+    expect(sql).toContain("is_lead");
+  });
+});
+
 describe("009_profile_documents.sql", () => {
   const sql = fs.readFileSync(path.join(migrationsDir(), "009_profile_documents.sql"), "utf8");
 

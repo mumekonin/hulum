@@ -1,9 +1,16 @@
 import { createGroqChatClient } from "../ai/groq.js";
 import type { AppEnv } from "../config/env.js";
+import { extractAfriworkJob } from "./extract-afriwork.js";
 import { extractOpportunities, type ExtractedOpportunity } from "./extract.js";
 import { pageContainsEvidence, stripHtml } from "./evidence.js";
 import { fetchPageText } from "./fetch-page.js";
-import { listingUrls } from "./official-links.js";
+import {
+  listingFollowScore,
+  listingUrls,
+  shouldExtractPage,
+  sitemapUrlFor,
+} from "./official-links.js";
+import { createPageRenderer, shouldRenderInBrowser } from "./render-page.js";
 import {
   EXTRACT_CONCURRENCY,
   FETCH_CONCURRENCY,
@@ -11,7 +18,7 @@ import {
   budgetDeadline,
   budgetExpired,
   mapPool,
-  takeBatch,
+  takePrioritized,
 } from "./pool.js";
 import { hostnameOf, isLeadHost, isSafePublicHttpUrl } from "./safety.js";
 import { KNOWN_LEAD_HOSTS, resolveSourceUrl, urlGroundedOnPage } from "./source-url.js";
@@ -23,16 +30,17 @@ import {
   listEnabledSources,
   listOfficialDomains,
   logEvent,
+  markExtractedExpired,
+  refreshExtracted,
   rememberOfficialDomain,
   saveExtracted,
-  touchInvestigatedAt,
   type InvestigationSummary,
   type SourceRow,
 } from "./store.js";
 
 export type { InvestigationSummary };
 
-const MAX_PAGES = 40;
+const MAX_PAGES = 800;
 
 function envValue(env: AppEnv, name: string | null): string | undefined {
   if (name === null) {
@@ -80,6 +88,8 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
   ];
 
   const runId = await createRun();
+  const renderer = createPageRenderer();
+  try {
   let checked = 0;
   let saved = 0;
   let rejected = 0;
@@ -116,6 +126,10 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
       continue;
     }
     enqueue(source.name, source.url);
+    const sitemap = sitemapUrlFor(source.url);
+    if (sitemap !== undefined) {
+      enqueue(source.name, sitemap);
+    }
   }
 
   if (chat === undefined) {
@@ -123,11 +137,28 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
     await logEvent(runId, "worker", "skip", "GROQ_API_KEY and GROQ_MODEL are required to extract.");
   }
 
-  while (chat !== undefined && queue.length > 0 && checked < MAX_PAGES && !budgetExpired(deadlineAt)) {
-    const batch = takeBatch(queue, FETCH_CONCURRENCY);
+  let rootsLeft = queue.length;
+
+  while (chat !== undefined && queue.length > 0 && checked < MAX_PAGES) {
+    const mustFinishRoots = rootsLeft > 0;
+    if (!mustFinishRoots && budgetExpired(deadlineAt)) {
+      break;
+    }
+    if (mustFinishRoots) {
+      rootsLeft = Math.max(0, rootsLeft - Math.min(FETCH_CONCURRENCY, queue.length, rootsLeft));
+    }
+    const batch = takePrioritized(queue, FETCH_CONCURRENCY, (page) => listingFollowScore(page.url));
     const fetched = await mapPool(batch, FETCH_CONCURRENCY, async (page) => {
       try {
-        const html = await fetchPageText(page.url, fetchHosts);
+        let html = await fetchPageText(page.url, fetchHosts);
+        if (shouldRenderInBrowser(page.url, html)) {
+          try {
+            html = await renderer.render(page.url);
+          } catch (renderError) {
+            const message = renderError instanceof Error ? renderError.message : "Browser render failed.";
+            notes.push(`${page.sourceName}: ${page.url} browser render failed (${message}).`);
+          }
+        }
         return { page, html, error: undefined as string | undefined };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Fetch failed.";
@@ -151,9 +182,14 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
       ready.push({ sourceName: row.page.sourceName, url: row.page.url, pageText, html: row.html });
     }
 
-    const extractedRows = await mapPool(ready, EXTRACT_CONCURRENCY, async (page) => {
+    const extractable = ready.filter((page) => shouldExtractPage(page.url, page.pageText));
+    const extractedRows = await mapPool(extractable, EXTRACT_CONCURRENCY, async (page) => {
       try {
-        const extracted = await extractOpportunities(chat, page.pageText, page.url);
+        const fromAfriwork = extractAfriworkJob(page.pageText, page.url);
+        const extracted =
+          fromAfriwork !== undefined
+            ? [fromAfriwork]
+            : await extractOpportunities(chat, page.pageText, page.url);
         return { page, extracted, error: undefined as string | undefined };
       } catch (error) {
         const message = error instanceof Error ? error.message : "Extract failed.";
@@ -169,23 +205,31 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
         continue;
       }
       for (const item of row.extracted) {
-        if (isSafePublicHttpUrl(item.officialSourceUrl)) {
+        if (
+          isSafePublicHttpUrl(item.officialSourceUrl) &&
+          hostnameOf(item.officialSourceUrl) === hostnameOf(row.page.url)
+        ) {
           enqueue(row.page.sourceName, item.officialSourceUrl);
         }
         const why = evaluateExtracted(item, row.page.pageText, row.page.url, now);
+        if (why === "deadline is missing or not in the future.") {
+          const closed = await markExtractedExpired(item.title, item.deadline);
+          if (closed) {
+            refreshed += 1;
+            await logEvent(runId, row.page.sourceName, "refresh", `${item.title} marked EXPIRED from the source page.`);
+          } else {
+            rejected += 1;
+            await logEvent(runId, row.page.sourceName, "reject", `${item.title}: ${why}`);
+          }
+          continue;
+        }
         if (why !== undefined) {
           rejected += 1;
           await logEvent(runId, row.page.sourceName, "reject", `${item.title}: ${why}`);
           continue;
         }
         const sourceUrl = resolveSourceUrl(item.officialSourceUrl, row.page.url, leadHosts);
-        if ((await findDuplicate(item.title, sourceUrl)) || (await findExistingByTitle(item.title))) {
-          await touchInvestigatedAt(item.title);
-          refreshed += 1;
-          await logEvent(runId, row.page.sourceName, "refresh", `${item.title} still present.`);
-          continue;
-        }
-        await saveExtracted({
+        const payload = {
           title: item.title,
           organization: item.organization,
           type: item.type,
@@ -195,7 +239,14 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
           applicationUrl: item.applicationUrl,
           sourceUrl,
           requirementEvidence: item.requirementEvidence,
-        });
+        };
+        if ((await findDuplicate(item.title, sourceUrl)) || (await findExistingByTitle(item.title))) {
+          await refreshExtracted(payload);
+          refreshed += 1;
+          await logEvent(runId, row.page.sourceName, "refresh", `${item.title} rewritten from the source page.`);
+          continue;
+        }
+        await saveExtracted(payload);
         const host = hostnameOf(sourceUrl);
         if (host !== undefined && !isLeadHost(host, leadHosts)) {
           await rememberOfficialDomain(host, `Discovered from ${row.page.sourceName}`);
@@ -214,6 +265,9 @@ export async function runInvestigation(env: AppEnv, now: Date = new Date()): Pro
   const noteText = [`elapsedMs ${String(elapsedMs)}.`, `refreshed ${String(refreshed)}.`, ...notes].join(" ");
   await finishRun(runId, checked, saved, rejected, noteText);
   return { runId, checked, saved, rejected, refreshed, notes };
+  } finally {
+    await renderer.close();
+  }
 }
 
 export function evaluateExtracted(

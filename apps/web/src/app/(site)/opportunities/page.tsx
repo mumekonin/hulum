@@ -63,9 +63,11 @@ export default function OpportunitiesPage() {
       ? `No ${TYPE_LABELS[type].toLowerCase()} records`
       : "No opportunities yet";
   const emptyBody = query
-    ? "Nothing in the curated list matches that search. Try another word, or clear search to see every record."
+    ? "Nothing in the catalog matches that search. Try another word, or clear search to see every record."
     : type
-      ? "Nothing in the current list matches this filter. Clear it to see every curated record."
+      ? type === "job"
+        ? "There are no jobs in the catalog yet. Clear the filter to see scholarships and internships already saved. Afriwork jobs appear after the investigator reads Explore jobs pages that still show a deadline."
+        : "Nothing in the current list matches this filter. Clear it to see every saved record."
       : "HULUM only shows stored, sourced opportunities. Create a profile so you are ready when records are available.";
 
   return (
@@ -114,7 +116,7 @@ export default function OpportunitiesPage() {
       </div>
       {loading ? (
         <StatusPanel variant="loading" title="Loading opportunities">
-          Checking the curated list{query ? ` for “${query}”` : ""}
+          Checking the catalog{query ? ` for “${query}”` : ""}
           {type ? ` in ${TYPE_LABELS[type]}` : ""}.
         </StatusPanel>
       ) : null}

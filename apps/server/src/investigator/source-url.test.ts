@@ -1,6 +1,12 @@
 import { describe, expect, it } from "vitest";
 import { KNOWN_LEAD_HOSTS, resolveSourceUrl, urlGroundedOnPage } from "./source-url.js";
 
+describe("KNOWN_LEAD_HOSTS", () => {
+  it("treats Afriwork as a lead host", () => {
+    expect(KNOWN_LEAD_HOSTS).toContain("afriworket.com");
+  });
+});
+
 describe("resolveSourceUrl", () => {
   it("prefers a non-aggregator official URL", () => {
     expect(

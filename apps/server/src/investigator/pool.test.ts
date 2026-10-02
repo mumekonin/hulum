@@ -5,14 +5,24 @@ import {
   budgetExpired,
   mapPool,
   takeBatch,
+  takePrioritized,
 } from "./pool.js";
 
 describe("investigate pool", () => {
-  it("keeps a 15 second catalog budget", () => {
-    expect(INVESTIGATE_BUDGET_MS).toBe(15_000);
+  it("keeps a twenty-minute catalog budget so sitemap listings can be extracted", () => {
+    expect(INVESTIGATE_BUDGET_MS).toBe(1_200_000);
     const deadline = budgetDeadline(1_000, INVESTIGATE_BUDGET_MS);
-    expect(budgetExpired(deadline, 15_999)).toBe(false);
-    expect(budgetExpired(deadline, 16_000)).toBe(true);
+    expect(budgetExpired(deadline, 1_200_999)).toBe(false);
+    expect(budgetExpired(deadline, 1_201_000)).toBe(true);
+  });
+
+  it("takes higher-score pages first", () => {
+    const queue = ["nav", "detail", "index"];
+    expect(takePrioritized(queue, 2, (item) => (item === "detail" ? 3 : item === "index" ? 1 : 0))).toEqual([
+      "detail",
+      "index",
+    ]);
+    expect(queue).toEqual(["nav"]);
   });
 
   it("takes a batch from the front of the queue", () => {
