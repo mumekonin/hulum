@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { AuthSession } from "@hulum/shared";
 import { api, userFacingError } from "@/lib/api";
+import { routeAfterAuth } from "@/lib/post-auth";
 import { persistAuthSession, setSessionToken } from "@/lib/storage";
 
 export default function AuthCallbackPage() {
@@ -22,7 +23,7 @@ export default function AuthCallbackPage() {
     void api<AuthSession>("/api/auth/me")
       .then((session) => {
         persistAuthSession(session);
-        router.replace("/profile");
+        return routeAfterAuth(router);
       })
       .catch((error: unknown) => {
         setMessage(userFacingError(error));

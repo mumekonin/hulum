@@ -12,6 +12,13 @@ export function hasVoxidePublicKey(): boolean {
   return readVoxidePublicKey() !== "";
 }
 
+/** Bottom padding for sticky bars so the floating Voxide launcher never covers their buttons. */
+export function voiceLauncherClearance(): string {
+  return hasVoxidePublicKey()
+    ? "pb-24 lg:pb-[max(1rem,env(safe-area-inset-bottom))]"
+    : "pb-[max(1rem,env(safe-area-inset-bottom))]";
+}
+
 /**
  * Widget STT locale hint. Public Voxide docs do not list Amharic/Oromo recognition.
  * Replies still follow the asked language on POST /api/voice/action.

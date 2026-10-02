@@ -37,6 +37,8 @@ Task 48 adds `sources`, `official_domains`, and investigation logs (`002_investi
 
 Migration `004_rls_owner_policies.sql` adds owner-scoped RLS policies (and public opportunity read). The API still connects as the table owner (owner bypasses RLS unless `FORCE`). Use a non-owner role + `app.current_user_id` / `app.rls_bypass` when hardening further.
 
+Migration `011_saved_opportunities.sql` adds `saved_opportunities (user_id, opportunity_id, created_at)` with a composite primary key, cascade deletes, and an owner RLS policy. It holds bookmarks only; decisions stay on `analyses`. Agreed with Mulualem.
+
 You can also paste `migrations/001_init.sql` into the Supabase SQL editor.
 
 ## Rules

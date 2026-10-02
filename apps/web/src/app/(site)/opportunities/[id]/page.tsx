@@ -1,25 +1,41 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
-import { TYPE_LABELS, type AnalysisDetail, type Opportunity } from "@hulum/shared";
-import { Notice } from "@/components/Notice";
-import { ExternalLink } from "@/components/ExternalLink";
+import { TYPE_LABELS, type Analysis, type Opportunity, type ReadinessItem } from "@hulum/shared";
+import { DecisionAuditPanel } from "@/components/DecisionAuditPanel";
 import { StatusPanel } from "@/components/StatusPanel";
+import { DecisionSection } from "@/components/analysis/DecisionSection";
+import { OfficialSourcePanel } from "@/components/analysis/OfficialSourcePanel";
+import { ReadinessSection } from "@/components/analysis/ReadinessSection";
+import { SaveOpportunityButton } from "@/components/SaveOpportunityButton";
 import { api, isNotFound, userFacingError } from "@/lib/api";
-import { formatDeadline, requirementLines } from "@/lib/format";
+import { daysUntil, formatDeadline, requirementLines } from "@/lib/format";
+import { fetchMyAnalyses } from "@/lib/history";
 import { getUserId } from "@/lib/storage";
+import { readVoiceSession, writeVoiceSession } from "@/lib/voice-session";
+
+const REQUIREMENT_GROUPS: Array<{ label: string; pick: (item: Opportunity) => string[] }> = [
+  { label: "Education", pick: (item) => requirementLines(item.educationRequirements) },
+  { label: "Field", pick: (item) => requirementLines(item.fieldRequirements) },
+  { label: "Experience", pick: (item) => requirementLines(item.experienceRequirements) },
+  { label: "Language", pick: (item) => requirementLines(item.languageRequirements) },
+  { label: "Documents", pick: (item) => item.documentRequirements },
+  { label: "Other", pick: (item) => item.otherRequirements },
+];
 
 export default function OpportunityDetailPage() {
   const params = useParams<{ id: string }>();
   const router = useRouter();
   const [opportunity, setOpportunity] = useState<Opportunity | null>(null);
-  const [error, setError] = useState<string | null>(null);
   const [loadError, setLoadError] = useState<string | null>(null);
   const [missing, setMissing] = useState(false);
-  const [analyzing, setAnalyzing] = useState(false);
   const [reloadKey, setReloadKey] = useState(0);
+  const [analysis, setAnalysis] = useState<Analysis | null>(null);
+  const [analyzing, setAnalyzing] = useState(false);
+  const [analyzeError, setAnalyzeError] = useState<string | null>(null);
+  const decisionRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -28,7 +44,9 @@ export default function OpportunityDetailPage() {
     setOpportunity(null);
     void api<Opportunity>(`/api/opportunities/${params.id}`)
       .then((data) => {
-        if (!cancelled) setOpportunity(data);
+        if (cancelled) return;
+        setOpportunity(data);
+        document.title = `${data.title} · HULUM`;
       })
       .catch((err: unknown) => {
         if (cancelled) return;
@@ -43,6 +61,28 @@ export default function OpportunityDetailPage() {
     };
   }, [params.id, reloadKey]);
 
+  // Reopen a stored analysis: from a link, this browser session, or the user's latest one.
+  useEffect(() => {
+    const fromUrl = new URLSearchParams(window.location.search).get("analysisId");
+    const session = readVoiceSession();
+    const candidate =
+      fromUrl ?? (session.opportunityId === params.id ? session.analysisId : undefined);
+    let cancelled = false;
+    const analysisId = candidate
+      ? Promise.resolve(candidate)
+      : fetchMyAnalyses(params.id).then((rows) => rows[0]?.analysisId);
+    void analysisId
+      .then((id) => (id && !cancelled ? api<Analysis>(`/api/analyses/${id}`) : undefined))
+      .then((stored) => {
+        if (!stored || cancelled || stored.opportunityId !== params.id) return;
+        setAnalysis((current) => current ?? stored);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [params.id]);
+
   async function analyze() {
     const userId = getUserId();
     if (!userId) {
@@ -50,18 +90,32 @@ export default function OpportunityDetailPage() {
       return;
     }
     setAnalyzing(true);
-    setError(null);
+    setAnalyzeError(null);
     try {
-      const analysis = await api<AnalysisDetail>(`/api/opportunities/${params.id}/analyze`, {
+      const result = await api<Analysis>(`/api/opportunities/${params.id}/analyze`, {
         method: "POST",
         body: JSON.stringify({ userId }),
       });
-      router.push(`/analysis/${analysis.id}`);
+      setAnalysis(result);
+      writeVoiceSession({ opportunityId: result.opportunityId, analysisId: result.id });
+      window.history.replaceState(null, "", `?analysisId=${result.id}`);
+      window.requestAnimationFrame(() => decisionRef.current?.focus());
     } catch (err) {
-      setError(userFacingError(err) || "We couldn't analyze this opportunity right now.");
+      setAnalyzeError(userFacingError(err));
     } finally {
       setAnalyzing(false);
     }
+  }
+
+  function replaceReadiness(item: ReadinessItem) {
+    setAnalysis((current) =>
+      current
+        ? {
+            ...current,
+            readiness: (current.readiness ?? []).map((row) => (row.id === item.id ? item : row)),
+          }
+        : current,
+    );
   }
 
   if (loadError) {
@@ -70,7 +124,7 @@ export default function OpportunityDetailPage() {
         variant="error"
         title="We couldn't load this opportunity"
         primary={{ label: "Try again", onClick: () => setReloadKey((value) => value + 1) }}
-        secondary={{ label: "Back to opportunities", href: "/opportunities" }}
+        secondary={{ label: "Back to Discover", href: "/opportunities" }}
       >
         {loadError}
       </StatusPanel>
@@ -82,9 +136,9 @@ export default function OpportunityDetailPage() {
       <StatusPanel
         variant="empty"
         title="This opportunity is not in the current list"
-        primary={{ label: "Browse opportunities", href: "/opportunities" }}
+        primary={{ label: "Back to Discover", href: "/opportunities" }}
       >
-        It may have been removed from the stored records. Open the list and pick another sourced opportunity.
+        It may have been removed from the stored records.
       </StatusPanel>
     );
   }
@@ -92,93 +146,204 @@ export default function OpportunityDetailPage() {
   if (!opportunity) {
     return (
       <StatusPanel variant="loading" title="Loading opportunity">
-        Fetching the official source, deadline, and structured requirements.
+        Fetching the official source, deadline, and requirements.
       </StatusPanel>
     );
   }
 
-  const needsProfile = error?.toLowerCase().includes("profile");
-  const listedRequirements = [
-    ...requirementLines(opportunity.educationRequirements),
-    ...requirementLines(opportunity.fieldRequirements),
-    ...requirementLines(opportunity.experienceRequirements),
-    ...requirementLines(opportunity.languageRequirements),
-    ...requirementLines(opportunity.documentRequirements),
-    ...requirementLines(opportunity.otherRequirements),
-  ];
+  const remaining = daysUntil(opportunity.deadline);
+  const closed = remaining !== null && remaining < 0;
+  const needsProfile = analyzeError?.toLowerCase().includes("profile") ?? false;
+  const requirementGroups = REQUIREMENT_GROUPS.map((group) => ({
+    label: group.label,
+    lines: group.pick(opportunity),
+  })).filter((group) => group.lines.length > 0);
+  const askHref = `/assistant?opportunityId=${opportunity.id}${analysis ? `&analysisId=${analysis.id}` : ""}`;
 
   return (
-    <article className="max-w-3xl">
-      <p className="text-sm uppercase tracking-wide text-muted">
-        {TYPE_LABELS[opportunity.type]} · {opportunity.verificationStatus.replace("_", " ")}
-      </p>
-      <h1 className="mt-2 font-display text-4xl">{opportunity.title}</h1>
-      <p className="mt-2 text-lg text-muted">{opportunity.organization}</p>
-      <p className="mt-6 leading-7">{opportunity.description}</p>
-      <dl className="mt-8 grid gap-4 text-sm md:grid-cols-2">
-        <div>
-          <dt className="text-muted">Deadline</dt>
-          <dd>{formatDeadline(opportunity.deadline)}</dd>
-        </div>
-        <div>
-          <dt className="text-muted">Last verified</dt>
-          <dd>{opportunity.lastVerifiedAt ? opportunity.lastVerifiedAt.slice(0, 10) : "Not recorded"}</dd>
-        </div>
-        <div>
-          <dt className="text-muted">Country eligibility</dt>
-          <dd>{opportunity.countryEligibility.join(", ")}</dd>
-        </div>
-        <div>
-          <dt className="text-muted">Education</dt>
-          <dd>{requirementLines(opportunity.educationRequirements).join(", ") || "Not listed"}</dd>
-        </div>
-      </dl>
-      <h2 className="mt-10 font-display text-2xl">Requirements</h2>
-      {listedRequirements.length === 0 ? (
-        <p className="mt-3 text-sm text-muted">
-          No structured requirements were stored for this listing. Confirm eligibility on the official
-          source.
+    <article>
+      <Link
+        href="/opportunities"
+        className="inline-flex min-h-11 items-center text-sm text-muted hover:text-ink"
+      >
+        ??? Discover
+      </Link>
+
+      <header className="mt-4 max-w-3xl">
+        <p className="text-xs uppercase tracking-[0.14em] text-muted">
+          {TYPE_LABELS[opportunity.type]}
         </p>
-      ) : (
-        <ul className="mt-3 list-disc space-y-2 pl-5 text-sm leading-6">
-          {listedRequirements.map((line) => (
-            <li key={line}>{line}</li>
-          ))}
-        </ul>
-      )}
-      <div className="mt-8 flex flex-wrap gap-3">
-        <button onClick={() => void analyze()} disabled={analyzing} className="min-h-11 bg-ink px-5 py-3 text-paper disabled:opacity-60">
-          {analyzing ? "Analyzing…" : "Analyze for me"}
-        </button>
-        {opportunity.applicationUrl ? (
-          <ExternalLink href={opportunity.applicationUrl} className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
-            Official application
-          </ExternalLink>
-        ) : null}
-        <ExternalLink href={opportunity.sourceUrl} className="inline-flex min-h-11 items-center px-5 py-3 text-muted">
-          Official source
-        </ExternalLink>
-      </div>
-      {error ? (
-        <StatusPanel
-          variant="error"
-          title="We couldn't analyze this opportunity right now"
-          primary={
-            needsProfile
-              ? { label: "Open profile", href: "/profile" }
-              : { label: "Try again", onClick: () => void analyze() }
-          }
-        >
-          {error} {needsProfile ? "Create or save a profile first." : "The decision engine did not finish. Try again."}
-        </StatusPanel>
-      ) : null}
-      <div className="mt-6">
-        <Notice>
-          Always confirm eligibility and deadlines with the official organization.{" "}
-          <Link href="/profile" className="underline">
-            Need a profile first?
+        <h1 className="mt-3 font-display text-4xl leading-tight tracking-tight sm:text-5xl">
+          {opportunity.title}
+        </h1>
+        <p className="mt-3 text-lg text-muted">{opportunity.organization}</p>
+        <p className={`mt-4 text-sm ${closed ? "text-skip" : "text-ink"}`}>
+          <span className="text-muted">Deadline ?? </span>
+          {formatDeadline(opportunity.deadline)}
+          {closed
+            ? " ?? Closed"
+            : remaining !== null
+              ? ` ?? ${remaining} ${remaining === 1 ? "day" : "days"} left`
+              : ""}
+        </p>
+      </header>
+
+      <div className="mt-10 grid gap-12 lg:grid-cols-[minmax(0,1fr)_18rem]">
+        <div className="min-w-0">
+          <div ref={decisionRef} tabIndex={-1} className="focus:outline-none">
+            {analysis ? (
+              <>
+                <DecisionSection analysis={analysis} />
+                <ReadinessSection
+                  items={analysis.readiness ?? []}
+                  askHref={askHref}
+                  onChange={replaceReadiness}
+                />
+                <div className="mt-10 flex flex-wrap gap-x-6 gap-y-2 text-sm">
+                  <button
+                    type="button"
+                    onClick={() => void analyze()}
+                    disabled={analyzing}
+                    className="min-h-11 text-muted underline underline-offset-4 hover:text-ink disabled:opacity-60"
+                  >
+                    {analyzing ? "Analyzing???" : "Analyze again with my latest profile"}
+                  </button>
+                  <Link
+                    href={askHref}
+                    className="inline-flex min-h-11 items-center text-muted underline underline-offset-4 hover:text-ink"
+                  >
+                    Why this decision? Ask HULUM
+                  </Link>
+                </div>
+                {analysis.audit ? <DecisionAuditPanel audit={analysis.audit} /> : null}
+              </>
+            ) : (
+              <section
+                className="border border-line bg-surface p-6"
+                aria-labelledby="analyze-heading"
+              >
+                <h2 id="analyze-heading" className="font-display text-2xl">
+                  Should you apply?
+                </h2>
+                <p className="mt-2 max-w-xl leading-7 text-muted">
+                  HULUM compares your saved profile with this listing&apos;s requirements and
+                  returns APPLY, MAYBE, or SKIP, with the reasons and what to prepare.
+                </p>
+                <button
+                  type="button"
+                  onClick={() => void analyze()}
+                  disabled={analyzing}
+                  className="mt-5 inline-flex min-h-11 items-center bg-ink px-5 text-sm text-paper transition-opacity hover:opacity-90 disabled:opacity-60"
+                >
+                  {analyzing ? "Analyzing your fit???" : "Analyze my fit"}
+                </button>
+              </section>
+            )}
+          </div>
+
+          {analyzeError ? (
+            <StatusPanel
+              variant="error"
+              title={
+                needsProfile
+                  ? "Complete your profile first"
+                  : "We couldn't analyze this opportunity"
+              }
+              primary={
+                needsProfile
+                  ? { label: "Open profile", href: "/profile" }
+                  : { label: "Try again", onClick: () => void analyze() }
+              }
+            >
+              {needsProfile
+                ? "HULUM needs your saved profile to compare against this listing."
+                : `${analyzeError} The decision engine did not finish.`}
+            </StatusPanel>
+          ) : null}
+
+          <section className="mt-14" aria-labelledby="about-heading">
+            <h2 id="about-heading" className="font-display text-2xl">
+              About this opportunity
+            </h2>
+            <p className="mt-4 max-w-3xl whitespace-pre-line leading-8">
+              {opportunity.description}
+            </p>
+          </section>
+
+          <section className="mt-12" aria-labelledby="requirements-heading">
+            <h2 id="requirements-heading" className="font-display text-2xl">
+              Requirements
+            </h2>
+            <p className="mt-2 text-sm text-muted">As stored from the official source.</p>
+            {requirementGroups.length === 0 ? (
+              <p className="mt-4 text-sm text-muted">
+                No structured requirements were stored for this listing. Confirm eligibility on the
+                official source.
+              </p>
+            ) : (
+              <dl className="mt-4 divide-y divide-line border-y border-line">
+                {requirementGroups.map((group) => (
+                  <div
+                    key={group.label}
+                    className="grid gap-1 py-4 sm:grid-cols-[9rem_1fr] sm:gap-6"
+                  >
+                    <dt className="text-xs uppercase tracking-[0.12em] text-muted sm:pt-1">
+                      {group.label}
+                    </dt>
+                    <dd>
+                      <ul className="space-y-1 leading-7">
+                        {group.lines.map((line) => (
+                          <li key={line}>{line}</li>
+                        ))}
+                      </ul>
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            )}
+          </section>
+        </div>
+
+        <aside className="space-y-6 lg:sticky lg:top-8 lg:self-start">
+          <dl className="space-y-4 text-sm">
+            <div>
+              <dt className="text-xs uppercase tracking-[0.12em] text-muted">Eligible countries</dt>
+              <dd className="mt-1">
+                {opportunity.countryEligibility.length > 0
+                  ? opportunity.countryEligibility.join(", ")
+                  : "Not listed"}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs uppercase tracking-[0.12em] text-muted">Source status</dt>
+              <dd className="mt-1">
+                {opportunity.verificationStatus === "VERIFIED"
+                  ? "Verified source"
+                  : opportunity.verificationStatus === "AI_EXTRACTED"
+                    ? "AI-extracted, not yet verified"
+                    : opportunity.verificationStatus === "EXPIRED"
+                      ? "Expired"
+                      : "Source needs review"}
+              </dd>
+            </div>
+            <div>
+              <dt className="text-xs uppercase tracking-[0.12em] text-muted">Last verified</dt>
+              <dd className="mt-1">
+                {opportunity.lastVerifiedAt
+                  ? formatDeadline(opportunity.lastVerifiedAt.slice(0, 10))
+                  : "Not recorded"}
+              </dd>
+            </div>
+          </dl>
+          <OfficialSourcePanel opportunity={opportunity} />
+          <SaveOpportunityButton opportunityId={opportunity.id} />
+          <Link
+            href={askHref}
+            className="flex min-h-11 items-center justify-center border border-line-strong px-4 text-sm hover:border-ink"
+          >
+            Ask HULUM about this
           </Link>
-        </Notice>
+        </aside>
       </div>
     </article>
   );

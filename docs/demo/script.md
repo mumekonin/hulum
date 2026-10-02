@@ -60,13 +60,13 @@ Do say: the engine decides; Claude only explains if a key is set; always open th
 
 **Click:** Sign in (pre-created account) or Create account → fill name / email / password → Create account.
 
-### 0:40 — Profile `/profile`
+### 0:40 — Profile `/profile` (first run: `/onboarding`)
 
-**Show:** Saved Abeba facts (or fill them now if this is the first run).
+**Show:** Saved Abeba facts and the completion bar. On a first run, Create account opens the 4-step onboarding: about you, education, skills and experience, CV (Skip for now is fine).
 
-**Say:** Abeba is a Computer Science student in Ethiopia, bachelor in progress, graduating 2027, Python and React, one internship, English and Amharic.
+**Say:** Abeba is a Computer Science student in Ethiopia, bachelor in progress, graduating 2027, Python and React, one internship, English and Amharic. Anything she leaves out is treated as uncertain, never guessed.
 
-**Optional:** upload a CV/transcript photo under Documents you already have.
+**Optional:** upload a CV in the CV section. It stays private to her account.
 
 ### 1:10 — Catalog `/opportunities`
 
@@ -78,19 +78,19 @@ Do say: the engine decides; Claude only explains if a key is set; always open th
 
 **Show:** requirements, Official source, Official application when present.
 
-**Click:** Analyze for me.
+**Click:** Analyze my fit.
 
 **Say:** The same engine runs here and in Ask HULUM. Fit score is a signal only. Do not invent APPLY / MAYBE / SKIP before the result appears.
 
-### 2:10 — Decision `/analysis/[id]`
+### 2:10 — Decision (same page)
 
-**Show:** APPLY, MAYBE, or SKIP as returned, Matched, Needs attention, Readiness, disclaimer.
+**Show:** APPLY, MAYBE, or SKIP as returned, Why / What to check / Not met, Next step, Readiness "X / Y ready", disclaimer. Old `/analysis/[id]` links redirect here.
 
-**Click:** Official source. Return to the tab.
+**Click:** Apply on official website (or View official opportunity). Return to the tab.
 
 **Say:** Confirm eligibility and the deadline with the organization. HULUM is a decision aid.
 
-**Click:** Ask HULUM (Primary nav or on-page CTA).
+**Click:** Ask HULUM about this (on-page) so the conversation keeps this opportunity as context.
 
 ### 3:00 — Text “voice” `/assistant`
 
@@ -107,7 +107,7 @@ Type or click:
 
 ### 3:40 — Amharic text (optional, ~30s)
 
-**Click:** Language → አማርኛ.
+**Click:** Reply in → አማርኛ.
 
 **Say:** Amharic text and quick actions work. Live Amharic speech is not claimed.
 

@@ -27,14 +27,17 @@ A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that deci
 ## What v0.1 actually does
 
 - **Sign in** — email/password register + login (JWT in `X-Hulum-Session`). Optional Google OAuth when client id/secret are set.
-- **Structured profile** — form facts you type and save. Optional document photo uploads. No one-click Abeba demo button.
+- **Onboarding and profile** — new accounts walk a 4-step setup (`/onboarding`); `/profile` shows what you saved, lets you edit it, and keeps a private CV (view, download, replace). No one-click Abeba demo button.
+- **Discover** — keyword search and filters over the stored catalog, including your stored decision. It never invents listings.
+- **My opportunities and Readiness** — saved listings, past APPLY / MAYBE / SKIP results, and preparation progress (`/my-opportunities`, `/readiness`).
 - **Opportunity catalog** — investigator-filled from evidenced pages (not a baked seed list). May be empty until the worker runs.
 - **APPLY / MAYBE / SKIP** — one verdict per opportunity or screenshot analyze; fit 0–100 does not override the rules.
 - **Screenshot analyze** — `/screenshot` extracts visible facts (Groq vision when keyed) then `decide()` against your profile.
 - **Explanation** — engine summary; optional Groq on `POST /api/analyses/:id/explain`. Models never change the decision.
 - **Gaps and readiness** — MET / NOT_MET / UNCERTAIN, then a TODO checklist.
 - **Official source** — stored `sourceUrl` / `applicationUrl` when present.
-- **Ask HULUM** — text and quick actions (ADR 003). Optional `@voxide/react` when `NEXT_PUBLIC_VOXIDE_KEY` is set; no live mic claim without a keyed test.
+- **Ask HULUM** — text, quick prompts, fixed FAQ answers, and browser-only recent questions (ADR 003). Replies show the stored decision as cards. Optional `@voxide/react` widget and mic button when `NEXT_PUBLIC_VOXIDE_KEY` is set; no live mic claim without a keyed test.
+- **Light and dark mode** — follows the OS until you choose.
 - **Backup mode** — Voice unavailable keeps typing and the rest of the UI.
 
 Out of v0.1: auto-apply, payments, native mobile, inventing listings, live ScholarXiv papers in the product, password-reset email, production deploy.
@@ -62,7 +65,7 @@ Out of v0.1: auto-apply, payments, native mobile, inventing listings, live Schol
 
 ```
 hulum/
-├── apps/web/          # Next.js: /, /profile, /opportunities, /analysis/[id], /assistant, /screenshot
+├── apps/web/          # Next.js: /, /onboarding, /opportunities, /opportunities/[id], /my-opportunities, /readiness, /assistant, /profile, /screenshot, /research
 ├── apps/server/       # Express API (Postgres + JWT auth + investigator worker)
 ├── packages/shared/   # Zod + Task 22 contracts
 ├── database/          # Postgres migrations

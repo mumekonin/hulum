@@ -17,7 +17,11 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
   }, [router]);
 
   if (!ready) {
-    return <p className="text-muted">Checking sign-in…</p>;
+    return (
+      <p className="text-muted" role="status">
+        Checking sign-in…
+      </p>
+    );
   }
   return <>{children}</>;
 }

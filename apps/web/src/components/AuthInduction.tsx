@@ -5,7 +5,9 @@ import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import type { AuthSession } from "@hulum/shared";
 import { api, userFacingError } from "@/lib/api";
+import { routeAfterAuth } from "@/lib/post-auth";
 import { isSignedIn, persistAuthSession } from "@/lib/storage";
+import { ThemeToggle } from "./ThemeToggle";
 
 const EMAIL_KEY = "hulum.gatewayEmail";
 
@@ -20,7 +22,7 @@ export function AuthInduction() {
 
   useEffect(() => {
     if (isSignedIn()) {
-      router.replace("/profile");
+      void routeAfterAuth(router);
     }
     const stored = window.localStorage.getItem(EMAIL_KEY)?.trim();
     if (stored) setEmail(stored);
@@ -37,7 +39,7 @@ export function AuthInduction() {
       });
       persistAuthSession(session);
       window.localStorage.setItem(EMAIL_KEY, session.email);
-      router.push("/profile");
+      await routeAfterAuth(router);
     } catch (error) {
       setBusy(false);
       setNotice(userFacingError(error));
@@ -52,22 +54,17 @@ export function AuthInduction() {
             <Link href="/" className="font-gw-serif text-[19px] font-semibold tracking-wider text-gw-primary normal-case">
               HULUM
             </Link>
-            <span className="text-gw-outline-var">/</span>
-            <span className="text-gw-muted tracking-widest">Decision system [AUTH_NODE_01]</span>
           </div>
           <div className="flex items-center gap-6 text-[9px] uppercase tracking-widest text-gw-muted">
-            <div className="flex items-center gap-1">
-              <span className="h-1.5 w-1.5 bg-gw-primary" aria-hidden />
-              <span>Gateway active</span>
-            </div>
             <span className="hidden sm:inline">9.0249° N, 38.7469° E</span>
+            <ThemeToggle />
           </div>
         </div>
       </header>
 
       <main id="main-content" tabIndex={-1} className="flex flex-1 items-center justify-center px-4 py-10 sm:px-8">
         <div className="mx-auto w-full max-w-md">
-          <div className="flex flex-col bg-gw-surface p-6 shadow-md sm:p-8">
+          <div className="flex flex-col border border-gw-outline-var/60 bg-gw-surface p-6 sm:p-8">
             <div className="mb-6 flex items-center justify-between pb-2 text-[9px] text-gw-muted">
               <span className="font-gw-mono font-medium text-gw-primary">REF: 849-AUTH</span>
               <span className="uppercase tracking-widest">Create account</span>

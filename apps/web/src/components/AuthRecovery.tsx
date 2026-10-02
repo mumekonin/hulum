@@ -63,14 +63,8 @@ export function AuthRecovery() {
             <Link href="/" className="font-gw-serif text-[19px] font-semibold tracking-wider text-gw-primary normal-case">
               HULUM
             </Link>
-            <span className="text-gw-outline-var">/</span>
-            <span className="text-gw-muted tracking-widest">Decision system [AUTH_NODE_01]</span>
           </div>
           <div className="flex items-center gap-6 text-[9px] uppercase tracking-widest text-gw-muted">
-            <div className="flex items-center gap-1">
-              <span className="h-1.5 w-1.5 bg-gw-primary" aria-hidden />
-              <span>Gateway active</span>
-            </div>
             <span className="hidden sm:inline">9.0249° N, 38.7469° E</span>
           </div>
         </div>

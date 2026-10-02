@@ -1,3 +1,5 @@
+import type { TextActionResult } from "./text-actions";
+
 export const HULUM_VOICE_REPLY_EVENT = "hulum-voice-reply";
 
 const OPPORTUNITY_KEY = "hulum.voice.opportunityId";
@@ -32,16 +34,37 @@ export function writeVoiceSession(next: VoiceSessionIds): void {
   }
 }
 
-export function publishVoiceReply(userText: string, reply: string): void {
+export function clearVoiceSession(): void {
   if (typeof window === "undefined") {
     return;
   }
-  window.dispatchEvent(new CustomEvent(HULUM_VOICE_REPLY_EVENT, { detail: { userText, reply } }));
+  window.sessionStorage.removeItem(OPPORTUNITY_KEY);
+  window.sessionStorage.removeItem(ANALYSIS_KEY);
+}
+
+export type VoiceReplyDetail = {
+  userText: string;
+  reply: string;
+  result?: TextActionResult;
+};
+
+export function publishVoiceReply(
+  userText: string,
+  reply: string,
+  result?: TextActionResult,
+): void {
+  if (typeof window === "undefined") {
+    return;
+  }
+  const detail: VoiceReplyDetail = { userText, reply, ...(result ? { result } : {}) };
+  window.dispatchEvent(new CustomEvent(HULUM_VOICE_REPLY_EVENT, { detail }));
 }
 
 export const HULUM_VOICE_ROUTES: Array<{ path: string; description: string }> = [
   { path: "/journey", description: "The HULUM journey after login" },
   { path: "/opportunities", description: "Browse stored opportunities" },
+  { path: "/my-opportunities", description: "Saved opportunities and past APPLY/MAYBE/SKIP decisions" },
+  { path: "/readiness", description: "Preparation progress for analyzed opportunities" },
   { path: "/profile", description: "View and edit the signed-in profile" },
   { path: "/assistant", description: "Ask HULUM with text and quick actions" },
   { path: "/screenshot", description: "Analyze an opportunity screenshot" },

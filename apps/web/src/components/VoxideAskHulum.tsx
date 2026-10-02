@@ -5,7 +5,9 @@ import { usePathname, useRouter } from "next/navigation";
 import { VoxideClient, VoxideWidget, type VoxideStatus } from "@voxide/react";
 import { detectAskedLanguage, type LanguageCode } from "@hulum/shared";
 import { getLanguage, getUserId } from "@/lib/storage";
+import { currentTheme, useTheme } from "@/lib/theme";
 import { runTextAction } from "@/lib/text-actions";
+import { publishVoxideClient } from "@/lib/voxide-client";
 import { recognitionFailureMessage, TEXT_FALLBACK_HINT } from "@/lib/client-failures";
 import {
   HULUM_VOICE_ROUTES,
@@ -95,6 +97,7 @@ export function VoxideAskHulum({
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const theme = useTheme();
   const sessionRef = useRef<VoiceSessionIds>(session ?? readVoiceSession());
   if (session) {
     sessionRef.current = { ...readVoiceSession(), ...session };
@@ -143,7 +146,7 @@ export function VoxideAskHulum({
     });
     lastReplyRef.current = response.reply;
     onReplyRef.current?.(utterance, response.reply);
-    publishVoiceReply(utterance, response.reply);
+    publishVoiceReply(utterance, response.reply, response);
     return response.reply;
   };
 
@@ -172,7 +175,7 @@ export function VoxideAskHulum({
       language: "en-US",
       ui: {
         title: "Ask HULUM",
-        theme: "light",
+        theme: currentTheme(),
         position: "bottom-right",
         greeting:
           "I can open any HULUM page and run the same actions as the website. Say show me scholarships, then analyze for me.",
@@ -339,6 +342,7 @@ export function VoxideAskHulum({
       return;
     }
 
+    publishVoxideClient(client);
     let silenceTimer: ReturnType<typeof setTimeout> | undefined;
     let lastStatus: VoxideStatus | null = null;
 
@@ -462,15 +466,17 @@ export function VoxideAskHulum({
       unsubTranscript();
       unsubMessage();
       unsubStatus();
+      publishVoxideClient(null);
       client.destroy();
     };
   }, [client]);
 
-  if (client === null) {
+  // Ask HULUM has its own mic on this same client; the floating launcher would cover its input.
+  if (client === null || pathname === "/assistant") {
     return null;
   }
 
-  return <VoxideWidget client={client} theme="light" title="Ask HULUM" position="bottom-right" />;
+  return <VoxideWidget client={client} theme={theme} title="Ask HULUM" position="bottom-right" />;
 }
 
 export { hasVoxidePublicKey } from "@/lib/voxide";
