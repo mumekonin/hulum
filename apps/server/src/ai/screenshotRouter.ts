@@ -12,7 +12,7 @@ import { analyzeScreenshotExtract } from "./screenshotAnalyze.js";
 import { EMPTY_SCREENSHOT_EXTRACT, SCREENSHOT_EXTRACT_SYSTEM, screenshotExtractFromModelText } from "./screenshotExtract.js";
 
 const ALLOWED_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
-const MAX_BASE64_CHARS = 5_500_000;
+const MAX_BASE64_CHARS = 6_000_000;
 
 const bodySchema = z.object({
   userId: z.string().uuid(),

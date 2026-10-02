@@ -122,7 +122,7 @@ describe("profile document routes", () => {
 
   async function listen(): Promise<number> {
     const app = express();
-    app.use(express.json({ limit: "5mb" }));
+    app.use(express.json({ limit: "8mb" }));
     app.use("/api/profile", createProfileRouter(service, createMemoryDocuments()));
     app.use(notFoundHandler);
     app.use(errorHandler);
