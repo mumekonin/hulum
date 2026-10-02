@@ -192,7 +192,7 @@ function isPgError(error: unknown): error is { code: string } {
   );
 }
 
-const MAX_BASE64_CHARS = 5_500_000;
+const MAX_BASE64_CHARS = 6_000_000;
 
 const uploadSchema = z.object({
   label: z.string().trim().min(1).max(80),

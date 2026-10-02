@@ -52,7 +52,8 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
       const isDocumentUpload =
         req.method === "POST" && /^\/api\/profile\/[^/]+\/documents$/.test(req.path);
       if (isScreenshot || isDocumentUpload) {
-        express.json({ limit: "5mb" })(req, res, next);
+        // 4 MB file → ~5.4 MB base64 plus JSON keys. 5mb rejected valid uploads.
+        express.json({ limit: "8mb" })(req, res, next);
         return;
       }
       express.json({ limit: "100kb" })(req, res, next);
