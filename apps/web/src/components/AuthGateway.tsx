@@ -13,6 +13,11 @@ type SimState = "idle" | "google-loading" | "submit-loading" | "error" | "notice
 
 const EMAIL_KEY = "hulum.gatewayEmail";
 
+const inputClass =
+  "h-12 w-full rounded-lg border border-[#e2e0db] bg-white px-3.5 font-sans text-[15px] text-gw-primary placeholder:text-[#a9a69f] transition-colors hover:border-[#cfccc5] focus:border-gw-primary focus:outline-none dark:border-[#2a2a2a] dark:bg-[#0f0f0f] dark:placeholder:text-[#5f5d58] dark:hover:border-[#3a3a3a]";
+
+const labelClass = "font-gw-mono text-[11px] uppercase tracking-[0.08em] text-gw-muted";
+
 export function AuthGateway() {
   const router = useRouter();
   const [sim, setSim] = useState<SimState>("idle");
@@ -64,197 +69,172 @@ export function AuthGateway() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col">
-      <header className="w-full border-b border-gw-outline-var/30">
-        <div className="flex h-14 w-full items-center justify-between px-5 sm:px-8">
-          <span className="font-gw-serif text-[19px] font-semibold tracking-wider text-gw-primary">HULUM</span>
-          <ThemeToggle />
-        </div>
-      </header>
+    <div className="relative flex min-h-screen flex-col items-center justify-center bg-[#fafaf8] px-4 pb-8 pt-16 font-sans sm:px-6 md:py-16 dark:bg-[#0b0b0b]">
+      <div className="absolute right-4 top-4 sm:right-6 sm:top-5">
+        <ThemeToggle />
+      </div>
 
       <main
         id="main-content"
         tabIndex={-1}
-        className="flex w-full flex-1 items-center py-8 md:min-h-[calc(100vh-150px)] md:py-10"
+        className="grid w-full max-w-[440px] overflow-hidden rounded-[14px] border border-[#e7e5e0] bg-white shadow-[0_1px_2px_rgba(20,20,20,0.04),0_8px_24px_-12px_rgba(20,20,20,0.08)] md:max-w-[960px] md:grid-cols-[46fr_54fr] md:min-h-[580px] dark:border-[#2a2a2a] dark:bg-[#141414] dark:shadow-none"
       >
-        <div className="mx-auto grid w-[calc(100%-40px)] max-w-[480px] grid-cols-1 items-center gap-8 md:w-[calc(100%-64px)] md:max-w-[1250px] md:grid-cols-[minmax(0,1fr)_360px] md:gap-10 min-[75rem]:w-[calc(100%-80px)] min-[75rem]:max-w-[1320px] min-[75rem]:grid-cols-[minmax(0,1fr)_400px] min-[75rem]:gap-[70px]">
-          <div className="flex flex-col">
-            <p className="hidden font-gw-serif text-[28px] font-semibold tracking-tight text-gw-primary sm:block min-[75rem]:text-[32px]">
-              HULUM
-            </p>
-            <h1 className="font-gw-serif text-[32px] leading-[1.1] tracking-tight text-gw-primary sm:mt-4 sm:text-[38px] min-[75rem]:text-[44px]">
-              Know what is worth your time.
-            </h1>
-            <p className="mt-4 max-w-[600px] text-[15px] leading-[1.6] text-gw-secondary min-[75rem]:mt-5 min-[75rem]:text-[16px]">
-              Find opportunities, understand your fit, and know exactly what to prepare before you apply.
-            </p>
+        <section className="flex flex-col items-center justify-center border-b border-[#ecebe6] bg-[#f6f5f2] px-8 py-6 text-center md:border-b-0 md:border-r md:px-12 md:py-12 dark:border-[#232323] dark:bg-[#101010]">
+          <HulumMark />
+          <p className="mt-4 font-gw-mono text-[12px] font-medium uppercase tracking-[0.28em] text-gw-primary md:mt-6">
+            HULUM
+          </p>
+          <h1 className="mt-3 max-w-[340px] text-balance font-gw-serif text-[26px] leading-[1.12] tracking-tight text-gw-primary md:mt-5 md:text-[36px]">
+            Know what is worth your time.
+          </h1>
+          <p className="mt-4 hidden max-w-[300px] text-[15px] leading-[1.65] text-gw-muted sm:block md:mt-6">
+            Understand opportunities.
+            <br />
+            Know where you stand.
+            <br />
+            Apply with confidence.
+          </p>
+        </section>
 
-            <div className="mt-8 hidden w-full bg-gw-surface-low px-6 py-5 sm:block min-[75rem]:mt-10">
-              <p className="text-[10px] uppercase tracking-widest text-gw-muted">Decision loop</p>
-              <p className="mt-2 font-gw-serif text-[22px] text-gw-primary min-[75rem]:text-[26px]">
-                APPLY / MAYBE / SKIP
-              </p>
-              <p className="mt-1.5 text-[10px] uppercase tracking-widest text-gw-muted">
-                Engine decides · AI explains only
-              </p>
+        <section className="flex flex-col justify-center px-6 py-7 sm:px-10 md:px-11 md:py-12">
+          <div className="text-center">
+            <h2 className="font-gw-serif text-[28px] leading-tight text-gw-primary md:text-[32px]">Welcome back.</h2>
+            <p className="mt-2 text-[15px] text-gw-muted">Continue your opportunity journey.</p>
+          </div>
+
+          {notice ? (
+            <p
+              className="mt-6 rounded-lg border border-[#e2e0db] bg-[#f6f5f2] px-4 py-3 text-[13px] leading-5 text-gw-primary dark:border-[#2a2a2a] dark:bg-[#1a1a1a]"
+              role="status"
+            >
+              {notice}
+            </p>
+          ) : null}
+
+          <button
+            type="button"
+            disabled={busy}
+            onClick={triggerGoogle}
+            className="mt-7 flex h-[50px] w-full items-center justify-center gap-2.5 rounded-lg border border-[#d9d6d0] bg-white text-[14px] font-semibold text-gw-primary transition-colors hover:border-[#bfbcb5] hover:bg-[#f6f5f2] disabled:opacity-60 dark:border-[#333] dark:bg-[#1a1a1a] dark:hover:border-[#444] dark:hover:bg-[#202020]"
+          >
+            {sim === "google-loading" ? (
+              <span className="h-4 w-4 animate-spin rounded-full border-2 border-gw-primary border-t-transparent" />
+            ) : (
+              <GoogleMark />
+            )}
+            <span>{sim === "google-loading" ? "Redirecting to Google…" : "Continue with Google"}</span>
+          </button>
+
+          <div className="my-5 flex items-center gap-3" aria-hidden>
+            <span className="h-px flex-1 bg-[#ecebe6] dark:bg-[#262626]" />
+            <span className="font-gw-mono text-[10px] uppercase tracking-[0.2em] text-[#9a978f] dark:text-[#6b6964]">
+              or
+            </span>
+            <span className="h-px flex-1 bg-[#ecebe6] dark:bg-[#262626]" />
+          </div>
+
+          <form className="flex flex-col gap-4" onSubmit={signIn}>
+            <div className="flex flex-col gap-1.5">
+              <label className={labelClass} htmlFor="gateway-email">
+                Email address
+              </label>
+              <input
+                id="gateway-email"
+                name="email"
+                type="email"
+                autoComplete="email"
+                required
+                placeholder="name@domain.com"
+                value={email}
+                onChange={(ev) => setEmail(ev.target.value)}
+                className={inputClass}
+              />
             </div>
 
-            <p className="mt-6 hidden max-w-[600px] text-[13px] leading-[1.6] text-gw-muted sm:block min-[75rem]:mt-8 min-[75rem]:text-[14px]">
-              HULUM evaluates academic grants, international fellowships, and early-career appointments for Ethiopian
-              students and professionals.
-            </p>
-          </div>
+            <div className="flex flex-col gap-1.5">
+              <div className="flex items-center justify-between">
+                <label className={labelClass} htmlFor="gateway-password">
+                  Password
+                </label>
+                <Link
+                  href="/forgot-password"
+                  className="text-[13px] text-gw-muted underline-offset-2 transition-colors hover:text-gw-primary hover:underline"
+                >
+                  Forgot password?
+                </Link>
+              </div>
+              <div className="relative">
+                <input
+                  id="gateway-password"
+                  name="password"
+                  type={showPassword ? "text" : "password"}
+                  autoComplete="current-password"
+                  required
+                  minLength={8}
+                  placeholder="At least 8 characters"
+                  value={password}
+                  onChange={(ev) => setPassword(ev.target.value)}
+                  className={`${inputClass} pr-16`}
+                />
+                <button
+                  type="button"
+                  className="absolute inset-y-0 right-0 px-3.5 text-[13px] font-medium text-gw-muted transition-colors hover:text-gw-primary"
+                  onClick={() => setShowPassword((v) => !v)}
+                  aria-label={showPassword ? "Hide password" : "Show password"}
+                >
+                  {showPassword ? "Hide" : "Show"}
+                </button>
+              </div>
+            </div>
 
-          <div className="flex w-full flex-col border border-gw-outline-var/60 bg-gw-surface p-7 sm:p-8 min-[75rem]:p-9">
-                  <div className="mb-6">
-                    <h2 className="font-gw-serif mb-1.5 text-[26px] leading-tight text-gw-primary min-[75rem]:text-[30px]">
-                      Welcome back.
-                    </h2>
-                    <p className="text-[14px] leading-6 text-gw-secondary">Continue your opportunity journey.</p>
-                  </div>
+            <button
+              type="submit"
+              disabled={busy}
+              className="mt-1.5 flex h-12 w-full items-center justify-center gap-2 rounded-lg bg-gw-primary text-[14px] font-semibold text-gw-on-primary transition-opacity hover:opacity-90 disabled:opacity-60"
+            >
+              {sim === "submit-loading" && busy ? (
+                <span className="h-4 w-4 animate-spin rounded-full border-2 border-gw-on-primary border-t-transparent" />
+              ) : null}
+              <span>{busy ? "Signing in…" : "Sign in"}</span>
+            </button>
+          </form>
 
-                  {notice ? (
-                    <p className="mb-5 bg-gw-surface-highest px-4 py-3 text-[12px] font-medium leading-5 text-gw-primary" role="status">
-                      {notice}
-                    </p>
-                  ) : null}
-
-                  <button
-                    type="button"
-                    disabled={busy}
-                    onClick={triggerGoogle}
-                    className="group flex h-12 w-full items-center justify-center gap-2 bg-gw-surface-high px-4 text-gw-primary transition-colors hover:bg-gw-surface-highest disabled:opacity-60"
-                  >
-                    {sim === "google-loading" ? (
-                      <span className="h-4 w-4 animate-pulse rounded-full border border-gw-primary border-t-transparent" />
-                    ) : (
-                      <GoogleMark />
-                    )}
-                    <span className="text-[12px] font-medium uppercase tracking-wider">
-                      {sim === "google-loading" ? "Checking…" : "Continue with Google"}
-                    </span>
-                  </button>
-
-                  <div className="relative my-5 flex items-center justify-center">
-                    <div className="h-px w-full bg-gw-surface-highest" />
-                    <span className="absolute bg-gw-surface px-2 text-[9px] uppercase tracking-widest text-gw-outline">
-                      Or
-                    </span>
-                  </div>
-
-                  <form className="flex flex-col gap-4" onSubmit={signIn}>
-                    <div className="flex flex-col gap-1">
-                      <label
-                        className="flex items-center justify-between text-[9px] uppercase tracking-widest text-gw-secondary"
-                        htmlFor="gateway-email"
-                      >
-                        <span>Email address</span>
-                      </label>
-                      <input
-                        id="gateway-email"
-                        name="email"
-                        type="email"
-                        autoComplete="email"
-                        required
-                        placeholder="name@domain.com"
-                        value={email}
-                        onChange={(ev) => setEmail(ev.target.value)}
-                        className="h-12 w-full bg-gw-surface-lowest px-4 text-[14px] text-gw-primary placeholder:text-gw-outline-var focus:bg-gw-surface-low focus:outline-none"
-                      />
-                    </div>
-
-                    <div className="flex flex-col gap-1">
-                      <div className="flex items-center justify-between text-[9px]">
-                        <label className="uppercase tracking-widest text-gw-secondary" htmlFor="gateway-password">
-                          Password
-                        </label>
-                        <Link
-                          href="/forgot-password"
-                          className="lowercase tracking-wider text-gw-muted transition-colors hover:text-gw-primary"
-                        >
-                          Forgot password?
-                        </Link>
-                      </div>
-                      <div className="relative flex items-center">
-                        <input
-                          id="gateway-password"
-                          name="password"
-                          type={showPassword ? "text" : "password"}
-                          autoComplete="current-password"
-                          required
-                          minLength={8}
-                          placeholder="••••••••••••"
-                          value={password}
-                          onChange={(ev) => setPassword(ev.target.value)}
-                          className="h-12 w-full bg-gw-surface-lowest pl-4 pr-16 text-[14px] text-gw-primary placeholder:text-gw-outline-var focus:bg-gw-surface-low focus:outline-none"
-                        />
-                        <button
-                          type="button"
-                          className="absolute right-3 text-gw-outline transition-colors hover:text-gw-primary"
-                          onClick={() => setShowPassword((v) => !v)}
-                          aria-label={showPassword ? "Hide password" : "Show password"}
-                        >
-                          {showPassword ? "Hide" : "Show"}
-                        </button>
-                      </div>
-                      <p className="text-[9px] text-gw-outline">At least 8 characters. Stored as a hash, never as plaintext.</p>
-                    </div>
-
-                    <button
-                      type="submit"
-                      disabled={busy}
-                      className="mt-2 flex h-12 w-full items-center justify-center gap-2 bg-gw-primary text-[12px] font-medium uppercase tracking-wider text-gw-on-primary transition-colors hover:bg-gw-on disabled:opacity-60"
-                    >
-                      {sim === "submit-loading" && busy ? (
-                        <span className="h-4 w-4 animate-pulse rounded-full border border-gw-on-primary border-t-transparent" />
-                      ) : null}
-                      <span>{busy ? "Signing in…" : "Sign in"}</span>
-                    </button>
-                  </form>
-
-                  <div className="mt-6 flex items-center justify-center gap-1 border-t border-gw-outline-var/20 pt-4 text-[11px] text-gw-muted">
-                    <span>Don&apos;t have an account?</span>
-                    <Link
-                      href="/verify"
-                      className="text-[9px] font-medium uppercase tracking-wide text-gw-primary transition-colors hover:text-gw-secondary"
-                    >
-                      Create account
-                    </Link>
-                  </div>
-
-                  <p className="mt-3 text-center text-[11px] text-gw-muted">
-                    Prefer the product map?{" "}
-                    <Link href="/journey" className="text-gw-primary underline-offset-2 hover:underline">
-                      Open journey
-                    </Link>
-                  </p>
-          </div>
-        </div>
+          <p className="mt-6 text-center text-[14px] text-gw-muted">
+            Don&apos;t have an account?{" "}
+            <Link
+              href="/verify"
+              className="font-semibold text-gw-primary underline-offset-2 transition-colors hover:underline"
+            >
+              Create account
+            </Link>
+          </p>
+        </section>
       </main>
 
-      <footer className="w-full border-t border-gw-outline-var/30 px-4 py-2 sm:px-8">
-        <div className="flex w-full flex-col items-center justify-between gap-2 text-[9px] text-gw-muted sm:flex-row">
-          <div className="flex items-center gap-2">
-            <span className="text-gw-primary">HULUM Decision Platform</span>
-            <span>·</span>
-            <span>Addis Ababa &amp; Global</span>
-          </div>
-          <nav className="flex items-center gap-3 uppercase tracking-wider" aria-label="Legal">
-            <Link href="/journey" className="transition-colors hover:text-gw-primary">
-              Journey
-            </Link>
-            <span className="text-gw-outline-var">·</span>
-            <span className="text-gw-outline-var">Privacy / Terms not published yet</span>
-          </nav>
-        </div>
-      </footer>
+      <p className="mt-5 text-center text-[13px] text-gw-muted md:mt-6">
+        New to HULUM?{" "}
+        <Link href="/journey" className="text-gw-primary underline underline-offset-2 hover:opacity-80">
+          See how it works
+        </Link>
+      </p>
     </div>
+  );
+}
+
+function HulumMark() {
+  return (
+    <span
+      aria-hidden
+      className="flex h-12 w-12 items-center justify-center rounded-[12px] bg-gw-primary font-gw-serif text-[28px] font-semibold leading-none text-gw-on-primary md:h-16 md:w-16 md:rounded-[16px] md:text-[38px]"
+    >
+      H
+    </span>
   );
 }
 
 function GoogleMark() {
   return (
-    <svg className="h-4 w-4 shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden>
+    <svg className="h-[18px] w-[18px] shrink-0" viewBox="0 0 24 24" fill="none" aria-hidden>
       <path
         d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
         fill="currentColor"
