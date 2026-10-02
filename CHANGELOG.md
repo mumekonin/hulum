@@ -2,6 +2,53 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-01 — Job filter stays empty until Afriwork posts are saved
+
+### Changed
+- The worker stays on configured boards (Afriwork, EthioScholarship) instead of following every official org homepage.
+- Afriwork `/jobs/{id}` pages are parsed from the deadline and requirement sentences on the page, without Groq.
+- The Job filter empty state no longer says “curated records.”
+
+### Why
+The catalog had scholarships and internships only. Afriwork never finished because other hosts ate the run, and Groq often returned unavailable.
+
+## 2026-10-01 — Afriwork Explore jobs browser render
+
+### Changed
+- The investigator opens [Afriwork Explore jobs](https://afriworket.com/jobs) in Chromium when the static HTML has no `/jobs/{id}` cards, then follows those job pages.
+- A job is saved only when the rendered page shows a deadline and requirement sentence. Past deadlines stay expired.
+
+### Why
+Afriwork draws the job list after JavaScript. A plain download of Explore jobs has no listings, so HULUM could not invent them.
+
+## 2026-10-01 — EthioScholarship catalog crawl
+
+### Changed
+- The investigator follows each source `sitemap.xml` and EthioScholarship `/scholarships/{slug}` pages, newest/detail first.
+- Past deadlines stay rejected or are marked `EXPIRED`. Index, filter, and empty SPA shells are not sent to Groq.
+- EthioScholarship starts at `https://scholarship.et/scholarships`. One run may check up to 800 pages for 20 minutes.
+
+### Why
+The previous run hit 80 pages of nav/index HTML and saved one row, while scholarship.et lists hundreds of open scholarships on its sitemap. Afriwork `/jobs` is a client-rendered board with no listing HTML or job sitemap entries, so HULUM still cannot invent those jobs.
+
+## 2026-10-01 — Afriwork jobs source
+
+### Added
+- Investigator source `Afriwork jobs` at `https://afriworket.com/jobs` (lead). Employer official URLs are preferred when the page shows them.
+
+### Why
+The catalog needed an Ethiopia jobs board among the configured sources.
+
+## 2026-10-01 — Investigator rewrites listings from every configured source
+
+### Changed
+- Each run fetches every enabled `WEB_PAGE` source first, then follows listing links for up to three minutes.
+- A listing already in the catalog is rewritten from the page (deadline, description, URL, requirement sentence). A past deadline becomes `EXPIRED`.
+- The worker repeats every 30 minutes by default.
+
+### Why
+The previous 15-second run only stamped “seen again,” so the same handful of rows sat unchanged.
+
 ## 2026-09-27 — Analyze uses profile facts and uploaded document content
 
 ### Added

@@ -1,6 +1,11 @@
 import { assertSafeHttpUrl, hostnameOf, isLeadHost, isSafePublicHttpUrl } from "./safety.js";
 
-export const KNOWN_LEAD_HOSTS = ["scholarship.et", "scholars4dev.com", "opportunitydesk.org"];
+export const KNOWN_LEAD_HOSTS = [
+  "scholarship.et",
+  "scholars4dev.com",
+  "opportunitydesk.org",
+  "afriworket.com",
+];
 
 function normalizeVisit(raw: string): string | undefined {
   try {

@@ -89,6 +89,64 @@ export async function rememberOfficialDomain(domain: string, note: string): Prom
   );
 }
 
+/** Rewrite an already-saved listing from a later evidenced extract. Does not invent a new title. */
+export async function refreshExtracted(input: {
+  title: string;
+  organization: string;
+  type: string;
+  description: string;
+  deadline: string;
+  countryEligibility: string[];
+  applicationUrl: string | null;
+  sourceUrl: string;
+  requirementEvidence?: string;
+}): Promise<boolean> {
+  const otherRequirements = input.requirementEvidence?.trim()
+    ? [input.requirementEvidence.trim()]
+    : [];
+  const result = await getPool().query(
+    `update opportunities
+     set organization = $2,
+         type = $3,
+         description = $4,
+         deadline = $5::date,
+         country_eligibility = $6,
+         other_requirements = $7,
+         application_url = $8,
+         source_url = $9,
+         verification_status = 'AI_EXTRACTED',
+         investigated_at = now(),
+         updated_at = now()
+     where lower(title) = lower($1)`,
+    [
+      input.title,
+      input.organization,
+      input.type,
+      input.description,
+      input.deadline,
+      input.countryEligibility,
+      otherRequirements,
+      input.applicationUrl,
+      input.sourceUrl,
+    ],
+  );
+  return (result.rowCount ?? 0) > 0;
+}
+
+/** Source still shows the listing, but the deadline is no longer in the future. */
+export async function markExtractedExpired(title: string, deadline: string): Promise<boolean> {
+  const result = await getPool().query(
+    `update opportunities
+     set deadline = $2::date,
+         verification_status = 'EXPIRED',
+         investigated_at = now(),
+         updated_at = now()
+     where lower(title) = lower($1)`,
+    [title, deadline],
+  );
+  return (result.rowCount ?? 0) > 0;
+}
+
 /** Seen again on a later run. Does not invent a new listing. */
 export async function touchInvestigatedAt(title: string, sourceUrl?: string): Promise<boolean> {
   const result =

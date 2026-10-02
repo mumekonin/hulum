@@ -1,4 +1,5 @@
-export const INVESTIGATE_BUDGET_MS = 15_000;
+/** Enough wall time to walk source sitemaps and extract open listing pages. */
+export const INVESTIGATE_BUDGET_MS = 1_200_000;
 export const FETCH_CONCURRENCY = 8;
 export const EXTRACT_CONCURRENCY = 3;
 
@@ -15,6 +16,11 @@ export function budgetExpired(deadlineAt: number, now: number = Date.now()): boo
 }
 
 export function takeBatch<T>(queue: T[], size: number): T[] {
+  return queue.splice(0, size);
+}
+
+export function takePrioritized<T>(queue: T[], size: number, score: (item: T) => number): T[] {
+  queue.sort((left, right) => score(right) - score(left));
   return queue.splice(0, size);
 }
 
