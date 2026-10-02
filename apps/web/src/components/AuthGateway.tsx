@@ -63,128 +63,50 @@ export function AuthGateway() {
     }
   }
 
-  const statusLabel =
-    sim === "google-loading"
-      ? "HANDSHAKE"
-      : sim === "submit-loading"
-        ? "EVALUATING"
-        : sim === "error" || sim === "notice"
-          ? "NOTICE"
-          : "STABLE";
-
-  const statusMuted = sim === "error" || sim === "notice";
-
   return (
     <div className="flex min-h-screen flex-col justify-between">
       <header className="w-full border-b border-gw-outline-var/30">
-        <div className="flex h-14 w-full items-center justify-between px-4 sm:px-8">
-          <div className="flex items-center gap-3 text-[9px] font-medium uppercase tracking-[0.16em]">
-            <span className="font-gw-serif text-[19px] font-semibold tracking-wider text-gw-primary normal-case">
-              HULUM
-            </span>
-          </div>
-          <div className="flex items-center gap-6 text-[9px] uppercase tracking-widest text-gw-muted">
-            <span className="hidden sm:inline">9.0249° N, 38.7469° E</span>
-            <ThemeToggle />
-          </div>
+        <div className="flex h-14 w-full items-center justify-between px-5 sm:px-8">
+          <span className="font-gw-serif text-[19px] font-semibold tracking-wider text-gw-primary">HULUM</span>
+          <ThemeToggle />
         </div>
       </header>
 
-      <main id="main-content" tabIndex={-1} className="relative flex flex-1 items-center justify-center px-4 py-10 sm:px-8">
-        <div className="flex w-full flex-col">
-          <div className="mx-auto w-full max-w-7xl px-0 py-8 lg:py-10">
-            <div className="grid grid-cols-1 items-center gap-10 lg:grid-cols-12 lg:gap-12">
-              <div className="flex flex-col justify-center lg:col-span-6 lg:pr-8">
-                <div className="mb-6 flex flex-col gap-4">
-                  <p className="font-gw-serif text-3xl font-semibold tracking-tight text-gw-primary">HULUM</p>
-                </div>
+      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center px-5 py-8 sm:px-8 sm:py-10">
+        <div className="mx-auto grid w-full max-w-[480px] grid-cols-1 items-center gap-8 sm:gap-10 min-[880px]:max-w-none min-[880px]:w-auto min-[880px]:grid-cols-[minmax(0,420px)_380px] min-[880px]:gap-12 lg:grid-cols-[minmax(0,500px)_420px] lg:gap-16 xl:gap-[72px]">
+          <div className="flex flex-col">
+            <p className="hidden font-gw-serif text-3xl font-semibold tracking-tight text-gw-primary sm:block">HULUM</p>
+            <h1 className="font-gw-serif text-[30px] leading-[36px] tracking-tight text-gw-primary sm:mt-3 sm:text-[34px] sm:leading-[40px]">
+              Know what is worth your time.
+            </h1>
+            <p className="mt-3 text-[15px] leading-6 text-gw-secondary">
+              Find opportunities, understand your fit, and know exactly what to prepare before you apply.
+            </p>
 
-                <div className="mb-8 flex flex-col gap-4">
-                  <h1 className="font-gw-serif max-w-lg text-[32px] leading-[38px] tracking-tight text-gw-primary sm:text-[34px] sm:leading-[38px]">
-                    Know what is worth your time.
-                  </h1>
-                  <p className="max-w-md text-[15px] leading-6 text-gw-secondary">
-                    Find opportunities, understand your fit, and know exactly what to prepare before you apply.
-                  </p>
-                </div>
+            <div className="mt-7 hidden w-full bg-gw-surface-low p-4 sm:block">
+              <p className="text-[9px] uppercase tracking-widest text-gw-muted">Decision loop</p>
+              <p className="mt-1.5 font-gw-serif text-[19px] text-gw-primary">APPLY / MAYBE / SKIP</p>
+              <p className="mt-1 text-[9px] uppercase tracking-widest text-gw-muted">
+                Engine decides · AI explains only
+              </p>
+            </div>
 
-                <div className="mb-8 w-full max-w-md bg-gw-surface-low p-4">
-                  <div className="mb-2 flex items-center justify-between pb-1 text-[9px] uppercase tracking-widest text-gw-muted">
-                    <span>Decision loop</span>
-                    <span className="font-gw-mono text-gw-primary">Local · v0.1</span>
-                  </div>
-                  <div className="flex items-end justify-between gap-2 py-2">
-                    <div className="flex flex-col gap-1">
-                      <span className="font-gw-serif text-[19px] text-gw-primary">APPLY / MAYBE / SKIP</span>
-                      <span className="text-[9px] uppercase tracking-widest text-gw-muted">
-                        Engine decides · AI explains only
-                      </span>
-                    </div>
-                    <div className="flex h-9 w-32 items-end gap-1 pb-1" aria-hidden>
-                      <div className="h-3 flex-1 bg-gw-surface-highest" />
-                      <div className="h-4 flex-1 bg-gw-surface-highest" />
-                      <div className="h-6 flex-1 bg-gw-surface-highest" />
-                      <div className="h-5 flex-1 bg-gw-surface-highest" />
-                      <div className="h-7 flex-1 bg-gw-surface-high" />
-                      <div className="h-8 flex-1 bg-gw-secondary" />
-                      <div className="h-9 flex-1 bg-gw-primary" />
-                    </div>
-                  </div>
-                  <div className="mt-1 flex items-center justify-between pt-1 text-[9px] text-gw-outline">
-                    <span>Synthesis: profile × curated catalog</span>
-                    <span>No fake precision %</span>
-                  </div>
-                </div>
+            <p className="mt-6 hidden text-[12px] leading-relaxed text-gw-muted sm:block">
+              HULUM evaluates academic grants, international fellowships, and early-career appointments for Ethiopian
+              students and professionals.
+            </p>
+          </div>
 
-                <div className="max-w-md bg-gw-surface-lowest/60 p-4">
-                  <div className="flex items-start gap-2">
-                    <span className="pt-0.5 text-[9px] uppercase tracking-widest text-gw-secondary">Note</span>
-                    <p className="text-[11px] italic leading-relaxed text-gw-muted">
-                      HULUM evaluates academic grants, international fellowships, and early-career appointments for
-                      Ethiopian students and professionals.
-                    </p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex justify-center lg:col-span-6 lg:justify-end">
-                <div className="relative flex w-full max-w-[480px] flex-col border border-gw-outline-var/60 bg-gw-surface p-6 sm:p-8">
-                  <div className="mb-6 flex items-center justify-between pb-2 text-[9px] text-gw-muted">
-                    <div className="flex items-center gap-1">
-                      <span className="font-gw-mono font-medium text-gw-primary">REF: 849-AUTH</span>
-                      <span className="text-gw-outline-var">/</span>
-                      <span className="uppercase tracking-widest">Gateway</span>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <span
-                        className={`h-1.5 w-1.5 ${statusMuted ? "bg-gw-secondary" : "bg-gw-primary"}`}
-                        aria-hidden
-                      />
-                      <span
-                        className={`uppercase tracking-widest ${statusMuted ? "text-gw-secondary" : "text-gw-primary"}`}
-                      >
-                        {statusLabel}
-                      </span>
-                    </div>
-                  </div>
-
-                  <div className="mb-6">
+          <div className="flex w-full flex-col border border-gw-outline-var/60 bg-gw-surface p-7 sm:p-8">
+                  <div className="mb-5">
                     <h2 className="font-gw-serif mb-1 text-2xl text-gw-primary">Welcome back.</h2>
                     <p className="text-[13px] leading-5 text-gw-secondary">Continue your opportunity journey.</p>
                   </div>
 
                   {notice ? (
-                    <div className="mb-6 bg-gw-surface-highest p-4" role="status">
-                      <div className="flex items-start gap-2">
-                        <span className="pt-0.5 font-gw-mono text-[9px] text-gw-secondary">! MSG //</span>
-                        <div className="flex-1">
-                          <p className="text-[11px] font-medium leading-4 text-gw-primary">{notice}</p>
-                          <p className="mt-0.5 text-[9px] text-gw-muted">
-                            Google and email/password both issue a JWT. Password reset is not wired yet.
-                          </p>
-                        </div>
-                      </div>
-                    </div>
+                    <p className="mb-5 bg-gw-surface-highest px-4 py-3 text-[12px] font-medium leading-5 text-gw-primary" role="status">
+                      {notice}
+                    </p>
                   ) : null}
 
                   <button
@@ -203,7 +125,7 @@ export function AuthGateway() {
                     </span>
                   </button>
 
-                  <div className="relative my-6 flex items-center justify-center">
+                  <div className="relative my-5 flex items-center justify-center">
                     <div className="h-px w-full bg-gw-surface-highest" />
                     <span className="absolute bg-gw-surface px-2 text-[9px] uppercase tracking-widest text-gw-outline">
                       Or
@@ -217,7 +139,6 @@ export function AuthGateway() {
                         htmlFor="gateway-email"
                       >
                         <span>Email address</span>
-                        <span className="font-gw-mono text-gw-outline-var">Required</span>
                       </label>
                       <input
                         id="gateway-email"
@@ -228,7 +149,7 @@ export function AuthGateway() {
                         placeholder="name@domain.com"
                         value={email}
                         onChange={(ev) => setEmail(ev.target.value)}
-                        className="w-full bg-gw-surface-lowest px-4 py-2 text-[13px] text-gw-primary placeholder:text-gw-outline-var focus:bg-gw-surface-low focus:outline-none"
+                        className="h-11 w-full bg-gw-surface-lowest px-4 text-[13px] text-gw-primary placeholder:text-gw-outline-var focus:bg-gw-surface-low focus:outline-none"
                       />
                     </div>
 
@@ -255,7 +176,7 @@ export function AuthGateway() {
                           placeholder="••••••••••••"
                           value={password}
                           onChange={(ev) => setPassword(ev.target.value)}
-                          className="w-full bg-gw-surface-lowest px-4 py-2 pr-10 text-[13px] text-gw-primary placeholder:text-gw-outline-var focus:bg-gw-surface-low focus:outline-none"
+                          className="h-11 w-full bg-gw-surface-lowest pl-4 pr-16 text-[13px] text-gw-primary placeholder:text-gw-outline-var focus:bg-gw-surface-low focus:outline-none"
                         />
                         <button
                           type="button"
@@ -291,20 +212,12 @@ export function AuthGateway() {
                     </Link>
                   </div>
 
-                  <div className="mt-4 flex items-center justify-between pt-1 text-[9px] uppercase tracking-widest text-gw-outline-var">
-                    <span>Email + password · hashed · session token</span>
-                    <span>Sys // v0.1</span>
-                  </div>
-
-                  <p className="mt-4 text-center text-[11px] text-gw-muted">
+                  <p className="mt-3 text-center text-[11px] text-gw-muted">
                     Prefer the product map?{" "}
                     <Link href="/journey" className="text-gw-primary underline-offset-2 hover:underline">
                       Open journey
                     </Link>
                   </p>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </main>

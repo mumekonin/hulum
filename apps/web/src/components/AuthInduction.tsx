@@ -56,7 +56,6 @@ export function AuthInduction() {
             </Link>
           </div>
           <div className="flex items-center gap-6 text-[9px] uppercase tracking-widest text-gw-muted">
-            <span className="hidden sm:inline">9.0249° N, 38.7469° E</span>
             <ThemeToggle />
           </div>
         </div>
