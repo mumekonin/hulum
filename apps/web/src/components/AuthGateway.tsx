@@ -64,7 +64,7 @@ export function AuthGateway() {
   }
 
   return (
-    <div className="flex min-h-screen flex-col justify-between">
+    <div className="flex min-h-screen flex-col">
       <header className="w-full border-b border-gw-outline-var/30">
         <div className="flex h-14 w-full items-center justify-between px-5 sm:px-8">
           <span className="font-gw-serif text-[19px] font-semibold tracking-wider text-gw-primary">HULUM</span>
@@ -72,32 +72,34 @@ export function AuthGateway() {
         </div>
       </header>
 
-      <main id="main-content" tabIndex={-1} className="flex flex-1 items-center px-5 py-8 sm:px-8 sm:py-10">
-        <div className="mx-auto grid w-full max-w-[480px] grid-cols-1 items-center gap-8 sm:gap-10 min-[880px]:max-w-none min-[880px]:w-auto min-[880px]:grid-cols-[minmax(0,420px)_380px] min-[880px]:gap-12 lg:grid-cols-[minmax(0,500px)_420px] lg:gap-16 xl:gap-[72px]">
+      <main id="main-content" tabIndex={-1} className="my-auto w-full py-10 sm:py-14 lg:py-16">
+        <div className="mx-auto grid w-full max-w-[480px] grid-cols-1 items-center gap-8 px-5 sm:gap-10 sm:px-8 min-[900px]:max-w-[1100px] min-[900px]:grid-cols-[minmax(0,1fr)_360px] min-[900px]:gap-12 lg:grid-cols-[minmax(0,1fr)_390px] lg:gap-14 2xl:max-w-[1200px] 2xl:grid-cols-[minmax(0,1fr)_420px] 2xl:gap-16">
           <div className="flex flex-col">
-            <p className="hidden font-gw-serif text-3xl font-semibold tracking-tight text-gw-primary sm:block">HULUM</p>
-            <h1 className="font-gw-serif text-[30px] leading-[36px] tracking-tight text-gw-primary sm:mt-3 sm:text-[34px] sm:leading-[40px]">
+            <p className="hidden font-gw-serif text-3xl font-semibold tracking-tight text-gw-primary sm:block 2xl:text-4xl">
+              HULUM
+            </p>
+            <h1 className="font-gw-serif text-[30px] leading-[36px] tracking-tight text-gw-primary sm:mt-3 sm:text-[36px] sm:leading-[42px] lg:text-[40px] lg:leading-[46px] 2xl:text-[46px] 2xl:leading-[52px]">
               Know what is worth your time.
             </h1>
-            <p className="mt-3 text-[15px] leading-6 text-gw-secondary">
+            <p className="mt-3 max-w-[480px] text-[15px] leading-6 text-gw-secondary lg:mt-4 lg:text-[16px] lg:leading-7 2xl:max-w-[540px] 2xl:text-[17px]">
               Find opportunities, understand your fit, and know exactly what to prepare before you apply.
             </p>
 
-            <div className="mt-7 hidden w-full bg-gw-surface-low p-4 sm:block">
+            <div className="mt-7 hidden w-full bg-gw-surface-low p-4 sm:block lg:mt-8 lg:p-5">
               <p className="text-[9px] uppercase tracking-widest text-gw-muted">Decision loop</p>
-              <p className="mt-1.5 font-gw-serif text-[19px] text-gw-primary">APPLY / MAYBE / SKIP</p>
+              <p className="mt-1.5 font-gw-serif text-[19px] text-gw-primary lg:text-[22px]">APPLY / MAYBE / SKIP</p>
               <p className="mt-1 text-[9px] uppercase tracking-widest text-gw-muted">
                 Engine decides · AI explains only
               </p>
             </div>
 
-            <p className="mt-6 hidden text-[12px] leading-relaxed text-gw-muted sm:block">
+            <p className="mt-6 hidden max-w-[540px] text-[12px] leading-relaxed text-gw-muted sm:block lg:text-[13px]">
               HULUM evaluates academic grants, international fellowships, and early-career appointments for Ethiopian
               students and professionals.
             </p>
           </div>
 
-          <div className="flex w-full flex-col border border-gw-outline-var/60 bg-gw-surface p-7 sm:p-8">
+          <div className="flex w-full flex-col border border-gw-outline-var/60 bg-gw-surface p-7 sm:p-8 2xl:p-9">
                   <div className="mb-5">
                     <h2 className="font-gw-serif mb-1 text-2xl text-gw-primary">Welcome back.</h2>
                     <p className="text-[13px] leading-5 text-gw-secondary">Continue your opportunity journey.</p>
