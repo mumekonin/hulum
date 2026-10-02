@@ -1,4 +1,5 @@
 import type { AppEnv } from "../config/env.js";
+import { INVESTIGATE_BUDGET_MS } from "./pool.js";
 import { markStaleExtracts } from "./store.js";
 import { runInvestigation, type InvestigationSummary } from "./run.js";
 import {
@@ -79,7 +80,7 @@ export function createInvestigateWorker(deps: InvestigateWorkerDeps): Investigat
       return;
     }
     log(
-      `Investigate worker on. intervalMs=${String(config.intervalMs)} onStart=${String(config.onStart)} budgetMs=15000`,
+      `Investigate worker on. intervalMs=${String(config.intervalMs)} onStart=${String(config.onStart)} budgetMs=${String(INVESTIGATE_BUDGET_MS)}`,
     );
     if (config.onStart) {
       delayHandle = setTimeoutFn(() => {

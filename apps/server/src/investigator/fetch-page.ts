@@ -1,7 +1,7 @@
 import { assertSafeHttpUrl, isAllowedFetchUrl, isSafePublicHttpUrl } from "./safety.js";
 
-const MAX_BYTES = 400_000;
-const TIMEOUT_MS = 4000;
+const MAX_BYTES = 1_500_000;
+const TIMEOUT_MS = 12_000;
 
 function canFetch(raw: string, fetchHosts: string[]): boolean {
   if (isAllowedFetchUrl(raw, fetchHosts)) {

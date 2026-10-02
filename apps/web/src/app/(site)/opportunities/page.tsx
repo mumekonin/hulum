@@ -177,6 +177,10 @@ export default function DiscoverPage() {
 
   const count = result.items.length;
   const resultLabel = `${count} ${count === 1 ? "opportunity" : "opportunities"}`;
+  const emptyMatchBody =
+    filters.type === "job" && query === ""
+      ? "There are no jobs in the catalog yet. Clear the Jobs chip to see scholarships and internships already saved. Afriwork jobs appear after the investigator reads Explore jobs pages that still show a deadline."
+      : "Nothing in the stored catalog matches this search and these filters.";
 
   return (
     <section>
@@ -386,7 +390,9 @@ export default function DiscoverPage() {
 
       {status === "loading" ? (
         <StatusPanel variant="loading" title="Loading opportunities">
-          Reading the stored, sourced catalog.
+          Reading the stored, sourced catalog
+          {query ? ` for “${query}”` : ""}
+          {filters.type ? ` in ${TYPE_LABELS[filters.type]}` : ""}.
         </StatusPanel>
       ) : null}
 
@@ -464,7 +470,7 @@ export default function DiscoverPage() {
                   : undefined
               }
             >
-              Nothing in the stored catalog matches this search and these filters.
+              {emptyMatchBody}
             </StatusPanel>
           ) : (
             <ul id="opportunity-results" className="divide-y divide-line">

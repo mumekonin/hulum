@@ -75,6 +75,12 @@ describe("analysis failure paths", () => {
 
   it("returns MAYBE when a stored requirement is UNCERTAIN", async () => {
     const userId = await demoUserId();
+    // The published fixture date is 30 September 2026. Keep that fact in the catalog,
+    // and open the deadline only here so MAYBE is about uncertainty, not the wall clock.
+    await mutateStore((store) => {
+      const item = store.opportunities.find((row) => row.id === "opp-mastercard-uct");
+      if (item) item.deadline = "2099-09-30";
+    });
     const result = await analyze(userId, "opp-mastercard-uct");
     expect(result.decision).toBe("MAYBE");
     expect(result.requirements.some((item) => item.status === "UNCERTAIN")).toBe(true);

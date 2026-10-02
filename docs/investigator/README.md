@@ -4,9 +4,10 @@ Do not commit API keys. Do not invent listings.
 
 ## Demo leads (already seeded)
 
-- `https://scholarship.et/` — lead
+- `https://scholarship.et/scholarships` — lead (catalog + sitemap detail pages)
 - `https://www.scholars4dev.com/` — lead
 - `https://opportunitydesk.org/` — lead
+- `https://afriworket.com/jobs` — lead (Ethiopia jobs board; Chromium renders Explore jobs, then `/jobs/{id}` pages)
 - `https://hetriil.moe.gov.et/` — official for pages it publishes
 
 ## Add another website
@@ -23,7 +24,7 @@ insert into official_domains (domain, note)
 values ('example.org', 'Why this domain is official');
 ```
 
-The worker also follows listing links off aggregator pages. It does not need every new host in `official_domains` first.
+The worker also follows listing links and `sitemap.xml` off aggregator pages. It does not need every new host in `official_domains` first. Expired deadlines are not saved.
 
 ## Add another API later
 
@@ -45,8 +46,9 @@ The list is empty until the investigator worker saves evidenced posts. Abeba Tes
 Timer → runInvestigation() → save new official posts → refresh seen posts → mark stale AI_EXTRACTED
 ```
 
-- Default interval: 6 hours (`INVESTIGATE_INTERVAL_HOURS` or `INVESTIGATE_INTERVAL_MS`).
-- First run starts immediately. Each run stops at **15 seconds** (parallel fetch + extract).
+- Default interval: 30 minutes (`INVESTIGATE_INTERVAL_HOURS` or `INVESTIGATE_INTERVAL_MS`).
+- First run starts immediately. Each run stops at **20 minutes** (parallel fetch + extract). Detail pages are extracted; index/nav/empty shells are not.
+- Afriwork Explore jobs is opened in a browser when the static HTML has no job posts (installed Chrome first, then Playwright Chromium). The worker does not call Afriwork’s private API.
 - Requires `GROQ_API_KEY` and `GROQ_MODEL`. Set `INVESTIGATE_WORKER=false` to disable.
 - Overlapping runs are skipped. Failures are logged and do not stop the API.
 - Aggregator listing pages are crawled and may be saved when the deadline and requirement sentences are on that page.

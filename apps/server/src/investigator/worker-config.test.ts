@@ -7,7 +7,7 @@ import {
 } from "./worker-config.js";
 
 describe("parseInvestigateWorkerConfig", () => {
-  it("defaults to a six-hour interval when Groq is ready", () => {
+  it("defaults to a thirty-minute interval when Groq is ready", () => {
     const config = parseInvestigateWorkerConfig({
       nodeEnv: "development",
       groqReady: true,

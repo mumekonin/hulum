@@ -19,7 +19,7 @@ export function createPgOpportunityStore(): OpportunityStore {
   return {
     async list(): Promise<Opportunity[]> {
       const result = await getPool().query<OpportunityRow>(
-        `select ${SELECT_COLUMNS} from opportunities order by deadline asc`,
+        `select ${SELECT_COLUMNS} from opportunities order by created_at desc, updated_at desc`,
       );
       return result.rows.map(mapOpportunityRow);
     },
