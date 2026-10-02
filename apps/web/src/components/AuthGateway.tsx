@@ -72,37 +72,45 @@ export function AuthGateway() {
         </div>
       </header>
 
-      <main id="main-content" tabIndex={-1} className="my-auto w-full py-10 sm:py-14 lg:py-16">
-        <div className="mx-auto grid w-full max-w-[480px] grid-cols-1 items-center gap-8 px-5 sm:gap-10 sm:px-8 min-[900px]:max-w-[1100px] min-[900px]:grid-cols-[minmax(0,1fr)_360px] min-[900px]:gap-12 lg:grid-cols-[minmax(0,1fr)_390px] lg:gap-14 2xl:max-w-[1200px] 2xl:grid-cols-[minmax(0,1fr)_420px] 2xl:gap-16">
+      <main
+        id="main-content"
+        tabIndex={-1}
+        className="flex w-full flex-1 items-center py-8 md:min-h-[calc(100vh-150px)] md:py-10"
+      >
+        <div className="mx-auto grid w-[calc(100%-40px)] max-w-[480px] grid-cols-1 items-center gap-8 md:w-[calc(100%-64px)] md:max-w-[1250px] md:grid-cols-[minmax(0,1fr)_360px] md:gap-10 min-[75rem]:w-[calc(100%-80px)] min-[75rem]:max-w-[1320px] min-[75rem]:grid-cols-[minmax(0,1fr)_400px] min-[75rem]:gap-[70px]">
           <div className="flex flex-col">
-            <p className="hidden font-gw-serif text-3xl font-semibold tracking-tight text-gw-primary sm:block 2xl:text-4xl">
+            <p className="hidden font-gw-serif text-[28px] font-semibold tracking-tight text-gw-primary sm:block min-[75rem]:text-[32px]">
               HULUM
             </p>
-            <h1 className="font-gw-serif text-[30px] leading-[36px] tracking-tight text-gw-primary sm:mt-3 sm:text-[36px] sm:leading-[42px] lg:text-[40px] lg:leading-[46px] 2xl:text-[46px] 2xl:leading-[52px]">
+            <h1 className="font-gw-serif text-[32px] leading-[1.1] tracking-tight text-gw-primary sm:mt-4 sm:text-[38px] min-[75rem]:text-[44px]">
               Know what is worth your time.
             </h1>
-            <p className="mt-3 max-w-[480px] text-[15px] leading-6 text-gw-secondary lg:mt-4 lg:text-[16px] lg:leading-7 2xl:max-w-[540px] 2xl:text-[17px]">
+            <p className="mt-4 max-w-[600px] text-[15px] leading-[1.6] text-gw-secondary min-[75rem]:mt-5 min-[75rem]:text-[16px]">
               Find opportunities, understand your fit, and know exactly what to prepare before you apply.
             </p>
 
-            <div className="mt-7 hidden w-full bg-gw-surface-low p-4 sm:block lg:mt-8 lg:p-5">
-              <p className="text-[9px] uppercase tracking-widest text-gw-muted">Decision loop</p>
-              <p className="mt-1.5 font-gw-serif text-[19px] text-gw-primary lg:text-[22px]">APPLY / MAYBE / SKIP</p>
-              <p className="mt-1 text-[9px] uppercase tracking-widest text-gw-muted">
+            <div className="mt-8 hidden w-full bg-gw-surface-low px-6 py-5 sm:block min-[75rem]:mt-10">
+              <p className="text-[10px] uppercase tracking-widest text-gw-muted">Decision loop</p>
+              <p className="mt-2 font-gw-serif text-[22px] text-gw-primary min-[75rem]:text-[26px]">
+                APPLY / MAYBE / SKIP
+              </p>
+              <p className="mt-1.5 text-[10px] uppercase tracking-widest text-gw-muted">
                 Engine decides · AI explains only
               </p>
             </div>
 
-            <p className="mt-6 hidden max-w-[540px] text-[12px] leading-relaxed text-gw-muted sm:block lg:text-[13px]">
+            <p className="mt-6 hidden max-w-[600px] text-[13px] leading-[1.6] text-gw-muted sm:block min-[75rem]:mt-8 min-[75rem]:text-[14px]">
               HULUM evaluates academic grants, international fellowships, and early-career appointments for Ethiopian
               students and professionals.
             </p>
           </div>
 
-          <div className="flex w-full flex-col border border-gw-outline-var/60 bg-gw-surface p-7 sm:p-8 2xl:p-9">
-                  <div className="mb-5">
-                    <h2 className="font-gw-serif mb-1 text-2xl text-gw-primary">Welcome back.</h2>
-                    <p className="text-[13px] leading-5 text-gw-secondary">Continue your opportunity journey.</p>
+          <div className="flex w-full flex-col border border-gw-outline-var/60 bg-gw-surface p-7 sm:p-8 min-[75rem]:p-9">
+                  <div className="mb-6">
+                    <h2 className="font-gw-serif mb-1.5 text-[26px] leading-tight text-gw-primary min-[75rem]:text-[30px]">
+                      Welcome back.
+                    </h2>
+                    <p className="text-[14px] leading-6 text-gw-secondary">Continue your opportunity journey.</p>
                   </div>
 
                   {notice ? (
@@ -115,7 +123,7 @@ export function AuthGateway() {
                     type="button"
                     disabled={busy}
                     onClick={triggerGoogle}
-                    className="group flex h-11 w-full items-center justify-center gap-2 bg-gw-surface-high px-4 text-gw-primary transition-colors hover:bg-gw-surface-highest disabled:opacity-60"
+                    className="group flex h-12 w-full items-center justify-center gap-2 bg-gw-surface-high px-4 text-gw-primary transition-colors hover:bg-gw-surface-highest disabled:opacity-60"
                   >
                     {sim === "google-loading" ? (
                       <span className="h-4 w-4 animate-pulse rounded-full border border-gw-primary border-t-transparent" />
@@ -151,7 +159,7 @@ export function AuthGateway() {
                         placeholder="name@domain.com"
                         value={email}
                         onChange={(ev) => setEmail(ev.target.value)}
-                        className="h-11 w-full bg-gw-surface-lowest px-4 text-[13px] text-gw-primary placeholder:text-gw-outline-var focus:bg-gw-surface-low focus:outline-none"
+                        className="h-12 w-full bg-gw-surface-lowest px-4 text-[14px] text-gw-primary placeholder:text-gw-outline-var focus:bg-gw-surface-low focus:outline-none"
                       />
                     </div>
 
@@ -178,7 +186,7 @@ export function AuthGateway() {
                           placeholder="••••••••••••"
                           value={password}
                           onChange={(ev) => setPassword(ev.target.value)}
-                          className="h-11 w-full bg-gw-surface-lowest pl-4 pr-16 text-[13px] text-gw-primary placeholder:text-gw-outline-var focus:bg-gw-surface-low focus:outline-none"
+                          className="h-12 w-full bg-gw-surface-lowest pl-4 pr-16 text-[14px] text-gw-primary placeholder:text-gw-outline-var focus:bg-gw-surface-low focus:outline-none"
                         />
                         <button
                           type="button"
@@ -195,7 +203,7 @@ export function AuthGateway() {
                     <button
                       type="submit"
                       disabled={busy}
-                      className="mt-2 flex h-11 w-full items-center justify-center gap-2 bg-gw-primary text-[12px] font-medium uppercase tracking-wider text-gw-on-primary transition-colors hover:bg-gw-on disabled:opacity-60"
+                      className="mt-2 flex h-12 w-full items-center justify-center gap-2 bg-gw-primary text-[12px] font-medium uppercase tracking-wider text-gw-on-primary transition-colors hover:bg-gw-on disabled:opacity-60"
                     >
                       {sim === "submit-loading" && busy ? (
                         <span className="h-4 w-4 animate-pulse rounded-full border border-gw-on-primary border-t-transparent" />
