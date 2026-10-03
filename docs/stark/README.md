@@ -54,7 +54,7 @@ Do **not** expect a one-click demo profile or seeded A2SV / UCT / Chevening card
 | File | Role |
 |---|---|
 | `evidence.md` | Task 47 index |
-| `task-status.md` | Day 20 checkbox pass |
+| `task-status.md` | Honesty index (append-only; tip of `main`) |
 | `git-history.md` | Branches vs `main` |
 | `changelog-review.md` | Day 19 changelog check |
 | `changelog-final.md` | Day 20 changelog check |

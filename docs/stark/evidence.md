@@ -23,7 +23,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Competitors | `docs/research/competitive-analysis.md` | Live-checked 2026-09-18; do not invent extra claims |
 | Product requirements | `task.md`, `docs/stark/task-status.md` | Present; Day 20 status pass 2026-09-19 |
 | Architecture | `docs/architecture/overview.md` | Present (as built) |
-| Database | `database/migrations/001_init.sql`–`004`, ADR 001 | Schema + migrate/smoke; **`npm run dev` uses Postgres** |
+| Database | `database/migrations/001_init.sql`–`013`, ADR 001 | Schema + migrate/smoke; **`npm run dev` uses Postgres**; curated seed closed (`006`); investigator sources; saved opps; profile document text |
 | Decision engine | `apps/server/src/decision/`, ADR 002 | Present + tests |
 | AI responsibility | ADR 001/002, Groq validation in `apps/server/src/ai/` | Engine decides; Groq explains stored analysis only |
 | Voice UX | ADR 003, ADR 004, `docs/demo/script.md`, `docs/research/voxide-integration.md` | Text/quick-action fallback; `@voxide/react` widget behind `NEXT_PUBLIC_VOXIDE_KEY` (no mic claim without a live key) |
@@ -32,7 +32,7 @@ Kidist slices after Mulualem’s `main` merge live on stacked `feat/*` branches 
 | Testing | `npm test`, `npm run smoke:local`, `npm run smoke:browser`, CI | Engine, API, auth, voice-text tests; CI register + catalog list + Chromium click-through (no `db:seed` APPLY) |
 | Iteration | `CHANGELOG.md`, `docs/stark/narrative.md` | Present; Day 20 narrative; do not rewrite history |
 | Deployment | `docs/stark/deployment.md` | **Not deployed**; local + config docs only |
-| Demo | `docs/demo/script.md`, `docs/demo/backup.md`, `docs/demo/rehearsal.md`, `docs/demo/screenshots/README.md` | JWT Create account; typed Abeba; investigator catalog; `/screenshot` backup; shot list (no PNGs); **no video** |
+| Demo | `docs/demo/script.md`, `docs/demo/backup.md`, `docs/demo/rehearsal.md`, `docs/demo/screenshots/README.md` | Welcome → `/sign-in` → Create account / onboarding; typed Abeba; investigator catalog; `/screenshot` backup; shot list (no PNGs); **no video** |
 | Changelog | `CHANGELOG.md`, `docs/stark/changelog-review.md`, `docs/stark/changelog-final.md` | Present; Day 20 freeze pass 2026-09-19 |
 | Git history | this GitHub repo, `docs/stark/git-history.md`, `docs/stark/milestones.md` | Real commits; `milestone/*` tags on real SHAs; no invented SemVer product release |
 | Team | `team_assignments.md`, `git-workflow.md` | Present |

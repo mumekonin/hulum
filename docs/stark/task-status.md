@@ -1,8 +1,31 @@
-# Task status (post Day 20 sync)
+# Task status (honesty index)
 
-**Date:** 2026-09-25  
+**Date:** 2026-10-02  
 **Files:** `task.md`, `HULUM_task.md`  
-**Rule:** mark what the running product and tests already do. Do not mark Voxide STT, a production host, ScholarXiv live papers, or a browser pass that was not run.
+**Rule:** mark what the running product and tests already do. Do not mark Voxide STT, a production host, ScholarXiv live papers, branch-protection require-check, or a browser mic pass that was not run. Older sections below are historical — tip of `main` wins.
+
+---
+
+## 2026-10-02 — Post product-UI honesty sync
+
+Shipped on tip of `main` (do **not** treat older HMAC / UI-preview / `db:seed` APPLY rows as current):
+
+- JWT Create account / Sign in (`/sign-in`), onboarding, Discover / My opportunities / Readiness product UI.
+- Investigator catalog (Afriwork / EthioScholarship sources among others); curated `db:seed` closed.
+- Migrations through `013`; CI = migrate + test + `smoke:local` (register + catalog list) + `smoke:browser` (sign-in → onboarding path).
+- File-store fixture deadlines bumped so UNCERTAIN→MAYBE failure-path tests stay calendar-honest.
+
+Still open (honest):
+
+| Item | Why |
+|---|---|
+| Production deploy / EthioDeploy | No public host |
+| Live Voxide mic STT/TTS as a verified demo | Needs keyed mic pass; text/quick actions remain reliable |
+| Afaan Oromo UI/voice | ADR 004 — no invented Oromo chrome |
+| Required status checks on `main` | Admin step (`docs/ops/branch-protection.md`) |
+| Backup video / screenshot PNG pack | Not checked in |
+| Password-reset email | Not wired |
+| API as non-owner DB role (RLS owner-bypass gone) | Still connects as table owner |
 
 ---
 

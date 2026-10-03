@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-02 — STARK task-status honesty after product UI
+
+### Changed
+- `docs/stark/task-status.md`: tip-of-main index (JWT, onboarding, investigator, migrations through `013`, CI smokes; no seed APPLY / HMAC-as-auth).
+- `docs/stark/evidence.md`, `deployment.md`, `opportunity-import.md`: migrations / catalog import match investigator (seed closed).
+
+### Why
+Judges still saw Day-20 HMAC / seed rows as current after the product UI and catalog work landed.
+
 ## 2026-10-02 — File-store fixture deadlines past calendar
 
 ### Fixed

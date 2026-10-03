@@ -37,7 +37,7 @@ These Phase 23 rows mean **configuration exists in code/docs**, not that a publi
 
 1. Provision Postgres (local Docker or team Supabase).
 2. Set `DATABASE_URL` in the server environment (never commit it).
-3. Run `npm run db:migrate --workspace @hulum/server` (applies `001`–`010`: init, investigator, audit, RLS, worker, close seed, password hash, Google sub, profile documents, document text cache).
+3. Run `npm run db:migrate --workspace @hulum/server` (applies `001`–`013`: init, investigator, audit, RLS, worker, close seed, password hash, Google sub, profile documents, document text, saved opportunities, Afriwork / EthioScholarship sources).
 4. Optional: `npm run db:smoke` (transactional insert/rollback).
 5. Do **not** rely on `db:seed` for the live catalog — migration `006` closed curated seed inserts. The investigator fills opportunities from evidenced pages when Groq + worker env are set.
 
