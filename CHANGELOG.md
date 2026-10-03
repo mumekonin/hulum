@@ -2,6 +2,17 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-03 — Task 13 Oromo Ask HULUM text quick actions
+
+### Changed
+- Ask HULUM Afaan Oromo: `QUICK_OM` chips + honest language hint; chrome stays English (ADR 004).
+- Client `listReply` Oromo strings align with server `replyOpportunityList`.
+- `task.md` / `HULUM_task.md`: Phase 13 third language = Oromo text path; STT still open.
+- Demo script + `voxide-languages.md` + task-status synced.
+
+### Why
+Server already understood Oromo intents; web still forced English quick actions after Amharic text UX shipped.
+
 ## 2026-10-03 — Runtime hulum_app role with session RLS
 
 ### Changed

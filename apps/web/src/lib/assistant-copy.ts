@@ -93,11 +93,27 @@ const QUICK_AM = [
   "ድገም",
 ];
 
-/** Afaan Oromo selects explain/readiness language when Groq is set. Ask HULUM chrome stays English (ADR 004). */
+/** Oromo intent keywords already on the server (ADR 004). Chrome shell stays English. */
+const QUICK_OM = [
+  "Carraa kana madaali?",
+  "Maalif?",
+  "Maal dhabe?",
+  "Qopheessi?",
+  "Carraawwan agarsiisi",
+  "Internshipwwan natti agarsiisi",
+  "Carraa kana ibsi",
+  "Should I apply for this?",
+  "Why did you say that?",
+  "What am I missing?",
+  "What should I prepare?",
+  "Repeat that",
+];
+
+/** Afaan Oromo: text quick actions + explain language. Ask HULUM chrome stays English (ADR 004). */
 const OM: AssistantCopy = {
   ...EN,
   languageHint:
-    "Afaan Oromo selects explain/readiness language when Groq is set. Ask HULUM chrome stays English — no invented Oromo UI copy (ADR 004). Live Oromo STT is not claimed.",
+    "Afaan Oromo quick actions and typed requests use the same intent keywords as the server (madaali, maalif, hanqina, qopheessi). Ask HULUM chrome stays English for v0.1 — no full Oromo UI shell (ADR 004). Live Oromo STT is not claimed.",
 };
 
 export function assistantCopy(language: LanguageCode): AssistantCopy {
@@ -108,6 +124,6 @@ export function assistantCopy(language: LanguageCode): AssistantCopy {
 
 export function assistantQuickActions(language: LanguageCode): string[] {
   if (language === "am") return QUICK_AM;
-  // Oromo: English quick actions (same intents). No invented Oromo chrome strings.
+  if (language === "om") return QUICK_OM;
   return QUICK_EN;
 }

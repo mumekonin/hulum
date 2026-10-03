@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-10-03 — Task 13 Oromo Ask HULUM text quick actions
+
+- `assistant-copy.ts`: `QUICK_OM` + language hint; chrome stays English (ADR 004).
+- `text-actions.ts` `listReply`: Oromo list chrome matches server `replyOpportunityList`.
+- Phase 13 third language = Oromo **text** quick actions; live STT still open.
+
+Still open: deploy, live mic/STT, full Oromo UI shell, CI require-check (admin), backup video/PNG files, password-reset email.
+
+---
+
 ## 2026-10-03 — Runtime hulum_app RLS (Task 35 residual)
 
 - Migration `014_hulum_app_role.sql`: `hulum_app` role + `profile_documents` owner policy.

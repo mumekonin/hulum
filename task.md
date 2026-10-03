@@ -217,7 +217,7 @@ hulum/
 - [x] Responsible AI eligibility uncertainty.
 - [x] Opportunity matching and decision-support systems.
 - [-] Voice-first design for non-English speakers. <!-- Ask HULUM text/quick actions proven; live non-English STT not mic-tested -->
-- [-] Multilingual interaction for English/Amharic/Afaan Oromo users. <!-- Amharic text UX shipped; Oromo UI/voice + live STT still open (ADR 004) -->
+- [-] Multilingual interaction for English/Amharic/Afaan Oromo users. <!-- Amharic + Oromo Ask HULUM text quick actions; Oromo chrome English; live STT open (ADR 004) -->
 - [x] Readiness support for scholarship/internship/job applications.
 - [x] Trust and verification of opportunity requirements.
 - [x] Human oversight when AI assists eligibility decisions.
@@ -796,8 +796,8 @@ Actual support depends on Voxide capabilities and quality.
 - [x] **P0** Test one language end-to-end. <!-- English Ask HULUM text path; not live STT -->
 - [x] **P0** Ensure core voice interaction works. <!-- text/quick actions + optional widget tools; live mic still open -->
 - [x] **P1** Add second language. <!-- Amharic Ask HULUM text UX; not live Amharic STT -->
-- [ ] **P1** Add third language if stable. <!-- Afaan Oromo UI/voice open (ADR 004) -->
-- [x] **P1** Test mixed-language input. <!-- English + Amharic text keywords; not dual-language STT -->
+- [x] **P1** Add third language if stable. <!-- Oromo Ask HULUM text quick actions; English chrome; not live STT -->
+- [x] **P1** Test mixed-language input. <!-- English + Amharic + Oromo text keywords; not dual-language STT -->
 - [x] **P1** Test opportunity terminology.
 - [x] **P1** Test decision explanations.
 
@@ -1269,7 +1269,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Structured AI output validation.
 - [x] Contextual assistant.
 - [x] Amharic text UX if stable (not live Amharic STT).
-- [ ] Afaan Oromo if stable and quality is acceptable.
+- [x] Afaan Oromo text quick actions if stable (not live Oromo STT; English chrome ADR 004).
 
 ## Days 15–16 — Integration
 
