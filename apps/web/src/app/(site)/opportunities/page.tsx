@@ -56,7 +56,8 @@ function pluralType(type: OpportunityType): string {
   return `${TYPE_LABELS[type]}s`;
 }
 
-const selectClass = "min-h-11 w-full border border-line bg-surface px-3 text-sm text-ink";
+const selectClass =
+  "min-h-11 w-full border border-line bg-surface px-3 text-sm normal-case tracking-normal text-ink";
 
 export default function DiscoverPage() {
   const [all, setAll] = useState<Opportunity[]>([]);
