@@ -616,10 +616,10 @@ Initial target:
 
 Actual support depends on Voxide capabilities and quality.
 
-- [x] **P0** Verify Voxide supported languages.
+- [x] **P0** Verify Voxide supported languages. <!-- voxide-languages.md; no live mic proof -->
 - [x] **P0** Define language architecture.
 - [x] **P0** Implement language selection.
-- [x] **P0** Test one language end-to-end.
+- [x] **P0** Test one language end-to-end. <!-- English Ask HULUM text path; not live STT -->
 - [x] **P0** Ensure core voice interaction works. <!-- text/quick actions + optional widget tools; live mic still open -->
 - [x] **P1** Add second language. <!-- Amharic Ask HULUM text UX; not live Amharic STT -->
 - [ ] **P1** Add third language if stable. <!-- Afaan Oromo UI/voice open (ADR 004) -->
@@ -707,7 +707,7 @@ audit_logs
 - [x] **P0** Persist analyses.
 - [x] **P0** Persist readiness state.
 - [x] **P1** Add indexes.
-- [x] **P1** Add security policies/RLS where applicable.
+- [x] **P1** Add security policies/RLS where applicable. <!-- RLS in 004+; API connects as table owner until non-owner role -->
 - [x] **P1** Define retention strategy.
 
 ---
@@ -810,8 +810,8 @@ The assistant must not become an unrestricted chatbot.
 - [x] **P0** Sanitize logs.
 - [x] **P0** Protect database access.
 - [x] **P0** Protect admin/debug routes if any.
-- [x] **P1** Add authentication if required.
-- [x] **P1** Add authorization if required.
+- [x] **P1** Add authentication if required. <!-- JWT + optional Google; no password-reset email/OTP -->
+- [x] **P1** Add authorization if required. <!-- JWT session scopes owned routes; not email OTP -->
 - [x] **P1** Review data exposure.
 - [x] **P1** Review retention.
 
@@ -951,8 +951,8 @@ EthioDeploy is optional. Documented as **not deployed** (`docs/stark/deployment.
 - [x] **P1** Run tests.
 - [x] **P1** Build frontend.
 - [x] **P1** Build backend.
-- [ ] **P1** Block merges when checks fail.
-- [x] **P1** Configure deployment workflow if appropriate.
+- [ ] **P1** Block merges when checks fail. <!-- admin: docs/ops/branch-protection.md -->
+- [x] **P1** Configure deployment workflow if appropriate. <!-- N/A — deployment.md; ci.yml has no deploy job -->
 
 ---
 
@@ -988,10 +988,10 @@ Interest: AI
 - [x] **P1** Demonstrate Amharic text UX if stable (not live Amharic STT).
 - [x] **P0** Open official opportunity source.
 - [x] **P0** Show responsible-AI notice.
-- [x] **P1** Demonstrate a MAYBE case.
-- [x] **P1** Demonstrate a SKIP case.
+- [x] **P1** Demonstrate a MAYBE case (when catalog / fixtures allow; not seeded triangle).
+- [x] **P1** Demonstrate a SKIP case (when catalog / fixtures allow; not seeded triangle).
 - [x] **P0** Prepare backup mode for external-service failure.
-- [x] **P0** Test clean browser/device.
+- [x] **P0** Test clean browser/device (`smoke:browser` on CI).
 - [ ] **P0** Test microphone.
 - [ ] **P0** Test production deployment.
 - [ ] **P1** Prepare backup video/screenshots.

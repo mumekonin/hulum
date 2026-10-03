@@ -2,6 +2,17 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-02 — Security / RLS / CI STARK supersession
+
+### Changed
+- `docs/stark/task-status.md`: mark HMAC / UI-only auth / `db:seed` CI history as superseded; tip of `main` = JWT + migrate + smokes.
+- `task.md` / `HULUM_task.md`: annotate RLS table-owner limit, JWT (no reset email), CI deploy N/A, branch-protection open.
+- `docs/product/hulum-flow.md`: `/verify` = Create account, not OTP.
+- `HULUM_Documentation.md`: SRS honesty banner pointing at tip of `main`.
+
+### Why
+Judge-facing STARK index still implied HMAC preview auth and seeded CI after JWT and migrate-only CI landed.
+
 ## 2026-10-02 — Amharic / voice checkbox honesty sync
 
 ### Changed

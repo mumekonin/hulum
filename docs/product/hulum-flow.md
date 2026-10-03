@@ -41,7 +41,7 @@ Official opportunity source
 | Screen (`task.md`) | Route | Notes |
 |---|---|---|
 | Landing/home | `/` | Welcome thesis; Get started / Sign in → `/sign-in` |
-| Sign in / Create account | `/sign-in`, `/verify` | JWT email/password (+ optional Google) |
+| Sign in / Create account | `/sign-in`, `/verify` | JWT email/password (+ optional Google). `/verify` is **Create account** (register), not email OTP |
 | Onboarding | `/onboarding` | First-run 4 steps; then Discover |
 | Profile view/edit | `/profile` | Structured facts + CV/documents |
 | Opportunity list | `/opportunities` | Investigator catalog; search/filters; may be empty |

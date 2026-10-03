@@ -8,6 +8,8 @@
 **Duration:** September 9 – October 2, 2026
 **Location:** Addis Ababa, Ethiopia
 
+> **Honesty (tip of `main`):** This SRS is background only. For what the product actually ships, trust `README.md`, `docs/stark/narrative.md`, and tip of `main` — not EthioDeploy-as-live, Claude-as-decider, invent OAuth/OTP/mail, or old HMAC/UI-preview auth paths.
+
 ---
 
 ## Abbreviations/Acronyms

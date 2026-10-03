@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-10-02 — Security / RLS / CI / STARK supersession
+
+- Phase 13/15/19/24 checkboxes annotated: Voxide verify = docs only; English e2e = text path; RLS policies exist but API is still table owner; JWT auth (no password-reset email/OTP); CI deploy workflow = N/A (no deploy job); branch-protection require-check still open.
+- Historical entries below that still say HMAC-as-auth, UI-only `/sign-in`/`/verify`, or `db:seed` in CI are **superseded** — tip of `main` is JWT + migrate + `smoke:local` + `smoke:browser`.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email, RLS non-owner role.
+
+---
+
 ## 2026-10-02 — Amharic / voice checkbox honesty
 
 - Days 13–14: Amharic **text UX** checked; not live Amharic STT.
@@ -109,28 +118,34 @@ Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), back
 
 ## 2026-09-24 — Demo-triangle smoke + Amharic second language
 
-- `smoke:local` / CI: APPLY + MAYBE + SKIP for Abeba.
+> **Superseded (2026-10-02):** curated seed APPLY triangle closed (`006`); CI does not seed the catalog. Amharic text UX + Oromo English chrome remain true.
+
+- Historical: `smoke:local` once checked Abeba APPLY/MAYBE/SKIP via seed.
 - Amharic marked as second language (text UX); Oromo selector = explain language, English chrome.
 
-Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), browser click-through, backup video/PNG files.
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
 
 ---
 
 ## 2026-09-24 — CI smoke + Amharic demo text
 
-- CI runs `db:seed` + `smoke:local` after tests.
+> **Superseded (2026-10-02):** CI runs `db:migrate` + tests + `smoke:local` + `smoke:browser` — **no** `db:seed` (migration `006` closed catalog seed).
+
+- Historical note only: earlier CI ran `db:seed` + `smoke:local`.
 - Demo script Amharic text step; screenshot shot list (no images yet).
 
-Still open: deploy, live mic/STT, Oromo, CI require-check (admin), browser click-through, backup video/PNG files.
+Still open: deploy, live mic/STT, Oromo, CI require-check (admin), backup video/PNG files.
 
 ---
 
 ## 2026-09-24 — Amharic text UX + smoke:local
 
-- Ask HULUM Amharic chrome/quick actions (text only).
-- `npm run smoke:local` for local Abeba→A2SV APPLY check.
+> **Superseded note:** Abeba→A2SV seed APPLY path closed; Amharic text UX still shipped. Current `smoke:local` = register + catalog list (no seed triangle).
 
-Still open: deploy, live mic, Amharic STT / second-language e2e, CI require-check, browser tests, backup video.
+- Ask HULUM Amharic chrome/quick actions (text only).
+- Historical: `npm run smoke:local` once checked Abeba→A2SV APPLY via seed.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check, backup video.
 
 ---
 
@@ -174,28 +189,30 @@ Still open: deploy, live Voxide/mic, Amharic/Oromo, CI branch protection require
 
 ## 2026-09-24 — Session auth + RLS (still on this branch line)
 
-- HMAC session (`SESSION_SECRET` / `X-Hulum-Session`) for owned API routes; required in production.
-- RLS owner policies in migration 004 (table-owner API still bypasses until a non-owner role).
-- Fixed gateway UUID → profile create (POST with `userId`, not PATCH of missing row).
-- **Not claimed:** OAuth/JWT provider login, live Voxide mic, or a public deploy.
+> **Superseded (2026-10-02):** JWT register/login (+ optional Google) is wired on tip of `main`. Session is **JWT HS256** in `X-Hulum-Session` (header name kept; not HMAC-as-auth for judges). `/sign-in` and `/verify` call real `/api/auth/*`. `/forgot-password` stays honest “no email”.
+
+- Historical: early HMAC session for owned API routes.
+- RLS owner policies in migration 004 (table-owner API still bypasses until a non-owner role) — **still true**.
+- **Still not claimed:** live Voxide mic, password-reset email/OTP, or a public deploy.
 
 Still **open on purpose** (need real external evidence or product work):
 
 | Item | Why |
 |---|---|
-| Second/third language, mixed-language tests | ADR 004 — English e2e only |
+| Third language (Oromo UI/voice) | ADR 004 — Amharic text UX shipped; Oromo chrome English-only |
 | Live Voxide mic / voice response / demonstrate voice | Needs publishable key + mic pass |
 | Deploy / production secrets / production verify | No public host |
-| Browser/device / microphone test | Not run |
+| Microphone test | Not run as verified demo |
 | Block merges when checks fail | CI runs on PR; required branch protection not verified from this pass |
 | Backup video/screenshots | Not captured |
 | ScholarXIV live Papers API citations | No live paper pull claimed |
-
-Auth gateway / recovery / induction UIs on `/sign-in`, `/forgot-password`, `/verify` remain **UI previews**; API session HMAC is the real v0.1 auth when `SESSION_SECRET` is set.
+| RLS non-owner DB role | API still connects as table owner |
 
 ---
 
 ## 2026-09-24 honesty sync
+
+> **Superseded (2026-10-02):** Phase 19 auth checkboxes **are** closed on `task.md` (JWT). Recovery (`/forgot-password`) stays honest “no email”. Do not read “Local UUID only” or “UI only auth” as current.
 
 Marked done because the repo already ships them:
 
@@ -210,17 +227,15 @@ Still **open on purpose** (need real external evidence or product work):
 
 | Item | Why |
 |---|---|
-| Second/third language, mixed-language tests | ADR 004 — English e2e only |
+| Third language (Oromo UI/voice) | ADR 004 — Amharic text UX shipped; Oromo open |
 | Live Voxide mic / voice response / demonstrate voice | Needs publishable key + mic pass |
 | Deploy / production secrets / production verify | No public host |
-| Browser/device / microphone test | Not run |
-| JWT authentication + authorization | Local UUID only; gateway UIs are previews |
-| Per-user RLS policies | Opportunities public-read only; user-scoped policies wait for auth |
+| Microphone test | Not run as verified demo |
+| JWT authentication + authorization | **DONE on main (JWT)**; password-reset email / OTP still open |
+| Per-user RLS as non-owner runtime | Policies in 004+; API still table owner |
 | Block merges when checks fail | CI runs on PR; required branch protection not verified from this pass |
 | Backup video/screenshots | Not captured |
 | ScholarXIV live Papers API citations | No live paper pull claimed |
-
-Auth gateway / recovery / induction UIs on `/sign-in`, `/forgot-password`, `/verify` are **UI only** — they do not close Phase 19 auth checkboxes.
 
 ---
 
