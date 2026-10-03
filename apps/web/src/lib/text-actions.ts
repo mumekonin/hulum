@@ -62,9 +62,10 @@ function decisionWord(value: string): "APPLY" | "MAYBE" | "SKIP" | undefined {
 }
 
 function listReply(items: Opportunity[], language: LanguageCode = "en", type?: string): string {
+  // Amharic text UX only. Afaan Oromo uses English list chrome (ADR 004).
+  const am = language === "am";
   if (items.length === 0) {
-    if (language === "am") return "መታወፅ እድል አልተገኘም። HULUM እድል አይፈጥርም።";
-    if (language === "om") return "Carraan kuufame hin argamne. HULUM carraa hin uumne.";
+    if (am) return "መታወፅ እድል አልተገኘም። HULUM እድል አይፈጥርም።";
     return "No stored opportunities matched. HULUM does not invent listings.";
   }
   const titles = items
@@ -72,22 +73,18 @@ function listReply(items: Opportunity[], language: LanguageCode = "en", type?: s
     .map((item) => `${item.title} — ${item.organization}`)
     .join("; ");
   if (type === "fellowship") {
-    if (language === "am") return `ፌሎሺፕ: ${titles}`;
-    if (language === "om") return `Fellowshipwwan: ${titles}`;
+    if (am) return `ፌሎሺፕ: ${titles}`;
     return `Fellowships: ${titles}`;
   }
   if (type === "scholarship") {
-    if (language === "am") return `ስኮላርሺፕ: ${titles}`;
-    if (language === "om") return `Scholarshipwwan: ${titles}`;
+    if (am) return `ስኮላርሺፕ: ${titles}`;
     return `Scholarships: ${titles}`;
   }
   if (type === "internship") {
-    if (language === "am") return `ኢንተርንሺፕ: ${titles}`;
-    if (language === "om") return `Internshipwwan: ${titles}`;
+    if (am) return `ኢንተርንሺፕ: ${titles}`;
     return `Internships: ${titles}`;
   }
-  if (language === "am") return `የአሁን እድሎች: ${titles}`;
-  if (language === "om") return `Carraawwan amma jiran: ${titles}`;
+  if (am) return `የአሁን እድሎች: ${titles}`;
   return `Here are current opportunities: ${titles}`;
 }
 
