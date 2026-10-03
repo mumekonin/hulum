@@ -18,11 +18,11 @@ If Analyze fails or the catalog is empty, use `/screenshot` or Ask HULUM text. D
 - HULUM is the official eligibility authority.
 - Claude chooses APPLY / MAYBE / SKIP.
 - Voice speech is live.
-- ScholarXiv papers are in the running product.
+- ScholarXIV papers drive APPLY / MAYBE / SKIP (or that we archived paper citations in the repo).
 - The app is deployed to production / EthioDeploy.
 - There is a one-click Abeba demo profile or a seeded A2SV / Chevening catalog.
 
-Do say: the engine decides; Claude only explains if a key is set; always open the official source; the list comes from evidenced pages the investigator fetched.
+Do say: the engine decides; Claude only explains if a key is set; always open the official source; the list comes from evidenced pages the investigator fetched. `/research` is live ScholarXIV search with a server key; the STARK paper log stays empty until someone copies a real result.
 
 ---
 

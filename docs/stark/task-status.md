@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-10-02 — Recovery UI + ScholarXIV/seed judge copy
+
+- `/forgot-password`: no "Send reset link" / fake send delay; honest recovery copy visible before action.
+- README, narrative, research-questions, demo script/backup/rehearsal: `/research` proxy when keyed; empty `scholarxiv.md` table; papers do not decide.
+- `task.md` / `HULUM_task.md`: seed/demo opportunity rows annotated (006 closed; investigator catalog).
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email, RLS non-owner role.
+
+---
+
 ## 2026-10-02 — Security / RLS / CI / STARK supersession
 
 - Phase 13/15/19/24 checkboxes annotated: Voxide verify = docs only; English e2e = text path; RLS policies exist but API is still table owner; JWT auth (no password-reset email/OTP); CI deploy workflow = N/A (no deploy job); branch-protection require-check still open.
@@ -205,7 +215,7 @@ Still **open on purpose** (need real external evidence or product work):
 | Microphone test | Not run as verified demo |
 | Block merges when checks fail | CI runs on PR; required branch protection not verified from this pass |
 | Backup video/screenshots | Not captured |
-| ScholarXIV live Papers API citations | No live paper pull claimed |
+| ScholarXIV live Papers API citations | Archived paper table empty; `/research` live when keyed |
 | RLS non-owner DB role | API still connects as table owner |
 
 ---
@@ -235,7 +245,7 @@ Still **open on purpose** (need real external evidence or product work):
 | Per-user RLS as non-owner runtime | Policies in 004+; API still table owner |
 | Block merges when checks fail | CI runs on PR; required branch protection not verified from this pass |
 | Backup video/screenshots | Not captured |
-| ScholarXIV live Papers API citations | No live paper pull claimed |
+| ScholarXIV live Papers API citations | Archived paper table empty; `/research` live when keyed |
 
 ---
 

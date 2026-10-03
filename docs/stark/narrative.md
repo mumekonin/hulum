@@ -47,7 +47,7 @@ Ask HULUM is keyword intents + text (optional Voxide widget when `NEXT_PUBLIC_VO
 
 ## Research
 
-ScholarXIV space and planned queries: `docs/research/scholarxiv.md`. **No papers were retrieved** into the product. Competitive notes were live-checked 2026-09-18; unverified names were left off.
+ScholarXIV ideation space: `docs/research/scholarxiv.md`. **`/research`** and `GET /api/research/papers` proxy live search when `SCHOLARXIV_API_KEY` is set; papers are research only and do not set APPLY / MAYBE / SKIP. The in-repo paper table is still empty (no copied citations for STARK evidence). Competitive notes were live-checked 2026-09-18; unverified names were left off.
 
 ---
 

@@ -40,4 +40,4 @@ If the live UI is down, use Path C in `docs/demo/backup.md`, `npm run smoke:loca
 
 ## What to say (unchanged)
 
-Engine decides. Groq explains only if a key is set. Official source (or screenshot evidence) last. Do not claim deploy, ScholarXiv papers, live speech, or a one-click demo profile.
+Engine decides. Groq explains only if a key is set. Official source (or screenshot evidence) last. Do not claim deploy, ScholarXIV as eligibility authority or archived paper log, live speech, or a one-click demo profile.

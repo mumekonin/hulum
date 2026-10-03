@@ -239,7 +239,7 @@ ScholarXIV is part of the STARK ideation requirement.
 - [x] **P1** Explore ScholarXIV MCP integration.
 - [x] **P1** Explore ScholarXIV Papers API.
 - [x] **P1** Link research findings to product decisions.
-- [x] **P1** Preserve research evidence in repository documentation.
+- [x] **P1** Preserve research evidence in repository documentation. <!-- docs/research/ + scholarxiv.md log; live /research when keyed; paper table empty -->
 
 ## Required ideation narrative
 
@@ -426,7 +426,7 @@ Opportunity
 
 - [x] **P0** Define opportunity schema.
 - [x] **P0** Create database model.
-- [x] **P0** Create seed/demo opportunities.
+- [x] **P0** Create seed/demo opportunities. <!-- historical seed + file-store fixtures; curated db:seed closed (006); runtime catalog = investigator -->
 - [x] **P0** Store official source URL.
 - [x] **P0** Store application URL where available.
 - [x] **P0** Store verification status.
@@ -1231,7 +1231,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Profile API.
 - [x] Profile UI.
 - [x] Opportunity schema.
-- [x] Demo opportunity seeds.
+- [x] Demo opportunity seeds. <!-- historical seed + file-store fixtures; curated db:seed closed (006); runtime catalog = investigator -->
 
 ## Days 5–7 — Decision Engine
 

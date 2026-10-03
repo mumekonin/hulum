@@ -40,7 +40,7 @@ A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that deci
 - **Light and dark mode** — follows the OS until you choose.
 - **Backup mode** — Voice unavailable keeps typing and the rest of the UI.
 
-Out of v0.1: auto-apply, payments, native mobile, inventing listings, live ScholarXiv papers in the product, password-reset email, production deploy.
+Out of v0.1: auto-apply, payments, native mobile, inventing listings, ScholarXIV as decision input, password-reset email, production deploy.
 
 ---
 
@@ -56,7 +56,7 @@ Out of v0.1: auto-apply, payments, native mobile, inventing listings, live Schol
 | Decision | `apps/server/src/decision/decide.ts` | An LLM must not decide |
 | Explanation | Groq on stored analyses (`GROQ_API_KEY`, `GROQ_MODEL`) | Claude leftover env names |
 | Voice | Keyword intents + text/quick actions | Voxide browser widget |
-| Research | `docs/research/` (design-time) | ScholarXIV Papers API — **no papers retrieved yet** |
+| Research | `docs/research/` + `/research` proxy when keyed | `scholarxiv.md` table empty by design; papers never decide |
 | Host | Local `npm run dev` | EthioDeploy / production — **not deployed** |
 
 ---

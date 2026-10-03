@@ -19,7 +19,7 @@ There is **no recorded video and no screenshot PNG pack** in this repository. Do
 
 - Live Voxide / STT
 - Claude chooses APPLY / MAYBE / SKIP
-- ScholarXiv papers in the running app
+- ScholarXIV papers drive APPLY / MAYBE / SKIP, or that archived paper citations exist in the repo
 - Production / EthioDeploy
 - One-click demo profile or seeded catalog cards
 

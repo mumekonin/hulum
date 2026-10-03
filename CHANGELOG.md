@@ -2,6 +2,17 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-02 — Recovery UI + ScholarXIV/seed judge honesty
+
+### Changed
+- `/forgot-password`: honest “email not connected” notice; Continue (no fake Send reset link delay).
+- README, narrative, research-questions, demo script/backup/rehearsal: `/research` when keyed; empty paper table; papers do not decide.
+- `task.md` / `HULUM_task.md`: seed/demo rows annotated (006 closed; investigator catalog).
+- `docs/stark/task-status.md`: tip-of-main index for this sync.
+
+### Why
+Recovery UI still advertised email reset, and STARK copy denied ScholarXIV “in the product” while `/research` is on `main`.
+
 ## 2026-10-02 — Security / RLS / CI STARK supersession
 
 ### Changed

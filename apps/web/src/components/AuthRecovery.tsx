@@ -16,24 +16,21 @@ const NOT_WIRED =
 
 export function AuthRecovery() {
   const [email, setEmail] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [notice, setNotice] = useState<string | null>(null);
+  const [confirmed, setConfirmed] = useState(false);
 
   function handleForgotSubmit(e: FormEvent) {
     e.preventDefault();
-    setBusy(true);
-    setNotice(null);
-    window.setTimeout(() => {
-      setBusy(false);
-      setNotice(NOT_WIRED);
-    }, 700);
+    setConfirmed(true);
   }
 
   return (
     <AuthShell>
-      <AuthHeading title="Reset your password." subtitle="Enter the email you use for HULUM." />
+      <AuthHeading
+        title="Reset your password."
+        subtitle="Enter the email you use for HULUM. Password reset email is not connected yet—we will show what to do next."
+      />
 
-      {notice ? <AuthNotice className="mt-6">{notice}</AuthNotice> : null}
+      <AuthNotice className="mt-6">{NOT_WIRED}</AuthNotice>
 
       <form className="mt-7 flex flex-col gap-4" onSubmit={handleForgotSubmit}>
         <div className="flex flex-col gap-1.5">
@@ -53,11 +50,8 @@ export function AuthRecovery() {
           />
         </div>
 
-        <button type="submit" disabled={busy} className={`mt-1.5 ${authPrimaryButtonClass}`}>
-          {busy ? (
-            <span className="h-4 w-4 animate-spin rounded-full border-2 border-gw-on-primary border-t-transparent" />
-          ) : null}
-          <span>{busy ? "Checking…" : "Send reset link"}</span>
+        <button type="submit" className={`mt-1.5 ${authPrimaryButtonClass}`}>
+          <span>{confirmed ? "Still not connected" : "Continue"}</span>
         </button>
       </form>
 
