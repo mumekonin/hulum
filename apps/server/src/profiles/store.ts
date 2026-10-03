@@ -1,5 +1,5 @@
 import type { PatchProfileRequest, Profile, ProfileWrite } from "@hulum/shared";
-import { getPool } from "../db/pool.js";
+import { dbConnect, dbQuery } from "../db/rls-session.js";
 import { HttpError } from "../http/errors.js";
 import { mapProfileRow, type ProfileRow, type UserRow } from "./mapper.js";
 
@@ -34,7 +34,7 @@ function toStored(row: JoinedRow, documentsHeld: string[] = []): StoredProfile {
 
 async function documentLabels(userId: string): Promise<string[]> {
   try {
-    const result = await getPool().query<{ label: string }>(
+    const result = await dbQuery<{ label: string }>(
       `select label from profile_documents where user_id = $1 order by created_at asc`,
       [userId],
     );
@@ -64,7 +64,7 @@ function isPgError(error: unknown): error is { code: string } {
 
 export function createPgProfileStore(): ProfileStore {
   async function getByUserId(userId: string): Promise<StoredProfile | undefined> {
-    const result = await getPool().query<JoinedRow>(
+    const result = await dbQuery<JoinedRow>(
       `select ${PROFILE_COLUMNS}
        from profiles p
        join users u on u.id = p.user_id
@@ -80,9 +80,11 @@ export function createPgProfileStore(): ProfileStore {
 
   return {
     async create(input: { name: string; email: string; userId?: string } & ProfileWrite): Promise<StoredProfile> {
-      const client = await getPool().connect();
+      const { client, release, ownsTransaction } = await dbConnect();
       try {
-        await client.query("begin");
+        if (ownsTransaction) {
+          await client.query("begin");
+        }
         let userRow: UserRow | undefined;
         if (input.userId !== undefined) {
           const existing = await client.query<UserRow>(
@@ -143,20 +145,24 @@ export function createPgProfileStore(): ProfileStore {
         if (profileRow === undefined) {
           throw new Error("Failed to persist profile");
         }
-        await client.query("commit");
+        if (ownsTransaction) {
+          await client.query("commit");
+        }
         return {
           name: userRow.name,
           email: userRow.email,
           profile: mapProfileRow(profileRow, await documentLabels(userId)),
         };
       } catch (error) {
-        await client.query("rollback");
+        if (ownsTransaction) {
+          await client.query("rollback");
+        }
         if (isPgError(error) && error.code === "23505") {
           throw new HttpError(409, "CONFLICT", "A user with this email or id already exists.");
         }
         throw error;
       } finally {
-        client.release();
+        release();
       }
     },
 
@@ -165,7 +171,7 @@ export function createPgProfileStore(): ProfileStore {
     },
 
     async getByEmail(email: string): Promise<StoredProfile | undefined> {
-      const result = await getPool().query<JoinedRow>(
+      const result = await dbQuery<JoinedRow>(
         `select ${PROFILE_COLUMNS}
          from profiles p
          join users u on u.id = p.user_id
@@ -201,7 +207,7 @@ export function createPgProfileStore(): ProfileStore {
       if (patch.interests !== undefined) add("interests", patch.interests);
 
       values.push(userId);
-      const result = await getPool().query<ProfileRow>(
+      const result = await dbQuery<ProfileRow>(
         `update profiles set ${assignments.join(", ")}
          where user_id = $${String(index)}
          returning id, user_id, education_level, field_of_study, graduation_year,

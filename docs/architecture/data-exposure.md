@@ -33,7 +33,9 @@
 - `GET /api/analyses` and `/api/saved` require the JWT even in open local mode, because they carry no user id to compare against.
 - New accounts start with `education_level` and `country` null (no placeholder values), so matching reports them UNCERTAIN until the user fills them in.
 - Passwords are stored hashed (`password_hash`); Google accounts use `google_sub`.
-- RLS policies in `004_rls_owner_policies.sql` scope user tables to `app.current_user_id` for non-owner DB roles; the v0.1 API still connects as table owner (owner bypasses RLS).
+- RLS policies in `004_rls_owner_policies.sql` (+ `014` `profile_documents`) scope user tables to `app.current_user_id`.
+- Request paths `SET LOCAL ROLE hulum_app` (`014_hulum_app_role.sql`): with `SESSION_SECRET`, JWT identity sets `app.current_user_id`; auth/investigator set `app.rls_bypass`. Open local (no `SESSION_SECRET`) uses bypass so UUID-in-body demos still work.
+- Migrate / direct `getPool()` setup still may use the table-owner `DATABASE_URL` connection.
 - Server uses `DATABASE_URL` / service credentials; never returned to the browser.
 
 ## Residual risk (honest)

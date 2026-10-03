@@ -1,6 +1,6 @@
 import type { ProfileDocument } from "@hulum/shared";
 import { z } from "zod";
-import { getPool } from "../db/pool.js";
+import { dbQuery } from "../db/rls-session.js";
 import { HttpError } from "../http/errors.js";
 import {
   extractDocumentText,
@@ -50,7 +50,7 @@ async function saveExtract(
   documentId: string,
   result: { text: string | null; status: ExtractStatus },
 ): Promise<void> {
-  await getPool().query(
+  await dbQuery(
     `update profile_documents
      set extracted_text = $2,
          extracted_at = now(),
@@ -63,7 +63,7 @@ async function saveExtract(
 export function createPgDocumentStore(): DocumentStore {
   return {
     async list(userId: string): Promise<ProfileDocument[]> {
-      const result = await getPool().query<Omit<ProfileDocumentRow, "bytes">>(
+      const result = await dbQuery<Omit<ProfileDocumentRow, "bytes">>(
         `select id, user_id, label, mime_type, created_at
          from profile_documents
          where user_id = $1
@@ -74,7 +74,7 @@ export function createPgDocumentStore(): DocumentStore {
     },
 
     async labels(userId: string): Promise<string[]> {
-      const result = await getPool().query<{ label: string }>(
+      const result = await dbQuery<{ label: string }>(
         `select label from profile_documents where user_id = $1 order by created_at asc`,
         [userId],
       );
@@ -88,7 +88,7 @@ export function createPgDocumentStore(): DocumentStore {
     },
 
     async texts(userId: string): Promise<DocumentTextRow[]> {
-      const result = await getPool().query<{ label: string; extracted_text: string }>(
+      const result = await dbQuery<{ label: string; extracted_text: string }>(
         `select label, extracted_text
          from profile_documents
          where user_id = $1
@@ -102,7 +102,7 @@ export function createPgDocumentStore(): DocumentStore {
     },
 
     async ensureExtracted(userId: string): Promise<void> {
-      const result = await getPool().query<Pick<ProfileDocumentRow, "id" | "mime_type" | "bytes" | "extract_status">>(
+      const result = await dbQuery<Pick<ProfileDocumentRow, "id" | "mime_type" | "bytes" | "extract_status">>(
         `select id, mime_type, bytes, extract_status
          from profile_documents
          where user_id = $1
@@ -119,7 +119,7 @@ export function createPgDocumentStore(): DocumentStore {
     },
 
     async create(input): Promise<ProfileDocument> {
-      const count = await getPool().query<{ n: string }>(
+      const count = await dbQuery<{ n: string }>(
         `select count(*)::text as n from profile_documents where user_id = $1`,
         [input.userId],
       );
@@ -130,7 +130,7 @@ export function createPgDocumentStore(): DocumentStore {
         throw new HttpError(413, "PAYLOAD_TOO_LARGE", "Each document photo must be 4 MB or smaller.");
       }
       try {
-        const result = await getPool().query<Omit<ProfileDocumentRow, "bytes">>(
+        const result = await dbQuery<Omit<ProfileDocumentRow, "bytes">>(
           `insert into profile_documents (user_id, label, mime_type, bytes, extract_status)
            values ($1, $2, $3, $4, 'pending')
            returning id, user_id, label, mime_type, created_at`,
@@ -162,7 +162,7 @@ export function createPgDocumentStore(): DocumentStore {
     },
 
     async getFile(userId: string, documentId: string): Promise<{ mimeType: string; bytes: Buffer } | undefined> {
-      const result = await getPool().query<Pick<ProfileDocumentRow, "mime_type" | "bytes">>(
+      const result = await dbQuery<Pick<ProfileDocumentRow, "mime_type" | "bytes">>(
         `select mime_type, bytes from profile_documents where id = $1 and user_id = $2`,
         [documentId, userId],
       );
@@ -174,7 +174,7 @@ export function createPgDocumentStore(): DocumentStore {
     },
 
     async remove(userId: string, documentId: string): Promise<boolean> {
-      const result = await getPool().query(
+      const result = await dbQuery(
         `delete from profile_documents where id = $1 and user_id = $2`,
         [documentId, userId],
       );

@@ -1,4 +1,5 @@
 import type { AppEnv } from "../config/env.js";
+import { withServiceRls } from "../db/rls-session.js";
 import { INVESTIGATE_BUDGET_MS } from "./pool.js";
 import { markStaleExtracts } from "./store.js";
 import { runInvestigation, type InvestigationSummary } from "./run.js";
@@ -62,7 +63,7 @@ export function createInvestigateWorker(deps: InvestigateWorkerDeps): Investigat
     try {
       const now = nowFn();
       const summary = await investigate(deps.env, now);
-      const stale = await markStale(new Date(now.getTime() - config.staleAfterMs));
+      const stale = await withServiceRls(() => markStale(new Date(now.getTime() - config.staleAfterMs)));
       log(
         `Investigate worker finished checked=${String(summary.checked)} saved=${String(summary.saved)} refreshed=${String(summary.refreshed ?? 0)} rejected=${String(summary.rejected)} stale=${String(stale)}`,
       );

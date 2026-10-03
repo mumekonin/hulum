@@ -24,7 +24,7 @@ import type { AnalysisService } from "../analysis/service.js";
 import { createPgAnalysisStore } from "../analysis/store.js";
 import { loadEnv } from "../config/env.js";
 import { decide } from "../decision/decide.js";
-import { getPool } from "../db/pool.js";
+import { dbQuery } from "../db/rls-session.js";
 import { HttpError } from "../http/errors.js";
 import { isUuid } from "../http/ids.js";
 import { assertRequestSession } from "../security/session.js";
@@ -394,7 +394,7 @@ async function persistVoiceSession(input: {
   userId: string;
   language: LanguageCode;
 }): Promise<void> {
-  await getPool().query(
+  await dbQuery(
     `insert into voice_sessions (id, user_id, language) values ($1, $2, $3)`,
     [input.id, input.userId, input.language],
   );

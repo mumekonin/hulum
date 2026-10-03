@@ -707,7 +707,7 @@ audit_logs
 - [x] **P0** Persist analyses.
 - [x] **P0** Persist readiness state.
 - [x] **P1** Add indexes.
-- [x] **P1** Add security policies/RLS where applicable. <!-- RLS in 004+; API connects as table owner until non-owner role -->
+- [x] **P1** Add security policies/RLS where applicable. <!-- 004+014: SET LOCAL ROLE hulum_app; JWT sets app.current_user_id; open local uses bypass -->
 - [x] **P1** Define retention strategy.
 
 ---

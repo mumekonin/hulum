@@ -2,6 +2,18 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-03 — Runtime hulum_app role with session RLS
+
+### Changed
+- `database/migrations/014_hulum_app_role.sql`: `hulum_app` + grants + `profile_documents` RLS.
+- API: `rlsRequestMiddleware` + `dbQuery` / `dbConnect` so request paths `SET LOCAL ROLE hulum_app`.
+- JWT (`SESSION_SECRET`) sets `app.current_user_id`; auth/investigator set `app.rls_bypass`; open local keeps bypass.
+- Investigator worker wraps DB work in `withServiceRls`.
+- Isolation test + docs / Phase 15 annotation.
+
+### Why
+RLS policies existed but the API connected as table owner and bypassed them.
+
 ## 2026-10-03 — SRS §3–5 as-built Mermaid + Groq judge copy
 
 ### Changed

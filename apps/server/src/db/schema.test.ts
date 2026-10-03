@@ -88,6 +88,17 @@ describe("010_profile_document_text.sql", () => {
   });
 });
 
+describe("014_hulum_app_role.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "014_hulum_app_role.sql"), "utf8");
+
+  it("creates hulum_app and owner policy for profile_documents", () => {
+    expect(sql).toContain("create role hulum_app");
+    expect(sql).toContain("grant hulum_app to");
+    expect(sql).toContain("profile_documents_owner_all");
+    expect(sql).toContain("app_current_user_id()");
+  });
+});
+
 describe("011_saved_opportunities.sql", () => {
   const sql = fs.readFileSync(path.join(migrationsDir(), "011_saved_opportunities.sql"), "utf8");
 

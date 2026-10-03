@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-10-03 — Runtime hulum_app RLS (Task 35 residual)
+
+- Migration `014_hulum_app_role.sql`: `hulum_app` role + `profile_documents` owner policy.
+- API requests `SET LOCAL ROLE hulum_app`; JWT → `app.current_user_id`; auth/investigator → `app.rls_bypass`.
+- Open local (no `SESSION_SECRET`) still bypasses so UUID-in-body demos work; production with secret enforces user RLS.
+- Isolation test: `apps/server/src/db/rls-session.test.ts` (needs `DATABASE_URL` + migrate).
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email.
+
+---
+
 ## 2026-10-03 — SRS §3–5 as-built Mermaid + Groq judge copy
 
 - `HULUM_Documentation.md` §3–5: `decide()` + optional Groq; EthioDeploy target; NFR-03 owner-bypass note.

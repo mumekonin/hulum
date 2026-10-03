@@ -1,4 +1,4 @@
-import { getPool } from "../db/pool.js";
+import { dbQuery } from "../db/rls-session.js";
 
 export type SourceRow = {
   id: string;
@@ -21,7 +21,7 @@ export type InvestigationSummary = {
 };
 
 export async function listEnabledSources(): Promise<SourceRow[]> {
-  const result = await getPool().query<SourceRow>(
+  const result = await dbQuery<SourceRow>(
     `select id, name, type, url, enabled, is_lead, api_key_env, api_url_env
      from sources where enabled = true order by name`,
   );
@@ -29,12 +29,12 @@ export async function listEnabledSources(): Promise<SourceRow[]> {
 }
 
 export async function listOfficialDomains(): Promise<string[]> {
-  const result = await getPool().query<{ domain: string }>("select domain from official_domains");
+  const result = await dbQuery<{ domain: string }>("select domain from official_domains");
   return result.rows.map((row) => row.domain.toLowerCase());
 }
 
 export async function createRun(): Promise<string> {
-  const result = await getPool().query<{ id: string }>(
+  const result = await dbQuery<{ id: string }>(
     "insert into investigation_runs (notes) values ($1) returning id",
     [""],
   );
@@ -46,7 +46,7 @@ export async function createRun(): Promise<string> {
 }
 
 export async function logEvent(runId: string, sourceName: string, action: string, detail: string): Promise<void> {
-  await getPool().query(
+  await dbQuery(
     "insert into investigation_events (run_id, source_name, action, detail) values ($1, $2, $3, $4)",
     [runId, sourceName, action, detail],
   );
@@ -59,7 +59,7 @@ export async function finishRun(
   rejected: number,
   notes: string,
 ): Promise<void> {
-  await getPool().query(
+  await dbQuery(
     `update investigation_runs
      set finished_at = now(), checked = $2, saved = $3, rejected = $4, notes = $5
      where id = $1`,
@@ -68,7 +68,7 @@ export async function finishRun(
 }
 
 export async function findDuplicate(title: string, sourceUrl: string): Promise<boolean> {
-  const result = await getPool().query(
+  const result = await dbQuery(
     "select 1 from opportunities where lower(title) = lower($1) and source_url = $2 limit 1",
     [title, sourceUrl],
   );
@@ -76,14 +76,14 @@ export async function findDuplicate(title: string, sourceUrl: string): Promise<b
 }
 
 export async function findExistingByTitle(title: string): Promise<boolean> {
-  const result = await getPool().query("select 1 from opportunities where lower(title) = lower($1) limit 1", [
+  const result = await dbQuery("select 1 from opportunities where lower(title) = lower($1) limit 1", [
     title,
   ]);
   return (result.rowCount ?? 0) > 0;
 }
 
 export async function rememberOfficialDomain(domain: string, note: string): Promise<void> {
-  await getPool().query(
+  await dbQuery(
     "insert into official_domains (domain, note) values ($1, $2) on conflict (domain) do nothing",
     [domain.toLowerCase(), note],
   );
@@ -104,7 +104,7 @@ export async function refreshExtracted(input: {
   const otherRequirements = input.requirementEvidence?.trim()
     ? [input.requirementEvidence.trim()]
     : [];
-  const result = await getPool().query(
+  const result = await dbQuery(
     `update opportunities
      set organization = $2,
          type = $3,
@@ -135,7 +135,7 @@ export async function refreshExtracted(input: {
 
 /** Source still shows the listing, but the deadline is no longer in the future. */
 export async function markExtractedExpired(title: string, deadline: string): Promise<boolean> {
-  const result = await getPool().query(
+  const result = await dbQuery(
     `update opportunities
      set deadline = $2::date,
          verification_status = 'EXPIRED',
@@ -151,13 +151,13 @@ export async function markExtractedExpired(title: string, deadline: string): Pro
 export async function touchInvestigatedAt(title: string, sourceUrl?: string): Promise<boolean> {
   const result =
     sourceUrl === undefined
-      ? await getPool().query(
+      ? await dbQuery(
           `update opportunities
            set investigated_at = now(), updated_at = now()
            where lower(title) = lower($1)`,
           [title],
         )
-      : await getPool().query(
+      : await dbQuery(
           `update opportunities
            set investigated_at = now(), updated_at = now()
            where lower(title) = lower($1) and source_url = $2`,
@@ -171,7 +171,7 @@ export async function touchInvestigatedAt(title: string, sourceUrl?: string): Pr
  * become NEEDS_REVIEW. Curated VERIFIED seed rows are left alone.
  */
 export async function markStaleExtracts(cutoff: Date): Promise<number> {
-  const result = await getPool().query(
+  const result = await dbQuery(
     `update opportunities
      set verification_status = 'NEEDS_REVIEW', updated_at = now()
      where verification_status = 'AI_EXTRACTED'
@@ -195,7 +195,7 @@ export async function saveExtracted(input: {
   const otherRequirements = input.requirementEvidence?.trim()
     ? [input.requirementEvidence.trim()]
     : [];
-  const result = await getPool().query<{ id: string }>(
+  const result = await dbQuery<{ id: string }>(
     `insert into opportunities (
        title, organization, type, description, deadline, country_eligibility,
        other_requirements, application_url, source_url, verification_status, investigated_at
