@@ -15,7 +15,7 @@
 
 | File | Route / state | What must be visible |
 |---|---|---|
-| `01-gateway.png` | `/` | HULUM brand + Sign in / Create account |
+| `01-gateway.png` | `/sign-in` | HULUM brand + Sign in / Create account |
 | `02-profile.png` | `/profile` after Abeba facts saved | Name + CS / Ethiopia fields |
 | `03-opportunities.png` | `/opportunities` | Catalog list **or** honest empty state (investigator) |
 | `04-analysis.png` | `/analysis/[id]` after Analyze | APPLY / MAYBE / SKIP + official source when present |

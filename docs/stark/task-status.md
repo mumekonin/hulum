@@ -126,7 +126,7 @@ Still **open on purpose** (need real external evidence or product work):
 | Backup video/screenshots | Not captured |
 | ScholarXIV live Papers API citations | No live paper pull claimed |
 
-Auth gateway / recovery / induction UIs on `/`, `/forgot-password`, `/verify` remain **UI previews**; API session HMAC is the real v0.1 auth when `SESSION_SECRET` is set.
+Auth gateway / recovery / induction UIs on `/sign-in`, `/forgot-password`, `/verify` remain **UI previews**; API session HMAC is the real v0.1 auth when `SESSION_SECRET` is set.
 
 ---
 
@@ -155,7 +155,7 @@ Still **open on purpose** (need real external evidence or product work):
 | Backup video/screenshots | Not captured |
 | ScholarXIV live Papers API citations | No live paper pull claimed |
 
-Auth gateway / recovery / induction UIs on `/`, `/forgot-password`, `/verify` are **UI only** — they do not close Phase 19 auth checkboxes.
+Auth gateway / recovery / induction UIs on `/sign-in`, `/forgot-password`, `/verify` are **UI only** — they do not close Phase 19 auth checkboxes.
 
 ---
 

@@ -31,7 +31,7 @@ Setup: `npm run db:migrate`, `npm run dev`, http://localhost:3000, health at `:3
 
 | Time | Action | Show / say |
 |---|---|---|
-| 0:00 | `/` Sign in | Decision agent: APPLY / MAYBE / SKIP, then why and what to prepare. |
+| 0:00 | `/` welcome → `/sign-in` | Decision agent: APPLY / MAYBE / SKIP, then why and what to prepare. |
 | 0:20 | `/profile` | Abeba facts already saved. |
 | 0:40 | `/opportunities` → first real card → Analyze | Show whatever decision the engine returns. Fit is a signal. |
 | 1:20 | Official source, then back | Confirm with the organization. |
