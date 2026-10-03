@@ -180,7 +180,8 @@ h3,
   font-family: var(--font-gateway-mono), "JetBrains Mono", ui-monospace, monospace;
 }
 
-:focus-visible {
+/* tabindex="-1" targets (headings, main) only receive focus from code, so they get no ring. */
+:focus-visible:not([tabindex="-1"]) {
   outline: 2px solid var(--hulum-ink);
   outline-offset: 3px;
 }
