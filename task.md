@@ -606,7 +606,7 @@ Team lock: Groq explains. The engine still owns APPLY / MAYBE / SKIP. No Voxide 
 > Deploy backend/database, configure production secrets, CORS, health checks,
 > logging, and environment configuration. Investigate EthioDeploy.
 
-**Verify:** deployed API passes health and smoke tests.
+**Verify:** local API passes health and smoke tests (`npm run dev`, CI). Production host verification stays open (`docs/stark/deployment.md`; Deploy rows below).
 
 ### Task 38 — Final technical sign-off (Day 20)
 **Coordinates:** whole team.
@@ -614,7 +614,7 @@ Team lock: Groq explains. The engine still owns APPLY / MAYBE / SKIP. No Voxide 
 > Run the complete production walkthrough covering profile, opportunity, decision,
 > AI explanation, readiness, voice, mobile/web integration, failure paths, and source links.
 
-**Verify:** final HULUM demo is reproducible from the deployed system.
+**Verify:** final HULUM demo is reproducible from the **local** stack (README + `docs/demo/script.md`), not from a public host until deploy is real.
 
 - [x] **P0** Define requirement schema.
 - [x] **P0** Define requirement categories.
@@ -1265,7 +1265,7 @@ Never manufacture commits, dates, research activity, or progress.
 
 ## Days 13–14 — AI + Multilingual
 
-- [x] Claude explanation.
+- [x] Claude explanation. <!-- v0.1: Groq explains when keyed; engine owns APPLY/MAYBE/SKIP — docs/decisions/001 -->
 - [x] Structured AI output validation.
 - [x] Contextual assistant.
 - [x] Amharic text UX if stable (not live Amharic STT).
@@ -1278,7 +1278,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Full Ask HULUM text / voice-tool flow (live mic STT/TTS still open).
 - [x] Error handling.
 - [x] Security review.
-- [x] Production configuration.
+- [x] Production configuration. <!-- CLIENT_URL, SESSION_SECRET, CORS validation in API code — no public host; see Phase 23 Deploy [ ] -->
 
 ## Days 17–18 — Deployment + Testing
 

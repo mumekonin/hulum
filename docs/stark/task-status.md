@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-10-03 — SRS deliverables + Task 37–38 local verify
+
+- `HULUM_Documentation.md` §1.2.10: v0.1 status column (local host, investigator catalog, English voice path).
+- Task 37–38 Verify lines (`task.md`, `team_assignments.md`): local/CI smoke, not “deployed API”.
+- Days 15–16 Production configuration `[x]` annotated: config in code, no public host.
+- Claude explanation row: Groq explains; engine decides.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email, RLS non-owner role.
+
+---
+
 ## 2026-10-03 — Create account (/verify) OTP honesty
 
 - `/verify`: visible notice that route is JWT register, not email OTP; metadata description matches.

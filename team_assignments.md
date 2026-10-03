@@ -419,7 +419,7 @@ Profile → Opportunity → Analysis → Matching → Decision → Claude → Re
 > Deploy backend/database, configure production secrets, CORS, health checks,
 > logging, and environment configuration. Investigate EthioDeploy.
 
-**Verify:** deployed API passes health and smoke tests.
+**Verify:** local API passes health and smoke tests (`npm run dev`, CI). Production host verification stays open (`docs/stark/deployment.md`; Deploy rows in `task.md`).
 
 ### Task 38 — Final technical sign-off (Day 20)
 **Coordinates:** whole team.
@@ -427,7 +427,7 @@ Profile → Opportunity → Analysis → Matching → Decision → Claude → Re
 > Run the complete production walkthrough covering profile, opportunity, decision,
 > AI explanation, readiness, voice, mobile/web integration, failure paths, and source links.
 
-**Verify:** final HULUM demo is reproducible from the deployed system.
+**Verify:** final HULUM demo is reproducible from the **local** stack (README + `docs/demo/script.md`), not from a public host until deploy is real.
 
 ---
 

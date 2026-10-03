@@ -2,6 +2,17 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-03 — SRS deliverables + Task 37–38 local verify
+
+### Changed
+- `HULUM_Documentation.md` §1.2.10 / NFR-05 / schedule: v0.1 status vs EthioDeploy target; scope note for investigator catalog.
+- `task.md` / `team_assignments.md`: Task 37–38 Verify = local/CI, not deployed host.
+- `task.md` / `HULUM_task.md`: Production configuration + Claude explanation annotations.
+- `docs/stark/task-status.md`: tip-of-main index for this sync.
+
+### Why
+SRS deliverables and Task 37 still read as EthioDeploy + trilingual Voxide while tip of `main` is local-only.
+
 ## 2026-10-03 — Create account (/verify) OTP honesty
 
 ### Changed

@@ -1091,7 +1091,7 @@ Never manufacture commits, dates, research activity, or progress.
 
 ## Days 13–14 — AI + Multilingual
 
-- [x] Claude explanation.
+- [x] Claude explanation. <!-- v0.1: Groq explains when keyed; engine owns APPLY/MAYBE/SKIP — docs/decisions/001 -->
 - [x] Structured AI output validation.
 - [x] Contextual assistant.
 - [x] Amharic text UX if stable (not live Amharic STT).
@@ -1104,7 +1104,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Full Ask HULUM text / voice-tool flow (live mic STT/TTS still open).
 - [x] Error handling.
 - [x] Security review.
-- [x] Production configuration.
+- [x] Production configuration. <!-- env/CORS/JWT in code; no EthioDeploy host -->
 
 ## Days 17–18 — Deployment + Testing
 

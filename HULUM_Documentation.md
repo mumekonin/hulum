@@ -180,6 +180,8 @@ In scope for the hackathon build:
 - A seed database of at least 10 verified opportunities at launch.
 - Web deployment via EthioDeploy with a mobile-responsive UI.
 
+**v0.1 note:** runtime catalog is investigator-filled (not ≥10 curated seed); EthioDeploy is the target host, not the current one (`docs/stark/deployment.md`).
+
 Out of scope for the hackathon build (candidate for future phases):
 - Direct application submission on behalf of the user.
 - Payment processing or paid-tier features.
@@ -195,14 +197,16 @@ Out of scope for the hackathon build (candidate for future phases):
 
 ### 1.2.10 Project Deliverables and Phases
 
-| Deliverable | Description |
-|---|---|
-| Working web application | Deployed on EthioDeploy, publicly accessible demo |
-| Source code repository | GitHub repo with daily commit history from Day 1 |
-| Seed opportunity database | ≥10 verified opportunities at launch |
-| Voice interaction layer | Amharic, English, Afaan Oromo via Voxide |
-| Demo script and backup video | For the October 2 live presentation |
-| STARK changelog entries | Recorded at every milestone |
+> **v0.1 (tip of `main`):** The third column is what judges can verify today. Original hackathon targets stay in *Description*; see `docs/stark/deployment.md`, `docs/stark/narrative.md`, `README.md`.
+
+| Deliverable | Description (hackathon target) | v0.1 status (tip of `main`) |
+|---|---|---|
+| Working web application | Public demo on EthioDeploy | **Local only** — `npm run dev`; no EthioDeploy URL (`docs/stark/deployment.md`) |
+| Source code repository | GitHub with daily commit history | **Shipped** — public repo + `CHANGELOG.md` |
+| Seed opportunity database | ≥10 verified opportunities at launch | **Investigator-filled Postgres**; curated `db:seed` closed (`006`); list may be empty until worker runs |
+| Voice interaction layer | Amharic, English, Afaan Oromo via Voxide | **English** text/quick actions + optional Voxide widget when keyed; **not** verified trilingual live mic/STT |
+| Demo script and backup video | October 2 live presentation | **Script + backup doc** — `docs/demo/script.md`, `docs/demo/backup.md`; no hosted demo URL |
+| STARK changelog entries | Recorded at every milestone | **Shipped** — root `CHANGELOG.md` + `docs/stark/*` |
 
 ### 1.2.11 Work Breakdown and Coordination
 
@@ -229,7 +233,7 @@ The team is motivated by a gap they have personally observed: Ethiopian peers wh
 | 1 | Days 1–3 | Foundation | Repo, schema, Supabase setup, 10 seed opportunities |
 | 2 | Days 4–10 | AI Engine | APPLY/MAYBE/SKIP core loop, readiness checklist |
 | 3 | Days 11–14 | Voice | Voxide integration — English, Amharic, Afaan Oromo |
-| 4 | Days 15–20 | Polish | UI refinement, mobile responsiveness, EthioDeploy production deployment |
+| 4 | Days 15–20 | Polish | UI refinement, mobile responsiveness, production **configuration** in code (**host not deployed**) |
 | 5 | Days 21–24 | Demo Prep | Demo script, rehearsal, backup video, final changelog |
 
 ---
@@ -299,7 +303,7 @@ HULUM operates as a three-part loop: **profile capture** (voice or text), **oppo
 | NFR-02 (Usability) | The voice interface shall support natural, conversational speech in Amharic, English, and Afaan Oromo without requiring users to learn rigid command phrases. |
 | NFR-03 (Security) | User profile data shall be protected using Supabase Row-Level Security (RLS), restricting access to the owning user. |
 | NFR-04 (Reliability) | Opportunity records shall be verified against official sources before being surfaced to users, to avoid recommending expired or fraudulent postings. |
-| NFR-05 (Availability) | The production system shall be deployed and reachable via EthioDeploy for the duration of the hackathon evaluation window and beyond. |
+| NFR-05 (Availability) | **Target:** production reachable via EthioDeploy for evaluation. **v0.1:** local dev + CI smokes only — not deployed (`docs/stark/deployment.md`). |
 | NFR-06 (Maintainability) | The AI evaluation logic shall be isolated from the profile and database layers so that reasoning prompts can be refined independently of the data model. |
 | NFR-07 (Scalability) | The database schema shall support growth from an initial 10 seed opportunities to a much larger curated catalog without redesign. |
 | NFR-08 (Localization) | All decision explanations shall be deliverable in the user's chosen language (Amharic, English, or Afaan Oromo). |
