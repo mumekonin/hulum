@@ -8,13 +8,13 @@
  * app/layout.tsx sets data-theme before first render so there is no flash.
  */
 :root {
-  --hulum-paper: #fafaf8;
+  --hulum-paper: #f7f6f2;
   --hulum-surface: #ffffff;
-  --hulum-surface-muted: #f3f2ef;
-  --hulum-ink: #141414;
-  --hulum-muted: #5c5a55;
-  --hulum-line: #e4e2dd;
-  --hulum-line-strong: #cfccc5;
+  --hulum-surface-muted: #f1f0ec;
+  --hulum-ink: #111111;
+  --hulum-muted: #66645f;
+  --hulum-line: #e4e2db;
+  --hulum-line-strong: #d9d7d0;
 
   --hulum-apply: #1e6b47;
   --hulum-apply-soft: #eef5f0;
@@ -35,13 +35,13 @@
 }
 
 [data-theme="dark"] {
-  --hulum-paper: #121211;
-  --hulum-surface: #1a1a19;
-  --hulum-surface-muted: #222220;
-  --hulum-ink: #ecebe7;
-  --hulum-muted: #a3a19b;
-  --hulum-line: #2c2b29;
-  --hulum-line-strong: #3d3c39;
+  --hulum-paper: #0b0b0a;
+  --hulum-surface: #131312;
+  --hulum-surface-muted: #1b1b1a;
+  --hulum-ink: #f5f3ed;
+  --hulum-muted: #a7a59e;
+  --hulum-line: #242423;
+  --hulum-line-strong: #333331;
 
   --hulum-apply: #7cc49a;
   --hulum-apply-soft: #16241c;
@@ -163,8 +163,7 @@ h1,
 h2,
 h3,
 .font-display {
-  font-family: var(--font-display), "Fraunces", serif;
-  font-optical-sizing: auto;
+  font-family: var(--font-gateway-serif), "EB Garamond", Georgia, serif;
 }
 
 .gateway {

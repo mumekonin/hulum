@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandMark } from "./BrandMark";
 import { ThemeToggle } from "./ThemeToggle";
 
 const rise = "motion-safe:animate-[wl-rise_550ms_cubic-bezier(0.2,0.7,0.2,1)_both]";
@@ -20,7 +21,9 @@ export function WelcomePage() {
         <section className="flex flex-col px-6 py-7 sm:px-12 sm:py-11 lg:px-14 lg:py-12">
           <Link href="/" className={`${rise} flex items-center gap-2.5 self-start`}>
             <BrandMark />
-            <span className="font-gw-serif text-[21px] font-semibold tracking-[0.08em] text-wl-ink">HULUM</span>
+            <span className="font-gw-serif text-[21px] font-semibold tracking-[0.08em] text-wl-ink">
+              HULUM
+            </span>
           </Link>
 
           <div className="flex flex-1 flex-col justify-center pt-10 sm:pt-14 lg:pt-0">
@@ -39,7 +42,8 @@ export function WelcomePage() {
             <p
               className={`${rise} mt-6 max-w-[480px] text-[16px] leading-[1.65] text-wl-muted [animation-delay:220ms] sm:text-[17px]`}
             >
-              Find opportunities, understand your fit, and know exactly what to prepare before you apply.
+              Find opportunities, understand your fit, and know exactly what to prepare before you
+              apply.
             </p>
 
             <div className={`${rise} mt-8 [animation-delay:300ms]`}>
@@ -48,7 +52,10 @@ export function WelcomePage() {
                 className="group inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-lg bg-wl-ink px-7 text-[15px] font-semibold tracking-[0.02em] text-wl-surface transition-opacity duration-200 hover:opacity-85 sm:w-auto"
               >
                 Get started
-                <span aria-hidden className="transition-transform duration-200 group-hover:translate-x-0.5">
+                <span
+                  aria-hidden
+                  className="transition-transform duration-200 group-hover:translate-x-0.5"
+                >
                   →
                 </span>
               </Link>
@@ -76,16 +83,6 @@ export function WelcomePage() {
   );
 }
 
-function BrandMark() {
-  return (
-    <svg viewBox="0 0 24 24" className="h-6 w-6 text-wl-ink" fill="none" aria-hidden>
-      <circle cx="12" cy="12" r="10.5" stroke="currentColor" strokeWidth="1.25" />
-      <path d="M6 15.5 12 7l6 8.5" stroke="currentColor" strokeWidth="1.25" strokeLinejoin="round" />
-      <circle cx="12" cy="15.5" r="1.75" className="fill-wl-accent" />
-    </svg>
-  );
-}
-
 const SOURCES = [70, 140, 210, 280, 350];
 
 function DecisionPath() {
@@ -102,7 +99,12 @@ function DecisionPath() {
         <circle cx="210" cy="400" r="175" opacity="0.6" />
       </g>
 
-      <text x="210" y="52" textAnchor="middle" className="fill-wl-muted font-gw-mono text-[11px] tracking-[0.22em]">
+      <text
+        x="210"
+        y="52"
+        textAnchor="middle"
+        className="fill-wl-muted font-gw-mono text-[11px] tracking-[0.22em]"
+      >
         OPPORTUNITIES
       </text>
 
@@ -140,7 +142,12 @@ function DecisionPath() {
         04
       </text>
 
-      <text x="210" y="466" textAnchor="middle" className="fill-wl-ink font-gw-serif text-[19px] italic">
+      <text
+        x="210"
+        y="466"
+        textAnchor="middle"
+        className="fill-wl-ink font-gw-serif text-[19px] italic"
+      >
         Apply · Maybe · Skip
       </text>
     </svg>
