@@ -491,7 +491,7 @@ HULUM must not present the result as a guarantee of admission, employment, fundi
 
 ---
 
-# 14. Phase 10 — AI / Claude Integration
+# 14. Phase 10 — AI / Groq Integration
 
 AI is an assistant, not the eligibility authority.
 
@@ -517,7 +517,7 @@ AI is an assistant, not the eligibility authority.
 
 ## Tasks
 
-- [x] **P0** Select/configure Claude provider.
+- [x] **P0** Select/configure Groq provider. <!-- GROQ_API_KEY; Claude env names legacy -->
 - [x] **P0** Define AI service.
 - [x] **P0** Define structured output schema.
 - [x] **P0** Implement output validation.

@@ -23,7 +23,7 @@ If Analyze fails or the catalog is empty, use `/screenshot` or Ask HULUM text. D
 - The app is deployed to production / EthioDeploy.
 - There is a one-click Abeba demo profile or a seeded A2SV / Chevening catalog.
 
-Do say: the engine decides; Claude only explains if a key is set; always open the official source; the list comes from evidenced pages the investigator fetched. `/research` is live ScholarXIV search with a server key; the STARK paper log stays empty until someone copies a real result.
+Do say: the engine decides; Groq may rephrase a stored analysis when `GROQ_API_KEY` is set (APPLY/MAYBE/SKIP unchanged); always open the official source; the list comes from evidenced pages the investigator fetched. `/research` is live ScholarXIV search with a server key; the STARK paper log stays empty until someone copies a real result.
 
 ---
 

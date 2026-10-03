@@ -303,7 +303,7 @@ HULUM operates as a three-part loop: **profile capture** (voice or text), **oppo
 |---|---|
 | NFR-01 (Performance) | The system shall return an eligibility decision within a few seconds of a user requesting evaluation. |
 | NFR-02 (Usability) | **Target:** conversational speech in Amharic, English, and Afaan Oromo. **v0.1:** English text + quick actions; optional Voxide widget when keyed; **not** verified trilingual live mic/STT (`docs/demo/backup.md`, README). |
-| NFR-03 (Security) | User profile data shall be protected using Supabase Row-Level Security (RLS), restricting access to the owning user. |
+| NFR-03 (Security) | **Target:** owner-scoped RLS in Postgres. **v0.1:** policies in migrations `004`/`011`; API connects as table owner (owner bypasses RLS); JWT + route checks enforce ownership until a non-owner DB role (`database/README.md`). |
 | NFR-04 (Reliability) | Opportunity records shall be verified against official sources before being surfaced to users, to avoid recommending expired or fraudulent postings. |
 | NFR-05 (Availability) | **Target:** production reachable via EthioDeploy for evaluation. **v0.1:** local dev + CI smokes only — not deployed (`docs/stark/deployment.md`). |
 | NFR-06 (Maintainability) | The AI evaluation logic shall be isolated from the profile and database layers so that reasoning prompts can be refined independently of the data model. |
@@ -371,9 +371,10 @@ HULUM's analysis and design use standard object-oriented artifacts — use case 
 | Student Applicant | Primary actor; creates a profile and evaluates opportunities |
 | Young Professional | Secondary actor; same interactions as Student Applicant with different opportunity focus |
 | System Administrator | Curates and verifies opportunity records |
-| Claude API (AI Engine) | Supporting actor; performs profile extraction and eligibility reasoning |
-| Voxide (Voice Service) | Supporting actor; performs speech-to-text and text-to-speech |
-| Supabase (Data Store) | Supporting actor; persists profiles, opportunities, and evaluation history |
+| Express `decide()` (engine) | Supporting actor; owns APPLY / MAYBE / SKIP and requirement matching |
+| Groq (optional) | Supporting actor; extract/explain when `GROQ_API_KEY` is set — never sets the decision |
+| Voxide (Voice Service) | Supporting actor; optional browser widget when keyed — not verified trilingual live mic |
+| Postgres (Data Store) | Supporting actor; persists profiles, opportunities, and evaluation history (Supabase-hosted Postgres OK) |
 
 ### 3.2.4 Use Case Diagram
 
@@ -382,9 +383,10 @@ flowchart LR
     Student([Student Applicant])
     Professional([Young Professional])
     Admin([System Administrator])
-    Claude[[Claude API]]
-    Voxide[[Voxide Voice Service]]
-    Supabase[[Supabase DB]]
+    Engine[[Express decide]]
+    Groq[[Groq optional]]
+    Voxide[[Voxide optional widget]]
+    DB[[Postgres]]
 
     Student --> UC1(Create Profile by Voice)
     Student --> UC2(Create/Edit Profile by Text)
@@ -405,13 +407,14 @@ flowchart LR
 
     UC1 -.-> Voxide
     UC7 -.-> Voxide
-    UC1 -.-> Claude
-    UC4 -.-> Claude
-    UC5 -.-> Claude
-    UC6 -.-> Claude
-    UC3 -.-> Supabase
-    UC4 -.-> Supabase
-    UC8 -.-> Supabase
+    UC1 -.-> Groq
+    UC4 --> Engine
+    UC4 -.-> Groq
+    UC5 --> Engine
+    UC6 --> Engine
+    UC3 -.-> DB
+    UC4 -.-> DB
+    UC8 -.-> DB
 ```
 
 ### 3.2.5 Use Case Description (Detailed/Textual)
@@ -421,9 +424,9 @@ flowchart LR
 | Field | Description |
 |---|---|
 | Use Case ID | UC-04 |
-| Actors | Student Applicant, Young Professional, Claude API, Supabase |
+| Actors | Student Applicant, Young Professional, Express API / `decide()`, Postgres; Groq optional |
 | Precondition | User has a saved profile and has selected an opportunity |
-| Main Flow | 1. User selects an opportunity from the browse screen. 2. System retrieves the opportunity's structured requirements from Supabase. 3. System sends the user profile and opportunity requirements to the Claude API for comparison. 4. Claude API returns a decision (APPLY/MAYBE/SKIP), a fit score (0–100), and reasoning. 5. System displays the decision screen with the result and stores the evaluation in history. |
+| Main Flow | 1. User selects an opportunity from the browse screen. 2. System retrieves the opportunity's structured requirements from Postgres. 3. Backend runs **`decide(profile, opportunity)`** (deterministic). 4. System stores the analysis and displays APPLY/MAYBE/SKIP, fit score, and engine summary. 5. Optional: Groq rephrases the stored summary when keyed (decision unchanged). |
 | Alternate Flow | If profile data is insufficient for a confident decision, the system requests the missing field(s) from the user before finalizing the evaluation. |
 | Postcondition | An evaluation record is created and linked to the user and opportunity. |
 
@@ -432,9 +435,9 @@ flowchart LR
 | Field | Description |
 |---|---|
 | Use Case ID | UC-01 |
-| Actors | Student Applicant, Voxide, Claude API |
-| Precondition | User has opened the voice onboarding screen and selected a language |
-| Main Flow | 1. User speaks a self-description. 2. Voxide converts speech to text in the selected language. 3. Claude API extracts structured profile fields from the transcript. 4. System displays the extracted profile for confirmation. 5. User confirms or edits; profile is saved to Supabase. |
+| Actors | Student Applicant; Voxide optional; Groq optional; Postgres |
+| Precondition | User has opened profile setup (text or optional voice widget when keyed) |
+| Main Flow | 1. User enters or speaks a self-description. 2. Optional Voxide converts speech to text when keyed. 3. Optional Groq extracts structured profile fields when keyed. 4. System displays the proposed fields for confirmation. 5. User confirms or edits; profile is saved to Postgres. |
 | Alternate Flow | If transcription confidence is low, the system asks the user to repeat or switch to text input. |
 | Postcondition | A structured `Profile` record exists for the user. |
 
@@ -443,9 +446,9 @@ flowchart LR
 | Field | Description |
 |---|---|
 | Use Case ID | UC-06 |
-| Actors | Student Applicant, Claude API |
+| Actors | Student Applicant, Express API / engine; Groq optional; Voxide optional |
 | Precondition | An opportunity has been evaluated as APPLY or MAYBE |
-| Main Flow | 1. User opens the readiness checklist for the evaluated opportunity. 2. System requests a document-by-document action plan from the Claude API based on the gap analysis. 3. System displays the checklist with checkable items. 4. System speaks the first next action aloud via Voxide. |
+| Main Flow | 1. User opens the readiness checklist for the evaluated opportunity. 2. System builds checklist items from engine gap analysis (optional Groq wording when keyed). 3. System displays the checklist with checkable items. 4. Optional: Voxide widget may speak a next action when keyed — not claimed as default demo path. |
 | Postcondition | The checklist is saved and its completion state persists across sessions. |
 
 ## 3.3 Sequence Diagramming
@@ -457,18 +460,23 @@ sequenceDiagram
     actor U as Student Applicant
     participant FE as Next.js Frontend
     participant BE as Express API
-    participant DB as Supabase
-    participant AI as Claude API
+    participant DB as Postgres
+    participant Engine as decide
+    participant Groq as Groq optional
 
     U->>FE: Select opportunity
-    FE->>BE: POST /evaluate {userId, opportunityId}
+    FE->>BE: Analyze opportunity
     BE->>DB: Fetch profile(userId)
     DB-->>BE: profile
     BE->>DB: Fetch opportunity(opportunityId)
     DB-->>BE: opportunity requirements
-    BE->>AI: Compare(profile, requirements)
-    AI-->>BE: {decision, fitScore, reasoning, gaps}
+    BE->>Engine: decide(profile, opportunity)
+    Engine-->>BE: {decision, fitScore, summary, gaps}
     BE->>DB: Store evaluation record
+    opt GROQ_API_KEY set
+      BE->>Groq: Rephrase stored summary
+      Groq-->>BE: explanation text
+    end
     BE-->>FE: {decision, fitScore, reasoning, gaps}
     FE-->>U: Render Decision Screen
 ```
@@ -479,16 +487,20 @@ sequenceDiagram
 sequenceDiagram
     actor U as Student Applicant
     participant FE as Next.js Frontend
-    participant VX as Voxide
-    participant AI as Claude API
-    participant DB as Supabase
+    participant VX as Voxide optional
+    participant Groq as Groq optional
+    participant DB as Postgres
 
-    U->>FE: Speak self-description
-    FE->>VX: Audio stream (language = am/en/om)
-    VX-->>FE: Transcribed text
-    FE->>AI: Extract structured profile(text)
-    AI-->>FE: {education, field, country, experience, documents}
-    FE-->>U: Show extracted profile for confirmation
+    U->>FE: Enter or speak self-description
+    opt Voxide keyed
+      FE->>VX: Audio stream
+      VX-->>FE: Transcribed text
+    end
+    opt GROQ_API_KEY set
+      FE->>Groq: Extract structured profile(text)
+      Groq-->>FE: proposed fields
+    end
+    FE-->>U: Show proposed profile for confirmation
     U->>FE: Confirm
     FE->>DB: Save profile
     DB-->>FE: profileId
@@ -666,7 +678,7 @@ There is no prior HULUM system; the "current" state for the target user is a man
 
 #### 4.1.4.1 Overview
 
-HULUM follows a layered client-server architecture: a Next.js/TypeScript frontend, a Node.js/Express backend API, a Supabase (PostgreSQL) persistence layer with Row-Level Security, an AI reasoning layer built on the Claude API, a voice layer via Voxide, and a research layer via the Scholarxiv Papers API/MCP server that informs (but does not sit in the runtime path of) product decisions.
+HULUM follows a layered client-server architecture: a Next.js/TypeScript frontend, a Node.js/Express backend API, PostgreSQL persistence (often Supabase-hosted) with RLS policies present but API still connecting as table owner, a **deterministic `decide()` engine**, optional **Groq** for extract/explain when keyed, optional Voxide browser widget when keyed, and a research layer via ScholarXIV (`/research` when keyed) that does not set APPLY/MAYBE/SKIP. **v0.1 host:** local `npm run dev` — EthioDeploy is target only (`docs/stark/deployment.md`).
 
 #### 4.1.4.2 Software Architecture
 
@@ -678,35 +690,39 @@ flowchart TB
 
     subgraph Server
       BE[Node.js + Express API]
+      Engine[decide engine]
     end
 
     subgraph Data
-      DB[(Supabase\nPostgreSQL + RLS)]
+      DB[(Postgres\nRLS policies; owner bypass)]
     end
 
     subgraph AI
-      Claude[Claude API\nclaude-sonnet-4-6]
+      Groq[Groq optional\nextract / explain]
     end
 
     subgraph Voice
-      VX[Voxide\nAmharic / English / Afaan Oromo]
+      VX[Voxide optional widget]
     end
 
     subgraph Research
-      SX[Scholarxiv Papers API + MCP Server]
+      SX[ScholarXIV /research when keyed]
     end
 
     subgraph Hosting
-      ED[EthioDeploy]
+      Local[Local npm run dev v0.1]
+      ED[EthioDeploy target only]
     end
 
     FE <--> BE
+    BE --> Engine
     BE <--> DB
-    BE <--> Claude
-    FE <--> VX
-    BE -.consulted during design.-> SX
-    FE --- ED
-    BE --- ED
+    BE -.-> Groq
+    FE -.-> VX
+    BE -.-> SX
+    FE --- Local
+    BE --- Local
+    Local -.-> ED
 ```
 
 #### 4.1.4.3 System Decomposition
@@ -715,8 +731,8 @@ flowchart TB
 |---|---|
 | Frontend Subsystem | Voice/text capture, screen rendering, navigation, playback of spoken responses |
 | Backend/API Subsystem | Request orchestration, business logic, profile/opportunity CRUD, calling AI and voice services |
-| AI Reasoning Subsystem | Profile extraction, eligibility comparison, fit scoring, gap analysis, checklist generation |
-| Voice Subsystem | Speech-to-text and text-to-speech across three languages |
+| AI Reasoning Subsystem | Deterministic matching/`decide()`; optional Groq extract/explain when keyed |
+| Voice Subsystem | Optional Voxide widget when keyed; English text/quick actions are the stable path |
 | Data Subsystem | Persistent storage of users, profiles, opportunities, evaluations, checklists |
 | Research Subsystem | Supplies research findings that shape prompt design and UX copy (offline/design-time use) |
 
@@ -739,23 +755,26 @@ flowchart LR
 
 | Component | Environment |
 |---|---|
-| Frontend | Static/SSR Next.js app served via EthioDeploy |
-| Backend API | Node.js runtime container on EthioDeploy |
-| Database | Managed Supabase Postgres instance (cloud) |
-| AI Engine | External Claude API over HTTPS |
-| Voice Service | External Voxide API over HTTPS/WebSocket |
+| Frontend | Next.js on local `:3000` (EthioDeploy = target) |
+| Backend API | Express on local `:3001` (EthioDeploy = target) |
+| Database | Postgres via `DATABASE_URL` (often Supabase-hosted) |
+| Decision engine | In-process `decide()` in Express |
+| Explanation / extract | External Groq over HTTPS when keyed |
+| Voice Service | Optional `@voxide/react` widget when keyed |
 | Client Devices | Mobile and desktop browsers (Ethiopian users, primarily mobile) |
 
 #### 4.1.4.6 Deployment Modeling
 
 ```mermaid
 flowchart TB
-    User[User Device\nMobile Browser] -->|HTTPS| ED[EthioDeploy Edge]
-    ED --> FE[Next.js Frontend Instance]
-    FE -->|REST| BE[Express API Instance]
-    BE -->|SQL| Supabase[(Supabase Postgres)]
-    BE -->|HTTPS| Claude[Claude API]
-    FE -->|HTTPS/WebSocket| Voxide[Voxide Voice API]
+    User[User Device\nBrowser] -->|HTTP| Local[Local npm run dev]
+    Local --> FE[Next.js :3000]
+    FE -->|REST| BE[Express :3001]
+    BE -->|SQL| DB[(Postgres)]
+    BE --> Engine[decide]
+    BE -.->|optional| Groq[Groq]
+    FE -.->|optional widget| Voxide[Voxide]
+    Local -.->|target only| ED[EthioDeploy]
 ```
 
 #### 4.1.4.7 Persistent Data Management

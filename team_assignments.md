@@ -342,7 +342,7 @@ GET  /api/analyses/:id/readiness
 
 **Verify:** an analysis produces a useful readiness checklist.
 
-### Task 30 — Claude AI orchestration (Days 9–12)
+### Task 30 — Groq AI orchestration (Days 9–12)
 **Depends on:** stable analysis contract.
 
 > Team lock (2026-09-20, Kidist + Mulualem): Groq explains stored analysis. Claude is not used. The engine still owns APPLY/MAYBE/SKIP.
@@ -359,7 +359,7 @@ facts, deterministic matching, or APPLY/MAYBE/SKIP.
 **Depends on:** Task 30.
 
 ```text
-Claude output
+Groq output
     ↓
 Schema validation
     ↓

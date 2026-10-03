@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-10-03 — SRS §3–5 as-built Mermaid + Groq judge copy
+
+- `HULUM_Documentation.md` §3–5: `decide()` + optional Groq; EthioDeploy target; NFR-03 owner-bypass note.
+- Demo script Do-say: Groq when keyed (not Claude).
+- `task.md` / `HULUM_task.md` / `team_assignments.md`: Task 30/Phase 10 → Groq.
+- `HULUM_GIT_WORKFLOW_v1.0.md` + ADR 001/002: Groq / JWT / investigator catalog.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email, RLS non-owner role.
+
+---
+
 ## 2026-10-03 — SRS §2 NFR/limits + Groq-as-built copy
 
 - `HULUM_Documentation.md`: §1.2.9 seed note; NFR-02/08 Target/v0.1; language success criterion; closing EthioDeploy → local demo.

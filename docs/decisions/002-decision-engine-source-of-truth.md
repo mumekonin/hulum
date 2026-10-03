@@ -12,8 +12,8 @@ Claude can write fluent eligibility language. That is also how products invent d
 
 1. `matchRequirement` + `decide` in `apps/server` own APPLY / MAYBE / SKIP.  
 2. Fit score is a weighted signal, never a replacement for the rules.  
-3. Claude, if configured, receives the structured analysis and may only rephrase. On failure, show the engine summary.  
-4. Opportunity requirements and official URLs come from seed/curated records, not from the model.
+3. Groq, when `GROQ_API_KEY` is set, receives the structured analysis and may only rephrase. On failure, show the engine summary.  
+4. Opportunity requirements and official URLs come from the investigator-filled catalog (or fixtures), not from the model.
 
 ## Consequences
 

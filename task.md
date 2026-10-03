@@ -522,24 +522,24 @@ GET  /api/analyses/:id/readiness
 
 **Verify:** an analysis produces a useful readiness checklist.
 
-### Task 30 — Claude AI orchestration (Days 9–12)
+### Task 30 — Groq AI orchestration (Days 9–12)
 **Depends on:** stable analysis contract.
 
 > Team lock (2026-09-20, Kidist + Mulualem): Groq explains stored analysis. Claude is not used. The engine still owns APPLY/MAYBE/SKIP.
 
-Claude handles natural-language profile extraction, explanation, requirement
-explanation, readiness-plan language, contextual Q&A, and multilingual explanation.
+Groq handles natural-language profile extraction, explanation, requirement
+explanation, readiness-plan language, contextual Q&A, and multilingual explanation when keyed.
 
-Claude is not the sole authority for official deadlines, requirements, stored profile
+Groq is not the sole authority for official deadlines, requirements, stored profile
 facts, deterministic matching, or APPLY/MAYBE/SKIP.
 
-**Verify:** Claude explains structured analysis without silently changing the decision.
+**Verify:** Groq explains structured analysis without silently changing the decision.
 
 ### Task 31 — AI output validation (Days 10–12)
 **Depends on:** Task 30.
 
 ```text
-Claude output
+Groq output
     ↓
 Schema validation
     ↓
@@ -665,7 +665,7 @@ HULUM must not present the result as a guarantee of admission, employment, fundi
 
 ---
 
-# 14. Phase 10 — AI / Claude Integration
+# 14. Phase 10 — AI / Groq Integration
 
 AI is an assistant, not the eligibility authority.
 
@@ -691,7 +691,7 @@ AI is an assistant, not the eligibility authority.
 
 ## Tasks
 
-- [x] **P0** Select/configure Claude provider.
+- [x] **P0** Select/configure Groq provider. <!-- GROQ_API_KEY; Claude env names legacy -->
 - [x] **P0** Define AI service.
 - [x] **P0** Define structured output schema.
 - [x] **P0** Implement output validation.

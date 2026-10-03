@@ -740,7 +740,7 @@ Issue #XX
 Screenshot: docs/demo/...
 
 ### Decision
-Decision logic remains deterministic; Claude is used to explain the result.
+Decision logic remains deterministic; Groq explains stored analysis when keyed; the engine decides APPLY/MAYBE/SKIP.
 ```
 
 Do not manufacture history. The repository and changelog must represent actual work performed.
@@ -1012,7 +1012,7 @@ Analysis Contract
    ├── uncertain
    └── next action
           ↓
-      Claude explanation
+      Groq explanation (optional)
           ↓
        User / Voice
 ```
@@ -1233,7 +1233,7 @@ Expected evidence:
 
 - Web + backend + database.
 - Mobile + backend.
-- Claude.
+- Groq explain (optional); engine decides APPLY/MAYBE/SKIP.
 - Voxide.
 - Tests.
 - Deployment.

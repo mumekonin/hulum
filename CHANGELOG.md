@@ -2,6 +2,18 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-03 — SRS §3–5 as-built Mermaid + Groq judge copy
+
+### Changed
+- `HULUM_Documentation.md` §3–5 diagrams/flows: `decide()` + optional Groq; local host; EthioDeploy target; NFR-03 RLS owner-bypass.
+- `docs/demo/script.md`: Do-say uses Groq when keyed.
+- Task 30 / Phase 10 titles and pipelines → Groq (`task.md`, `HULUM_task.md`, `team_assignments.md`).
+- `HULUM_GIT_WORKFLOW_v1.0.md`, ADR 001/002: match tip of tree.
+- `docs/stark/task-status.md`: tip-of-main index for this sync.
+
+### Why
+After §2 honesty, §3–§5 still diagrammed Claude deciding and EthioDeploy as live.
+
 ## 2026-10-03 — SRS §2 NFR/limits + Groq-as-built copy
 
 ### Changed
