@@ -25,11 +25,11 @@ export default function JourneyPage() {
         APPLY, MAYBE, or SKIP — then shows why, what is missing, and what to prepare.
       </p>
       <div className="mt-8 flex flex-wrap gap-3">
-        <Link href="/profile" className="inline-flex min-h-11 items-center bg-ink px-5 py-3 text-paper">
-          Create your profile
-        </Link>
-        <Link href="/opportunities" className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
+        <Link href="/opportunities" className="inline-flex min-h-11 items-center bg-ink px-5 py-3 text-paper">
           Browse opportunities
+        </Link>
+        <Link href="/profile" className="inline-flex min-h-11 items-center border border-ink px-5 py-3">
+          Review your profile
         </Link>
       </div>
 

@@ -8,13 +8,13 @@
  * app/layout.tsx sets data-theme before first render so there is no flash.
  */
 :root {
-  --hulum-paper: #fafaf8;
+  --hulum-paper: #f7f6f2;
   --hulum-surface: #ffffff;
-  --hulum-surface-muted: #f3f2ef;
-  --hulum-ink: #141414;
-  --hulum-muted: #5c5a55;
-  --hulum-line: #e4e2dd;
-  --hulum-line-strong: #cfccc5;
+  --hulum-surface-muted: #f1f0ec;
+  --hulum-ink: #111111;
+  --hulum-muted: #66645f;
+  --hulum-line: #e4e2db;
+  --hulum-line-strong: #d9d7d0;
 
   --hulum-apply: #1e6b47;
   --hulum-apply-soft: #eef5f0;
@@ -23,17 +23,25 @@
   --hulum-skip: #9b2c2c;
   --hulum-skip-soft: #faeeee;
 
+  --wl-bg: #f1f0ec;
+  --wl-surface: #ffffff;
+  --wl-soft: #f5f4f0;
+  --wl-ink: #111111;
+  --wl-muted: #66645f;
+  --wl-line: #d9d7d0;
+  --wl-accent: #626b52;
+
   color-scheme: light;
 }
 
 [data-theme="dark"] {
-  --hulum-paper: #121211;
-  --hulum-surface: #1a1a19;
-  --hulum-surface-muted: #222220;
-  --hulum-ink: #ecebe7;
-  --hulum-muted: #a3a19b;
-  --hulum-line: #2c2b29;
-  --hulum-line-strong: #3d3c39;
+  --hulum-paper: #0b0b0a;
+  --hulum-surface: #131312;
+  --hulum-surface-muted: #1b1b1a;
+  --hulum-ink: #f5f3ed;
+  --hulum-muted: #a7a59e;
+  --hulum-line: #242423;
+  --hulum-line-strong: #333331;
 
   --hulum-apply: #7cc49a;
   --hulum-apply-soft: #16241c;
@@ -41,6 +49,14 @@
   --hulum-maybe-soft: #2a2215;
   --hulum-skip: #e3938a;
   --hulum-skip-soft: #2c1b19;
+
+  --wl-bg: #090909;
+  --wl-surface: #111111;
+  --wl-soft: #181818;
+  --wl-ink: #f5f3ed;
+  --wl-muted: #a7a59e;
+  --wl-line: #292929;
+  --wl-accent: #a8b18f;
 
   color-scheme: dark;
 }
@@ -76,6 +92,15 @@
   --color-gw-outline-var: var(--hulum-line-strong);
   --color-gw-primary: var(--hulum-ink);
   --color-gw-on-primary: var(--hulum-paper);
+
+  /* Welcome (entry) page palette. Olive accent is for small highlights only. */
+  --color-wl-bg: var(--wl-bg);
+  --color-wl-surface: var(--wl-surface);
+  --color-wl-soft: var(--wl-soft);
+  --color-wl-ink: var(--wl-ink);
+  --color-wl-muted: var(--wl-muted);
+  --color-wl-line: var(--wl-line);
+  --color-wl-accent: var(--wl-accent);
 }
 
 html,
@@ -123,12 +148,22 @@ body {
   }
 }
 
+@keyframes wl-rise {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 h1,
 h2,
 h3,
 .font-display {
-  font-family: var(--font-display), "Fraunces", serif;
-  font-optical-sizing: auto;
+  font-family: var(--font-gateway-serif), "EB Garamond", Georgia, serif;
 }
 
 .gateway {
@@ -145,7 +180,8 @@ h3,
   font-family: var(--font-gateway-mono), "JetBrains Mono", ui-monospace, monospace;
 }
 
-:focus-visible {
+/* tabindex="-1" targets (headings, main) only receive focus from code, so they get no ring. */
+:focus-visible:not([tabindex="-1"]) {
   outline: 2px solid var(--hulum-ink);
   outline-offset: 3px;
 }

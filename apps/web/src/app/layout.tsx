@@ -1,12 +1,7 @@
 import type { Metadata } from "next";
-import { EB_Garamond, Fraunces, JetBrains_Mono, Source_Sans_3 } from "next/font/google";
+import { EB_Garamond, JetBrains_Mono, Source_Sans_3 } from "next/font/google";
 import { THEME_INIT_SCRIPT } from "@/lib/theme-script";
 import "./globals.css";
-
-const display = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-display",
-});
 
 const sans = Source_Sans_3({
   subsets: ["latin"],
@@ -35,7 +30,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <script dangerouslySetInnerHTML={{ __html: THEME_INIT_SCRIPT }} />
       </head>
       <body
-        className={`${display.variable} ${sans.variable} ${gatewaySerif.variable} ${gatewayMono.variable} antialiased`}
+        className={`${sans.variable} ${gatewaySerif.variable} ${gatewayMono.variable} antialiased`}
       >
         <a href="#main-content" className="skip-link">
           Skip to main content

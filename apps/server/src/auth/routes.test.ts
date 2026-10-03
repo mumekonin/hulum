@@ -2,7 +2,7 @@ import { createServer } from "node:http";
 import type { AddressInfo } from "node:net";
 import type { AuthSession } from "@hulum/shared";
 import express from "express";
-import { afterEach, describe, expect, it } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { errorHandler, notFoundHandler } from "../http/error-handler.js";
 import { createAuthRouter } from "./routes.js";
 import type { AuthService } from "./service.js";
@@ -97,5 +97,26 @@ describe("auth routes", () => {
       headers: { "X-Hulum-Session": "token.example" },
     });
     expect(ok.status).toBe(200);
+  });
+
+  it("sends the browser back to sign-in when Google is not configured", async () => {
+    vi.stubEnv("GOOGLE_CLIENT_ID", "");
+    vi.stubEnv("GOOGLE_CLIENT_SECRET", "");
+    vi.stubEnv("CLIENT_URL", "http://localhost:3000");
+    try {
+      const port = await listen(
+        createTestApp({
+          register: async () => session,
+          login: async () => session,
+          loginWithGoogle: async () => session,
+          me: async () => session,
+        }),
+      );
+      const response = await fetch(`http://127.0.0.1:${port}/api/auth/google`, { redirect: "manual" });
+      expect(response.status).toBe(302);
+      expect(response.headers.get("location")).toBe("http://localhost:3000/?auth_error=google_unconfigured");
+    } finally {
+      vi.unstubAllEnvs();
+    }
   });
 });

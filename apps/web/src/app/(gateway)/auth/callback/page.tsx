@@ -16,7 +16,7 @@ export default function AuthCallbackPage() {
     const token =
       new URLSearchParams(hash).get("token") ?? new URLSearchParams(window.location.search).get("token");
     if (token === null || token.trim() === "") {
-      router.replace("/?auth_error=google_failed");
+      router.replace("/sign-in?auth_error=google_failed");
       return;
     }
     setSessionToken(token);
@@ -27,7 +27,7 @@ export default function AuthCallbackPage() {
       })
       .catch((error: unknown) => {
         setMessage(userFacingError(error));
-        router.replace("/?auth_error=google_failed");
+        router.replace("/sign-in?auth_error=google_failed");
       });
   }, [router]);
 

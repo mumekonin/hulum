@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { initialsOf, useAccount, type Account } from "@/lib/account";
 import { clearSession } from "@/lib/storage";
+import { BrandMark } from "./BrandMark";
 import { ThemeToggle } from "./ThemeToggle";
 
 type NavLink = { href: string; label: string };
@@ -54,7 +55,7 @@ export function AppNav() {
 
   function signOut() {
     clearSession();
-    router.replace("/");
+    router.replace("/sign-in");
   }
 
   return (
@@ -93,11 +94,12 @@ export function AppNav() {
             ref={menu}
             id="mobile-menu"
             aria-label="Primary"
-            className="border-t border-line px-2 pb-4 pt-2"
+            className="max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border-t border-line px-2 pb-4 pt-2"
           >
             <NavList links={primaryLinks} pathname={pathname} />
             <div className="my-3 border-t border-line" />
             <NavList links={[profileLink]} pathname={pathname} />
+            <p className="mt-4 px-3 pb-1 text-xs uppercase tracking-[0.14em] text-muted">More</p>
             <NavList links={moreLinks} pathname={pathname} small />
             <div className="mt-3 border-t border-line pt-3">
               <AccountSummary account={account} />
@@ -120,10 +122,11 @@ function Wordmark() {
   return (
     <Link
       href="/opportunities"
-      className="px-3 font-display text-2xl tracking-tight text-ink"
+      className="flex items-center gap-2.5 px-3 text-ink"
       aria-label="HULUM, go to Discover"
     >
-      HULUM
+      <BrandMark />
+      <span className="font-display text-[21px] font-semibold tracking-[0.08em]">HULUM</span>
     </Link>
   );
 }
@@ -146,8 +149,10 @@ function NavList({
             <Link
               href={link.href}
               aria-current={current ? "page" : undefined}
-              className={`flex min-h-11 items-center px-3 transition-colors ${small ? "text-sm" : "text-[15px]"} ${
-                current ? "bg-surface-muted font-medium text-ink" : "text-muted hover:text-ink"
+              className={`relative flex min-h-11 items-center rounded-md px-3 transition-colors ${small ? "text-sm" : "text-[15px]"} ${
+                current
+                  ? "bg-surface-muted font-medium text-ink before:absolute before:inset-y-2.5 before:left-0 before:w-0.5 before:rounded-full before:bg-wl-accent"
+                  : "text-muted hover:bg-surface-muted/60 hover:text-ink"
               }`}
             >
               {link.label}

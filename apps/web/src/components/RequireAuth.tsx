@@ -10,7 +10,7 @@ export function RequireAuth({ children }: { children: React.ReactNode }) {
 
   useEffect(() => {
     if (!isSignedIn()) {
-      router.replace("/");
+      router.replace("/sign-in");
       return;
     }
     setReady(true);

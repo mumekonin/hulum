@@ -52,9 +52,9 @@ Do say: the engine decides; Claude only explains if a key is set; always open th
 
 ## Script
 
-### 0:00 — Sign in (`/`)
+### 0:00 — Welcome (`/`) and sign in (`/sign-in`)
 
-**Show:** HULUM gateway (email/password or Google).
+**Show:** HULUM welcome page, then Get started → sign-in (email/password or Google).
 
 **Say:** Ethiopian students find opportunities. They still waste time on ones they cannot use. HULUM is a decision agent: one answer, then why, gaps, and what to prepare.
 

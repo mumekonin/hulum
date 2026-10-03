@@ -69,7 +69,7 @@ Do not put Groq or `decide()` in the browser.
 
 | Path | Role |
 |---|---|
-| `apps/web` | Next.js App Router: `/`, `/profile`, `/opportunities`, `/analysis/[id]`, `/assistant` |
+| `apps/web` | Next.js App Router: `/` (welcome), `/sign-in`, `/verify`, `/forgot-password`, `/profile`, `/opportunities`, `/analysis/[id]`, `/assistant` |
 | `apps/server` | Express routes, matching, decision, readiness, optional model wording, voice-text |
 | `packages/shared` | Profile, Opportunity, Decision, RequirementStatus, Analysis, ReadinessItem, VoiceIntent, Zod schemas |
 | `database/migrations/001_init.sql` | Postgres/Supabase schema for when credentials exist |
