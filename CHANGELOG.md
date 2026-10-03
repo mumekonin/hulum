@@ -10,12 +10,14 @@ Contributor: Kidist (frontend). Branch `feat/product-ui-transformation`. One bac
 - Welcome page at `/`: one large rounded panel over a faint monochrome backdrop. Left: HULUM mark, "Know what is worth your time.", short description, Get started and "Already have an account? Sign in →" (both go to `/sign-in`). Right: an abstract path from opportunities to fit, readiness, and one decision (Apply · Maybe · Skip). Own warm black/white palette (`--wl-*` in `globals.css`), olive used only for small highlights. No login UI.
 - Shared `AuthShell`: one centered two-panel card (brand left, form right, stacked on mobile) used by sign-in, create account, and password reset.
 - Favicon `app/icon.svg` (serif "H", light and dark variants). Removes the missing `favicon.ico` console error.
+- Shared `BrandMark` (circle, peak, olive dot) used on the welcome page, sidebar, mobile top bar, and onboarding header.
 
 ### Changed
 - Sign-in moved from `/` to `/sign-in`. The auth guard, sign-out, Google callback, reset success, 404 page, and auth-page links point there. `/` forwards `?auth_error=…` to `/sign-in`, so the API's Google redirects are unchanged.
 - `GET /api/auth/google` redirects to `/?auth_error=google_unconfigured` instead of returning a raw 503 JSON page when `GOOGLE_CLIENT_ID` or `GOOGLE_CLIENT_SECRET` is missing. Sign-in shows "Google sign-in isn't available yet."
 - Sign-in, create account, and forgot password rebuilt on `AuthShell`. Logic, request bodies, field IDs, and validation are unchanged, except the forgot-password email is now required (it was optional and only kept in the browser).
 - `smoke:browser` starts at `/sign-in`.
+- Signed-in app uses the welcome palette: warmer light and darker dark values for the shared `paper` / `surface` / `ink` / `muted` / `line` tokens. APPLY / MAYBE / SKIP colors are unchanged. `h1`–`h3` use EB Garamond instead of Fraunces (Fraunces is no longer loaded). Sidebar active link gets a thin olive marker.
 
 ### Removed
 - Fake system text on the auth screens: REF numbers, SEC-PROTOCOL, Phase_01/02, Node: preview, "Local gateway · v0.1", coordinates, "Stored as a hash", decision-loop box, and the "Privacy / Terms not published yet" footer (those pages do not exist).
@@ -25,7 +27,7 @@ Contributor: Kidist (frontend). Branch `feat/product-ui-transformation`. One bac
 The first screen was a sign-in form crowded with invented metadata. Now a signed-out user sees what HULUM does, then one calm card to sign in.
 
 ### Evidence
-Commits `442b94e`, `37f3d89`, `4f561a3`, `a34b25f`, `a79df30`, `fba8eb3`, `4191e9e`, `7b71d6f`, `655fd83`, `37a2c32`, `7ab3864`. Server: 287 tests pass, including a new Google-unconfigured redirect test; `tsc` clean. Web: ESLint and `tsc` clean. Browser checks (Playwright in Edge) in light and dark at 1440, 1280, 820, and 390px: the welcome page has no form, Google, or email/password text, and its links open `/sign-in`; sign-in password toggle, required email, login request body, error notice, Google redirect, and `auth_error` notices; create-account request body and error; forgot-password required email and notice; signed-out `/opportunities` goes to `/sign-in`. Not run: `smoke:browser` end to end (no local `DATABASE_URL`) and live Google OAuth (no client id/secret).
+Commits `442b94e`, `37f3d89`, `4f561a3`, `a34b25f`, `a79df30`, `fba8eb3`, `4191e9e`, `7b71d6f`, `655fd83`, `37a2c32`, `7ab3864`, `4fb3a75`. Server: 287 tests pass, including a new Google-unconfigured redirect test; `tsc` clean. Web: ESLint and `tsc` clean. Browser checks (Playwright in Edge), light and dark: welcome page at 1440, 1280, 820, and 390px; sign-in at 1440, 1024, 820, and 390px; create account and forgot password at 1440 and 390px; Discover, My opportunities, and How HULUM works at 1440px, plus Discover at 390px (API stubbed with `[TEST]` fixtures in the test only). Checked: the welcome page has no form, Google, or email/password text, and its links open `/sign-in`; sign-in password toggle, required email, login request body, error notice, Google redirect, and `auth_error` notices; create-account request body and error; forgot-password required email and notice; signed-out `/opportunities` goes to `/sign-in`. Not run: `smoke:browser` end to end (no local `DATABASE_URL`), live Google OAuth (no client id/secret), and visual review of profile, opportunity detail, Ask HULUM, and Readiness after the palette change.
 
 ## 2026-09-29 — Product UI transformation, onboarding, and Ask HULUM redesign
 
