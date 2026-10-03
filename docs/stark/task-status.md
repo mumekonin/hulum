@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-10-03 — SRS §2 NFR/limits + Groq-as-built copy
+
+- `HULUM_Documentation.md`: §1.2.9 seed note; NFR-02/08 Target/v0.1; language success criterion; closing EthioDeploy → local demo.
+- `team_assignments.md`: integration path + rules + Task 30 → Groq (engine decides).
+- `git-workflow.md`: STARK example, analysis contract, Days 17–18 evidence → Groq.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email, RLS non-owner role, full SRS Ch.3–5 diagram pass.
+
+---
+
 ## 2026-10-03 — SRS deliverables + Task 37–38 local verify
 
 - `HULUM_Documentation.md` §1.2.10: v0.1 status column (local host, investigator catalog, English voice path).

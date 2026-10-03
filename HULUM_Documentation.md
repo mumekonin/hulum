@@ -191,6 +191,7 @@ Out of scope for the hackathon build (candidate for future phases):
 ### 1.2.9 Limitations of the Project
 
 - The opportunity database is manually curated and verified during the hackathon window, so coverage is limited to seeded entries rather than the full universe of circulating opportunities.
+  **v0.1 note:** runtime catalog is investigator-filled Postgres; curated `db:seed` closed; list may be empty until the worker runs — not a shipped ≥10 curated seed set.
 - Voice recognition accuracy for Afaan Oromo may lag behind Amharic and English given relatively less mature language-model and speech tooling.
 - The system evaluates eligibility based on user-declared profile data; it does not independently verify credentials or documents.
 - Time constraints limit the depth of automated opportunity-source verification to spot-checks against official domains rather than a full trust-scoring pipeline.
@@ -272,6 +273,7 @@ HULUM is a web-based (mobile-responsive), voice-first application. Its scope cov
 - **Objective:** Reduce decision time per opportunity. **Success criterion:** A user receives an APPLY/MAYBE/SKIP decision within seconds of selecting an opportunity, not hours of manual research.
 - **Objective:** Increase applications among eligible users. **Success criterion:** Users presented with an APPLY decision and a readiness checklist proceed to prepare/apply at a higher rate than baseline self-assessment.
 - **Objective:** Extend access via language. **Success criterion:** Non-English-first users can complete profile setup and receive decisions entirely by voice in Amharic or Afaan Oromo.
+  **v0.1:** not met for live voice; English text/quick actions are the stable path; Amharic quick-action strings exist; Oromo UI/voice open (README, ADR 004).
 
 ### 2.1.7 General Description
 
@@ -300,13 +302,13 @@ HULUM operates as a three-part loop: **profile capture** (voice or text), **oppo
 | ID | Requirement |
 |---|---|
 | NFR-01 (Performance) | The system shall return an eligibility decision within a few seconds of a user requesting evaluation. |
-| NFR-02 (Usability) | The voice interface shall support natural, conversational speech in Amharic, English, and Afaan Oromo without requiring users to learn rigid command phrases. |
+| NFR-02 (Usability) | **Target:** conversational speech in Amharic, English, and Afaan Oromo. **v0.1:** English text + quick actions; optional Voxide widget when keyed; **not** verified trilingual live mic/STT (`docs/demo/backup.md`, README). |
 | NFR-03 (Security) | User profile data shall be protected using Supabase Row-Level Security (RLS), restricting access to the owning user. |
 | NFR-04 (Reliability) | Opportunity records shall be verified against official sources before being surfaced to users, to avoid recommending expired or fraudulent postings. |
 | NFR-05 (Availability) | **Target:** production reachable via EthioDeploy for evaluation. **v0.1:** local dev + CI smokes only — not deployed (`docs/stark/deployment.md`). |
 | NFR-06 (Maintainability) | The AI evaluation logic shall be isolated from the profile and database layers so that reasoning prompts can be refined independently of the data model. |
 | NFR-07 (Scalability) | The database schema shall support growth from an initial 10 seed opportunities to a much larger curated catalog without redesign. |
-| NFR-08 (Localization) | All decision explanations shall be deliverable in the user's chosen language (Amharic, English, or Afaan Oromo). |
+| NFR-08 (Localization) | **Target:** explanations in the user's chosen language (Amharic, English, or Afaan Oromo). **v0.1:** English UI/explain path; Amharic quick-action strings; Groq when keyed — not full trilingual explain. |
 
 ## 2.2 Current (Existing) System Description
 
@@ -989,4 +991,4 @@ interface AIReasoningService {
 
 ## Closing Statement
 
-HULUM does not just find opportunities — it tells a user which ones are worth their time, and exactly what to do next. This document formalizes that promise into a requirement, design, and object model intended to guide a 24-day build from Day 1 foundation work to an October 2 live demonstration on EthioDeploy.
+HULUM does not just find opportunities — it tells a user which ones are worth their time, and exactly what to do next. This document formalizes that promise into a requirement, design, and object model intended to guide a 24-day build from Day 1 foundation work to a reproducible local demo (`README.md`, `docs/demo/script.md`). EthioDeploy / public host remains open (`docs/stark/deployment.md`).

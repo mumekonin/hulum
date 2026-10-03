@@ -2,6 +2,17 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-03 — SRS §2 NFR/limits + Groq-as-built copy
+
+### Changed
+- `HULUM_Documentation.md`: seed limitation note; NFR-02/08 Target/v0.1; language success criterion; closing points to local demo.
+- `team_assignments.md`: Claude → Groq in product boundary, Task 30, integration path, working rules.
+- `git-workflow.md`: STARK changelog example, analysis contract, Days 17–18 evidence.
+- `docs/stark/task-status.md`: tip-of-main index for this sync.
+
+### Why
+After §1.2.10, §2 NFRs and team/git-workflow still read as shipped trilingual voice and Claude while tip of tree is Groq-when-keyed + engine decides.
+
 ## 2026-10-03 — SRS deliverables + Task 37–38 local verify
 
 ### Changed
