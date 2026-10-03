@@ -94,11 +94,12 @@ export function AppNav() {
             ref={menu}
             id="mobile-menu"
             aria-label="Primary"
-            className="border-t border-line px-2 pb-4 pt-2"
+            className="max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border-t border-line px-2 pb-4 pt-2"
           >
             <NavList links={primaryLinks} pathname={pathname} />
             <div className="my-3 border-t border-line" />
             <NavList links={[profileLink]} pathname={pathname} />
+            <p className="mt-4 px-3 pb-1 text-xs uppercase tracking-[0.14em] text-muted">More</p>
             <NavList links={moreLinks} pathname={pathname} small />
             <div className="mt-3 border-t border-line pt-3">
               <AccountSummary account={account} />
