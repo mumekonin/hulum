@@ -23,13 +23,13 @@
   --hulum-skip: #9b2c2c;
   --hulum-skip-soft: #faeeee;
 
-  --wl-bg: #f7f6f2;
+  --wl-bg: #f1f0ec;
   --wl-surface: #ffffff;
-  --wl-ink: #171717;
-  --wl-muted: #5f5f5a;
-  --wl-line: #dcdad3;
+  --wl-soft: #f5f4f0;
+  --wl-ink: #111111;
+  --wl-muted: #66645f;
+  --wl-line: #d9d7d0;
   --wl-accent: #626b52;
-  --wl-accent-soft: #eceee6;
 
   color-scheme: light;
 }
@@ -50,13 +50,13 @@
   --hulum-skip: #e3938a;
   --hulum-skip-soft: #2c1b19;
 
-  --wl-bg: #0d0e0c;
-  --wl-surface: #151713;
-  --wl-ink: #f4f2ea;
-  --wl-muted: #a7a99e;
-  --wl-line: #2b2d27;
+  --wl-bg: #090909;
+  --wl-surface: #111111;
+  --wl-soft: #181818;
+  --wl-ink: #f5f3ed;
+  --wl-muted: #a7a59e;
+  --wl-line: #292929;
   --wl-accent: #a8b18f;
-  --wl-accent-soft: #1c1f18;
 
   color-scheme: dark;
 }
@@ -96,11 +96,11 @@
   /* Welcome (entry) page palette. Olive accent is for small highlights only. */
   --color-wl-bg: var(--wl-bg);
   --color-wl-surface: var(--wl-surface);
+  --color-wl-soft: var(--wl-soft);
   --color-wl-ink: var(--wl-ink);
   --color-wl-muted: var(--wl-muted);
   --color-wl-line: var(--wl-line);
   --color-wl-accent: var(--wl-accent);
-  --color-wl-accent-soft: var(--wl-accent-soft);
 }
 
 html,
