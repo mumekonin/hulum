@@ -43,5 +43,21 @@ Freshness is **computed on read**. HULUM does not rewrite the database row when 
 | Who is stale | Only rows currently stored as `VERIFIED` |
 | Missing / invalid `lastVerifiedAt` | Treated as stale → effective `NEEDS_REVIEW` |
 | Age > 30 days | Effective `NEEDS_REVIEW`; stored status stays `VERIFIED` |
+| Deadline before today (UTC) | Effective `EXPIRED` (wins over stale) |
+| Stored `EXPIRED` | Stays `EXPIRED` |
+| Empty `sourceUrl` | Effective `NEEDS_REVIEW` |
+
+**Decision impact:** if effective status is `EXPIRED`, `decide()` returns **SKIP** and prepends a reason that HULUM is not the organization. Stale → `NEEDS_REVIEW` does **not** force SKIP by itself; matching and other rules still decide APPLY / MAYBE / SKIP. The list and detail screens show the effective status so users see "needs review" when the catalog is old.
+
+Tests: `apps/server/src/verification/rules.test.ts`.
+
+---
+
+## Out of v0.1
+
+- Admin UI to click "mark verified"
+- Automatic scrape / re-fetch of official pages
+- Push notifications when a listing goes stale
+- Claiming HULUM confirmation as official eligibility
 
 Related: `docs/architecture/manual-verification.md`, `docs/architecture/opportunity-import.md`, `docs/investigator/README.md`.
