@@ -39,6 +39,9 @@ export function AuthGateway() {
     } else if (error === "google_failed") {
       setSim("error");
       setNotice("Google sign-in failed. Try again, or use email and password.");
+    } else if (error === "google_unconfigured") {
+      setSim("error");
+      setNotice("Google sign-in isn't available yet. Use email and password for now.");
     }
   }, [router]);
 

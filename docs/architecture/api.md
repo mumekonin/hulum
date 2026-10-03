@@ -13,7 +13,7 @@
 | `GET` | `/api/health` | — | `{ status: "ok" }` |
 | `POST` | `/api/auth/register` | name, email, password | Creates user; returns JWT session |
 | `POST` | `/api/auth/login` | email, password | Returns JWT session |
-| `GET` | `/api/auth/google` | — | Starts Google OAuth (needs client id/secret) |
+| `GET` | `/api/auth/google` | — | Starts Google OAuth (needs client id/secret; without them redirects to `/?auth_error=google_unconfigured`) |
 | `GET` | `/api/auth/google/callback` | OAuth query | Completes Google login |
 | `GET` | `/api/auth/me` | — | Current user from `X-Hulum-Session` |
 | `POST` | `/api/profile` | profile fields + name/email | Creates/updates profile for the session user |

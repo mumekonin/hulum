@@ -58,7 +58,8 @@ export function createAuthRouter(service?: AuthService): Router {
     try {
       const env = loadEnv({ fromFile: false });
       if (env.GOOGLE_CLIENT_ID === undefined || env.GOOGLE_CLIENT_SECRET === undefined) {
-        throw new HttpError(503, "CONFIG", "Google sign-in is not configured.");
+        res.redirect(`${clientOrigin()}/?auth_error=google_unconfigured`);
+        return;
       }
       const state = issueOauthState(authSigningSecret(env));
       res.redirect(
