@@ -166,7 +166,7 @@ export default function OpportunityDetailPage() {
         href="/opportunities"
         className="inline-flex min-h-11 items-center text-sm text-muted hover:text-ink"
       >
-        ??? Discover
+        ← Discover
       </Link>
 
       <header className="mt-4 max-w-3xl">
@@ -178,12 +178,12 @@ export default function OpportunityDetailPage() {
         </h1>
         <p className="mt-3 text-lg text-muted">{opportunity.organization}</p>
         <p className={`mt-4 text-sm ${closed ? "text-skip" : "text-ink"}`}>
-          <span className="text-muted">Deadline ?? </span>
+          <span className="text-muted">Deadline · </span>
           {formatDeadline(opportunity.deadline)}
           {closed
-            ? " ?? Closed"
+            ? " · Closed"
             : remaining !== null
-              ? ` ?? ${remaining} ${remaining === 1 ? "day" : "days"} left`
+              ? ` · ${remaining} ${remaining === 1 ? "day" : "days"} left`
               : ""}
         </p>
       </header>
@@ -206,7 +206,7 @@ export default function OpportunityDetailPage() {
                     disabled={analyzing}
                     className="min-h-11 text-muted underline underline-offset-4 hover:text-ink disabled:opacity-60"
                   >
-                    {analyzing ? "Analyzing???" : "Analyze again with my latest profile"}
+                    {analyzing ? "Analyzing…" : "Analyze again with my latest profile"}
                   </button>
                   <Link
                     href={askHref}
@@ -235,7 +235,7 @@ export default function OpportunityDetailPage() {
                   disabled={analyzing}
                   className="mt-5 inline-flex min-h-11 items-center bg-ink px-5 text-sm text-paper transition-opacity hover:opacity-90 disabled:opacity-60"
                 >
-                  {analyzing ? "Analyzing your fit???" : "Analyze my fit"}
+                  {analyzing ? "Analyzing your fit…" : "Analyze my fit"}
                 </button>
               </section>
             )}
