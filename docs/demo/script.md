@@ -4,6 +4,7 @@
 **Persona:** Abeba Tesfaye (typed facts — there is no “Use demo profile” button)  
 **Runtime:** local `npm run dev` — web `:3000`, API `:3001`  
 **Auth:** Create account / Sign in (JWT). Google optional if keys are set.  
+**Routes:** Create account uses `/verify` (JWT register only—not email OTP).  
 **Catalog:** investigator-filled (not `db:seed`). Cards may be empty until the worker has run.  
 **Voice:** Ask HULUM text + quick actions (ADR 003). Do not claim live Voxide or a microphone.
 
@@ -58,7 +59,7 @@ Do say: the engine decides; Claude only explains if a key is set; always open th
 
 **Say:** Ethiopian students find opportunities. They still waste time on ones they cannot use. HULUM is a decision agent: one answer, then why, gaps, and what to prepare.
 
-**Click:** Sign in (pre-created account) or Create account → fill name / email / password → Create account.
+**Click:** Sign in (pre-created account) or Create account → fill name / email / password → Create account. Say the `/verify` URL is legacy naming if judges notice it.
 
 ### 0:40 — Profile `/profile` (first run: `/onboarding`)
 

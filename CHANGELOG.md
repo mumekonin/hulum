@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-03 — Create account (/verify) OTP honesty
+
+### Changed
+- `/verify` (`AuthInduction`): notice + subtitle that route is JWT register, not email OTP; page metadata matches.
+- README + demo script: `/verify` = Create account, not OTP.
+- `docs/stark/task-status.md`: tip-of-main index for this sync.
+
+### Why
+`smoke:browser` and demos land on `/verify`; without on-page copy it still read like email verification after forgot-password was fixed.
+
 ## 2026-10-02 — Recovery UI + ScholarXIV/seed judge honesty
 
 ### Changed

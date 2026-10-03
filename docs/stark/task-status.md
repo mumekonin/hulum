@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-10-03 — Create account (/verify) OTP honesty
+
+- `/verify`: visible notice that route is JWT register, not email OTP; metadata description matches.
+- README + demo script: `/verify` = Create account, not OTP.
+- AuthGateway/AuthInduction unchanged (already real `/api/auth/register` + `/login`).
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email, RLS non-owner role.
+
+---
+
 ## 2026-10-02 — Recovery UI + ScholarXIV/seed judge copy
 
 - `/forgot-password`: no "Send reset link" / fake send delay; honest recovery copy visible before action.

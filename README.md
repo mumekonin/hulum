@@ -26,7 +26,7 @@ A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that deci
 
 ## What v0.1 actually does
 
-- **Sign in** — email/password register + login (JWT in `X-Hulum-Session`). Optional Google OAuth when client id/secret are set.
+- **Sign in** — email/password register + login (JWT in `X-Hulum-Session`). Create account at `/verify` (register only—not email OTP). Optional Google OAuth when client id/secret are set.
 - **Onboarding and profile** — new accounts walk a 4-step setup (`/onboarding`); `/profile` shows what you saved, lets you edit it, and keeps a private CV (view, download, replace). No one-click Abeba demo button.
 - **Discover** — keyword search and filters over the stored catalog, including your stored decision. It never invents listings.
 - **My opportunities and Readiness** — saved listings, past APPLY / MAYBE / SKIP results, and preparation progress (`/my-opportunities`, `/readiness`).
