@@ -216,7 +216,7 @@ hulum/
 - [-] Causes of opportunity application failure among African youth.
 - [x] Responsible AI eligibility uncertainty.
 - [x] Opportunity matching and decision-support systems.
-- [-] Voice-first design for non-English speakers.
+- [-] Voice-first design for non-English speakers. <!-- Ask HULUM text/quick actions proven; live non-English STT not mic-tested -->
 - [-] Multilingual interaction for English/Amharic/Afaan Oromo users. <!-- Amharic text UX shipped; Oromo UI/voice + live STT still open (ADR 004) -->
 - [x] Readiness support for scholarship/internship/job applications.
 - [x] Trust and verification of opportunity requirements.
@@ -344,7 +344,7 @@ Official opportunity source
 - [x] **P0** Explanation view.
 - [x] **P0** Requirement status view.
 - [x] **P0** Readiness checklist.
-- [-] **P0** Voice interaction.
+- [-] **P0** Voice interaction. <!-- live mic; Ask HULUM text/quick actions are shipped -->
 - [x] **P0** Official source/application link.
 - [x] **P1** Filters.
 - [x] **P1** Search.
@@ -742,10 +742,10 @@ It must perform meaningful HULUM actions and must not be decorative.
 
 - [x] **P0** Study Voxide integration requirements.
 - [x] **P0** Create development integration.
-- [-] **P0** Receive/process voice input.
-- [x] **P0** Connect voice to HULUM actions.
-- [-] **P0** Produce voice response.
-- [x] **P0** Analyze an opportunity by voice.
+- [-] **P0** Receive/process voice input. <!-- live mic / STT; text path is separate -->
+- [x] **P0** Connect voice to HULUM actions. <!-- widget tools + text → POST /api/voice/action -->
+- [-] **P0** Produce voice response. <!-- TTS; text reply shipped -->
+- [x] **P0** Analyze an opportunity by voice. <!-- via text/widget tools calling the same action API -->
 - [x] **P0** Ask "Why?"
 - [x] **P0** Ask "What am I missing?"
 - [x] **P0** Ask "What should I prepare?"
@@ -794,10 +794,10 @@ Actual support depends on Voxide capabilities and quality.
 - [x] **P0** Define language architecture.
 - [x] **P0** Implement language selection.
 - [x] **P0** Test one language end-to-end.
-- [x] **P0** Ensure core voice interaction works.
-- [x] **P1** Add second language.
-- [ ] **P1** Add third language if stable.
-- [x] **P1** Test mixed-language input.
+- [x] **P0** Ensure core voice interaction works. <!-- text/quick actions + optional widget tools; live mic still open -->
+- [x] **P1** Add second language. <!-- Amharic Ask HULUM text UX; not live Amharic STT -->
+- [ ] **P1** Add third language if stable. <!-- Afaan Oromo UI/voice open (ADR 004) -->
+- [x] **P1** Test mixed-language input. <!-- English + Amharic text keywords; not dual-language STT -->
 - [x] **P1** Test opportunity terminology.
 - [x] **P1** Test decision explanations.
 
@@ -929,7 +929,7 @@ Analysis
 - [x] **P0** Decision result.
 - [x] **P0** Requirement breakdown.
 - [x] **P0** Readiness checklist.
-- [-] **P0** Voice interaction.
+- [-] **P0** Voice interaction. <!-- live mic; Ask HULUM text/quick actions are shipped -->
 - [x] **P0** Official source/application action.
 - [x] **P1** Search/filter.
 - [x] **P1** Error states.
@@ -1268,14 +1268,14 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Claude explanation.
 - [x] Structured AI output validation.
 - [x] Contextual assistant.
-- [x] Amharic voice/UX if stable.
+- [x] Amharic text UX if stable (not live Amharic STT).
 - [ ] Afaan Oromo if stable and quality is acceptable.
 
 ## Days 15–16 — Integration
 
 - [x] Full profile → opportunity → analysis flow.
 - [x] Full analysis → readiness flow.
-- [x] Full voice flow.
+- [x] Full Ask HULUM text / voice-tool flow (live mic STT/TTS still open).
 - [x] Error handling.
 - [x] Security review.
 - [x] Production configuration.
@@ -1323,10 +1323,10 @@ The HULUM MVP requires these capabilities to work together:
 - [x] **P0** Decision explanation.
 - [x] **P0** Missing/uncertain requirements.
 - [x] **P0** Readiness checklist.
-- [ ] **P0** Voxide voice interaction.
-- [x] **P0** At least one stable language end-to-end.
+- [ ] **P0** Voxide voice interaction. <!-- keyed mic pass still required -->
+- [x] **P0** At least one stable language end-to-end. <!-- English -->
 - [x] **P0** English support.
-- [ ] **P0** Amharic support if Voxide quality is sufficient.
+- [ ] **P0** Amharic support if Voxide quality is sufficient. <!-- Amharic text UX shipped; Voxide STT quality unverified -->
 - [x] **P0** Official source/application link.
 - [x] **P0** Responsible-AI notice.
 - [ ] **P0** Working deployed prototype.
@@ -1463,18 +1463,18 @@ However, STARK-required research and ideation documentation must be maintained t
 
 ## Gate 4 — Voice Slice
 
-- [ ] Voxide input works.
-- [x] Voice intent works.
+- [ ] Voxide input works. <!-- live mic / STT -->
+- [x] Voice intent works. <!-- text + widget tools → /api/voice/action -->
 - [x] HULUM action executes.
-- [ ] Voice response works.
+- [ ] Voice response works. <!-- TTS; text reply shipped -->
 - [x] Failure fallback works.
 
 ## Gate 5 — Integrated MVP
 
 - [x] Profile → opportunity → analysis works.
 - [x] Analysis → readiness works.
-- [x] Voice → analysis works.
-- [x] Voice → explanation works.
+- [x] Voice → analysis works. <!-- via text/widget tools -->
+- [x] Voice → explanation works. <!-- via text/widget tools -->
 - [x] Official source link works.
 - [x] Responsible-AI notice works.
 
@@ -1482,7 +1482,7 @@ However, STARK-required research and ideation documentation must be maintained t
 
 - [ ] Production deployment works.
 - [x] Demo scenario is stable.
-- [ ] Voice works.
+- [ ] Voice works. <!-- keyed live mic -->
 - [x] Backup mode exists.
 - [x] Documentation is complete.
 - [x] Git history is truthful.

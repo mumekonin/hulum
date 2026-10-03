@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-02 — Amharic / voice checkbox honesty sync
+
+### Changed
+- `task.md` / `HULUM_task.md`: Amharic = text UX (not STT); voice gates annotate text/widget vs live mic; Days 13–14 / Gate 4–6 / MVP Amharic rows honest.
+- `docs/product/research-questions.md`, `docs/research/voxide-languages.md`: Amharic text UX shipped; Voxide STT still unverified.
+- `docs/stark/task-status.md`: tip-of-main index for this sync.
+
+### Why
+Checkboxes still read as “Amharic voice” / “full voice flow” while only Ask HULUM text + widget tools were proven.
+
 ## 2026-10-02 — Task 49 DONE + task.md / Oromo chrome honesty
 
 ### Changed

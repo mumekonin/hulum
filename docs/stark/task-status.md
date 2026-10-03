@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-10-02 — Amharic / voice checkbox honesty
+
+- Days 13–14: Amharic **text UX** checked; not live Amharic STT.
+- Phase 13 second language = Amharic Ask HULUM text; third language (Oromo) open.
+- Gate 4–6 / MVP: Voxide mic + TTS open; voice intent / actions via text + widget tools checked.
+- Research questions + `voxide-languages.md` match: text UX shipped, STT unverified.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
+
+---
+
 ## 2026-10-02 — Task 49 DONE + task.md honesty (rule.md)
 
 - Task 49 marked DONE on tip of `main` (`#49`).
