@@ -45,8 +45,8 @@ Voice (text/quick actions now; Voxide in the browser when wired) is a shortcut t
 
 ## How this shows up in the product
 
-- `decide()` / the file-store engine (not Groq, not Claude, not Voxide) sets APPLY / MAYBE / SKIP
-- Groq may explain a stored Postgres analysis; optional Claude may word the file-store summary
+- `decide()` (Postgres path on `npm run dev`; not Groq, not Claude, not Voxide) sets APPLY / MAYBE / SKIP
+- Groq may explain a stored analysis; file-store engines remain for unit tests only
 - Every analysis reminds the user to verify the official source
 
 Related: [architecture overview](../architecture/overview.md), [ADR 001](../decisions/001-stack-and-providers.md).
@@ -59,7 +59,7 @@ This is not ScholarXIV evidence. Paper-backed answers belong in `docs/research/`
 
 ### Opportunity-discovery problem
 
-Ethiopian students and young professionals already see many scholarships, fellowships, internships, jobs, grants, and competitions. Discovery is noisy, not absent. HULUM does **not** try to become another feed. v0.1 seed data is a small curated set with official source URLs.
+Ethiopian students and young professionals already see many scholarships, fellowships, internships, jobs, grants, and competitions. Discovery is noisy, not absent. HULUM does **not** try to become another feed. v0.1 listings come from the investigator (evidenced pages with official `sourceUrl`); curated `db:seed` is closed.
 
 ### Opportunity-decision problem
 

@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-02 — Product docs + freeze notes match tip of main
+
+### Changed
+- Personas, hulum-flow, problem, ideation: JWT / onboarding / investigator (no seed APPLY triangle).
+- Day 19/20 changelog freeze docs + ADR 001: file-store is tests-only; tip of `main` is the product.
+- `smoke:browser` visits welcome `/` before Create account; CI step label updated.
+
+### Why
+Product and Day-20 freeze pages still described file-store seed demos after product UI landed.
+
 ## 2026-10-02 — STARK cover matches product UI on main
 
 ### Changed

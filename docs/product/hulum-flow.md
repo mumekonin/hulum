@@ -2,7 +2,7 @@
 
 **Owner:** Kidist  
 **Source:** `task.md` Phase 4  
-**Status:** Mapped to the current web app
+**Status:** Mapped to the current web app (tip of `main`, 2026-10-02)
 
 This is the user-facing journey HULUM must keep intact. It is a decision product, not a chatbot and not an opportunity directory.
 
@@ -11,9 +11,11 @@ Related: `docs/product/problem.md`, `docs/product/personas.md`, `docs/demo/scrip
 ## Core journey
 
 ```text
-User creates profile
+Welcome → Create account / Sign in
         ↓
-HULUM shows opportunities
+Onboarding (first run) / profile facts
+        ↓
+HULUM shows opportunities (Discover)
         ↓
 User opens opportunity
         ↓
@@ -38,19 +40,19 @@ Official opportunity source
 
 | Screen (`task.md`) | Route | Notes |
 |---|---|---|
-| Landing/home | `/` | States the product thesis and the journey |
-| Profile creation/edit | `/profile` | Structured facts only; demo persona available |
-| Opportunity list | `/opportunities` | Curated records with verification, search, type filter, and deadline |
-| Opportunity details | `/opportunities/[id]` | Requirements, official source, Analyze |
-| Analyze opportunity | POST via details page | Calls the backend decision engine |
-| APPLY/MAYBE/SKIP result | `/analysis/[id]` | Decision is visually dominant |
-| Explanation view | `/analysis/[id]` | Why the engine decided |
-| Requirement status view | `/analysis/[id]` | MET / NOT_MET / UNCERTAIN with a **Why** explanation (and evidence when stored) |
-| Readiness checklist | `/analysis/[id]` | TODO / IN_PROGRESS / DONE / NOT_REQUIRED |
-| Voice interaction | `/assistant` | Text and quick actions until Voxide is wired |
-| Official source/application | links on detail + analysis | Never invented; opens the organization URL |
-| Loading / empty / error | `StatusPanel` on core screens | Retry, clear filter, open profile, or return to the list |
-| Accessibility | layout + core screens | Skip link, focus ring, touch size, labeled decisions, new-tab announcement |
+| Landing/home | `/` | Welcome thesis; Get started / Sign in → `/sign-in` |
+| Sign in / Create account | `/sign-in`, `/verify` | JWT email/password (+ optional Google) |
+| Onboarding | `/onboarding` | First-run 4 steps; then Discover |
+| Profile view/edit | `/profile` | Structured facts + CV/documents |
+| Opportunity list | `/opportunities` | Investigator catalog; search/filters; may be empty |
+| Opportunity details + analyze | `/opportunities/[id]` | Requirements, official source, inline Analyze / decision |
+| APPLY/MAYBE/SKIP result | `/opportunities/[id]` | Decision dominant; old `/analysis/[id]` redirects here |
+| My opportunities | `/my-opportunities` | Saved + analyzed APPLY / MAYBE / SKIP groups |
+| Readiness | `/readiness` | Checklist progress across analyzed listings |
+| Voice interaction | `/assistant` | Text/quick actions; optional Voxide widget when keyed |
+| Screenshot backup | `/screenshot` | When catalog empty or for photo evidence |
+| Official source/application | links on detail | Never invented; opens the organization URL |
+| Loading / empty / error | route + status UI | Retry, sign in, or return to Discover |
 
 ## Decision UI rule
 

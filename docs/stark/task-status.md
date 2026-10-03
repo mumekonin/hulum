@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-10-02 — Product + freeze-doc honesty
+
+- Personas / hulum-flow / problem: JWT + onboarding + Discover; no seed APPLY triangle or local UUID guest.
+- Day 19/20 changelog freeze notes dated as historical; ADR 001 file-store superseded for runtime.
+- `smoke:browser` + CI label: welcome `/` → sign-in → onboarding.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
+
+---
+
 ## 2026-10-02 — STARK cover: main is the product UI
 
 - STARK README / evidence / narrative / git-history: tip of `main` has welcome → sign-in → onboarding (no “clone main = no web”).

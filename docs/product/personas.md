@@ -2,7 +2,7 @@
 
 **Owner:** Kidist  
 **Source:** `task.md` Phase 1 P1  
-**Date recorded:** 2026-09-18
+**Date recorded:** 2026-09-18 · **Updated:** 2026-10-02
 
 Personas below are product-design tools from `HULUM_Documentation.md` and the v0.1 demo scenario. They are not statistically sampled user research.
 
@@ -12,9 +12,9 @@ Personas below are product-design tools from `HULUM_Documentation.md` and the v0
 
 Ethiopian university student or recent graduate. May prefer Amharic or English. Looking at scholarships, internships, and fellowships. Time-constrained. Needs a clear APPLY / MAYBE / SKIP, not another list.
 
-**v0.1 demo persona already in the app:** Abeba Tesfaye — Computer Science, Ethiopia, bachelor in progress, graduating 2027, Python/React, one internship, English + Amharic, interested in AI.
+**v0.1 demo walkthrough persona:** Abeba Tesfaye — Computer Science, Ethiopia, bachelor in progress, graduating 2027, Python/React, one internship, English + Amharic, interested in AI.
 
-Use Abeba for the repeatable STARK walkthrough: profile → A2SV (APPLY) / UCT Mastercard (MAYBE) / Chevening (SKIP).
+Judges type Abeba facts after Create account / onboarding (there is no one-click demo profile). The catalog is investigator-filled — do **not** expect seeded A2SV / UCT / Chevening cards. Empty list → `/screenshot` backup. See `docs/demo/script.md`.
 
 ---
 
@@ -26,13 +26,13 @@ Early-career professional seeking grants, fellowships, or international roles. S
 
 ## Guest / unregistered user
 
-May browse opportunities. Analysis still needs a saved profile. v0.1 uses a local user id rather than full auth so the decision loop is not blocked.
+Sees the welcome page; signed-out Discover redirects to `/sign-in`. Analysis needs a JWT account and a saved profile. v0.1 uses email/password (or optional Google), not a local UUID Continue path.
 
 ---
 
 ## System administrator (not a v0.1 user-facing screen)
 
-Curates and verifies opportunity records. In v0.1 this is seed data + `verificationStatus` / `lastVerifiedAt`, not an admin console.
+Reviews investigator / verified opportunity records (`verificationStatus` / `lastVerifiedAt`). There is no admin console; curated `db:seed` is closed.
 
 ---
 
@@ -46,4 +46,4 @@ Curates and verifies opportunity records. In v0.1 this is seed data + `verificat
 | What do I do next? | “Apply here” | Readiness checklist + next action |
 | Can I trust this? | Reposted link | Official source, verification state, disclaimer |
 
-Out of v0.1: native mobile app, application submission, payments, scraping unverified sources.
+Out of v0.1: native mobile app, application submission, payments, inventing unverified listings.

@@ -28,8 +28,11 @@ async function main() {
   page.setDefaultTimeout(timeout);
 
   try {
-    await page.goto(`${WEB}/sign-in`, { waitUntil: "domcontentloaded" });
+    await page.goto(WEB, { waitUntil: "domcontentloaded" });
     await page.getByText("HULUM", { exact: true }).first().waitFor();
+    await page.getByText(/Know what is worth/i).first().waitFor();
+    await page.getByRole("link", { name: /Get started|Sign in/i }).first().click();
+    await page.waitForURL(/\/sign-in/);
 
     await page.getByRole("link", { name: /Create account/i }).click();
     await page.waitForURL(/\/verify/);
@@ -107,7 +110,7 @@ async function main() {
     await page.getByRole("heading", { name: /Ask HULUM|ሁሉምን ጠይቅ/i }).waitFor();
     await page.getByText(/Microphone unavailable|Type or use a quick action|ማይክሮፎን/i).first().waitFor();
 
-    console.log("ok: register → onboarding → opportunities → screenshot → Ask HULUM text fallback");
+    console.log("ok: welcome → register → onboarding → opportunities → screenshot → Ask HULUM text fallback");
   } finally {
     await browser.close();
   }
