@@ -18,7 +18,7 @@
 | `01-gateway.png` | `/sign-in` | HULUM brand + Sign in / Create account |
 | `02-profile.png` | `/profile` after Abeba facts saved | Name + CS / Ethiopia fields |
 | `03-opportunities.png` | `/opportunities` | Catalog list **or** honest empty state (investigator) |
-| `04-analysis.png` | `/analysis/[id]` after Analyze | APPLY / MAYBE / SKIP + official source when present |
+| `04-analysis.png` | `/opportunities/[id]` after Analyze (old `/analysis/[id]` redirects here) | APPLY / MAYBE / SKIP + official source when present |
 | `04b-screenshot.png` | `/screenshot` after analyze (if catalog empty) | Decision from photo + profile |
 | `05-ask-hulum-text.png` | `/assistant` | Voice unavailable / text path + a quick action reply |
 | `06-ask-hulum-amharic.png` | `/assistant` language አማርኛ | Amharic chrome or quick action (text only) |

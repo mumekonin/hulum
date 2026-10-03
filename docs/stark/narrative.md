@@ -1,7 +1,7 @@
 # How HULUM was built (development narrative)
 
 **Team:** Kidist + Mulualem  
-**Written:** 2026-09-19  
+**Written:** 2026-09-19 · **Updated:** 2026-10-02  
 **Rule:** this is a summary of the repository. It does not invent papers, a host, or live speech.
 
 Full trace: `CHANGELOG.md` and `docs/stark/git-history.md`.
@@ -16,47 +16,51 @@ Rejected paths (marketplace, auto-apply, chatbot-as-product) are in `docs/resear
 
 ---
 
-## What each person actually shipped
+## What each person shipped (and where it lives now)
 
-**Mulualem (`main`, PRs #1–#10):** Express scaffold, Postgres schema + migrate/smoke, `@hulum/shared` Task 22 lock, then Postgres-backed opportunity, profile, matching, decision, analysis, and readiness services.
+**Mulualem:** Express scaffold, Postgres schema + migrate/smoke, `@hulum/shared` lock, opportunity / profile / matching / decision / analysis / readiness services, investigator worker, JWT/Google auth paths — on tip of `main`.
 
-**Kidist (stacked `feat/*`):** product docs, Next.js UI, file-store vertical slice (Abeba → A2SV APPLY), Ask HULUM text/quick actions, optional Claude explanation that cannot change the engine, STARK demo and evidence files.
+**Kidist:** product and STARK docs, Next.js UI (welcome, sign-in, onboarding, Discover, Ask HULUM), Amharic text chrome, screenshot analyze, demo walkthrough, CI browser smoke — also on tip of `main`.
 
-Judges who clone only `main` will not see the web demo. Look at branches.
+Early weeks used stacked `feat/*` and a file-store demo. That split is historical. Judges who clone **`main` today** get the running product (`npm run dev` → web `:3000` + API `:3001` on Postgres).
 
 ---
 
-## Two runtimes (on purpose, for now)
+## Runtime (current)
 
-| Demo (`npm run dev`) | Mulualem services |
+| Piece | Fact |
 |---|---|
-| JSON file store, seed catalog | Postgres when `DATABASE_URL` is set |
-| `createApp()` in `apps/server/src/app.ts` | routers under `profiles/`, `analysis/`, … |
-| `decision/engine.ts` | `decision/decide.ts` |
-
-v0.1 walkthrough uses the file store. The schema on `main` is real; the demo process does not switch stores automatically.
+| Store | Postgres (`createApp({ store: "postgres" })`) |
+| Catalog | Investigator-filled; curated `db:seed` closed |
+| Auth | Email/password JWT (+ optional Google) in `X-Hulum-Session` |
+| Decision | `decision/decide.ts` only |
+| Explain | Optional Groq wording of a stored analysis |
+| File-store | Tests only — not `npm run dev` |
 
 ---
 
 ## Voice and language
 
-Ask HULUM is keyword intents + text. Gaps use `SHOW_MISSING_REQUIREMENTS` (Task 22). Voxide STT/TTS is not connected. English is the stable path (ADR 004). Amharic quick-action strings exist; live Amharic speech is not claimed.
+Ask HULUM is keyword intents + text (optional Voxide widget when `NEXT_PUBLIC_VOXIDE_KEY` is set). Live mic STT/TTS is not claimed. English is the stable path (ADR 004). Amharic quick-action strings exist; Oromo is explain-language only — no invented Oromo chrome.
 
 ---
 
 ## Research
 
-ScholarXIV space and planned queries: `docs/research/scholarxiv.md`. **No papers were retrieved.** Competitive notes were live-checked 2026-09-18; unverified names were left off.
+ScholarXIV space and planned queries: `docs/research/scholarxiv.md`. **No papers were retrieved** into the product. Competitive notes were live-checked 2026-09-18; unverified names were left off.
 
 ---
 
 ## What we did not finish
 
 - Production deploy / EthioDeploy
-- Clean-browser/device pass in this freeze
-- Native mobile (Task 14, out of v0.1)
-- Full login/RLS
+- Live Voxide mic / Amharic STT
+- Afaan Oromo UI/voice
+- Required GitHub status checks on `main` (admin)
+- Checked-in backup video / screenshot PNG pack
+- Password-reset email
+- API as non-owner so RLS owner-bypass is gone
 
 Milestone git tags: see `docs/stark/milestones.md` (`milestone/*` on real commits; no fake SemVer release).
 
-The product loop still runs locally: profile → opportunity → APPLY/MAYBE/SKIP → official source.
+The product loop runs locally: welcome → Create account → onboarding / profile → Discover (or `/screenshot`) → APPLY/MAYBE/SKIP → official source.

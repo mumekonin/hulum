@@ -1,24 +1,24 @@
-# Git history review (Day 20)
+# Git history review
 
-**Date:** 2026-09-19  
-**Tip reviewed:** `feat/task-status` (`2c822ac`) after merge of `origin/main`  
-**Rule:** describe the repository as it is. Do not rewrite commits or invent merges.
+**First written:** 2026-09-19 (Day 20 freeze)  
+**Updated:** 2026-10-02  
+**Rule:** describe the repository as it is. Do not invent merges or SemVer product releases.
 
 ---
 
-## Result
+## Result (current)
 
 The Git history is **real**. It does not invent ScholarXIV papers, a production host, or live Voxide.
 
-Kidist pushes on this stack do **not** include `Co-authored-by: Cursor <cursoragent@cursor.com>` (checked on the recent `feat/*` bodies). Authors are `kikemal` and `MULUALEM MEKONIN`.
+**Tip of `main` is the source of truth** for the running product (Postgres, JWT auth, welcome / sign-in / onboarding, Discover, investigator catalog, smokes). Open `feat/*` only for work not yet merged.
 
-`main` is **not** the full product. Judges must look at stacked `feat/*` branches.
+Author names on recent commits are human accounts (e.g. `kikemal`, `Mulualem Mekonin`). Do not treat Cursor as a product contributor.
 
 ---
 
-## What is on `origin/main`
+## How `main` grew (historical)
 
-Merged PRs:
+Early Mulualem PRs built the backend foundation:
 
 | PR | What |
 |---|---|
@@ -33,31 +33,19 @@ Merged PRs:
 | #9 | Analysis persist API |
 | #10 | Readiness checklist engine |
 
-The stacked Kidist branch still serves the demo from the JSON file store (`createApp` in `apps/server/src/app.ts`). Mulualem’s Postgres routers live beside that and are not the default `npm run dev` path until they are wired.
-
-Early files on `main` also include README, `task.md` rename, and `rule.md`. The running Next.js app, decision engine, Ask HULUM, and Day 19 docs are **not** all on `main` yet.
-
----
-
-## What lives on stacked branches
-
-Kidist work after the backend scaffold is a chain of `feat/*` and `docs/*` branches (product, research, web, voice-text, API tests, demo, STARK docs, Day 20 task status). Latest reviewed tip: `feat/task-status`.
-
-Mulualem’s schema is on `main` and was merged into `feat/backup-demo` so later Kidist branches include it.
-
-Do not treat unmerged branches as if they were squash-merged. Do not backfill fake PR numbers for those branches.
+Later merges brought JWT/Google auth, investigator catalog (seed closed), Afriwork / EthioScholarship sources, profile documents, product UI (welcome, onboarding, Discover, My opportunities, Readiness), Ask HULUM, screenshot analyze, and CI smokes. File-store was the early demo path; it is **not** what `npm run dev` uses now.
 
 ---
 
 ## What this review does not claim
 
-- Every feature branch is on `main`
+- Every historical `feat/*` tip is still open or needed
 - Milestone tags (`v0.8.0` / `v1.0.0`) as product releases — see `docs/stark/milestones.md` for honest `milestone/*` tags instead
-- Cursor is a GitHub contributor on Kidist commits
-- History was rewritten to look cleaner
+- Branch protection / required checks are enabled (admin step — `docs/ops/branch-protection.md`)
+- History was rewritten only to invent features
 
 ---
 
 ## Git workflow
 
-§39: the repository should tell the truth about how HULUM was built. This pass: it does, if you follow branches plus `CHANGELOG.md`, not `main` alone.
+§39: the repository should tell the truth about how HULUM was built. Follow tip of `main` + `CHANGELOG.md`. Use stacked branches only for unmerged work.

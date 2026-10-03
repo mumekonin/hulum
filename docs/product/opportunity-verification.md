@@ -1,6 +1,6 @@
 ﻿# Opportunity verification (v0.1)
 
-HULUM does not invent listing facts. Curated seed rows carry `sourceUrl`, optional `applicationUrl`, `verificationStatus`, and `lastVerifiedAt`. The UI shows the effective status; the official organization page remains the eligibility authority.
+HULUM does not invent listing facts. Investigator-filled (and any manually inserted) rows carry `sourceUrl`, optional `applicationUrl`, `verificationStatus`, and `lastVerifiedAt`. The UI shows the effective status; the official organization page remains the eligibility authority. Curated `db:seed` inserts are closed (`006_close_catalog_seed.sql`).
 
 Code: `apps/server/src/verification/rules.ts`. List/detail reads go through `presentOpportunity` in `apps/server/src/opportunities/service.ts`. `decide()` uses `effectiveVerificationStatus` so an expired listing cannot stay APPLY.
 
@@ -11,7 +11,7 @@ Code: `apps/server/src/verification/rules.ts`. List/detail reads go through `pre
 | Stored / effective | Meaning |
 |---|---|
 | `VERIFIED` | A teammate checked the official source; `lastVerifiedAt` is set. |
-| `NEEDS_REVIEW` | Not yet checked, blank `sourceUrl`, or a previously verified row that is stale on read. |
+| `NEEDS_REVIEW` | Not yet checked, blank `sourceUrl`, AI-extracted awaiting review, or a previously verified row that is stale on read. |
 | `EXPIRED` | Stored as expired, or the deadline date is before today (UTC). |
 
 `sourceUrl` is the fact authority for deadline and eligibility text. `applicationUrl` is only where to apply when present; otherwise apply falls back to `sourceUrl`. Empty `sourceUrl` is never invented — effective status becomes `NEEDS_REVIEW`.
@@ -20,14 +20,14 @@ Code: `apps/server/src/verification/rules.ts`. List/detail reads go through `pre
 
 ## Manual verification workflow
 
-v0.1 has **no admin console**. Verification is a teammate checklist when editing seed / catalog SQL or seed TypeScript.
+v0.1 has **no admin console**. Verification is a teammate checklist when reviewing investigator rows or inserting a verified official page via SQL.
 
 1. Open the organization's official opportunity page in a browser (the URL that will be stored as `sourceUrl`).
 2. Confirm title, organization, type, deadline, country/education/field/language requirements against that page. Do not copy from secondary aggregators.
 3. Set `applicationUrl` only if the organization publishes a separate apply link; otherwise leave it null.
 4. Set `verificationStatus` to `VERIFIED` and `lastVerifiedAt` to the UTC time of that check.
 5. If the page is gone, the deadline has passed on the official page, or requirements cannot be confirmed, set `EXPIRED` or leave / set `NEEDS_REVIEW` — never invent a replacement URL.
-6. Commit the seed/migration change through the normal PR review. Do not put secrets in the catalog.
+6. Commit the SQL / store change through the normal PR review. Do not put secrets in the catalog.
 
 Re-verify when requirements or deadlines change on the official page, or when the listing ages past the stale window below.
 
@@ -43,19 +43,5 @@ Freshness is **computed on read**. HULUM does not rewrite the database row when 
 | Who is stale | Only rows currently stored as `VERIFIED` |
 | Missing / invalid `lastVerifiedAt` | Treated as stale → effective `NEEDS_REVIEW` |
 | Age > 30 days | Effective `NEEDS_REVIEW`; stored status stays `VERIFIED` |
-| Deadline before today (UTC) | Effective `EXPIRED` (wins over stale) |
-| Stored `EXPIRED` | Stays `EXPIRED` |
-| Empty `sourceUrl` | Effective `NEEDS_REVIEW` |
 
-**Decision impact:** if effective status is `EXPIRED`, `decide()` returns **SKIP** and prepends a reason that HULUM is not the organization. Stale → `NEEDS_REVIEW` does **not** force SKIP by itself; matching and other rules still decide APPLY / MAYBE / SKIP. The list and detail screens show the effective status so users see "needs review" when the catalog is old.
-
-Tests: `apps/server/src/verification/rules.test.ts`.
-
----
-
-## Out of v0.1
-
-- Admin UI to click "mark verified"
-- Automatic scrape / re-fetch of official pages
-- Push notifications when a listing goes stale
-- Claiming HULUM confirmation as official eligibility
+Related: `docs/architecture/manual-verification.md`, `docs/architecture/opportunity-import.md`, `docs/investigator/README.md`.

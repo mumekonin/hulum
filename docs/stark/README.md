@@ -6,7 +6,7 @@
 
 This folder is the judge entry. It does not invent ScholarXIV papers, a production URL, or live Voxide.
 
-**Look at GitHub branches, not only `main`.** Kidist’s web app, demo docs, and file-store API tests live on stacked `feat/*` until they are reviewed into `main`. `main` has Mulualem PRs #1–#10 (scaffold, schema, contracts, Postgres services).
+**Source of truth:** tip of `main` (Postgres, JWT, welcome → `/sign-in` → onboarding, Discover, investigator catalog). Open stacked `feat/*` only for unmerged work.
 
 ---
 
@@ -33,7 +33,7 @@ Backup if the UI fails: `docs/demo/backup.md`. Rehearsal notes: `docs/demo/rehea
 
 ## What v0.1 proves
 
-A student can **Create account** (JWT), type a profile (e.g. Abeba facts), browse investigator-filled opportunities (list may be empty until the worker runs), get **APPLY / MAYBE / SKIP** from a TypeScript engine when a card exists, see why / gaps / readiness, and open the official source — or use `/screenshot` when the catalog is empty. Ask HULUM uses the same engine over text.
+A student can open the welcome page, **Create account** (JWT), complete onboarding (or type Abeba facts), browse investigator-filled opportunities on Discover (list may be empty until the worker runs), get **APPLY / MAYBE / SKIP** from a TypeScript engine when a card exists, see why / gaps / readiness, and open the official source — or use `/screenshot` when the catalog is empty. Ask HULUM uses the same engine over text.
 
 Do **not** expect a one-click demo profile or seeded A2SV / UCT / Chevening cards.
 

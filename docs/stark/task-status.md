@@ -6,6 +6,15 @@
 
 ---
 
+## 2026-10-02 — STARK cover: main is the product UI
+
+- STARK README / evidence / narrative / git-history: tip of `main` has welcome → sign-in → onboarding (no “clone main = no web”).
+- Architecture overview + verification docs: investigator catalog; seed closed; analysis lives on opportunity detail.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
+
+---
+
 ## 2026-10-02 — Post product-UI honesty sync
 
 Shipped on tip of `main` (do **not** treat older HMAC / UI-preview / `db:seed` APPLY rows as current):

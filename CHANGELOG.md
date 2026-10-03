@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-02 — STARK cover matches product UI on main
+
+### Changed
+- `docs/stark/README.md`, `narrative.md`, `git-history.md`, `evidence.md`: tip of `main` is welcome / sign-in / onboarding / Discover.
+- `docs/architecture/overview.md`, verification docs, demo rehearsal + screenshot shot list: investigator catalog; analysis on `/opportunities/[id]`.
+
+### Why
+Judge entry still told people the web lived only on `feat/*` after product UI landed on `main`.
+
 ## 2026-10-02 — STARK task-status honesty after product UI
 
 ### Changed
