@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-10-03 — smoke:browser analyze → decision
+
+- Migration `015_ci_smoke_investigator_row.sql`: one static **AI_EXTRACTED** row for CI/local smoke (not curated seed reopen / 006).
+- `smoke:browser`: Discover → Analyze my fit → HULUM decision + official source + Readiness; then screenshot / Ask HULUM / Oromo chip.
+- `smoke:local`: POST analyze when catalog non-empty; assert APPLY|MAYBE|SKIP (no hardcoded APPLY).
+
+Still open: deploy, live mic/STT, full app Oromo shell, CI require-check (admin), backup video/PNG files, password-reset email.
+
+---
+
 ## 2026-10-03 — Ask HULUM Oromo lang a11y + smoke:browser
 
 - Quick-action buttons set `lang={om|am}` from Reply-in (not Ethiopic-only heuristic).

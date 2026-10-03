@@ -92,6 +92,34 @@ async function main() {
     await page.waitForURL(/\/opportunities/);
     await page.getByRole("heading", { name: /Find opportunities worth your time/i }).waitFor();
 
+    // Core thesis: Discover → Analyze my fit → APPLY/MAYBE/SKIP + official source (CI row from 015).
+    const cards = page.locator("#opportunity-results li");
+    if ((await cards.count()) === 0) {
+      throw new Error(
+        "Discover catalog empty — run migrations including 015_ci_smoke_investigator_row.sql",
+      );
+    }
+    const analyzePromise = page.waitForResponse((response) => {
+      if (response.request().method() !== "POST") return false;
+      try {
+        return /\/api\/opportunities\/[^/]+\/analyze$/.test(new URL(response.url()).pathname);
+      } catch {
+        return false;
+      }
+    });
+    await cards.first().getByRole("link").first().click();
+    await page.waitForURL(/\/opportunities\//);
+    await page.getByRole("button", { name: "Analyze my fit" }).click();
+    await assertOk(await analyzePromise, "Analyze");
+    await page.getByRole("heading", { name: "HULUM decision" }).waitFor();
+    await page.getByLabel(/Decision (APPLY|MAYBE|SKIP)\./).waitFor();
+    await page.getByText(/Fit signal \d+\/100 · advisory only/).waitFor();
+    await page.getByRole("heading", { name: "Official source" }).waitFor();
+    await page
+      .getByText(/Always verify final eligibility and deadlines with the official organization/)
+      .waitFor();
+    await page.getByRole("heading", { name: "Readiness" }).waitFor();
+
     await page
       .getByRole("navigation", { name: "Primary" })
       .getByRole("link", { name: "Screenshot", exact: true })
@@ -115,7 +143,7 @@ async function main() {
     await page.getByRole("button", { name: /Carraa kana madaali/i }).first().waitFor();
 
     console.log(
-      "ok: welcome → register → onboarding → opportunities → screenshot → Ask HULUM text fallback → Oromo quick action",
+      "ok: welcome → register → onboarding → opportunities → analyze decision → screenshot → Ask HULUM text fallback → Oromo quick action",
     );
   } finally {
     await browser.close();

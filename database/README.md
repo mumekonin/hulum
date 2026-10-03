@@ -29,7 +29,7 @@ npm run db:smoke
 
 `db:smoke` inserts sample rows in a transaction and rolls them back. It does not seed the catalog.
 
-`GET /api/opportunities` reads this table. Catalog seed is closed (`006_close_catalog_seed.sql`). Do not insert invented postings. Use the investigator.
+`GET /api/opportunities` reads this table. Catalog seed is closed (`006_close_catalog_seed.sql`). Do not insert invented postings. Use the investigator. Migration `015_ci_smoke_investigator_row.sql` adds one static **AI_EXTRACTED** row so CI/`smoke:browser` can Analyze when the worker has not run — not a curated-seed reopen.
 
 Task 48 adds `sources`, `official_domains`, and investigation logs (`002_investigator.sql`). Add a new website later with `insert into sources (...)`. Add an official apply domain with `insert into official_domains (domain, note) values (...)`. Env names only in `.env.example`.
 
