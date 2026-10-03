@@ -110,7 +110,13 @@ async function main() {
     await page.getByRole("heading", { name: /Ask HULUM|ሁሉምን ጠይቅ/i }).waitFor();
     await page.getByText(/Microphone unavailable|Type or use a quick action|ማይክሮፎን/i).first().waitFor();
 
-    console.log("ok: welcome → register → onboarding → opportunities → screenshot → Ask HULUM text fallback");
+    // Task 13: Oromo text quick actions (chrome shell stays English; no STT claim).
+    await page.locator("select").filter({ has: page.locator('option[value="om"]') }).selectOption("om");
+    await page.getByRole("button", { name: /Carraa kana madaali/i }).first().waitFor();
+
+    console.log(
+      "ok: welcome → register → onboarding → opportunities → screenshot → Ask HULUM text fallback → Oromo quick action",
+    );
   } finally {
     await browser.close();
   }

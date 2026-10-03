@@ -495,7 +495,7 @@ function AssistantInner() {
                     type="button"
                     disabled={Boolean(pending)}
                     onClick={() => ask(prompt)}
-                    lang={/[\u1200-\u137F]/.test(prompt.label) ? "am" : undefined}
+                    lang={language === "en" ? undefined : language}
                     className="min-h-11 border border-line-strong px-4 text-sm transition-colors hover:border-ink disabled:opacity-60"
                   >
                     {prompt.label}
@@ -561,7 +561,7 @@ function AssistantInner() {
                     type="button"
                     disabled={Boolean(pending)}
                     onClick={() => ask(prompt)}
-                    lang={/[\u1200-\u137F]/.test(prompt.label) ? "am" : undefined}
+                    lang={language === "en" ? undefined : language}
                     className="min-h-11 shrink-0 border border-line px-3 text-sm text-muted transition-colors hover:border-ink hover:text-ink disabled:opacity-60"
                   >
                     {prompt.label}

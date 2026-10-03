@@ -114,7 +114,7 @@ Type or click:
 
 **Click:** ምን ጎድሎኛል? or ምን ላዘጋጅ?
 
-**Afaan Oromo (optional ~20s):** Reply in → Afaan Oromo → tap `Carraa kana madaali?` (or `Maalif?`). Say: Oromo text quick actions use server intent keywords; Ask HULUM chrome stays English; live Oromo STT is not claimed.
+**Afaan Oromo (optional ~20s):** Reply in → Afaan Oromo → tap `Carraa kana madaali?` (or `Maalif?`). Say: Oromo text quick actions use server intent keywords; Ask HULUM chrome stays English; live Oromo STT is not claimed. (`smoke:browser` asserts the Oromo chip after language select.)
 
 ### 4:20 — Screenshot path (if catalog empty or Analyze fails)
 

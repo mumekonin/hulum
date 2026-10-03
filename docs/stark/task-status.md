@@ -6,6 +6,16 @@
 
 ---
 
+## 2026-10-03 — Ask HULUM Oromo lang a11y + smoke:browser
+
+- Quick-action buttons set `lang={om|am}` from Reply-in (not Ethiopic-only heuristic).
+- `smoke:browser`: after Ask HULUM, select Afaan Oromo and assert `Carraa kana madaali` chip.
+- Ask HULUM chrome shell stays English for Oromo (ADR 004); no invented full Oromo UI.
+
+Still open: deploy, live mic/STT, full app Oromo shell, CI require-check (admin), backup video/PNG files, password-reset email.
+
+---
+
 ## 2026-10-03 — Task 13 Oromo Ask HULUM text quick actions
 
 - `assistant-copy.ts`: `QUICK_OM` + language hint; chrome stays English (ADR 004).

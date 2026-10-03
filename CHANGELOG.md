@@ -2,6 +2,16 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-03 — Ask HULUM Oromo lang a11y + smoke:browser
+
+### Changed
+- Ask HULUM quick-action buttons: `lang` follows Reply-in (`am` / `om`), not Ethiopic regex only.
+- `smoke:browser`: select Afaan Oromo and assert Task 13 `Carraa kana madaali` chip.
+- Removed leftover local patch script; task-status synced.
+
+### Why
+Oromo chips shipped in Task 13 but a11y `lang` and CI browser smoke did not cover them.
+
 ## 2026-10-03 — Task 13 Oromo Ask HULUM text quick actions
 
 ### Changed
