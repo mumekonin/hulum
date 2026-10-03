@@ -2,6 +2,15 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-02 — Task 49 DONE + task.md / Oromo chrome honesty
+
+### Changed
+- `task.md` / `HULUM_task.md`: Task 49 DONE; EthioDeploy deploy reopened; voice demo = text path vs live mic; multilingual row honest.
+- Ask HULUM Afaan Oromo: English chrome + explain-language hint; no invented Oromo UI strings; STT locale stays `en-US` for `om`.
+
+### Why
+`rule.md` / `task.md` still claimed IN REVIEW UI, EthioDeploy, full Oromo multilingual, and “demonstrate voice” while mic and Oromo chrome were open/invented.
+
 ## 2026-10-02 — Product docs + freeze notes match tip of main
 
 ### Changed

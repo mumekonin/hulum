@@ -6,6 +6,18 @@
 
 ---
 
+## 2026-10-02 — Task 49 DONE + task.md honesty (rule.md)
+
+- Task 49 marked DONE on tip of `main` (`#49`).
+- Reopened EthioDeploy deploy checkbox; documented decision stays checked.
+- Voice demo split: text/quick actions checked; live mic / Voxide STT open.
+- Multilingual research row: Amharic text UX only; Oromo UI/voice open.
+- Ask HULUM Oromo chrome → English + explain-language hint (ADR 004).
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
+
+---
+
 ## 2026-10-02 — Product + freeze-doc honesty
 
 - Personas / hulum-flow / problem: JWT + onboarding + Discover; no seed APPLY triangle or local UUID guest.

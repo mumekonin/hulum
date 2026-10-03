@@ -93,37 +93,11 @@ const QUICK_AM = [
   "ድገም",
 ];
 
-const QUICK_OM = [
-  "Scholarshipwwan natti agarsiisi",
-  "Carraa kana madaali",
-  "Carraa kana ibsi",
-  "Maalif?",
-  "Maal dhabe?",
-  "Maal qopheessuu qaba?",
-  "Should I apply for this?",
-  "Tell me about this opportunity",
-];
-
+/** Afaan Oromo selects explain/readiness language when Groq is set. Ask HULUM chrome stays English (ADR 004). */
 const OM: AssistantCopy = {
-  title: "HULUM gaafadhu",
-  intro:
-    "Sagaleen tarkaanfii HULUM dhugaa ta'e hojjechuu qaba. Barreeffamaafi tarkaanfii saffisaa yeroo hunda ni hojjeta. APPLY / MAYBE / SKIP hin uumamu.",
-  languageLegend: "Afaan",
+  ...EN,
   languageHint:
-    "Afaan Ingilizii, Amaaraa, ykn Afaan Oromootiin gaafadhu. Deebiin afaan gaaffii keessanii hordofa. STT Voxide amma hin mirkanaa'u.",
-  quickLegend: "Tarkaanfii saffisaa",
-  typePlaceholder: "HULUM gaafadhu…",
-  send: "Ergi",
-  micMissingTitle: "Maayikiroofoonii hin jiru",
-  micMissingBody:
-    "Barreessi ykn tarkaanfii saffisaa fayyadami. NEXT_PUBLIC_VOXIDE_KEY (vox_pub_…) kaa'i.",
-  voxideReadyTitle: "Voxide qophaa'eera",
-  voxideReadyBody:
-    "Gaafannoo sagalee ykn barreeffamaaf launcher Ask HULUM (gadi-mirga) fayyadami. APPLY / MAYBE / SKIP decide() irraa qofa dhufa.",
-  voiceIssueTitle: "Rakkoo sagalee",
-  typeRequest: "Gaaffii barreessi",
-  browseOpportunities: "Carraawwan ilaali",
-  showInternships: "Internshipwwan agarsiisi",
+    "Afaan Oromo selects explain/readiness language when Groq is set. Ask HULUM chrome stays English — no invented Oromo UI copy (ADR 004). Live Oromo STT is not claimed.",
 };
 
 export function assistantCopy(language: LanguageCode): AssistantCopy {
@@ -134,6 +108,6 @@ export function assistantCopy(language: LanguageCode): AssistantCopy {
 
 export function assistantQuickActions(language: LanguageCode): string[] {
   if (language === "am") return QUICK_AM;
-  if (language === "om") return QUICK_OM;
+  // Oromo: English quick actions (same intents). No invented Oromo chrome strings.
   return QUICK_EN;
 }

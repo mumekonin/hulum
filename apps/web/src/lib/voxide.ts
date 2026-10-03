@@ -20,15 +20,13 @@ export function voiceLauncherClearance(): string {
 }
 
 /**
- * Widget STT locale hint. Public Voxide docs do not list Amharic/Oromo recognition.
- * Replies still follow the asked language on POST /api/voice/action.
+ * Widget STT locale hint. Public Voxide docs do not list verified Amharic/Oromo recognition.
+ * Use English STT for Oromo UI selection — do not invent an om-ET mic claim (ADR 004).
+ * Replies still follow the asked language on POST /api/voice/action when the model supports it.
  */
-export function voxideSpeechLocale(language: LanguageCode): "en-US" | "am-ET" | "om-ET" {
+export function voxideSpeechLocale(language: LanguageCode): "en-US" | "am-ET" {
   if (language === "am") {
     return "am-ET";
-  }
-  if (language === "om") {
-    return "om-ET";
   }
   return "en-US";
 }

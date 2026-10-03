@@ -193,7 +193,7 @@ hulum/
 - [x] Responsible AI eligibility uncertainty.
 - [x] Opportunity matching and decision-support systems.
 - [-] Voice-first design for non-English speakers.
-- [x] Multilingual interaction for English/Amharic/Afaan Oromo users.
+- [-] Multilingual interaction for English/Amharic/Afaan Oromo users. <!-- Amharic text UX shipped; Oromo UI/voice + live STT still open (ADR 004) -->
 - [x] Readiness support for scholarship/internship/job applications.
 - [x] Trust and verification of opportunity requirements.
 - [x] Human oversight when AI assists eligibility decisions.
@@ -935,10 +935,10 @@ Do not log unnecessary personal profile data or raw voice/conversation content.
 - [x] **P0** Configure production secrets.
 - [ ] **P0** Verify production analysis flow.
 - [ ] **P0** Verify production voice flow.
-- [x] **P1** Deploy on EthioDeploy if practical.
+- [ ] **P1** Deploy on EthioDeploy if practical.
 - [x] **P1** Document deployment decision.
 
-EthioDeploy is optional, but if used, document it as part of the implementation/deployment story.
+EthioDeploy is optional. Documented as **not deployed** (`docs/stark/deployment.md`). Do not mark deploy done without a real host.
 
 ---
 
@@ -982,7 +982,8 @@ Interest: AI
 - [x] **P0** Show matched requirements.
 - [x] **P0** Show missing/uncertain requirements.
 - [x] **P0** Show readiness checklist.
-- [x] **P0** Demonstrate voice.
+- [x] **P0** Demonstrate Ask HULUM text / quick actions (same product actions as voice tools).
+- [ ] **P0** Demonstrate live microphone / Voxide STT (needs keyed mic pass).
 - [x] **P0** Demonstrate English.
 - [x] **P1** Demonstrate Amharic if stable.
 - [x] **P0** Open official opportunity source.
