@@ -2,6 +2,14 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-02 — File-store fixture deadlines past calendar
+
+### Fixed
+- `opp-mastercard-uct` and remaining open file-store fixture deadlines in `test-opportunities.ts` moved to 2027 so Abeba→MAYBE UNCERTAIN tests do not SKIP after wall-clock expiry.
+
+### Why
+Critical `deadline_open` NOT_MET correctly yields SKIP; the fixture date had expired on the wall clock.
+
 ## 2026-10-02 — Welcome page, `/sign-in` route, and auth page redesign
 
 Contributor: Kidist (frontend). Branch `feat/product-ui-transformation`. One backend auth route changed (below); flagged for Mulualem. No migration, shared-contract, or `.env.example` changes.
