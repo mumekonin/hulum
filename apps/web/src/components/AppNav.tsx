@@ -54,7 +54,7 @@ export function AppNav() {
 
   function signOut() {
     clearSession();
-    router.replace("/");
+    router.replace("/sign-in");
   }
 
   return (

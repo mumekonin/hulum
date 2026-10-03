@@ -21,7 +21,7 @@ export default function NotFound() {
             Go to Discover
           </Link>
           <Link
-            href="/"
+            href="/sign-in"
             className="inline-flex min-h-11 items-center border border-line-strong px-5 hover:border-ink"
           >
             Sign in

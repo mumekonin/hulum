@@ -28,7 +28,7 @@ async function main() {
   page.setDefaultTimeout(timeout);
 
   try {
-    await page.goto(WEB, { waitUntil: "domcontentloaded" });
+    await page.goto(`${WEB}/sign-in`, { waitUntil: "domcontentloaded" });
     await page.getByText("HULUM", { exact: true }).first().waitFor();
 
     await page.getByRole("link", { name: /Create account/i }).click();

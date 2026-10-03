@@ -214,12 +214,12 @@ export function AuthGateway() {
         </section>
       </main>
 
-      <p className="mt-5 text-center text-[13px] text-gw-muted md:mt-6">
-        New to HULUM?{" "}
-        <Link href="/journey" className="text-gw-primary underline underline-offset-2 hover:opacity-80">
-          See how it works
-        </Link>
-      </p>
+      <Link
+        href="/"
+        className="mt-5 text-[13px] text-gw-muted underline-offset-2 transition-colors hover:text-gw-primary hover:underline md:mt-6"
+      >
+        <span aria-hidden>← </span>Back to HULUM
+      </Link>
     </div>
   );
 }

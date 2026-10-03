@@ -51,7 +51,7 @@ export function AuthRecovery() {
     setNotice("Password reset is not stored yet. Sign in with the password you already have, or create a new account.");
     setResetBusy(false);
     window.setTimeout(() => {
-      router.push("/");
+      router.push("/sign-in");
     }, 900);
   }
 
@@ -147,7 +147,7 @@ export function AuthRecovery() {
                   </button>
                   <div className="flex items-center justify-between pt-1">
                     <Link
-                      href="/"
+                      href="/sign-in"
                       className="flex items-center gap-1 text-[9px] uppercase tracking-widest text-gw-muted transition-colors hover:text-gw-primary"
                     >
                       <span aria-hidden>←</span>
@@ -314,7 +314,7 @@ export function AuthRecovery() {
               <span className="font-gw-mono text-[9px] uppercase text-gw-muted">Support</span>
               <p className="text-[11px] text-gw-muted">
                 No ops@hulum.org desk in v0.1. Prefer{" "}
-                <Link href="/" className="text-gw-primary underline-offset-2 hover:underline">
+                <Link href="/sign-in" className="text-gw-primary underline-offset-2 hover:underline">
                   sign in
                 </Link>{" "}
                 or{" "}
@@ -336,7 +336,7 @@ export function AuthRecovery() {
             <span>Addis Ababa &amp; Global</span>
           </div>
           <nav className="flex items-center gap-3 uppercase tracking-wider" aria-label="Gateway">
-            <Link href="/" className="transition-colors hover:text-gw-primary">
+            <Link href="/sign-in" className="transition-colors hover:text-gw-primary">
               Sign in
             </Link>
             <span className="text-gw-outline-var">·</span>

@@ -151,7 +151,7 @@ export function AuthInduction() {
 
             <div className="mt-6 flex items-center justify-center gap-1 border-t border-gw-outline-var/20 pt-4 text-[11px] text-gw-muted">
               <span>Already have an account?</span>
-              <Link href="/" className="text-[9px] font-medium uppercase tracking-wide text-gw-primary hover:text-gw-secondary">
+              <Link href="/sign-in" className="text-[9px] font-medium uppercase tracking-wide text-gw-primary hover:text-gw-secondary">
                 Sign in
               </Link>
             </div>
@@ -162,7 +162,7 @@ export function AuthInduction() {
       <footer className="w-full border-t border-gw-outline-var/30 px-4 py-2 sm:px-8">
         <div className="flex w-full flex-col items-center justify-between gap-2 text-[9px] text-gw-muted sm:flex-row">
           <span className="text-gw-primary">HULUM Decision Platform</span>
-          <Link href="/" className="uppercase tracking-wider hover:text-gw-primary">
+          <Link href="/sign-in" className="uppercase tracking-wider hover:text-gw-primary">
             Sign in
           </Link>
         </div>
