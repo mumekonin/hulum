@@ -127,6 +127,13 @@ function educationStatus(profile: Profile, required: string[], clock: Clock): Ma
       reason: `Your education is ${label}. Confirm this wording on the official source: ${listed}.`,
     };
   }
+  if (need.kind === "none") {
+    return {
+      status: RequirementStatus.NOT_APPLICABLE,
+      evidence: null,
+      reason: "The opportunity does not list an education requirement.",
+    };
+  }
   if (have === null) {
     return {
       status: RequirementStatus.UNCERTAIN,
