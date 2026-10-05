@@ -19,10 +19,10 @@ import {
 import {
   isEchoOfReply,
   isHulumProductRequest,
+  isHulumSpeakPrompt,
   isSpokenHulumResult,
   isVoxideRefusal,
   readVoxidePublicKey,
-  voxideSpeakOnly,
   VOXIDE_STARTERS,
 } from "@/lib/voxide";
 
@@ -81,6 +81,52 @@ function eventRole(payload: unknown): "user" | "ai" | undefined {
     }
   }
   return undefined;
+}
+
+type WidgetMessage = { role: "user" | "ai"; text: string };
+
+function widgetMessages(client: VoxideClient): WidgetMessage[] {
+  return (client.getSnapshot().messages ?? []).map((row) => ({
+    role: row.role,
+    text: row.text,
+  }));
+}
+
+function lastProductUtterance(client: VoxideClient, fallback: string): string {
+  const messages = widgetMessages(client);
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    const row = messages[index];
+    if (row !== undefined && row.role === "user" && isHulumProductRequest(row.text)) {
+      return row.text.trim();
+    }
+  }
+  return fallback;
+}
+
+/** Put the HULUM answer in the widget transcript. Do not send it back through Gemini. */
+function presentAssistantText(client: VoxideClient, text: string): void {
+  const live = client as VoxideClient & {
+    _setVoiceSnapshot?: (patch: { messages: WidgetMessage[] }) => void;
+  };
+  if (typeof live._setVoiceSnapshot !== "function") {
+    return;
+  }
+  const next = widgetMessages(client).filter((row) => {
+    if (row.role === "ai" && isVoxideRefusal(row.text)) {
+      return false;
+    }
+    if (row.role === "user" && isHulumSpeakPrompt(row.text)) {
+      return false;
+    }
+    return true;
+  });
+  const last = next[next.length - 1];
+  if (last?.role === "ai" && last.text === text) {
+    live._setVoiceSnapshot({ messages: next });
+    return;
+  }
+  next.push({ role: "ai", text });
+  live._setVoiceSnapshot({ messages: next });
 }
 
 /**
@@ -177,6 +223,9 @@ export function VoxideAskHulum({
         title: "Ask HULUM",
         theme: currentTheme(),
         position: "bottom-right",
+        launcherShape: "circle",
+        launcherMode: "panel",
+        launcherIcon: "mic",
         greeting:
           "I can open any HULUM page and run the same actions as the website. Say show me scholarships, then analyze for me.",
         placeholder: "Show me scholarships",
@@ -194,14 +243,14 @@ export function VoxideAskHulum({
 
     ai.setFallback({
       message:
-        "Always call a registered HULUM tool. Never say you lack ability. Show scholarships, internships, or other stored opportunities; analyze against the profile; or open a page.",
+        "Call showScholarships, showInternships, showOpportunities, analyzeOpportunity, or askHulum. Never say you lack tools. Speak only the handler return value.",
       suggestions: VOXIDE_STARTERS,
     });
 
     ai.register({
       showScholarships: {
         description:
-          "Always call this when the user asks to show, list, or find scholarships. Speak only the returned text. Never say you lack ability.",
+          "Required for any request to show, list, find, or display scholarships (including 'show me scholarship'). Call this tool. Return and speak only the handler text. Never say you lack tools.",
         params: { text: { type: "string" } },
         scope: "global",
         handler: async (args) => runOrFail(spokenText(args, "show me scholarships")),
@@ -299,7 +348,7 @@ export function VoxideAskHulum({
       },
       askHulum: {
         description:
-          "Any other website action: list, analyze, details, APPLY MAYBE SKIP filter, or profile gaps. Pass the user's exact words. Speak the returned text.",
+          "Call this for any HULUM question when another tool does not fit: list opportunities, analyze, details, APPLY MAYBE SKIP, or profile gaps. Pass the user's exact words. Speak only the returned text. Never say you lack tools.",
         params: {
           text: {
             type: "string",
@@ -355,6 +404,7 @@ export function VoxideAskHulum({
 
     const isLoopText = (text: string) =>
       isVoxideRefusal(text) ||
+      isHulumSpeakPrompt(text) ||
       isSpokenHulumResult(text) ||
       isEchoOfReply(text, lastReplyRef.current);
 
@@ -381,13 +431,10 @@ export function VoxideAskHulum({
           if (reply.trim() === "" || isVoxideRefusal(reply)) {
             return;
           }
-          if (spokeForRef.current === utterance) {
-            return;
-          }
           spokeForRef.current = utterance;
           lastReplyRef.current = reply;
           client.interrupt();
-          return client.sendText(voxideSpeakOnly(reply));
+          presentAssistantText(client, reply);
         })
         .finally(() => {
           recoveringRef.current = false;
@@ -395,12 +442,34 @@ export function VoxideAskHulum({
     };
 
     const recoverIfRefused = (aiText: string) => {
-      const lastUser = lastUserRef.current;
-      if (!isVoxideRefusal(aiText) || !isHulumProductRequest(lastUser) || isLoopText(lastUser)) {
+      if (!isVoxideRefusal(aiText)) {
+        return;
+      }
+      if (lastReplyRef.current.trim() !== "") {
+        presentAssistantText(client, lastReplyRef.current);
+        return;
+      }
+      const lastUser = lastProductUtterance(client, lastUserRef.current);
+      if (!isHulumProductRequest(lastUser) || isLoopText(lastUser)) {
         return;
       }
       speakHulumReply(lastUser);
     };
+
+    let lastDispatchedUser = "";
+    const unsubSnap = client.subscribe(() => {
+      const messages = widgetMessages(client);
+      const lastUser = lastProductUtterance(client, "");
+      if (lastUser !== "" && lastUser !== lastDispatchedUser) {
+        lastDispatchedUser = lastUser;
+        rememberUser(lastUser);
+        speakHulumReply(lastUser);
+      }
+      const refusal = [...messages].reverse().find((row) => row.role === "ai" && isVoxideRefusal(row.text));
+      if (refusal !== undefined) {
+        recoverIfRefused(refusal.text);
+      }
+    });
 
     const unsubError = client.on("error", (payload: unknown) => {
       clearSilence();
@@ -462,6 +531,7 @@ export function VoxideAskHulum({
 
     return () => {
       clearSilence();
+      unsubSnap();
       unsubError();
       unsubTranscript();
       unsubMessage();

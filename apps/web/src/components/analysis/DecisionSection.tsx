@@ -35,8 +35,12 @@ function ReasonList({
               {mark}
             </span>
             <div className="min-w-0">
-              <p className="leading-7">{requirementText(item)}</p>
-              {item.reason ? <p className="text-sm leading-6 text-muted">{item.reason}</p> : null}
+              <p className="leading-7">
+                {item.reason?.trim() || requirementText(item)}
+              </p>
+              {item.reason?.trim() && requirementText(item) !== item.reason.trim() ? (
+                <p className="text-sm leading-6 text-muted">{requirementText(item)}</p>
+              ) : null}
             </div>
           </li>
         ))}

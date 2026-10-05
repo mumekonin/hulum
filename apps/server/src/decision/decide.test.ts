@@ -137,4 +137,54 @@ describe("decide", () => {
   it("returns the same result for the same profile, opportunity, and clock", () => {
     expect(decide(profile, opportunity, clock)).toEqual(decide(profile, opportunity, clock));
   });
+
+  it("recommends APPLY when catalog wording matches the profile and documents are on file", () => {
+    const result = decide(
+      {
+        ...profile,
+        educationLevel: "bachelor_in_progress",
+        fieldOfStudy: "Computer Science",
+        country: "Ethiopia",
+        languages: ["English", "Amharic"],
+        documentsHeld: ["CV", "Transcript"],
+        documentText: "Label: CV\nComputer Science student. One software internship.",
+      },
+      {
+        ...opportunity,
+        countryEligibility: ["Africa"],
+        educationRequirements: "Currently enrolled university student in computer science or a related field.",
+        fieldRequirements: "Computer science, software engineering, or related STEM.",
+        experienceRequirements: "Internships are helpful but not required.",
+        languageRequirements: "English",
+        documentRequirements: ["CV", "Transcript"],
+        otherRequirements: ["Confirm current application windows on the official site."],
+      },
+      clock,
+    );
+    expect(result.decision).toBe(Decision.APPLY);
+    expect(result.nextAction).toMatch(/Prepare your application materials/i);
+  });
+
+  it("recommends MAYBE with a document next step when the CV is on file but a transcript is not", () => {
+    const result = decide(
+      {
+        ...profile,
+        country: "Ethiopia",
+        fieldOfStudy: "Computer Science",
+        languages: ["English"],
+        documentsHeld: ["CV"],
+      },
+      {
+        ...opportunity,
+        countryEligibility: ["Ethiopia"],
+        educationRequirements: ["university_student"],
+        fieldRequirements: "Computer Science",
+        languageRequirements: "English",
+        documentRequirements: ["CV", "Transcript"],
+      },
+      clock,
+    );
+    expect(result.decision).toBe(Decision.MAYBE);
+    expect(result.nextAction).toMatch(/Transcript/i);
+  });
 });

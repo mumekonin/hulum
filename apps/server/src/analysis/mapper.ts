@@ -9,7 +9,7 @@ import {
   type ReadinessItem,
   type Requirement,
 } from "@hulum/shared";
-import { NEXT_ACTION } from "../decision/rules.js";
+import { nextActionFrom } from "../decision/rules.js";
 
 export type AnalysisRow = {
   id: string;
@@ -90,14 +90,17 @@ export function mapReadinessRow(row: ReadinessRow): ReadinessItem {
   };
 }
 
-export function nextActionFor(decision: Decision): string {
-  if (decision === Decision.APPLY) {
-    return NEXT_ACTION.APPLY;
-  }
-  if (decision === Decision.SKIP) {
-    return NEXT_ACTION.SKIP;
-  }
-  return NEXT_ACTION.MAYBE;
+export function nextActionFor(
+  decision: Decision,
+  requirements: Array<Pick<Requirement, "status" | "reason">> = [],
+): string {
+  return nextActionFrom(
+    decision,
+    requirements.map((item) => ({
+      status: item.status,
+      reason: item.reason ?? "",
+    })),
+  );
 }
 
 function isRulePath(value: unknown): value is DecisionAudit["rulePath"] {
@@ -142,7 +145,7 @@ export function mapAnalysis(
     fitScore: row.fit_score,
     summary: row.summary,
     requirements,
-    nextAction: nextActionFor(row.decision),
+    nextAction: nextActionFor(row.decision, requirements),
     readiness,
     ...(audit !== undefined ? { audit } : {}),
     createdAt: toIsoDateTime(row.created_at),

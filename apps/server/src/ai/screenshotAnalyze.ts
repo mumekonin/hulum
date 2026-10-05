@@ -69,7 +69,7 @@ export function analyzeScreenshotExtract(
     decision: {
       decision: result.decision,
       fitScore: result.fitScore,
-      summary: analysisSummaryFor(result.decision),
+      summary: analysisSummaryFor(result.decision, result.matches),
       nextAction: result.nextAction,
       reasons: result.reasons,
       matched: result.matchedRequirements.map((item) => item.text),

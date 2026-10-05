@@ -302,4 +302,30 @@ describe("createVoiceService", () => {
     expect(result.intent).toBe("OPEN_OPPORTUNITY");
     expect(result.reply).toMatch(/Gosa|Guyyaa xumuraa|Madda|Murteen kuufame/);
   });
+
+  it("answers a deadline question from the stored listing", async () => {
+    const service = createVoiceService({
+      profiles: { getByUserId: async () => profileView },
+      opportunities: {
+        list: async () => [opportunity],
+        getById: async () => opportunity,
+      },
+      analyses: {
+        analyze: async () => {
+          throw new Error("analyze should not run");
+        },
+        getById: async () => undefined,
+      },
+      clock,
+    });
+    const result = await service.handleAction({
+      userId: profile.userId,
+      text: "What is the deadline?",
+      language: "en",
+      opportunityId: opportunity.id,
+    });
+    expect(result.intent).toBe("OPEN_OPPORTUNITY");
+    expect(result.reply).toContain("2026-12-31");
+    expect(result.reply).toContain("example.invalid");
+  });
 });

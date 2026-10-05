@@ -67,7 +67,7 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
       ...(typeHit === undefined ? {} : { type: typeHit[1] }),
     };
   }
-  if (/ለምን|why (apply|maybe|skip|did you)|explain|^why\b|maalif|maaliif/i.test(value)) {
+  if (/ለምን|why (apply|maybe|skip|did you)|explain|^why\b|maalif|maaliif|what do you think|your opinion|is this (good|worth)|do you recommend|how does this (fit|compare)/i.test(value)) {
     return { intent: "EXPLAIN_DECISION" };
   }
   // Profile gaps before generic "what am I missing" (opportunity requirements).
@@ -115,7 +115,7 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
     return { intent: "SHOW_OPPORTUNITIES" };
   }
   if (
-    /open|details|tell me about this|about this opportunity|current opportunity|ዝርዝር|ስለዚህ እድል|ንገረኝ|ibsi|natti himi|naaf himi/i.test(
+    /open|details|tell me about this|about this opportunity|current opportunity|ዝርዝር|ስለዚህ እድል|ንገረኝ|ibsi|natti himi|naaf himi|deadline|due date|documents?|requirements?|eligib|official (site|source|link)|where (do i|to) apply|funded|stipend/i.test(
       value,
     )
   ) {
