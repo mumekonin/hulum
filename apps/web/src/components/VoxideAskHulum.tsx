@@ -103,12 +103,20 @@ function lastProductUtterance(client: VoxideClient, fallback: string): string {
   return fallback;
 }
 
+type VoiceSnapshotWriter = (patch: { messages: WidgetMessage[] }) => void;
+
+function voiceSnapshotWriter(client: VoxideClient): VoiceSnapshotWriter | null {
+  const write = (client as unknown as { _setVoiceSnapshot?: VoiceSnapshotWriter })._setVoiceSnapshot;
+  if (typeof write !== "function") {
+    return null;
+  }
+  return write.bind(client);
+}
+
 /** Put the HULUM answer in the widget transcript. Do not send it back through Gemini. */
 function presentAssistantText(client: VoxideClient, text: string): void {
-  const live = client as VoxideClient & {
-    _setVoiceSnapshot?: (patch: { messages: WidgetMessage[] }) => void;
-  };
-  if (typeof live._setVoiceSnapshot !== "function") {
+  const write = voiceSnapshotWriter(client);
+  if (write === null) {
     return;
   }
   const next = widgetMessages(client).filter((row) => {
@@ -122,11 +130,11 @@ function presentAssistantText(client: VoxideClient, text: string): void {
   });
   const last = next[next.length - 1];
   if (last?.role === "ai" && last.text === text) {
-    live._setVoiceSnapshot({ messages: next });
+    write({ messages: next });
     return;
   }
   next.push({ role: "ai", text });
-  live._setVoiceSnapshot({ messages: next });
+  write({ messages: next });
 }
 
 /**
