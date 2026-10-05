@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import Link from "next/link";
 import type { ScreenshotAnalyzeResult, ScreenshotExtracted } from "@hulum/shared";
+import { DecisionView, screenshotDecisionModel } from "@/components/analysis/DecisionSection";
 import { Notice } from "@/components/Notice";
 import { StatusPanel } from "@/components/StatusPanel";
 import { api, userFacingError } from "@/lib/api";
@@ -196,21 +197,7 @@ export default function ScreenshotPage() {
             <ScreenshotRequirements extracted={result.extracted} />
           </div>
           {result.decision ? (
-            <div className="border border-line p-4">
-              <h2 className="font-display text-2xl">{result.decision.decision}</h2>
-              <p className="mt-2 text-sm">{result.decision.summary}</p>
-              <p className="mt-2 text-sm text-muted">{result.decision.nextAction}</p>
-              {result.decision.missing.length > 0 ? (
-                <div className="mt-4">
-                  <h3 className="text-sm font-medium">Needs attention</h3>
-                  <ul className="mt-1 list-disc pl-5 text-sm">
-                    {result.decision.missing.map((item) => (
-                      <li key={item}>{item}</li>
-                    ))}
-                  </ul>
-                </div>
-              ) : null}
-            </div>
+            <DecisionView model={screenshotDecisionModel(result.decision)} />
           ) : (
             <p className="text-sm text-muted">No APPLY / MAYBE / SKIP yet — the photo did not have enough facts, or you still need a profile.</p>
           )}

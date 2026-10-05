@@ -5,7 +5,12 @@ let pool: pg.Pool | undefined;
 
 export function getPool(): pg.Pool {
   if (pool === undefined) {
-    pool = new pg.Pool({ connectionString: requireDatabaseUrl() });
+    pool = new pg.Pool({
+      connectionString: requireDatabaseUrl(),
+      max: 10,
+      idleTimeoutMillis: 30_000,
+      connectionTimeoutMillis: 5_000,
+    });
   }
   return pool;
 }

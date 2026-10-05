@@ -1,5 +1,9 @@
 import { OPPORTUNITY_TYPES, type Opportunity, type OpportunityType } from "@hulum/shared";
+import { passesRequirementFilters, type ExperienceFilter } from "./discover-filters";
 import { daysUntil, requirementLines } from "./format";
+
+export type { ExperienceFilter, FilterOption } from "./discover-filters";
+export { catalogLabel, filterOptions } from "./discover-filters";
 
 /**
  * Keyword search over stored listings. This is not AI: it removes filler words, reads an
@@ -143,7 +147,6 @@ function termMatches(text: string, term: string): boolean {
 }
 
 export type DeadlineWindow = "any" | "7" | "30" | "90";
-export type ExperienceFilter = "any" | "listed" | "none";
 
 export type DiscoverFilters = {
   type: OpportunityType | "";
@@ -180,19 +183,7 @@ function passesFilters(item: Opportunity, filters: DiscoverFilters): boolean {
   if (filters.deadline !== "any") {
     if (remaining === null || remaining < 0 || remaining > Number(filters.deadline)) return false;
   }
-  if (filters.location !== "" && !item.countryEligibility.includes(filters.location)) return false;
-  if (filters.field !== "" && !requirementLines(item.fieldRequirements).includes(filters.field))
-    return false;
-  if (
-    filters.education !== "" &&
-    !requirementLines(item.educationRequirements).includes(filters.education)
-  ) {
-    return false;
-  }
-  const hasExperience = requirementLines(item.experienceRequirements).length > 0;
-  if (filters.experience === "listed" && !hasExperience) return false;
-  if (filters.experience === "none" && hasExperience) return false;
-  return true;
+  return passesRequirementFilters(item, filters);
 }
 
 export function discover(
@@ -220,19 +211,4 @@ export function discover(
     .sort((a, b) => a.deadline.localeCompare(b.deadline));
 
   return { items, inferredType, ignoredTerms };
-}
-
-/** Distinct values actually stored in the catalog, so filters never offer an empty option. */
-export function filterOptions(all: Opportunity[]): {
-  locations: string[];
-  fields: string[];
-  education: string[];
-} {
-  const collect = (pick: (item: Opportunity) => string[]) =>
-    [...new Set(all.flatMap(pick))].sort((a, b) => a.localeCompare(b));
-  return {
-    locations: collect((item) => item.countryEligibility),
-    fields: collect((item) => requirementLines(item.fieldRequirements)),
-    education: collect((item) => requirementLines(item.educationRequirements)),
-  };
 }

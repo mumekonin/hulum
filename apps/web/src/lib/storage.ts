@@ -64,6 +64,9 @@ export function getLanguage(): LanguageCode {
   return isLanguageCode(stored) ? stored : "en";
 }
 
+export const LANGUAGE_CHANGE_EVENT = "hulum-language-change";
+
 export function setLanguage(language: LanguageCode): void {
   window.localStorage.setItem(LANGUAGE_KEY, language);
+  window.dispatchEvent(new Event(LANGUAGE_CHANGE_EVENT));
 }
