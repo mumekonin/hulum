@@ -9,7 +9,8 @@ import {
   type Opportunity,
   type OpportunityType,
 } from "@hulum/shared";
-import { OpportunityRow } from "@/components/OpportunityRow";
+import { OpportunityRow, OpportunitySuggestionCard } from "@/components/OpportunityRow";
+import { useSiteProfile } from "@/components/RequireProfile";
 import { StatusPanel } from "@/components/StatusPanel";
 import { api, userFacingError } from "@/lib/api";
 import {
@@ -19,21 +20,24 @@ import {
   type DeadlineWindow,
   type DiscoverFilters,
   type ExperienceFilter,
+  type FilterOption,
 } from "@/lib/discover";
 import { DISCOVER_CONTEXT_LIMIT, writeDiscoverContext } from "@/lib/discover-context";
+import {
+  buildSearchSuggestions,
+  suggestOpportunities,
+  suggestionBasis,
+  suggestionFiltersActive,
+  type SearchSuggestion,
+} from "@/lib/discover-suggestions";
 import {
   DECISION_FILTER_OPTIONS,
   decisionsById,
   fetchMyAnalyses,
   matchesDecision,
+  sortByStoredDecision,
   type DecisionFilter,
 } from "@/lib/history";
-
-const EXAMPLE_QUERIES = [
-  "AI scholarships for Ethiopian students",
-  "Fully funded master's opportunities",
-  "Internships for computer science students",
-];
 
 const DEADLINE_OPTIONS: Array<{ value: DeadlineWindow; label: string }> = [
   { value: "any", label: "Any deadline" },
@@ -42,11 +46,54 @@ const DEADLINE_OPTIONS: Array<{ value: DeadlineWindow; label: string }> = [
   { value: "90", label: "Within 90 days" },
 ];
 
-const EXPERIENCE_OPTIONS: Array<{ value: ExperienceFilter; label: string }> = [
-  { value: "any", label: "Any experience" },
-  { value: "listed", label: "Experience listed" },
-  { value: "none", label: "No experience listed" },
-];
+function groupedOptions(options: FilterOption[]) {
+  const ungrouped: FilterOption[] = [];
+  const groups: Array<{ label: string; options: FilterOption[] }> = [];
+  const index = new Map<string, number>();
+  for (const option of options) {
+    if (option.group === undefined) {
+      ungrouped.push(option);
+      continue;
+    }
+    const existing = index.get(option.group);
+    if (existing === undefined) {
+      index.set(option.group, groups.length);
+      groups.push({ label: option.group, options: [option] });
+    } else {
+      groups[existing].options.push(option);
+    }
+  }
+  return { ungrouped, groups };
+}
+
+function FilterSelectOptions({
+  options,
+  emptyLabel,
+}: {
+  options: FilterOption[];
+  emptyLabel?: string;
+}) {
+  const { ungrouped, groups } = groupedOptions(options);
+  return (
+    <>
+      {emptyLabel !== undefined ? <option value="">{emptyLabel}</option> : null}
+      {ungrouped.map((option) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
+      {groups.map((group) => (
+        <optgroup key={group.label} label={group.label}>
+          {group.options.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
+            </option>
+          ))}
+        </optgroup>
+      ))}
+    </>
+  );
+}
 
 function isOpportunityType(value: string | null): value is OpportunityType {
   return OPPORTUNITY_TYPES.some((type) => type === value);
@@ -70,6 +117,8 @@ export default function DiscoverPage() {
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [decisions, setDecisions] = useState<Map<string, Decision> | null>(null);
   const [decisionFilter, setDecisionFilter] = useState<DecisionFilter>("");
+  const siteProfile = useSiteProfile();
+  const profile = siteProfile?.profile ?? null;
 
   useEffect(() => {
     let cancelled = false;
@@ -124,13 +173,20 @@ export default function DiscoverPage() {
 
   const result = useMemo(() => {
     const found = discover(all, query, filters);
-    if (decisions === null || decisionFilter === "") return found;
+    const filtered =
+      decisions === null || decisionFilter === ""
+        ? found.items
+        : found.items.filter((item) => matchesDecision(item.id, decisionFilter, decisions));
     return {
       ...found,
-      items: found.items.filter((item) => matchesDecision(item.id, decisionFilter, decisions)),
+      items: sortByStoredDecision(filtered, decisions),
     };
   }, [all, query, filters, decisions, decisionFilter]);
+  const sortedByStoredDecisions = decisions !== null && decisions.size > 0;
   const options = useMemo(() => filterOptions(all), [all]);
+  const searchSuggestions = useMemo(() => buildSearchSuggestions(all, profile), [all, profile]);
+  const suggestedListings = useMemo(() => suggestOpportunities(all, profile, 3), [all, profile]);
+  const suggestionFacts = useMemo(() => suggestionBasis(profile), [profile]);
 
   useEffect(() => {
     if (status !== "ready") return;
@@ -151,6 +207,12 @@ export default function DiscoverPage() {
   ].filter(Boolean).length;
   const filtersActive = activeFilterCount > 0;
   const showDecisionFilter = decisions !== null && decisions.size > 0;
+  const showSuggestedListings =
+    status === "ready" &&
+    query === "" &&
+    !filtersActive &&
+    filters.type === "" &&
+    suggestedListings.length > 0;
 
   function update<K extends keyof DiscoverFilters>(key: K, value: DiscoverFilters[K]) {
     setFilters((current) => ({ ...current, [key]: value }));
@@ -161,9 +223,17 @@ export default function DiscoverPage() {
     setQuery(queryInput.trim());
   }
 
-  function runExample(example: string) {
-    setQueryInput(example);
-    setQuery(example);
+  function applySuggestion(suggestion: SearchSuggestion) {
+    if (suggestionFiltersActive(filters, suggestion) && query === suggestion.query) {
+      setQueryInput("");
+      setQuery("");
+      setFilters((current) => ({ ...EMPTY_FILTERS, type: current.type }));
+      return;
+    }
+    setQueryInput(suggestion.query);
+    setQuery(suggestion.query);
+    setFilters({ ...EMPTY_FILTERS, ...suggestion.filters });
+    setDecisionFilter("");
   }
 
   function clearSearch() {
@@ -216,19 +286,32 @@ export default function DiscoverPage() {
             Search
           </button>
         </div>
-        <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted">
-          <span>Try</span>
-          {EXAMPLE_QUERIES.map((example) => (
-            <button
-              key={example}
-              type="button"
-              onClick={() => runExample(example)}
-              className="min-h-11 text-left underline decoration-line-strong underline-offset-4 hover:text-ink hover:decoration-ink"
-            >
-              {example}
-            </button>
-          ))}
-        </div>
+        {searchSuggestions.length > 0 ? (
+          <div className="mt-5">
+            <p className="text-xs uppercase tracking-[0.12em] text-muted">Suggested searches</p>
+            <div className="mt-2 flex flex-wrap gap-2" role="group" aria-label="Suggested searches">
+              {searchSuggestions.map((suggestion) => {
+                const active =
+                  suggestionFiltersActive(filters, suggestion) && query === suggestion.query;
+                return (
+                  <button
+                    key={suggestion.id}
+                    type="button"
+                    aria-pressed={active}
+                    onClick={() => applySuggestion(suggestion)}
+                    className={`min-h-11 border px-4 text-sm transition-colors ${
+                      active
+                        ? "border-ink bg-ink text-paper"
+                        : "border-line text-ink hover:border-line-strong"
+                    }`}
+                  >
+                    {suggestion.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
       </form>
 
       <div
@@ -299,9 +382,9 @@ export default function DiscoverPage() {
               className={selectClass}
             >
               <option value="">Any location</option>
-              {options.locations.map((value) => (
-                <option key={value} value={value}>
-                  {value}
+              {options.locations.map((option) => (
+                <option key={option.value} value={option.value}>
+                  {option.label}
                 </option>
               ))}
             </select>
@@ -313,12 +396,7 @@ export default function DiscoverPage() {
               onChange={(e) => update("field", e.target.value)}
               className={selectClass}
             >
-              <option value="">Any field</option>
-              {options.fields.map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
+              <FilterSelectOptions options={options.fields} emptyLabel="Any field" />
             </select>
           </label>
           <label className="grid gap-1 text-xs uppercase tracking-[0.12em] text-muted">
@@ -328,12 +406,7 @@ export default function DiscoverPage() {
               onChange={(e) => update("education", e.target.value)}
               className={selectClass}
             >
-              <option value="">Any education</option>
-              {options.education.map((value) => (
-                <option key={value} value={value}>
-                  {value}
-                </option>
-              ))}
+              <FilterSelectOptions options={options.education} emptyLabel="Any education" />
             </select>
           </label>
           <label className="grid gap-1 text-xs uppercase tracking-[0.12em] text-muted">
@@ -343,11 +416,7 @@ export default function DiscoverPage() {
               onChange={(e) => update("experience", e.target.value as ExperienceFilter)}
               className={selectClass}
             >
-              {EXPERIENCE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
+              <FilterSelectOptions options={options.experience} />
             </select>
           </label>
           {showDecisionFilter ? (
@@ -421,6 +490,33 @@ export default function DiscoverPage() {
 
       {status === "ready" && all.length > 0 ? (
         <div className="mt-10">
+          {showSuggestedListings ? (
+            <section className="mb-12" aria-labelledby="suggested-opportunities-heading">
+              <div className="border-b border-line pb-3">
+                <h2
+                  id="suggested-opportunities-heading"
+                  className="font-display text-2xl leading-snug"
+                >
+                  Suggested for you
+                </h2>
+                <p className="mt-2 text-sm text-muted">
+                  {suggestionFacts.length > 0
+                    ? `From your profile · ${suggestionFacts.join(" · ")}.`
+                    : "From the stored catalog."}{" "}
+                  This is a filter, not a HULUM APPLY / MAYBE / SKIP decision. Analyze a listing to
+                  see your fit.
+                </p>
+              </div>
+              <ul className="mt-5 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+                {suggestedListings.map((opportunity) => (
+                  <li key={opportunity.id}>
+                    <OpportunitySuggestionCard opportunity={opportunity} />
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
+
           <div
             className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line pb-3"
             aria-live="polite"
@@ -432,6 +528,9 @@ export default function DiscoverPage() {
                   {" "}
                   · {pluralType(result.inferredType).toLowerCase()} from your search
                 </span>
+              ) : null}
+              {sortedByStoredDecisions ? (
+                <span className="text-muted"> · Sorted by your stored HULUM decisions</span>
               ) : null}
             </p>
             {result.ignoredTerms.length > 0 ? (

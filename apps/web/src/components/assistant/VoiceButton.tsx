@@ -15,16 +15,9 @@ const LABELS: Partial<Record<VoxideStatus, string>> = {
 
 function MicIcon() {
   return (
-    <svg
-      aria-hidden
-      viewBox="0 0 24 24"
-      className="h-5 w-5"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="1.5"
-    >
-      <rect x="9" y="3" width="6" height="11" rx="3" />
-      <path d="M5 11a7 7 0 0 0 14 0M12 18v3" strokeLinecap="round" />
+    <svg aria-hidden viewBox="0 0 24 24" className="h-6 w-6" fill="currentColor">
+      <path d="M12 2.75A3.75 3.75 0 0 0 8.25 6.5v5a3.75 3.75 0 1 0 7.5 0v-5A3.75 3.75 0 0 0 12 2.75Z" />
+      <path d="M6.5 11.25a.75.75 0 0 0-1.5 0 7 7 0 0 0 6.25 6.96V20.5H8.75a.75.75 0 0 0 0 1.5h6.5a.75.75 0 0 0 0-1.5H12.75v-2.29A7 7 0 0 0 19 11.25a.75.75 0 0 0-1.5 0 5.5 5.5 0 0 1-11 0Z" />
     </svg>
   );
 }
@@ -32,7 +25,7 @@ function MicIcon() {
 function StopIcon() {
   return (
     <svg aria-hidden viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor">
-      <rect x="7" y="7" width="10" height="10" />
+      <rect x="6.5" y="6.5" width="11" height="11" rx="1.5" />
     </svg>
   );
 }
@@ -68,6 +61,12 @@ export function VoiceButton({
     onIssue(null);
     setStarting(true);
     try {
+      if (status === "error") {
+        client.disconnect();
+      }
+      if (!client.isInitialized) {
+        await client.init();
+      }
       await client.connect();
     } catch {
       onIssue("Voice didn't connect. Check microphone permission, or type your question instead.");
@@ -83,8 +82,9 @@ export function VoiceButton({
       disabled={disabled && !live}
       aria-pressed={live}
       aria-label={live ? "Stop voice" : "Speak to HULUM"}
+      title={live ? "Stop voice" : "Speak to HULUM"}
       className={`inline-flex min-h-12 min-w-12 items-center justify-center gap-2 border px-3 text-sm transition-colors disabled:opacity-60 ${
-        live ? "border-ink bg-ink text-paper" : "border-line-strong hover:border-ink"
+        live ? "border-ink bg-ink text-paper" : "border-line-strong bg-surface text-ink hover:border-ink hover:bg-ink hover:text-paper"
       }`}
     >
       {live ? <StopIcon /> : <MicIcon />}

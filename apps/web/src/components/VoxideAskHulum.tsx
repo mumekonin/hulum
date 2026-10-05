@@ -1,10 +1,10 @@
 "use client";
 
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { VoxideClient, VoxideWidget, type VoxideStatus } from "@voxide/react";
 import { detectAskedLanguage, type LanguageCode } from "@hulum/shared";
-import { getLanguage, getUserId } from "@/lib/storage";
+import { getLanguage, getUserId, LANGUAGE_CHANGE_EVENT } from "@/lib/storage";
 import { currentTheme, useTheme } from "@/lib/theme";
 import { runTextAction } from "@/lib/text-actions";
 import { publishVoxideClient } from "@/lib/voxide-client";
@@ -23,6 +23,7 @@ import {
   isSpokenHulumResult,
   isVoxideRefusal,
   readVoxidePublicKey,
+  voxideSpeechLocale,
   VOXIDE_STARTERS,
 } from "@/lib/voxide";
 
@@ -171,6 +172,21 @@ export function VoxideAskHulum({
   const recoveringRef = useRef(false);
   const spokeForRef = useRef("");
   const publicKey = readVoxidePublicKey();
+  const [askedLanguage, setAskedLanguage] = useState<LanguageCode>(
+    () => language ?? getLanguage(),
+  );
+  const speechLocale = voxideSpeechLocale(askedLanguage);
+
+  useEffect(() => {
+    const sync = () => setAskedLanguage(language ?? getLanguage());
+    sync();
+    window.addEventListener(LANGUAGE_CHANGE_EVENT, sync);
+    window.addEventListener("storage", sync);
+    return () => {
+      window.removeEventListener(LANGUAGE_CHANGE_EVENT, sync);
+      window.removeEventListener("storage", sync);
+    };
+  }, [language]);
 
   const persistSession = (next: VoiceSessionIds) => {
     writeVoiceSession(next);
@@ -226,7 +242,7 @@ export function VoxideAskHulum({
 
     const ai = new VoxideClient({
       publicKey,
-      language: "en-US",
+      language: speechLocale,
       ui: {
         title: "Ask HULUM",
         theme: currentTheme(),
@@ -390,9 +406,9 @@ export function VoxideAskHulum({
 
   useEffect(() => {
     if (client === null) return;
-    client.setLanguage("en-US");
+    client.setLanguage(speechLocale);
     client.setActiveRoute(pathname);
-  }, [client, pathname]);
+  }, [client, pathname, speechLocale]);
 
   useEffect(() => {
     if (client === null) {
@@ -400,6 +416,9 @@ export function VoxideAskHulum({
     }
 
     publishVoxideClient(client);
+    void client.init().catch(() => {
+      /* VoiceButton surfaces connect failures after init. */
+    });
     let silenceTimer: ReturnType<typeof setTimeout> | undefined;
     let lastStatus: VoxideStatus | null = null;
 

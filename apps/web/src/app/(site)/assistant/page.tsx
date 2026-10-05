@@ -396,7 +396,7 @@ function AssistantInner() {
       : voice.status === "error"
         ? voice.errorCode === "usage_limit"
           ? "Voice is unavailable right now. Type your question instead."
-          : "The voice session stopped with an error. Type your question instead."
+          : "Voice didn't stay connected. Tap the microphone to try again, or type."
         : isVoiceLive(voice.status)
           ? "Voice is on. Ask your question out loud; answers appear here."
           : voiceClient === null
@@ -606,7 +606,7 @@ function AssistantInner() {
           </form>
         </div>
 
-        <aside className="space-y-10 lg:border-l lg:border-line lg:pl-8">
+        <aside className="space-y-10 lg:sticky lg:top-8 lg:self-start lg:border-l lg:border-line lg:pl-8">
           <RecentQuestions items={recent} onSelect={askAgain} disabled={Boolean(pending)} />
           <FrequentlyAsked onSelect={showFaq} disabled={Boolean(pending)} />
         </aside>

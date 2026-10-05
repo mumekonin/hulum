@@ -1,4 +1,5 @@
 import { dbQuery } from "../db/rls-session.js";
+import { invalidateOpportunityListCache } from "../opportunities/list-cache.js";
 
 export type SourceRow = {
   id: string;
@@ -19,6 +20,13 @@ export type InvestigationSummary = {
   refreshed: number;
   notes: string[];
 };
+
+function catalogChanged(changed: boolean): boolean {
+  if (changed) {
+    invalidateOpportunityListCache();
+  }
+  return changed;
+}
 
 export async function listEnabledSources(): Promise<SourceRow[]> {
   const result = await dbQuery<SourceRow>(
@@ -45,7 +53,12 @@ export async function createRun(): Promise<string> {
   return id;
 }
 
-export async function logEvent(runId: string, sourceName: string, action: string, detail: string): Promise<void> {
+export async function logEvent(
+  runId: string,
+  sourceName: string,
+  action: string,
+  detail: string,
+): Promise<void> {
   await dbQuery(
     "insert into investigation_events (run_id, source_name, action, detail) values ($1, $2, $3, $4)",
     [runId, sourceName, action, detail],
@@ -76,9 +89,10 @@ export async function findDuplicate(title: string, sourceUrl: string): Promise<b
 }
 
 export async function findExistingByTitle(title: string): Promise<boolean> {
-  const result = await dbQuery("select 1 from opportunities where lower(title) = lower($1) limit 1", [
-    title,
-  ]);
+  const result = await dbQuery(
+    "select 1 from opportunities where lower(title) = lower($1) limit 1",
+    [title],
+  );
   return (result.rowCount ?? 0) > 0;
 }
 
@@ -130,7 +144,7 @@ export async function refreshExtracted(input: {
       input.sourceUrl,
     ],
   );
-  return (result.rowCount ?? 0) > 0;
+  return catalogChanged((result.rowCount ?? 0) > 0);
 }
 
 /** Source still shows the listing, but the deadline is no longer in the future. */
@@ -144,7 +158,7 @@ export async function markExtractedExpired(title: string, deadline: string): Pro
      where lower(title) = lower($1)`,
     [title, deadline],
   );
-  return (result.rowCount ?? 0) > 0;
+  return catalogChanged((result.rowCount ?? 0) > 0);
 }
 
 /** Seen again on a later run. Does not invent a new listing. */
@@ -178,7 +192,11 @@ export async function markStaleExtracts(cutoff: Date): Promise<number> {
        and (investigated_at is null or investigated_at < $1)`,
     [cutoff.toISOString()],
   );
-  return result.rowCount ?? 0;
+  const changed = result.rowCount ?? 0;
+  if (changed > 0) {
+    invalidateOpportunityListCache();
+  }
+  return changed;
 }
 
 export async function saveExtracted(input: {
@@ -217,5 +235,6 @@ export async function saveExtracted(input: {
   if (id === undefined) {
     throw new Error("Failed to persist extracted opportunity");
   }
+  invalidateOpportunityListCache();
   return id;
 }

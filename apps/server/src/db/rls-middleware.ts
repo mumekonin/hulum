@@ -39,6 +39,10 @@ export function rlsRequestMiddleware() {
       next();
       return;
     }
+    if (req.method === "GET" && /^\/opportunities(\/[^/]+)?$/.test(path)) {
+      next();
+      return;
+    }
 
     void (async () => {
       const finished = waitForResponse(res);

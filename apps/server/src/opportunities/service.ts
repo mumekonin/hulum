@@ -3,6 +3,7 @@ import type { Clock } from "../services/common/clock.js";
 import { systemClock } from "../services/common/clock.js";
 import { presentOpportunity } from "../verification/index.js";
 import type { OpportunityStore } from "./store.js";
+import { readOpportunityListCache, writeOpportunityListCache } from "./list-cache.js";
 
 export type OpportunityService = {
   list(): Promise<Opportunity[]>;
@@ -15,8 +16,14 @@ export function createOpportunityService(
 ): OpportunityService {
   return {
     async list(): Promise<Opportunity[]> {
+      const cached = readOpportunityListCache();
+      if (cached !== null) {
+        return cached;
+      }
       const rows = await store.list();
-      return rows.map((row) => presentOpportunity(row, clock));
+      const items = rows.map((row) => presentOpportunity(row, clock));
+      writeOpportunityListCache(items);
+      return items;
     },
     async getById(id: string): Promise<Opportunity | undefined> {
       const row = await store.getById(id);

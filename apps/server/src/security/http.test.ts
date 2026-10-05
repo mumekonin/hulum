@@ -70,6 +70,8 @@ describe("API security middleware", () => {
 
     expect(allowed.headers.get("access-control-allow-origin")).toBe("http://localhost:3000");
     expect(allowed.headers.get("x-content-type-options")).toBe("nosniff");
+    expect(allowed.headers.get("x-frame-options")).toBe("DENY");
+    expect(allowed.headers.get("referrer-policy")).toBe("no-referrer");
     expect(allowed.headers.get("x-powered-by")).toBeNull();
     expect(denied.headers.get("access-control-allow-origin")).toBeNull();
   });
@@ -111,17 +113,57 @@ describe("API security middleware", () => {
       }),
     );
     const url = `http://127.0.0.1:${port}/api/analyses/11111111-1111-4111-8111-111111111111/explain`;
-    const first = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" });
-    const second = await fetch(url, { method: "POST", headers: { "content-type": "application/json" }, body: "{}" });
+    const init = {
+      method: "POST" as const,
+      headers: { "content-type": "application/json" },
+      body: "{}",
+    };
+    const controller = new AbortController();
+    void fetch(url, { ...init, signal: controller.signal }).catch(() => undefined);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    const second = await fetch(url, init);
+    controller.abort();
     const body: unknown = await second.json();
 
-    expect(first.status).not.toBe(429);
     expect(second.status).toBe(429);
     expect(body).toEqual({
       data: null,
       error: {
         code: "RATE_LIMITED",
         message: "Too many AI wording requests. Please try again shortly.",
+      },
+    });
+  });
+
+  it("rate-limits POST /api/auth/login", async () => {
+    const port = await listen(
+      createApp({
+        env,
+        store: "postgres",
+        authLimiter: createRateLimiter({ windowMs: 60_000, max: 1 }),
+      }),
+    );
+    const url = `http://127.0.0.1:${port}/api/auth/login`;
+    const body = JSON.stringify({ email: "a@example.invalid", password: "strong-pass" });
+    const first = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+    });
+    const second = await fetch(url, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body,
+    });
+    const payload: unknown = await second.json();
+
+    expect(first.status).not.toBe(429);
+    expect(second.status).toBe(429);
+    expect(payload).toEqual({
+      data: null,
+      error: {
+        code: "RATE_LIMITED",
+        message: "Too many sign-in attempts. Please try again shortly.",
       },
     });
   });

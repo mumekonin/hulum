@@ -16,6 +16,7 @@
     "build:server": "npm run build -w @hulum/server",
     "typecheck:shared": "npm run typecheck -w @hulum/shared",
     "typecheck:server": "npm run typecheck -w @hulum/server",
+    "typecheck:web": "npm run typecheck -w @hulum/web",
     "lint": "eslint apps/server/src apps/web/src packages/shared/src",
     "format": "prettier --write \"apps/server/src/**/*.{ts,tsx}\" \"apps/web/src/**/*.{ts,tsx}\" \"packages/shared/src/**/*.{ts,tsx}\" eslint.config.mjs .prettierrc.json",
     "format:check": "prettier --check \"apps/server/src/**/*.{ts,tsx}\" \"apps/web/src/**/*.{ts,tsx}\" \"packages/shared/src/**/*.{ts,tsx}\" eslint.config.mjs .prettierrc.json",
