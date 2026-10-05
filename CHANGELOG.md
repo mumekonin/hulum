@@ -2,6 +2,61 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-05 — Account menu on the sidebar
+
+### Changed
+- Sidebar identity (name and email) opens a compact account menu: **Profile** and **Log out**. Appearance (theme) sits in that menu on desktop.
+- Profile is no longer a separate nav item. The broken “Sign out” row beside the moon toggle is gone.
+
+### Why
+Sign out wrapped into an unreadable control, and Profile competed with the account strip.
+
+## 2026-10-05 — Widget questions use HULUM, not Gemini refusals
+
+### Changed
+- Typed or spoken Ask HULUM widget questions call `/api/voice/action` and the listing/decision is written into the widget transcript.
+- Gemini “I don’t have the tools” bubbles are replaced. The answer is no longer sent back through Gemini as a fake user prompt.
+
+### Why
+The Voxide panel answered “Show me scholarships” with a no-tools apology because Gemini did not call registered HULUM tools, and typed chat never reached the recovery path.
+
+## 2026-10-05 — Default Voxide voice launcher
+
+### Changed
+- Ask HULUM floating control uses Voxide’s default orange mic, as a **circle** (`launcherShape: circle`) instead of the pill bar.
+
+### Why
+The custom HULUM mark/mic replaced the familiar default widget.
+
+## 2026-10-05 — HULUM mark on the voice launcher and favicon
+
+### Changed
+- Ask HULUM floating launcher uses a professional microphone on the olive HULUM accent, not Voxide’s default orange pill. Dashboard appearance is overridden in code.
+- Favicon `app/icon.svg` uses the HULUM peak mark (light olive tile, dark-mode ink tile).
+
+### Why
+The default Voxide mic bar read as a third-party widget instead of HULUM.
+
+## 2026-10-05 — Profile + document-aware eligibility matching
+
+### Changed
+- Matcher compares the saved profile (and uploaded document text as evidence) to catalog wording: Ethiopia/`ET`/`Africa`, education rank vs enrollment prose, Computer Science/`computer_science`, English/`en`.
+- Reasons quote the profile fact that drove MET / MAYBE / SKIP. Optional experience and “confirm the official site” notes no longer force MAYBE.
+- Next step is rebuilt from the remaining gap (for example a missing transcript). `decide()` still owns APPLY / MAYBE / SKIP; OCR still cannot mark field or experience MET.
+
+### Why
+Exact-string matching skipped real listings (Africa vs ET, “Currently enrolled university student” vs `bachelor_in_progress`) even when the profile and CV matched.
+
+## 2026-10-05 — Clearer analysis reasons and Ask HULUM listing answers
+
+### Changed
+- Analysis summary now includes the stored matcher reasons (not only APPLY / MAYBE / SKIP headlines).
+- Opportunity page shows the requirement **reason** first, then the listing line.
+- Ask HULUM: "why / what do you think" uses stored requirement reasons (and Groq explain when available). Deadline, documents, eligibility, and similar questions answer from the stored listing. Off-topic questions with an open listing stay on those stored facts instead of "not a product action".
+
+### Why
+Users saw highlights without a clean why, and general questions about an open opportunity were dropped as unsupported.
+
 ## 2026-10-03 — Ask HULUM Oromo lang a11y + smoke:browser
 
 ### Changed

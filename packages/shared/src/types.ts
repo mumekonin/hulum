@@ -152,6 +152,7 @@ export type DecisionAudit = {
 export type DecisionResult = {
   decision: Decision;
   fitScore: number;
+  matches: RequirementMatch[];
   matchedRequirements: RequirementMatch[];
   missingRequirements: RequirementMatch[];
   uncertainRequirements: RequirementMatch[];

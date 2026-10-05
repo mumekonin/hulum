@@ -21,7 +21,6 @@ import type { OpportunityService } from "../opportunities/service.js";
 import { profileForDecision } from "../profiles/documentContext.js";
 import type { DocumentStore } from "../profiles/documents.js";
 import type { ProfileService } from "../profiles/service.js";
-import { matchRequirements } from "../requirements/match.js";
 import { buildReadinessItems } from "../readiness/build.js";
 import type { Clock } from "../services/common/clock.js";
 import type { AnalysisStore } from "./store.js";
@@ -92,15 +91,14 @@ export function createAnalysisService(deps: {
           const result = timeOpsSync("decision", "decide", () =>
             decide(profile, opportunity, deps.clock),
           );
-          const matches = matchRequirements(profile, opportunity, deps.clock);
           return deps.store.create({
             userId,
             opportunityId,
             decision: result.decision,
             fitScore: result.fitScore,
-            summary: analysisSummaryFor(result.decision),
-            matches,
-            readiness: buildReadinessItems(matches),
+            summary: analysisSummaryFor(result.decision, result.matches),
+            matches: result.matches,
+            readiness: buildReadinessItems(result.matches),
             audit: result.audit,
           });
         },

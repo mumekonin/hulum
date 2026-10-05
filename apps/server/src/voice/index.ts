@@ -1,6 +1,7 @@
 import { randomUUID } from "node:crypto";
 import { Router } from "express";
 import {
+  Language,
   RequirementStatus,
   detectAskedLanguage,
   voiceActionSchema,
@@ -15,6 +16,7 @@ import {
   ok,
 } from "@hulum/shared";
 import { createGroqChatClient, type ChatClient } from "../ai/index.js";
+import { answerFromStoredFacts, answerOpportunityQuestion, clarifyStoredAnalysis } from "../ai/opportunityAnswer.js";
 import {
   formatProfileExtractReply,
   proposeProfileExtract,
@@ -124,7 +126,7 @@ function toAnalysisDetail(analysis: Analysis, opportunity: Opportunity, profile:
 export function createVoiceService(deps: {
   profiles: Pick<ProfileService, "getByUserId">;
   opportunities: Pick<OpportunityService, "list" | "getById">;
-  analyses: Pick<AnalysisService, "analyze" | "getById">;
+  analyses: Pick<AnalysisService, "analyze" | "getById"> & Partial<Pick<AnalysisService, "explain">>;
   clock?: Clock;
   chat?: ChatClient;
   persistSession?: (input: { id: string; userId: string; language: LanguageCode }) => Promise<void>;
@@ -219,11 +221,17 @@ export function createVoiceService(deps: {
             reply: await spoken(replyNeedOpportunity(language)),
           };
         }
-        const storedDecision =
-          analysis && analysis.opportunityId === opportunity.id ? analysis.decision : undefined;
+        const storedAnalysis =
+          analysis && analysis.opportunityId === opportunity.id ? analysis : undefined;
+        const storedFact = answerFromStoredFacts(input.text, opportunity, storedAnalysis);
+        const reply =
+          storedFact ??
+          (storedAnalysis
+            ? `${replyDetails(language, opportunity, storedAnalysis.decision)} ${clarifyStoredAnalysis(storedAnalysis)}`
+            : replyDetails(language, opportunity));
         return {
           intent: intent.intent,
-          reply: await spoken(replyDetails(language, opportunity, storedDecision)),
+          reply: await spoken(reply),
           opportunity,
         };
       }
@@ -342,9 +350,18 @@ export function createVoiceService(deps: {
             : undefined;
 
         if (intent.intent === "EXPLAIN_DECISION") {
+          let explanation = clarifyStoredAnalysis(analysis);
+          if (deps.analyses.explain !== undefined) {
+            try {
+              const explained = await deps.analyses.explain(analysis.id, language as Language);
+              explanation = explained.explanation;
+            } catch {
+              explanation = clarifyStoredAnalysis(analysis);
+            }
+          }
           return {
             intent: intent.intent,
-            reply: await spoken(replyExplain(language, analysis.decision, analysis.summary)),
+            reply: await spoken(replyExplain(language, analysis.decision, explanation)),
             analysis: detail,
             opportunity: relatedOpportunity,
           };
@@ -378,6 +395,23 @@ export function createVoiceService(deps: {
         return {
           intent: intent.intent,
           reply: await spoken(replyNeedAnalysis(language)),
+        };
+      }
+
+      if (opportunity) {
+        const storedAnalysis =
+          analysis && analysis.opportunityId === opportunity.id ? analysis : undefined;
+        const reply = await answerOpportunityQuestion({
+          question: input.text,
+          language,
+          opportunity,
+          ...(storedAnalysis === undefined ? {} : { analysis: storedAnalysis }),
+          ...(deps.chat === undefined ? {} : { chat: deps.chat }),
+        });
+        return {
+          intent: storedAnalysis ? "EXPLAIN_DECISION" : "OPEN_OPPORTUNITY",
+          reply: await spoken(reply),
+          opportunity,
         };
       }
 

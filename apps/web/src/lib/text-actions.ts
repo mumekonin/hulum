@@ -184,7 +184,7 @@ export async function runTextAction(input: {
     };
   }
 
-  if (/ለምን|why (apply|maybe|skip|did you)|explain|^why\b|maalif|maaliif/i.test(value)) {
+  if (/ለምን|why (apply|maybe|skip|did you)|explain|^why\b|maalif|maaliif|what do you think|your opinion|is this (good|worth)|do you recommend/i.test(value)) {
     if (!input.analysisId) {
       return { reply: "Analyze an opportunity first. Explanation follows a stored decision." };
     }
@@ -355,17 +355,50 @@ export async function runTextAction(input: {
     return { reply: listReply(opportunities, language), opportunityId: opportunities[0]?.id };
   }
 
-  if (/open|details|tell me about this|about this opportunity|current opportunity/i.test(value)) {
+  if (/open|details|tell me about this|about this opportunity|current opportunity|deadline|documents?|requirements?|eligib|where (do i|to) apply/i.test(value)) {
     if (!input.opportunityId) {
       return { reply: "Open an opportunity first, then ask about it." };
     }
     const item = await api<Opportunity>(`/api/opportunities/${input.opportunityId}`);
-    const decision = input.analysisId
-      ? (await api<Analysis>(`/api/analyses/${input.analysisId}`)).decision
+    const analysis = input.analysisId
+      ? await api<Analysis>(`/api/analyses/${input.analysisId}`)
       : undefined;
-    const stored = decision ? ` Stored HULUM decision: ${decision}.` : "";
+    const docs = item.documentRequirements.join("; ");
+    const deadlineReply = /deadline|due date/i.test(value)
+      ? `Stored deadline: ${item.deadline}. Confirm it on the official source: ${item.sourceUrl}.`
+      : undefined;
+    const documentReply =
+      /\bdocuments?\b/i.test(value)
+        ? docs
+          ? `Stored document requirements: ${docs}. Confirm on the official source: ${item.sourceUrl}.`
+          : `This listing does not store specific document requirements. Confirm on the official source: ${item.sourceUrl}.`
+        : undefined;
+    const why =
+      analysis === undefined
+        ? ""
+        : ` HULUM decision: ${analysis.decision}. ${analysis.summary} Next: ${analysis.nextAction}.`;
+    const reply =
+      deadlineReply ??
+      documentReply ??
+      `${item.title} — ${item.organization}. Type ${item.type}. Deadline ${item.deadline}.${item.description.trim() ? ` ${item.description.trim()}` : ""} Official source: ${item.sourceUrl}.${why} Confirm details on the official page.`;
     return {
-      reply: `${item.title} — ${item.organization}. Type ${item.type}. Deadline ${item.deadline}. Official source: ${item.sourceUrl}.${stored} Confirm details on the official page.`,
+      reply,
+      opportunityId: item.id,
+      analysisId: input.analysisId,
+    };
+  }
+
+  if (input.opportunityId) {
+    const item = await api<Opportunity>(`/api/opportunities/${input.opportunityId}`);
+    const analysis = input.analysisId
+      ? await api<Analysis>(`/api/analyses/${input.analysisId}`)
+      : undefined;
+    const why =
+      analysis === undefined
+        ? " Analyze this listing for APPLY / MAYBE / SKIP against your profile."
+        : ` HULUM decision: ${analysis.decision}. ${analysis.summary} Next: ${analysis.nextAction}.`;
+    return {
+      reply: `${item.title} — ${item.organization}. Deadline ${item.deadline}. Official source: ${item.sourceUrl}.${why} I can only answer from the stored listing and your analysis — not from facts that are not on the page.`,
       opportunityId: item.id,
       analysisId: input.analysisId,
     };

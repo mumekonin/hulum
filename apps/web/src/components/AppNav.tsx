@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { initialsOf, useAccount, type Account } from "@/lib/account";
 import { clearSession } from "@/lib/storage";
@@ -16,8 +16,6 @@ const primaryLinks: NavLink[] = [
   { href: "/readiness", label: "Readiness" },
   { href: "/assistant", label: "Ask HULUM" },
 ];
-
-const profileLink: NavLink = { href: "/profile", label: "Profile" };
 
 const moreLinks: NavLink[] = [
   { href: "/screenshot", label: "Screenshot" },
@@ -64,12 +62,10 @@ export function AppNav() {
         <Wordmark />
         <nav aria-label="Primary" className="mt-10 flex flex-1 flex-col">
           <NavList links={primaryLinks} pathname={pathname} />
-          <div className="my-5 border-t border-line" />
-          <NavList links={[profileLink]} pathname={pathname} />
           <p className="mt-8 px-3 text-xs uppercase tracking-[0.14em] text-muted">More</p>
           <NavList links={moreLinks} pathname={pathname} small />
         </nav>
-        <AccountBlock account={account} onSignOut={signOut} />
+        <AccountMenu account={account} onSignOut={signOut} showAppearance />
       </aside>
 
       <header className="sticky top-0 z-40 border-b border-line bg-paper lg:hidden">
@@ -97,19 +93,10 @@ export function AppNav() {
             className="max-h-[calc(100dvh-3.5rem)] overflow-y-auto overscroll-contain border-t border-line px-2 pb-4 pt-2"
           >
             <NavList links={primaryLinks} pathname={pathname} />
-            <div className="my-3 border-t border-line" />
-            <NavList links={[profileLink]} pathname={pathname} />
             <p className="mt-4 px-3 pb-1 text-xs uppercase tracking-[0.14em] text-muted">More</p>
             <NavList links={moreLinks} pathname={pathname} small />
             <div className="mt-3 border-t border-line pt-3">
-              <AccountSummary account={account} />
-              <button
-                type="button"
-                onClick={signOut}
-                className="mt-2 inline-flex min-h-11 items-center px-3 text-sm text-muted hover:text-ink"
-              >
-                Sign out
-              </button>
+              <AccountMenu account={account} onSignOut={signOut} />
             </div>
           </nav>
         ) : null}
@@ -175,37 +162,111 @@ function Avatar({ name }: { name: string }) {
   );
 }
 
-function AccountSummary({ account }: { account: Account | null }) {
+function Chevron({ open }: { open: boolean }) {
   return (
-    <Link
-      href="/profile"
-      className="flex min-h-11 items-center gap-3 px-3 py-2 hover:bg-surface-muted"
+    <svg
+      viewBox="0 0 16 16"
+      className={`h-4 w-4 shrink-0 text-muted transition-transform ${open ? "rotate-180" : ""}`}
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      aria-hidden
     >
-      <Avatar name={account?.name ?? ""} />
-      <span className="min-w-0">
-        <span className="block truncate text-sm text-ink">{account?.name ?? "Your profile"}</span>
-        {account?.email ? (
-          <span className="block truncate text-xs text-muted">{account.email}</span>
-        ) : null}
-      </span>
-    </Link>
+      <path d="M4 6.5 8 10.5 12 6.5" strokeLinecap="round" strokeLinejoin="round" />
+    </svg>
   );
 }
 
-function AccountBlock({ account, onSignOut }: { account: Account | null; onSignOut: () => void }) {
+const menuItemClass =
+  "flex min-h-11 w-full items-center px-3 text-left text-sm text-ink transition-colors hover:bg-surface-muted";
+
+function AccountMenu({
+  account,
+  onSignOut,
+  showAppearance = false,
+}: {
+  account: Account | null;
+  onSignOut: () => void;
+  showAppearance?: boolean;
+}) {
+  const pathname = usePathname();
+  const menuId = useId();
+  const wrap = useRef<HTMLDivElement>(null);
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    setOpen(false);
+  }, [pathname]);
+
+  useEffect(() => {
+    if (!open) return;
+    const onPointer = (event: MouseEvent) => {
+      if (!wrap.current?.contains(event.target as Node)) {
+        setOpen(false);
+      }
+    };
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") {
+        setOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", onPointer);
+    window.addEventListener("keydown", onKey);
+    return () => {
+      document.removeEventListener("mousedown", onPointer);
+      window.removeEventListener("keydown", onKey);
+    };
+  }, [open]);
+
+  const name = account?.name?.trim() || "Your account";
+
   return (
-    <div className="border-t border-line pt-4">
-      <AccountSummary account={account} />
-      <div className="mt-2 flex items-center justify-between px-1">
-        <button
-          type="button"
-          onClick={onSignOut}
-          className="inline-flex min-h-11 items-center px-2 text-sm text-muted hover:text-ink"
+    <div ref={wrap} className="relative">
+      {open ? (
+        <div
+          id={menuId}
+          role="menu"
+          aria-label="Account"
+          className="mb-2 overflow-hidden rounded-lg border border-line bg-surface shadow-[0_8px_24px_-12px_rgba(20,20,20,0.18)]"
         >
-          Sign out
-        </button>
-        <ThemeToggle />
-      </div>
+          <Link
+            role="menuitem"
+            href="/profile"
+            className={menuItemClass}
+            onClick={() => setOpen(false)}
+          >
+            Profile
+          </Link>
+          <button role="menuitem" type="button" onClick={onSignOut} className={menuItemClass}>
+            Log out
+          </button>
+          {showAppearance ? (
+            <div className="flex items-center justify-between border-t border-line px-3 py-1">
+              <span className="text-xs text-muted">Appearance</span>
+              <ThemeToggle className="h-10 w-10" />
+            </div>
+          ) : null}
+        </div>
+      ) : null}
+      <button
+        type="button"
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-controls={menuId}
+        onClick={() => setOpen((value) => !value)}
+        className="flex w-full items-center gap-3 rounded-md px-2 py-2 text-left transition-colors hover:bg-surface-muted"
+      >
+        <Avatar name={account?.name ?? ""} />
+        <span className="min-w-0 flex-1">
+          <span className="block truncate text-sm font-medium text-ink">{name}</span>
+          {account?.email ? (
+            <span className="block truncate text-xs text-muted">{account.email}</span>
+          ) : (
+            <span className="block text-xs text-muted">Account</span>
+          )}
+        </span>
+        <Chevron open={open} />
+      </button>
     </div>
   );
 }

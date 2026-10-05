@@ -176,4 +176,86 @@ describe("matchRequirements", () => {
     );
     expect(status(result, RequirementKey.EDUCATION)).toBe(RequirementStatus.UNCERTAIN);
   });
+
+  it("treats Ethiopia, ET, and Africa as the same country eligibility", () => {
+    const ethiopia = matchRequirements({ ...profile, country: "Ethiopia" }, opportunity, clock);
+    expect(status(ethiopia, RequirementKey.COUNTRY)).toBe(RequirementStatus.MET);
+    const africa = matchRequirements(profile, { ...opportunity, countryEligibility: ["Africa"] }, clock);
+    expect(status(africa, RequirementKey.COUNTRY)).toBe(RequirementStatus.MET);
+    const reason = africa.find((item) => item.key === RequirementKey.COUNTRY)?.reason ?? "";
+    expect(reason).toMatch(/ET/i);
+    expect(reason).toMatch(/Africa/i);
+  });
+
+  it("treats Computer Science and computer_science as the same field", () => {
+    const result = matchRequirements(
+      { ...profile, fieldOfStudy: "Computer Science" },
+      { ...opportunity, fieldRequirements: ["computer science, software engineering, or related STEM"] },
+      clock,
+    );
+    expect(status(result, RequirementKey.FIELD)).toBe(RequirementStatus.MET);
+    expect(result.find((item) => item.key === RequirementKey.FIELD)?.reason).toMatch(/Computer Science/i);
+  });
+
+  it("treats English and en as the same language", () => {
+    const result = matchRequirements(
+      { ...profile, languages: ["English", "Amharic"] },
+      { ...opportunity, languageRequirements: "English" },
+      clock,
+    );
+    expect(status(result, RequirementKey.LANGUAGE)).toBe(RequirementStatus.MET);
+  });
+
+  it("reads catalog prose against the profile instead of requiring exact enum strings", () => {
+    const result = matchRequirements(
+      {
+        ...profile,
+        educationLevel: "bachelor_in_progress",
+        fieldOfStudy: "Computer Science",
+        country: "Ethiopia",
+        languages: ["English", "Amharic"],
+        documentsHeld: ["CV"],
+        documentText: "Label: CV\nComputer Science student at Addis Ababa University. One software internship.",
+      },
+      {
+        ...opportunity,
+        countryEligibility: ["Africa"],
+        educationRequirements: "Currently enrolled university student in computer science or a related field.",
+        fieldRequirements: "Computer science, software engineering, or related STEM.",
+        experienceRequirements: "Strong programming fundamentals; internships are helpful but not required.",
+        languageRequirements: "English",
+        documentRequirements: ["CV", "Transcript"],
+        otherRequirements: ["Confirm current application windows on the official A2SV site."],
+      },
+      clock,
+    );
+    expect(status(result, RequirementKey.COUNTRY)).toBe(RequirementStatus.MET);
+    expect(status(result, RequirementKey.EDUCATION)).toBe(RequirementStatus.MET);
+    expect(status(result, RequirementKey.FIELD)).toBe(RequirementStatus.MET);
+    expect(status(result, RequirementKey.LANGUAGE)).toBe(RequirementStatus.MET);
+    expect(status(result, RequirementKey.EXPERIENCE)).toBe(RequirementStatus.NOT_APPLICABLE);
+    expect(status(result, RequirementKey.OTHER)).toBe(RequirementStatus.NOT_APPLICABLE);
+    expect(status(result, RequirementKey.DOCUMENTS)).toBe(RequirementStatus.UNCERTAIN);
+    expect(result.find((item) => item.key === RequirementKey.DOCUMENTS)?.reason).toMatch(/Transcript/i);
+  });
+
+  it("marks experience MET only from structured years, never from CV wording", () => {
+    const met = matchRequirements(
+      { ...profile, yearsExperience: 3, experience: "Backend engineering" },
+      { ...opportunity, experienceRequirements: ["2 years"] },
+      clock,
+    );
+    expect(status(met, RequirementKey.EXPERIENCE)).toBe(RequirementStatus.MET);
+    const fromCv = matchRequirements(
+      {
+        ...profile,
+        yearsExperience: 0,
+        experience: null,
+        documentText: "Label: CV\nSoftware engineer with 2 years of backend experience.",
+      },
+      { ...opportunity, experienceRequirements: ["2 years"] },
+      clock,
+    );
+    expect(status(fromCv, RequirementKey.EXPERIENCE)).toBe(RequirementStatus.UNCERTAIN);
+  });
 });
