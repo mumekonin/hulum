@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-10-07 — Profile redesign + photo + CV update
+
+- `/profile` reorganized into header, completeness, sections, CV card, and other documents. Same profile/documents API; no fields removed.
+- New: `017_profile_photo_and_file_names.sql` (`profile_photos`, `profile_documents.file_name`). Run `npm run db:migrate` on every environment.
+- CV update replaces the stored file in one statement (`replacesId`); no duplicate CV rows.
+- Verified locally with `npm run smoke:profile` (photo add/change/reload, CV upload/update/reload, edit/reload, documents add/update/view, documents load failure, themes, three widths).
+
+Still open: storage is Postgres `bytea` like existing documents (no Supabase Storage bucket in this project), so large-scale photo hosting/CDN is not in scope.
+
+---
+
 ## 2026-10-07 — Password reset by email
 
 - `/forgot-password` sends `POST /api/auth/password-reset/request`; email links to `CLIENT_URL/reset-password#token=…` (single use, 30 minutes, SHA-256 hash stored in `016_password_reset_tokens.sql`).

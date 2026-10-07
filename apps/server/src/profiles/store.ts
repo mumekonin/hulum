@@ -2,11 +2,13 @@ import type { PatchProfileRequest, Profile, ProfileWrite } from "@hulum/shared";
 import { dbConnect, dbQuery } from "../db/rls-session.js";
 import { HttpError } from "../http/errors.js";
 import { mapProfileRow, type ProfileRow, type UserRow } from "./mapper.js";
+import { createPgPhotoStore } from "./photos.js";
 
 export type StoredProfile = {
   name: string;
   email: string;
   profile: Profile;
+  photoUpdatedAt?: string | null;
 };
 
 export type ProfileStore = {
@@ -75,7 +77,11 @@ export function createPgProfileStore(): ProfileStore {
     if (row === undefined) {
       return undefined;
     }
-    return toStored(row, await documentLabels(userId));
+    const [labels, photoUpdatedAt] = await Promise.all([
+      documentLabels(userId),
+      createPgPhotoStore().updatedAt(userId),
+    ]);
+    return { ...toStored(row, labels), photoUpdatedAt };
   }
 
   return {

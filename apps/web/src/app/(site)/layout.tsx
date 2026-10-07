@@ -8,7 +8,7 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
     <div className="site min-h-screen bg-paper text-ink">
       <AppNav />
       <div className="lg:pl-60">
-        <main id="main-content" tabIndex={-1} className="mx-auto min-h-[80vh] max-w-5xl px-5 py-10 sm:px-8 lg:py-14">
+        <main id="main-content" tabIndex={-1} className="mx-auto min-h-[80vh] max-w-5xl px-5 py-10 sm:px-8 lg:py-14 has-[[data-wide-page]]:max-w-[72rem]">
           <RequireAuth>
             <RequireProfile>
               {children}

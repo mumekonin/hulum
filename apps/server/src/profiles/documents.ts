@@ -19,6 +19,7 @@ export type ProfileDocumentRow = {
   label: string;
   mime_type: string;
   bytes: Buffer;
+  file_name?: string | null;
   created_at: Date | string;
   extracted_text?: string | null;
   extracted_at?: Date | string | null;
@@ -30,7 +31,15 @@ export type DocumentStore = {
   labels(userId: string): Promise<string[]>;
   texts(userId: string): Promise<DocumentTextRow[]>;
   ensureExtracted(userId: string): Promise<void>;
-  create(input: { userId: string; label: string; mimeType: string; bytes: Buffer }): Promise<ProfileDocument>;
+  /** With replacesId, the new file takes that document's place in the same statement. */
+  create(input: {
+    userId: string;
+    label: string;
+    mimeType: string;
+    bytes: Buffer;
+    fileName?: string | null;
+    replacesId?: string;
+  }): Promise<ProfileDocument>;
   getFile(userId: string, documentId: string): Promise<{ mimeType: string; bytes: Buffer } | undefined>;
   remove(userId: string, documentId: string): Promise<boolean>;
 };
@@ -42,9 +51,12 @@ function toView(row: Omit<ProfileDocumentRow, "bytes">): ProfileDocument {
     userId: row.user_id,
     label: row.label,
     mimeType: row.mime_type,
+    fileName: row.file_name ?? null,
     createdAt: created,
   };
 }
+
+const VIEW_COLUMNS = "id, user_id, label, mime_type, file_name, created_at";
 
 async function saveExtract(
   documentId: string,
@@ -64,7 +76,7 @@ export function createPgDocumentStore(): DocumentStore {
   return {
     async list(userId: string): Promise<ProfileDocument[]> {
       const result = await dbQuery<Omit<ProfileDocumentRow, "bytes">>(
-        `select id, user_id, label, mime_type, created_at
+        `select ${VIEW_COLUMNS}
          from profile_documents
          where user_id = $1
          order by created_at desc`,
@@ -119,22 +131,36 @@ export function createPgDocumentStore(): DocumentStore {
     },
 
     async create(input): Promise<ProfileDocument> {
-      const count = await dbQuery<{ n: string }>(
-        `select count(*)::text as n from profile_documents where user_id = $1`,
-        [input.userId],
-      );
-      if (Number(count.rows[0]?.n ?? "0") >= MAX_DOCUMENTS_PER_USER) {
-        throw new HttpError(400, "INVALID_INPUT", "You can store at most 8 document photos.");
-      }
       if (input.bytes.length > MAX_DOCUMENT_BYTES) {
         throw new HttpError(413, "PAYLOAD_TOO_LARGE", "Each document photo must be 4 MB or smaller.");
       }
+      const replacesId = input.replacesId ?? null;
+      if (replacesId !== null) {
+        const existing = await dbQuery(
+          `select 1 from profile_documents where id = $1 and user_id = $2`,
+          [replacesId, input.userId],
+        );
+        if (existing.rows.length === 0) {
+          throw new HttpError(404, "NOT_FOUND", "The document you are updating no longer exists.");
+        }
+      } else {
+        const count = await dbQuery<{ n: string }>(
+          `select count(*)::text as n from profile_documents where user_id = $1`,
+          [input.userId],
+        );
+        if (Number(count.rows[0]?.n ?? "0") >= MAX_DOCUMENTS_PER_USER) {
+          throw new HttpError(400, "INVALID_INPUT", "You can store at most 8 document photos.");
+        }
+      }
       try {
         const result = await dbQuery<Omit<ProfileDocumentRow, "bytes">>(
-          `insert into profile_documents (user_id, label, mime_type, bytes, extract_status)
-           values ($1, $2, $3, $4, 'pending')
-           returning id, user_id, label, mime_type, created_at`,
-          [input.userId, input.label, input.mimeType, input.bytes],
+          `with replaced as (
+             delete from profile_documents where id = $6 and user_id = $1
+           )
+           insert into profile_documents (user_id, label, mime_type, bytes, file_name, extract_status)
+           values ($1, $2, $3, $4, $5, 'pending')
+           returning ${VIEW_COLUMNS}`,
+          [input.userId, input.label, input.mimeType, input.bytes, input.fileName ?? null, replacesId],
         );
         const row = result.rows[0];
         if (row === undefined) {
@@ -194,16 +220,31 @@ function isPgError(error: unknown): error is { code: string } {
 
 const MAX_BASE64_CHARS = 6_000_000;
 
+const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
 const uploadSchema = z.object({
   label: z.string().trim().min(1).max(80),
   mimeType: z.enum(DOCUMENT_MIME_TYPES),
   fileBase64: z.string().min(24).max(MAX_BASE64_CHARS),
+  fileName: z.string().optional(),
+  replacesId: z.string().regex(UUID).optional(),
 });
+
+/** Keeps only the base name, without control characters, so it is safe to show and download. */
+export function cleanFileName(value: string | undefined): string | null {
+  if (value === undefined) return null;
+  const base = value.split(/[\\/]/).pop() ?? "";
+  // eslint-disable-next-line no-control-regex
+  const cleaned = base.replace(/[\u0000-\u001f\u007f"<>|]/g, "").trim().slice(0, 200);
+  return cleaned === "" ? null : cleaned;
+}
 
 export function parseDocumentUpload(body: unknown): {
   label: string;
   mimeType: (typeof DOCUMENT_MIME_TYPES)[number];
   bytes: Buffer;
+  fileName: string | null;
+  replacesId?: string;
 } {
   const parsed = uploadSchema.safeParse(body);
   if (!parsed.success) {
@@ -221,7 +262,13 @@ export function parseDocumentUpload(body: unknown): {
   if (bytes.length === 0 || bytes.length > MAX_DOCUMENT_BYTES) {
     throw new HttpError(413, "PAYLOAD_TOO_LARGE", "Each document photo must be 4 MB or smaller.");
   }
-  return { label: parsed.data.label, mimeType: parsed.data.mimeType, bytes };
+  return {
+    label: parsed.data.label,
+    mimeType: parsed.data.mimeType,
+    bytes,
+    fileName: cleanFileName(parsed.data.fileName),
+    ...(parsed.data.replacesId ? { replacesId: parsed.data.replacesId } : {}),
+  };
 }
 
 export { formatDocumentTextBag };

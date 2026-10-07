@@ -65,6 +65,8 @@ export type ProfileView = {
   email: string;
   profile: Profile;
   completeness: ProfileCompleteness;
+  /** When the profile photo was last set; null when there is none. Display only. */
+  photoUpdatedAt?: string | null;
   /** Present when the API has SESSION_SECRET and issues X-Hulum-Session tokens. */
   sessionToken?: string;
 };
