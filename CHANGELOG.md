@@ -2,6 +2,12 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-07 — MAYBE / SKIP badge hover
+
+### Changed
+- MAYBE and SKIP decision badges lift slightly on mouse hover, with a soft light that follows the cursor (MAYBE warm, SKIP tighter plus one left-to-right sweep). APPLY is unchanged.
+- Hover only, on devices with a fine pointer; nothing changes at rest, on touch, or (beyond border and shadow) with reduced motion. Badges stay read-only labels; the decision still comes only from the server.
+
 ## 2026-10-07 — Working password reset
 
 ### Changed

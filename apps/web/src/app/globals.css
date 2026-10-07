@@ -211,3 +211,116 @@ h3,
 .skip-link:focus {
   top: 1rem;
 }
+
+/*
+ * MAYBE / SKIP badge hover. Badges are read-only labels, so there is no press state.
+ * At rest nothing here is visible; effects apply only to a fine pointer that can hover.
+ * MAYBE: soft warm light that follows the cursor. SKIP: one left-to-right sweep on enter,
+ * plus a tighter cursor light.
+ */
+:root {
+  --touch-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --touch-maybe-light: rgb(255 253 247 / 0.95);
+  --touch-skip-light: rgb(255 255 255 / 0.85);
+  --touch-maybe-shadow: 0 6px 16px -8px rgb(70 52 24 / 0.32);
+  --touch-skip-shadow: 0 4px 10px -6px rgb(17 17 17 / 0.32);
+}
+
+[data-theme="dark"] {
+  --touch-maybe-light: rgb(245 238 222 / 0.09);
+  --touch-skip-light: rgb(245 243 237 / 0.1);
+  --touch-maybe-shadow: 0 8px 18px -8px rgb(0 0 0 / 0.75);
+  --touch-skip-shadow: 0 5px 12px -6px rgb(0 0 0 / 0.8);
+}
+
+.decision-touch {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  transition:
+    transform 220ms var(--touch-ease),
+    box-shadow 220ms var(--touch-ease),
+    border-color 220ms var(--touch-ease);
+}
+
+.decision-touch::before,
+.decision-touch::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 240ms var(--touch-ease);
+}
+
+.decision-touch--maybe::before {
+  background: radial-gradient(
+    6em circle at var(--touch-x, 50%) var(--touch-y, 50%),
+    var(--touch-maybe-light),
+    transparent 70%
+  );
+}
+
+.decision-touch--skip::before {
+  background: radial-gradient(
+    3.5em circle at var(--touch-x, 50%) var(--touch-y, 50%),
+    var(--touch-skip-light),
+    transparent 60%
+  );
+}
+
+.decision-touch--skip::after {
+  background: linear-gradient(
+    100deg,
+    transparent 30%,
+    var(--touch-skip-light) 50%,
+    transparent 70%
+  );
+  transform: translateX(-110%);
+}
+
+@keyframes decision-sweep {
+  from {
+    transform: translateX(-110%);
+  }
+  to {
+    transform: translateX(110%);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .decision-touch:hover {
+    transform: translateY(-2px) scale(1.015);
+  }
+
+  .decision-touch:hover::before {
+    opacity: 1;
+  }
+
+  .decision-touch--maybe:hover {
+    border-color: color-mix(in srgb, var(--hulum-maybe) 65%, transparent);
+    box-shadow: var(--touch-maybe-shadow);
+  }
+
+  .decision-touch--skip:hover {
+    border-color: color-mix(in srgb, var(--hulum-skip) 80%, transparent);
+    box-shadow: var(--touch-skip-shadow);
+  }
+
+  .decision-touch--skip:hover::after {
+    opacity: 1;
+    animation: decision-sweep 560ms var(--touch-ease) both;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .decision-touch:hover {
+    transform: none;
+  }
+
+  .decision-touch::before,
+  .decision-touch::after {
+    display: none;
+  }
+}
