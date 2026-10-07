@@ -99,6 +99,20 @@ describe("014_hulum_app_role.sql", () => {
   });
 });
 
+describe("016_password_reset_tokens.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "016_password_reset_tokens.sql"), "utf8");
+
+  it("stores hashed single-use tokens behind a service-only policy", () => {
+    expect(sql).toContain("create table if not exists password_reset_tokens");
+    expect(sql).toContain("token_hash text not null");
+    expect(sql).toContain("used_at timestamptz");
+    expect(sql).toContain("on delete cascade");
+    expect(sql).toContain("enable row level security");
+    expect(sql).toContain("current_setting('app.rls_bypass', true) = 'on'");
+    expect(sql).not.toMatch(/\btoken text\b/);
+  });
+});
+
 describe("011_saved_opportunities.sql", () => {
   const sql = fs.readFileSync(path.join(migrationsDir(), "011_saved_opportunities.sql"), "utf8");
 

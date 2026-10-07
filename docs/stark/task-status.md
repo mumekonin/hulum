@@ -6,6 +6,17 @@
 
 ---
 
+## 2026-10-07 — Password reset by email
+
+- `/forgot-password` sends `POST /api/auth/password-reset/request`; email links to `CLIENT_URL/reset-password#token=…` (single use, 30 minutes, SHA-256 hash stored in `016_password_reset_tokens.sql`).
+- `/reset-password` verifies the link, then `POST /api/auth/password-reset/confirm` sets a new scrypt hash. Same 8-character rule as sign-up.
+- HULUM auth is its own `users` table + JWT, not Supabase Auth, so reset lives in that auth module (SMTP via `SMTP_*` / `MAIL_FROM`).
+- Verified locally with `npm run smoke:password-reset` (local SMTP inbox): request → email → link → new password → sign in; old password and reused link rejected.
+
+Still open: delivery through a real SMTP provider (needs values in `apps/server/.env`), deploy, live mic/STT, CI require-check (admin), backup video.
+
+---
+
 ## 2026-10-03 — Ask HULUM Oromo lang a11y + smoke:browser
 
 - Quick-action buttons set `lang={om|am}` from Reply-in (not Ethiopic-only heuristic).

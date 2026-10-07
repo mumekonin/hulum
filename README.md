@@ -26,7 +26,7 @@ A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that deci
 
 ## What v0.1 actually does
 
-- **Sign in** — email/password register + login (JWT in `X-Hulum-Session`). Create account at `/verify` (register only—not email OTP). Optional Google OAuth when client id/secret are set.
+- **Sign in** — email/password register + login (JWT in `X-Hulum-Session`). Create account at `/verify` (register only—not email OTP). Optional Google OAuth when client id/secret are set. **Forgot password?** emails a single-use 30-minute link to `/reset-password` when `SMTP_HOST` + `MAIL_FROM` are set; until then the page says email is unavailable.
 - **Onboarding and profile** — new accounts walk a 4-step setup (`/onboarding`); `/profile` shows what you saved, lets you edit it, and keeps a private CV (view, download, replace). No one-click Abeba demo button.
 - **Discover** — keyword search and filters over the stored catalog, including your stored decision. It never invents listings.
 - **My opportunities and Readiness** — saved listings, past APPLY / MAYBE / SKIP results, and preparation progress (`/my-opportunities`, `/readiness`).
@@ -40,7 +40,7 @@ A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that deci
 - **Light and dark mode** — follows the OS until you choose.
 - **Backup mode** — Voice unavailable keeps typing and the rest of the UI.
 
-Out of v0.1: auto-apply, payments, native mobile, inventing listings, ScholarXIV as decision input, password-reset email, production deploy.
+Out of v0.1: auto-apply, payments, native mobile, inventing listings, ScholarXIV as decision input, production deploy.
 
 ---
 
@@ -155,6 +155,7 @@ v0.1 is **not deployed**. When a host exists:
 | `DATABASE_URL` / `SUPABASE_*` | yes for `npm run dev` | Postgres for the default API |
 | `SESSION_SECRET` | yes in production | JWT signing for `X-Hulum-Session` |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | no | Optional Google OAuth |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` / `SMTP_USER` / `SMTP_PASS` / `MAIL_FROM` | no | Password reset email. Links use `CLIENT_URL` + `/reset-password` |
 
 The API refuses to start in production without `CLIENT_URL` and `SESSION_SECRET`.
 

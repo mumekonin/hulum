@@ -984,7 +984,7 @@ The assistant must not become an unrestricted chatbot.
 - [x] **P0** Sanitize logs.
 - [x] **P0** Protect database access.
 - [x] **P0** Protect admin/debug routes if any.
-- [x] **P1** Add authentication if required. <!-- JWT + optional Google; no password-reset email/OTP -->
+- [x] **P1** Add authentication if required. <!-- JWT + optional Google; password reset by email (SMTP_* + CLIENT_URL); no OTP -->
 - [x] **P1** Add authorization if required. <!-- JWT session scopes owned routes; not email OTP -->
 - [x] **P1** Review data exposure.
 - [x] **P1** Review retention.

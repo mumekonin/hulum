@@ -12,7 +12,7 @@ const EXPLAIN_PATH = /^\/api\/analyses\/[^/]+\/explain\/?$/;
 const READINESS_PLAN_PATH = /^\/api\/analyses\/[^/]+\/readiness\/plan\/?$/;
 const PROFILE_EXTRACT_PATH = /^\/api\/ai\/profile-extract\/?$/;
 const SCREENSHOT_ANALYZE_PATH = /^\/api\/ai\/screenshot-analyze\/?$/;
-const AUTH_PATH = /^\/api\/auth\/(login|register)\/?$/;
+const AUTH_PATH = /^\/api\/auth\/(login|register|password-reset\/(request|verify|confirm))\/?$/;
 
 export type RateLimiter = {
   allow(key: string): boolean;

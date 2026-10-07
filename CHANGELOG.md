@@ -2,6 +2,19 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-07 — Working password reset
+
+### Changed
+- `/forgot-password` sends a real request (`POST /api/auth/password-reset/request`). It shows "If an account exists…" for any address, so it does not reveal accounts.
+- Email (SMTP via `SMTP_*`, `MAIL_FROM`) links to `CLIENT_URL/reset-password#token=…`. The token is single use, expires in 30 minutes, and only its SHA-256 hash is stored (`016_password_reset_tokens.sql`, service-only RLS).
+- New `/reset-password`: checks the link, then sets a new password with the sign-up rule (`PASSWORD_MIN_LENGTH` in shared). Used, expired, and malformed links each get a clear message and a "Request a new link" path.
+- A new request invalidates older links. Reset endpoints share the sign-in rate limit.
+- Without SMTP configured, the request returns `MAIL_UNAVAILABLE` instead of pretending an email was sent.
+- `npm run smoke:password-reset`: end-to-end check with a local SMTP inbox.
+
+### Why
+"Forgot password?" opened a page whose button only toggled local state; no request or email existed. HULUM accounts live in its own `users` table (scrypt + JWT), not Supabase Auth, so the reset is built into that auth module.
+
 ## 2026-10-05 — Account menu on the sidebar
 
 ### Changed

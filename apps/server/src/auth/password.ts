@@ -1,4 +1,5 @@
 import { randomBytes, scrypt as scryptCallback, timingSafeEqual } from "node:crypto";
+import { PASSWORD_MIN_LENGTH } from "@hulum/shared";
 
 const KEY_LEN = 32;
 const N = 16384;
@@ -23,8 +24,8 @@ function scryptHash(
 }
 
 export function assertPasswordStrength(password: string): void {
-  if (password.length < 8) {
-    throw new Error("Password must be at least 8 characters.");
+  if (password.length < PASSWORD_MIN_LENGTH) {
+    throw new Error(`Password must be at least ${String(PASSWORD_MIN_LENGTH)} characters.`);
   }
 }
 
