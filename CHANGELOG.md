@@ -2,6 +2,17 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-07 — Profile redesign, profile photo, CV update
+
+### Changed
+- `/profile` is reorganized from one long field list into a profile: header (photo, name, field · education, location · languages, email, Edit profile), completeness bar from the existing calculation with "Add missing details" that focuses the first missing field, then Education, Skills & experience (chips + experience), Interests, Languages (+ reply language), CV, and Other documents.
+- Profile photo: add, change, or remove. Cropped to 512px and re-encoded in the browser (drops camera metadata such as GPS) and stored in `profile_photos` (migration `017`, owner-only RLS). Display-only; the decision engine never reads it.
+- CV: "Upload CV" only when there is none; once stored, the card shows the file name and date with View and Update CV (plus Download / Remove). Update swaps the file in one statement (`replacesId`), so there is never a duplicate CV record and the 8-document limit can't block an update.
+- Other documents get View and Update next to Remove. Uploads keep the original file name (`profile_documents.file_name`), shown in the list and used for downloads.
+- While documents load, or if loading fails, the CV card shows loading / Try again instead of a false "No CV uploaded yet".
+- The profile page uses a wider content column (72rem); the account button in the sidebar is highlighted on `/profile`.
+- `npm run smoke:profile` walks every state in a real browser (light/dark, desktop/tablet/mobile).
+
 ## 2026-10-07 — MAYBE / SKIP badge hover
 
 ### Changed

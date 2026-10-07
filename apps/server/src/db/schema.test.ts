@@ -113,6 +113,22 @@ describe("016_password_reset_tokens.sql", () => {
   });
 });
 
+describe("017_profile_photo_and_file_names.sql", () => {
+  const sql = fs.readFileSync(
+    path.join(migrationsDir(), "017_profile_photo_and_file_names.sql"),
+    "utf8",
+  );
+
+  it("adds one owner-only photo per user and document file names", () => {
+    expect(sql).toContain("add column if not exists file_name text");
+    expect(sql).toContain("create table if not exists profile_photos");
+    expect(sql).toContain("user_id uuid primary key");
+    expect(sql).toContain("mime_type in ('image/jpeg', 'image/png', 'image/webp')");
+    expect(sql).toContain("enable row level security");
+    expect(sql).toContain("user_id = app_current_user_id()");
+  });
+});
+
 describe("011_saved_opportunities.sql", () => {
   const sql = fs.readFileSync(path.join(migrationsDir(), "011_saved_opportunities.sql"), "utf8");
 

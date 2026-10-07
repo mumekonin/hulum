@@ -8,6 +8,7 @@ import {
   parseDocumentUpload,
   type DocumentStore,
 } from "./documents.js";
+import { createPgPhotoStore, parsePhotoUpload, type PhotoStore } from "./photos.js";
 import { createProfileService, type ProfileService } from "./service.js";
 import { createPgProfileStore } from "./store.js";
 import { parseCreateProfileRequest, parsePatchProfileRequest } from "./validate.js";
@@ -16,10 +17,15 @@ function defaultService(): ProfileService {
   return createProfileService(createPgProfileStore());
 }
 
-export function createProfileRouter(service?: ProfileService, documents?: DocumentStore): Router {
+export function createProfileRouter(
+  service?: ProfileService,
+  documents?: DocumentStore,
+  photos?: PhotoStore,
+): Router {
   const router = Router();
   const getService = (): ProfileService => service ?? defaultService();
   const getDocuments = (): DocumentStore => documents ?? createPgDocumentStore();
+  const getPhotos = (): PhotoStore => photos ?? createPgPhotoStore();
 
   function requireUserId(value: string | undefined): string {
     if (value === undefined || !isUuid(value)) {
@@ -93,6 +99,49 @@ export function createProfileRouter(service?: ProfileService, documents?: Docume
       const removed = await getDocuments().remove(userId, documentId);
       if (!removed) {
         throw new HttpError(404, "NOT_FOUND", "Document not found.");
+      }
+      res.status(200).json(ok({ deleted: true }));
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.get("/:userId/photo", async (req, res, next) => {
+    try {
+      const userId = requireUserId(req.params.userId);
+      assertRequestSession(req, userId);
+      const photo = await getPhotos().get(userId);
+      if (photo === undefined) {
+        throw new HttpError(404, "NOT_FOUND", "No profile photo yet.");
+      }
+      res.setHeader("Cache-Control", "private, no-store");
+      res.setHeader("Content-Type", photo.mimeType);
+      res.setHeader("X-Content-Type-Options", "nosniff");
+      res.status(200).send(photo.bytes);
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/:userId/photo", async (req, res, next) => {
+    try {
+      const userId = requireUserId(req.params.userId);
+      assertRequestSession(req, userId);
+      const input = parsePhotoUpload(req.body);
+      const saved = await getPhotos().put({ userId, ...input });
+      res.status(200).json(ok({ photoUpdatedAt: saved.updatedAt }));
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.delete("/:userId/photo", async (req, res, next) => {
+    try {
+      const userId = requireUserId(req.params.userId);
+      assertRequestSession(req, userId);
+      const removed = await getPhotos().remove(userId);
+      if (!removed) {
+        throw new HttpError(404, "NOT_FOUND", "No profile photo to remove.");
       }
       res.status(200).json(ok({ deleted: true }));
     } catch (error) {

@@ -27,7 +27,7 @@ A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that deci
 ## What v0.1 actually does
 
 - **Sign in** — email/password register + login (JWT in `X-Hulum-Session`). Create account at `/verify` (register only—not email OTP). Optional Google OAuth when client id/secret are set. **Forgot password?** emails a single-use 30-minute link to `/reset-password` when `SMTP_HOST` + `MAIL_FROM` are set; until then the page says email is unavailable.
-- **Onboarding and profile** — new accounts walk a 4-step setup (`/onboarding`); `/profile` shows what you saved, lets you edit it, and keeps a private CV (view, download, replace). No one-click Abeba demo button.
+- **Onboarding and profile** — new accounts walk a 4-step setup (`/onboarding`); `/profile` is a structured profile (photo, identity, completeness, education, skills, interests, languages), lets you edit it, and keeps a private CV (Upload CV once, then View / Update CV) plus supporting documents. The photo is display-only and never read by the decision engine. No one-click Abeba demo button.
 - **Discover** — keyword search and filters over the stored catalog, including your stored decision. It never invents listings.
 - **My opportunities and Readiness** — saved listings, past APPLY / MAYBE / SKIP results, and preparation progress (`/my-opportunities`, `/readiness`).
 - **Opportunity catalog** — investigator-filled from evidenced pages (not a baked seed list). May be empty until the worker runs.
@@ -118,7 +118,10 @@ GET    /api/auth/google
 POST   /api/profile
 GET    /api/profile/:userId
 PATCH  /api/profile/:userId
-POST   /api/profile/:userId/documents
+POST   /api/profile/:userId/documents      # optional replacesId swaps one file in place
+GET    /api/profile/:userId/photo
+POST   /api/profile/:userId/photo
+DELETE /api/profile/:userId/photo
 GET    /api/opportunities
 GET    /api/opportunities/:id
 POST   /api/opportunities/:id/analyze

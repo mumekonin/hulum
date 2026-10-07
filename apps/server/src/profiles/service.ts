@@ -10,12 +10,18 @@ export type ProfileService = {
   update(userId: string, patch: PatchProfileRequest): Promise<ProfileView | undefined>;
 };
 
-function toView(stored: { name: string; email: string; profile: Profile }): ProfileView {
+function toView(stored: {
+  name: string;
+  email: string;
+  profile: Profile;
+  photoUpdatedAt?: string | null;
+}): ProfileView {
   return {
     name: stored.name,
     email: stored.email,
     profile: stored.profile,
     completeness: profileCompleteness(stored.profile),
+    photoUpdatedAt: stored.photoUpdatedAt ?? null,
     sessionToken: issueAuthSessionToken(stored.profile.userId, loadEnv({ fromFile: false })),
   };
 }

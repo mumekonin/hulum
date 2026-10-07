@@ -219,6 +219,7 @@ function AccountMenu({
   }, [open]);
 
   const name = account?.name?.trim() || "Your account";
+  const onProfile = isCurrent(pathname, "/profile");
 
   return (
     <div ref={wrap} className="relative">
@@ -232,7 +233,8 @@ function AccountMenu({
           <Link
             role="menuitem"
             href="/profile"
-            className={menuItemClass}
+            aria-current={onProfile ? "page" : undefined}
+            className={`${menuItemClass} ${onProfile ? "font-medium" : ""}`}
             onClick={() => setOpen(false)}
           >
             Profile
@@ -254,7 +256,11 @@ function AccountMenu({
         aria-haspopup="menu"
         aria-controls={menuId}
         onClick={() => setOpen((value) => !value)}
-        className="flex w-full items-center gap-3 rounded-md px-2 py-2 text-left transition-colors hover:bg-surface-muted"
+        className={`relative flex w-full items-center gap-3 rounded-md px-2 py-2 text-left transition-colors hover:bg-surface-muted ${
+          onProfile
+            ? "bg-surface-muted before:absolute before:inset-y-3 before:left-0 before:w-0.5 before:rounded-full before:bg-wl-accent"
+            : ""
+        }`}
       >
         <Avatar name={account?.name ?? ""} />
         <span className="min-w-0 flex-1">
