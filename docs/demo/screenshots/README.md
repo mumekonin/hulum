@@ -1,14 +1,14 @@
 # Demo screenshots (shot list)
 
-**Status:** shot list only — **no image files in this folder yet**  
-**Rule:** Do not invent screenshots or a recorded video. Capture locally when preparing the STARK pack.
+**Status:** required PNG frames captured locally via `npm run capture:demo-screenshots` (2026-10-07). **No recorded video yet.**  
+**Rule:** Do not invent a video. Re-run the capture script after UI changes; keep frames honest (local host, investigator catalog, text Ask HULUM).
 
 ## How to capture
 
-1. `npm run db:migrate && npm run dev`
-2. Create account + save Abeba facts (see `docs/demo/script.md`).
-3. Open http://localhost:3000 in a clean browser window (full desktop width).
-4. Save PNGs into this folder with the names below.
+1. `npm run db:migrate`
+2. Prefer `INVESTIGATE_WORKER=false npm run dev` so the worker does not starve the DB during capture.
+3. `npm run capture:demo-screenshots` (Playwright; uses system Edge/Chrome when bundled Chromium is missing).
+4. Manual alternative: create account + Abeba facts (`docs/demo/script.md`), then save PNGs with the names below at full desktop width.
 5. Do not crop out the HULUM brand or the official-source control.
 
 ## Required frames (backup pack)
@@ -39,4 +39,4 @@ Do not invent UCT/Chevening frames if those titles are not in the investigator l
 - EthioDeploy banner
 - Seeded A2SV card
 
-When PNG files exist, mark Phase 25 **Prepare backup video/screenshots** in `task.md` for screenshots only (video stays open until recorded).
+Phase 25 **Prepare backup video/screenshots**: screenshots done in-repo; video stays open until recorded.

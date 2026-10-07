@@ -28,6 +28,16 @@ Still open: delivery through a real SMTP provider (needs values in `apps/server/
 
 ---
 
+## 2026-10-07 — Phase 25 backup demo screenshots
+
+- `npm run capture:demo-screenshots` → `docs/demo/screenshots/01`–`06` PNGs from local JWT + Abeba path.
+- Video still open (not recorded). Prefer `INVESTIGATE_WORKER=false` during capture.
+- `smoke:browser` waits for Discover load before Analyze (avoids empty-list false fail).
+
+Still open: deploy, live mic/STT, full app Oromo shell, CI require-check (admin), backup **video**.
+
+---
+
 ## 2026-10-03 — smoke:browser analyze → decision
 
 - Migration `015_ci_smoke_investigator_row.sql`: one static **AI_EXTRACTED** row for CI/local smoke (not curated seed reopen / 006).

@@ -91,6 +91,7 @@ async function main() {
     await page.getByRole("link", { name: /Find opportunities/i }).click();
     await page.waitForURL(/\/opportunities/);
     await page.getByRole("heading", { name: /Find opportunities worth your time/i }).waitFor();
+    await page.getByText("Loading opportunities").waitFor({ state: "hidden", timeout: 90_000 });
 
     // Core thesis: Discover → Analyze my fit → APPLY/MAYBE/SKIP + official source (CI row from 015).
     const cards = page.locator("#opportunity-results li");

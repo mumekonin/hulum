@@ -32,6 +32,17 @@ HULUM records actual work. Do not invent history.
 ### Why
 "Forgot password?" opened a page whose button only toggled local state; no request or email existed. HULUM accounts live in its own `users` table (scrypt + JWT), not Supabase Auth, so the reset is built into that auth module.
 
+## 2026-10-07 — Phase 25 backup demo screenshots
+
+### Changed
+- `scripts/capture-demo-screenshots.mjs` + `npm run capture:demo-screenshots` writes the STARK shot-list PNGs.
+- `docs/demo/screenshots/`: required frames `01`–`06` captured from local stack (no video).
+- `task.md` Phase 25 backup row: screenshots in-repo; video still open.
+- `smoke:browser`: wait for Discover loading to finish before Analyze.
+
+### Why
+Phase 25 still had only a shot list. Judges need real local PNGs without inventing a recorded video or a public deploy.
+
 ## 2026-10-05 — Account menu on the sidebar
 
 ### Changed
