@@ -99,6 +99,19 @@ describe("014_hulum_app_role.sql", () => {
   });
 });
 
+describe("015_ci_smoke_investigator_row.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "015_ci_smoke_investigator_row.sql"), "utf8");
+
+  it("inserts one AI_EXTRACTED CI smoke row without reopening curated seed", () => {
+    expect(sql).toContain("AI_EXTRACTED");
+    expect(sql).toContain("CI / local smoke only");
+    expect(sql).toContain("00000000-0000-4000-8000-000000000015");
+    expect(sql).toMatch(/'AI_EXTRACTED'/);
+    expect(sql).not.toMatch(/verification_status[\s\S]*'VERIFIED'|,\s*'VERIFIED'\s*,/);
+    expect(sql).toContain("on conflict (id) do nothing");
+  });
+});
+
 describe("016_password_reset_tokens.sql", () => {
   const sql = fs.readFileSync(path.join(migrationsDir(), "016_password_reset_tokens.sql"), "utf8");
 

@@ -87,6 +87,17 @@ Exact-string matching skipped real listings (Africa vs ET, “Currently enrolled
 ### Why
 Users saw highlights without a clean why, and general questions about an open opportunity were dropped as unsupported.
 
+## 2026-10-03 — smoke:browser analyze → APPLY/MAYBE/SKIP
+
+### Changed
+- `015_ci_smoke_investigator_row.sql`: one AI_EXTRACTED CI/local smoke listing (not curated seed reopen).
+- `smoke:browser`: Discover → Analyze my fit → decision + official source + Readiness.
+- `smoke:local`: analyze first catalog row; assert APPLY|MAYBE|SKIP.
+- CI step label + task-status / demo notes synced.
+
+### Why
+After Oromo/onboarding smokes, CI still never proved the core Analyze → decision path when the investigator catalog was empty.
+
 ## 2026-10-03 — Ask HULUM Oromo lang a11y + smoke:browser
 
 ### Changed

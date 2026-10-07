@@ -47,8 +47,25 @@ async function main() {
   if (!Array.isArray(opportunities)) {
     throw new Error("opportunities list is not an array");
   }
+  if (opportunities.length === 0) {
+    throw new Error(
+      "catalog empty — run migrations including 015_ci_smoke_investigator_row.sql (CI AI_EXTRACTED fixture, not curated seed)",
+    );
+  }
+  const opportunityId = opportunities[0].id;
+  if (typeof opportunityId !== "string" || opportunityId === "") {
+    throw new Error("first opportunity has no id");
+  }
+  const analysis = await json(`/api/opportunities/${opportunityId}/analyze`, {
+    method: "POST",
+    headers: { "X-Hulum-Session": session.sessionToken },
+    body: JSON.stringify({ userId: session.userId }),
+  });
+  if (!["APPLY", "MAYBE", "SKIP"].includes(analysis.decision)) {
+    throw new Error(`unexpected decision ${String(analysis.decision)}`);
+  }
   console.log(
-    `ok: health, registered ${session.userId}, catalog ${String(opportunities.length)} (investigator, not seed)`,
+    `ok: health, registered ${session.userId}, catalog ${String(opportunities.length)}, analyze ${analysis.decision} (CI fixture / investigator; not curated seed)`,
   );
 }
 
