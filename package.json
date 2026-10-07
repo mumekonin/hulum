@@ -27,7 +27,8 @@
     "db:seed": "npm run db:seed -w @hulum/server",
     "db:smoke": "npm run db:smoke -w @hulum/server",
     "smoke:local": "node scripts/smoke-local.mjs",
-    "smoke:browser": "node scripts/smoke-browser.mjs"
+    "smoke:browser": "node scripts/smoke-browser.mjs",
+    "capture:demo-screenshots": "node scripts/capture-demo-screenshots.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",
