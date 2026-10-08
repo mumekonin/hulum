@@ -4,7 +4,7 @@
 **Repo:** https://github.com/mumekonin/hulum  
 **Hackathon:** STARK 2026
 
-This folder is the judge entry. It does not invent ScholarXIV papers, a production URL, or live Voxide.
+This folder is the judge entry. It does not invent ScholarXIV papers. The live site is [https://hulum-alpha.vercel.app](https://hulum-alpha.vercel.app). The API is [https://hulum-api.onrender.com](https://hulum-api.onrender.com).
 
 **Source of truth:** tip of `main` (Postgres, JWT, welcome → `/sign-in` → onboarding, Discover, investigator catalog). Open stacked `feat/*` only for unmerged work.
 
@@ -19,7 +19,7 @@ This folder is the judge entry. It does not invent ScholarXIV papers, a producti
 | 3 | `docs/research/ideation.md` | What was rejected |
 | 4 | `docs/architecture/overview.md` | What actually runs |
 | 5 | `docs/product/opportunity-verification.md` | Manual verify + stale rules |
-| 6 | `docs/stark/deployment.md` | Local-only; no EthioDeploy URL |
+| 6 | `docs/stark/deployment.md` | Vercel site and Render API |
 | 7 | `docs/demo/script.md` | Abeba Tesfaye walkthrough |
 | 8 | `docs/stark/evidence.md` | Task 47 map |
 | 9 | `docs/stark/narrative.md` | How it was built (honest) |
@@ -42,8 +42,8 @@ Do **not** expect a one-click demo profile or seeded A2SV / UCT / Chevening card
 ## What this package does not claim
 
 - Retrieved ScholarXIV papers (`docs/research/scholarxiv.md` is empty on purpose)
-- Production / EthioDeploy
-- Microphone or Voxide speech without a live keyed pass
+- An EthioDeploy URL
+- Measured Amharic or Afaan Oromo speech recognition
 - Seeded catalog APPLY / MAYBE / SKIP labels
 - A recorded demo video
 

@@ -2,11 +2,14 @@
 
 **Your AI opportunity decision agent.**
 
-HULUM compares a personal profile to a curated opportunity and returns one answer: **APPLY**, **MAYBE**, or **SKIP** — then why, what is missing, and what to prepare. Official organization pages stay the eligibility authority.
+HULUM compares a saved profile with an opportunity and returns one answer: **APPLY**, **MAYBE**, or **SKIP** — then why, what is missing, and what to prepare. The official organization page stays the eligibility authority. A TypeScript engine makes the decision. Groq may explain it. Groq does not change it.
 
-The problem we are solving: [docs/product/problem.md](docs/product/problem.md).
+Built for Ethiopian students and young professionals (STARK Hackathon 2026). Team Ethiopian Builders: Kidist (product, web, demo) and Mulualem (API, database, decision engine).
 
-Built for Ethiopian students and young professionals (STARK Hackathon 2026). English is the stable v0.1 path. Amharic and Afaan Oromo language codes are stored; live speech is not connected.
+**Try it:** [https://hulum-alpha.vercel.app](https://hulum-alpha.vercel.app)  
+**API health:** [https://hulum-api.onrender.com/api/health](https://hulum-api.onrender.com/api/health)
+
+The free API sleeps when idle. The first open can take about a minute. Create an account, finish onboarding, then open Discover. The problem statement is [docs/product/problem.md](docs/product/problem.md). Judges: [docs/stark/README.md](docs/stark/README.md), then [docs/demo/script.md](docs/demo/script.md).
 
 ---
 
@@ -20,13 +23,13 @@ Profile  →  Opportunity  →  Fit Analysis  →  APPLY / MAYBE / SKIP
                                         Official source
 ```
 
-A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that decision. Fit score is a signal only.
+Fit score is a signal only. It never replaces APPLY / MAYBE / SKIP.
 
 ---
 
 ## What v0.1 actually does
 
-- **Sign in** — email/password register + login (JWT in `X-Hulum-Session`). Create account at `/verify` (register only—not email OTP). Optional Google OAuth when client id/secret are set. **Forgot password?** emails a single-use 30-minute link to `/reset-password` when `SMTP_HOST` + `MAIL_FROM` are set; until then the page says email is unavailable.
+- **Sign in** — email and password (JWT in `X-Hulum-Session`). Create account at `/verify` (register, not email OTP). Google sign-in uses the same account. **Forgot password** emails a single-use 30-minute link.
 - **Onboarding and profile** — new accounts walk a 4-step setup (`/onboarding`); `/profile` is a structured profile (photo, identity, completeness, education, skills, interests, languages), lets you edit it, and keeps a private CV (Upload CV once, then View / Update CV) plus supporting documents. The photo is display-only and never read by the decision engine. No one-click Abeba demo button.
 - **Discover** — keyword search and filters over the stored catalog, including your stored decision. It never invents listings.
 - **My opportunities and Readiness** — saved listings, past APPLY / MAYBE / SKIP results, and preparation progress (`/my-opportunities`, `/readiness`).
@@ -36,11 +39,11 @@ A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that deci
 - **Explanation** — engine summary; optional Groq on `POST /api/analyses/:id/explain`. Models never change the decision.
 - **Gaps and readiness** — MET / NOT_MET / UNCERTAIN, then a TODO checklist.
 - **Official source** — stored `sourceUrl` / `applicationUrl` when present.
-- **Ask HULUM** — text, quick prompts, fixed FAQ answers, and browser-only recent questions (ADR 003). Replies show the stored decision as cards. Optional `@voxide/react` widget and mic button when `NEXT_PUBLIC_VOXIDE_KEY` is set; no live mic claim without a keyed test.
+- **Ask HULUM** — text and quick prompts on `/assistant`, plus a microphone button after sign-in. The button talks to Voxide only when that key allows the site’s domain. If it cannot connect, type the question. The same engine answers both.
 - **Light and dark mode** — follows the OS until you choose.
 - **Backup mode** — Voice unavailable keeps typing and the rest of the UI.
 
-Out of v0.1: auto-apply, payments, native mobile, inventing listings, ScholarXIV as decision input, production deploy.
+Out of v0.1: auto-apply, payments, native mobile, inventing listings, and using ScholarXIV papers as the decision. The footer “Subscribe” box does not store addresses.
 
 ---
 
@@ -55,9 +58,9 @@ Out of v0.1: auto-apply, payments, native mobile, inventing listings, ScholarXIV
 | Store | PostgreSQL via `DATABASE_URL` | JSON file store (tests / optional) |
 | Decision | `apps/server/src/decision/decide.ts` | An LLM must not decide |
 | Explanation | Groq on stored analyses (`GROQ_API_KEY`, `GROQ_MODEL`) | Claude leftover env names |
-| Voice | Keyword intents + text/quick actions | Voxide browser widget |
-| Research | `docs/research/` + `/research` proxy when keyed | `scholarxiv.md` table empty by design; papers never decide |
-| Host | Local `npm run dev` | API on Render, web on Vercel — not live until those services exist |
+| Voice | Ask HULUM text, plus the Voxide microphone when the key allows the site | Amharic/Oromo recognition quality is not a claimed result |
+| Research | `docs/research/` and `/research` when a server key is set | The paper log in `scholarxiv.md` stays empty; papers never decide |
+| Host | [hulum-alpha.vercel.app](https://hulum-alpha.vercel.app) and [hulum-api.onrender.com](https://hulum-api.onrender.com) | Local `npm run dev` still works |
 
 ---
 
@@ -142,7 +145,7 @@ Set `CLIENT_URL` in `apps/server/.env` to the web origin (`http://localhost:3000
 
 ## Production configuration
 
-The chosen hosts are **Render** (API) and **Vercel** (web). They are not live until you create the services. Steps: `docs/stark/deployment.md`.
+Live hosts: **Vercel** serves the site and **Render** serves the API. Setup notes: `docs/stark/deployment.md`.
 
 | Variable | Required in production | Role |
 |---|---|---|
@@ -155,7 +158,7 @@ The chosen hosts are **Render** (API) and **Vercel** (web). They are not live un
 | `CLAUDE_API_KEY` + `CLAUDE_MODEL` | no | Leftover names; v0.1 explain uses Groq |
 | `GROQ_API_KEY` + `GROQ_MODEL` | no | Optional explain of a stored analysis |
 | `VOXIDE_API_KEY` | no | Leftover; widget uses public web key |
-| `NEXT_PUBLIC_VOXIDE_PUBLIC_KEY` | no | Optional `vox_pub_…` for `@voxide/react` on `/assistant` |
+| `NEXT_PUBLIC_VOXIDE_KEY` | no | Publishable `vox_pub_…` key. The Voxide dashboard must allow the site origin |
 | `DATABASE_URL` / `SUPABASE_*` | yes for `npm run dev` | Postgres for the default API |
 | `SESSION_SECRET` | yes in production | JWT signing for `X-Hulum-Session` |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | no | Optional Google OAuth |

@@ -2,11 +2,11 @@
 
 **Owner:** Kidist  
 **Persona:** Abeba Tesfaye (typed facts — there is no “Use demo profile” button)  
-**Runtime:** local `npm run dev` — web `:3000`, API `:3001`  
-**Auth:** Create account / Sign in (JWT). Google optional if keys are set.  
+**Runtime:** https://hulum-alpha.vercel.app (API https://hulum-api.onrender.com). Local `npm run dev` is the backup.  
+**Auth:** Create account / Sign in (JWT). Google sign-in and forgot-password email are on the live API.  
 **Routes:** Create account uses `/verify` (JWT register only—not email OTP).  
-**Catalog:** investigator-filled (not `db:seed`). Cards may be empty until the worker has run.  
-**Voice:** Ask HULUM text + quick actions (ADR 003). Do not claim live Voxide or a microphone.
+**Catalog:** investigator-filled (not `db:seed`). The free API does not run the investigator worker.  
+**Voice:** Ask HULUM text always. The microphone button is on signed-in pages when Voxide allows this site.
 
 Target length: about 6 minutes. One story, not a feature tour.
 
@@ -18,9 +18,9 @@ If Analyze fails or the catalog is empty, use `/screenshot` or Ask HULUM text. D
 
 - HULUM is the official eligibility authority.
 - Claude chooses APPLY / MAYBE / SKIP.
-- Voice speech is live.
+- Amharic or Afaan Oromo speech recognition was measured.
 - ScholarXIV papers drive APPLY / MAYBE / SKIP (or that we archived paper citations in the repo).
-- The app is deployed to production / EthioDeploy.
+- The app is on EthioDeploy. The live hosts are Vercel and Render.
 - There is a one-click Abeba demo profile or a seeded A2SV / Chevening catalog.
 
 Do say: the engine decides; Groq may rephrase a stored analysis when `GROQ_API_KEY` is set (APPLY/MAYBE/SKIP unchanged); always open the official source; the list comes from evidenced pages the investigator fetched. `/research` is live ScholarXIV search with a server key; the STARK paper log stays empty until someone copies a real result.
@@ -97,7 +97,7 @@ Do say: the engine decides; Groq may rephrase a stored analysis when `GROQ_API_K
 
 **Show:** Voice unavailable / text path. Type and quick actions still work.
 
-**Say:** Speech is not wired. Backup mode is text so the demo cannot die on a missing Voxide key.
+**Say:** If the microphone cannot connect, use these buttons. The decision is the same either way.
 
 Type or click:
 

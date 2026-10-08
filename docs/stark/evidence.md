@@ -26,12 +26,12 @@ This is an index, not a new research study. Empty ScholarXIV rows stay empty.
 | Database | `database/migrations/001_init.sql`–`013`, ADR 001 | Schema + migrate/smoke; **`npm run dev` uses Postgres**; curated seed closed (`006`); investigator sources; saved opps; profile document text |
 | Decision engine | `apps/server/src/decision/`, ADR 002 | Present + tests |
 | AI responsibility | ADR 001/002, Groq validation in `apps/server/src/ai/` | Engine decides; Groq explains stored analysis only |
-| Voice UX | ADR 003, ADR 004, `docs/demo/script.md`, `docs/research/voxide-integration.md` | Text/quick-action fallback; `@voxide/react` widget behind `NEXT_PUBLIC_VOXIDE_KEY` (no mic claim without a live key) |
-| Auth / session | `apps/server/src/auth/`, `apps/server/src/security/session.ts` | Email/password JWT (+ optional Google) in `X-Hulum-Session` (HS256 via `SESSION_SECRET`; required in production). Password-reset email is not wired. |
+| Voice UX | ADR 003, ADR 004, `docs/demo/script.md`, `docs/research/voxide-integration.md` | Ask HULUM text always works. The microphone widget is on the signed-in site when `NEXT_PUBLIC_VOXIDE_KEY` is set and Voxide allows that domain. |
+| Auth / session | `apps/server/src/auth/`, `apps/server/src/security/session.ts` | Email/password JWT (+ Google) in `X-Hulum-Session`. Password reset emails a single-use link when SMTP is set. |
 | Implementation | `apps/web`, `apps/server`, `packages/shared` | Present |
 | Testing | `npm test`, `npm run smoke:local`, `npm run smoke:browser`, CI | Engine, API, auth, voice-text tests; CI register + catalog list + Chromium click-through (no `db:seed` APPLY) |
 | Iteration | `CHANGELOG.md`, `docs/stark/narrative.md` | Present; Day 20 narrative; do not rewrite history |
-| Deployment | `docs/stark/deployment.md` | **Not deployed**; local + config docs only |
+| Deployment | `docs/stark/deployment.md` | Site on Vercel, API on Render |
 | Demo | `docs/demo/script.md`, `docs/demo/backup.md`, `docs/demo/rehearsal.md`, `docs/demo/screenshots/README.md` | Welcome → `/sign-in` → Create account / onboarding; typed Abeba; investigator catalog; `/screenshot` backup; shot list (no PNGs); **no video** |
 | Changelog | `CHANGELOG.md`, `docs/stark/changelog-review.md`, `docs/stark/changelog-final.md` | Present; Day 20 freeze pass 2026-09-19 |
 | Git history | this GitHub repo, `docs/stark/git-history.md`, `docs/stark/milestones.md` | Real commits; `milestone/*` tags on real SHAs; no invented SemVer product release |
@@ -42,8 +42,8 @@ This is an index, not a new research study. Empty ScholarXIV rows stay empty.
 ## Gaps (do not paper over)
 
 1. ScholarXIV Papers API is proxied on `/research`; MCP is not used in Analyze. The paper table stays empty until a teammate copies a live result (`docs/research/scholarxiv.md`).
-2. No production host. CORS/`CLIENT_URL` and `SESSION_SECRET` are configured for production; health is local.
-3. Live Voxide mic STT/TTS is not claimed without a publishable key + mic pass. Demo uses Ask HULUM text; widget mounts only when `NEXT_PUBLIC_VOXIDE_KEY` is set.
+2. The free Render API sleeps when idle. The investigator worker is off on that instance, so the catalog is whatever is already in Postgres.
+3. The microphone connects only after the Voxide dashboard allows `https://hulum-alpha.vercel.app`. Ask HULUM text does not depend on that. Amharic and Oromo recognition quality is not a measured result.
 4. Per-user RLS policies exist for non-owner roles; the API still connects as table owner (owner bypasses RLS).
 5. Not all historical `feat/*` branches are on `main`; tip of `main` is the source of truth.
 ---

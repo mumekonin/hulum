@@ -1,6 +1,6 @@
 ﻿# Deployment guide (v0.1)
 
-**Status:** hosts chosen, services not created yet. There is no public URL until Render and Vercel finish their first deploy.
+**Status:** live. Site: https://hulum-alpha.vercel.app. API: https://hulum-api.onrender.com. Health: https://hulum-api.onrender.com/api/health.
 
 This file is the Phase 26 **deployment guide** and the Phase 23 **deployment decision**.
 
@@ -8,7 +8,7 @@ This file is the Phase 26 **deployment guide** and the Phase 23 **deployment dec
 
 The API goes on **Render**. The website goes on **Vercel**. EthioDeploy is not the host.
 
-Until those two services exist, HULUM still runs **locally** with:
+The same app still runs **locally** with:
 
 ```bash
 npm install
@@ -97,10 +97,10 @@ Required before any public host:
 
 Names live in `.env.example` / `apps/server/.env.example`. Real values stay in the host secret store.
 
-### Still open until a host exists
+### Checked on the live hosts
 
-- Deploy frontend / backend
-- Verify production analysis / voice flows on that host
+- API health returns ok at https://hulum-api.onrender.com/api/health
+- The site is https://hulum-alpha.vercel.app
 
 ## Deployment workflow (CI)
 
@@ -116,7 +116,6 @@ Follow the root `README.md`. Demo walkthrough: `docs/demo/script.md`. Backup pat
 
 ## What is still open (honest)
 
-- Create the Render service and the Vercel project, then verify analysis, password reset, and voice on those URLs
+- Allow `https://hulum-alpha.vercel.app` on the Voxide key, or the microphone shows “Assistant unavailable”
 - Org admin enabling required status checks on `main`
-- Live Voxide mic / Amharic STT
-- Checked-in backup video / screenshot PNG pack
+- A recorded demo video

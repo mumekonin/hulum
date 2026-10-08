@@ -105,7 +105,7 @@ File-store twin coverage: `npm test` in `apps/server` (flow / failures / voice t
 | No profile | Create account → save Abeba facts. |
 | Empty catalog | `/screenshot` or wait for investigator; do not invent cards. |
 | Wrong or surprising decision | Do not override the engine. Open Official source. |
-| Microphone asked for | Say speech is not wired; use Path A. |
+| Microphone cannot connect | Use Ask HULUM text (Path A). The decision is the same. |
 | Need a second decision and time is gone | Explain MAYBE vs SKIP in one sentence; do not invent seed titles. |
 
 ---

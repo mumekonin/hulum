@@ -22,7 +22,7 @@ Analyze: `POST /api/opportunities/:id/analyze` with `{ "userId": "<uuid>" }`. An
 
 Optional keys in `.env` stay empty until later tasks. Never commit `.env`.
 
-Production hosts must set `NODE_ENV=production`, `CLIENT_URL` (web origin for CORS), and `PORT` if not using **3001**. Groq keys stay optional. File-store (`createApp({ store: "file" })`) is for tests, not the default boot.
+Production is https://hulum-api.onrender.com (`NODE_ENV=production`, `CLIENT_URL` = the Vercel origin). Groq keys stay optional. File-store (`createApp({ store: "file" })`) is for tests, not the default boot.
 
 API surface, retention, and data-exposure notes: `docs/architecture/api.md`, `docs/architecture/retention.md`, `docs/architecture/data-exposure.md`. Deploy decision: `docs/stark/deployment.md`.
 

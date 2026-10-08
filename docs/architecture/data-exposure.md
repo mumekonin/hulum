@@ -40,6 +40,6 @@
 
 ## Residual risk (honest)
 
-Without `SESSION_SECRET`, session checks are relaxed for local demo — do not run a public host that way. Password-reset email is not wired; users who forget passwords create a new account or use Google when configured.
+Without `SESSION_SECRET`, session checks are relaxed for a local demo. Production sets `SESSION_SECRET`. Password reset emails a single-use link when SMTP is configured.
 
 Related: `docs/architecture/api.md`, `docs/architecture/retention.md`.
