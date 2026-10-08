@@ -50,13 +50,10 @@ export function WelcomePage() {
             <div className={`${rise} mt-8 [animation-delay:300ms]`}>
               <Link
                 href="/sign-in"
-                className="group inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-lg bg-wl-ink px-7 text-[15px] font-semibold tracking-[0.02em] text-wl-surface transition-opacity duration-200 hover:opacity-85 sm:w-auto"
+                className="wl-cta inline-flex h-[50px] w-full items-center justify-center gap-2 rounded-lg bg-wl-ink px-7 text-[15px] font-semibold tracking-[0.02em] text-wl-surface sm:w-auto"
               >
-                Get started
-                <span
-                  aria-hidden
-                  className="transition-transform duration-200 group-hover:translate-x-0.5"
-                >
+                <span className="relative z-[1]">Get started</span>
+                <span aria-hidden className="wl-cta__arrow relative z-[1]">
                   →
                 </span>
               </Link>

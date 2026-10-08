@@ -55,7 +55,7 @@ export const FAQ: FaqEntry[] = [
   {
     question: "Where do I submit my application?",
     answer:
-      "On the official organization's website. Every opportunity page has an “Apply on official website” or “View official opportunity” button that uses the link stored from the official source.",
+      "On the official organization's website. Every opportunity page has an Apply on official website or View official opportunity button that uses the link stored from the official source.",
   },
   {
     question: "How accurate is HULUM's analysis?",

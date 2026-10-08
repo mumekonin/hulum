@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { BrandMark } from "./BrandMark";
 import { ThemeToggle } from "./ThemeToggle";
 
 export const authInputClass =
@@ -50,7 +51,9 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
         className="grid w-full max-w-[440px] overflow-hidden rounded-[14px] border border-[#e7e5e0] bg-white shadow-[0_1px_2px_rgba(20,20,20,0.04),0_8px_24px_-12px_rgba(20,20,20,0.08)] md:max-w-[960px] md:grid-cols-[46fr_54fr] md:min-h-[580px] dark:border-[#2a2a2a] dark:bg-[#141414] dark:shadow-none"
       >
         <section className="flex flex-col items-center justify-center border-b border-[#ecebe6] bg-[#f6f5f2] px-8 py-6 text-center md:border-b-0 md:border-r md:px-12 md:py-12 dark:border-[#232323] dark:bg-[#101010]">
-          <HulumMark />
+          <span className="text-gw-primary">
+            <BrandMark className="h-14 w-14 md:h-16 md:w-16" />
+          </span>
           <p className="mt-4 font-gw-mono text-[12px] font-medium uppercase tracking-[0.28em] text-gw-primary md:mt-6">
             HULUM
           </p>
@@ -81,13 +84,3 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-function HulumMark() {
-  return (
-    <span
-      aria-hidden
-      className="flex h-12 w-12 items-center justify-center rounded-[12px] bg-gw-primary font-gw-serif text-[28px] font-semibold leading-none text-gw-on-primary md:h-16 md:w-16 md:rounded-[16px] md:text-[38px]"
-    >
-      H
-    </span>
-  );
-}

@@ -414,6 +414,96 @@ body {
   }
 }
 
+/* Welcome Get started. Resting look stays the dark button; motion is hover, press, and one quiet arrow cue. */
+.wl-cta {
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  transition:
+    transform 280ms cubic-bezier(0.22, 1, 0.36, 1),
+    box-shadow 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wl-cta::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    105deg,
+    transparent 34%,
+    color-mix(in srgb, var(--wl-surface) 42%, transparent) 50%,
+    transparent 66%
+  );
+  transform: translateX(-130%);
+  pointer-events: none;
+}
+
+.wl-cta__arrow {
+  display: inline-block;
+  transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wl-cta:focus-visible {
+  outline: 2px solid var(--wl-accent);
+  outline-offset: 3px;
+}
+
+.wl-cta:active {
+  transform: scale(0.97);
+  transition-duration: 120ms;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wl-cta:hover {
+    transform: translateY(-2px) scale(1.018);
+    box-shadow: 0 14px 28px -18px color-mix(in srgb, var(--wl-ink) 45%, transparent);
+  }
+
+  .wl-cta:hover .wl-cta__arrow,
+  .wl-cta:focus-visible .wl-cta__arrow {
+    transform: translateX(7px);
+    animation: none;
+  }
+
+  .wl-cta:active {
+    transform: translateY(0) scale(0.97);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .wl-cta__arrow {
+    animation: wl-cta-nudge 7.5s cubic-bezier(0.22, 1, 0.36, 1) infinite;
+  }
+
+  .wl-cta:hover::before,
+  .wl-cta:focus-visible::before {
+    animation: wl-cta-sweep 680ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+}
+
+@keyframes wl-cta-sweep {
+  from {
+    transform: translateX(-130%);
+  }
+  to {
+    transform: translateX(130%);
+  }
+}
+
+@keyframes wl-cta-nudge {
+  0%,
+  82%,
+  100% {
+    transform: translateX(0);
+  }
+  88% {
+    transform: translateX(5px);
+  }
+  94% {
+    transform: translateX(0);
+  }
+}
+
 h1,
 h2,
 h3,

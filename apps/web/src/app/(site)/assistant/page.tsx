@@ -485,7 +485,7 @@ function AssistantInner() {
                 {opportunity
                   ? `Ask me anything about ${opportunity.title}.`
                   : discover
-                    ? `You're looking at ${discover.total} ${discover.total === 1 ? "result" : "results"}${discover.query ? ` for “${discover.query}”` : ""}. Ask which ones are worth applying for.`
+                    ? `You're looking at ${discover.total} ${discover.total === 1 ? "result" : "results"}${discover.query ? ` for ${discover.query}` : ""}. Ask which ones are worth applying for.`
                     : "Ask me anything about opportunities, eligibility, or what you should prepare."}
               </p>
               <div className="mt-6 flex flex-wrap gap-2">

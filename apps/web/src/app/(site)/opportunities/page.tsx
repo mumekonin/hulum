@@ -461,7 +461,7 @@ export default function DiscoverPage() {
       {status === "loading" ? (
         <StatusPanel variant="loading" title="Loading opportunities">
           Reading the stored, sourced catalog
-          {query ? ` for “${query}”` : ""}
+          {query ? ` for ${query}` : ""}
           {filters.type ? ` in ${TYPE_LABELS[filters.type]}` : ""}.
         </StatusPanel>
       ) : null}
@@ -535,7 +535,7 @@ export default function DiscoverPage() {
             </p>
             {result.ignoredTerms.length > 0 ? (
               <p className="text-sm text-muted">
-                No listing mentions {result.ignoredTerms.map((term) => `“${term}”`).join(", ")}, so{" "}
+                No listing mentions {result.ignoredTerms.join(", ")}, so{" "}
                 {result.ignoredTerms.length === 1 ? "it was" : "they were"} ignored.
               </p>
             ) : null}

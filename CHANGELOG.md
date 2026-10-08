@@ -2,6 +2,13 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-08 — Brand mark, quote cleanup, Get started motion
+
+### Changed
+- Sign-in, create account, and password reset use the same `BrandMark` as the welcome page and app shell. The black square with a letter H is gone.
+- Decorative quotation marks were removed from rendered copy (FAQ button names, Discover search phrasing, Ask HULUM). Apostrophes in contractions stay.
+- Welcome Get started lifts slightly on hover, the arrow travels once, a single light sweep crosses the button, and press compresses it. Keyboard focus uses an olive ring. Touch keeps the resting button plus the press. A quiet arrow cue repeats about every 7.5s and stops while hovered.
+
 ## 2026-10-08 — Welcome journey diagram motion
 
 ### Changed
