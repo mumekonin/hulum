@@ -128,7 +128,7 @@ export function createAuthRouter(service?: AuthService, resetService?: PasswordR
       res.redirect(
         googleAuthorizeUrl({
           clientId: env.GOOGLE_CLIENT_ID,
-          redirectUri: googleRedirectUri(env.PORT),
+          redirectUri: googleRedirectUri(env.PORT, env.API_PUBLIC_URL),
           state,
         }),
       );
@@ -156,7 +156,7 @@ export function createAuthRouter(service?: AuthService, resetService?: PasswordR
       verifyOauthState(state, authSigningSecret(env));
       const profile = await exchangeGoogleCode({
         code,
-        redirectUri: googleRedirectUri(env.PORT),
+        redirectUri: googleRedirectUri(env.PORT, env.API_PUBLIC_URL),
         clientId: env.GOOGLE_CLIENT_ID,
         clientSecret: env.GOOGLE_CLIENT_SECRET,
       });

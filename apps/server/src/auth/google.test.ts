@@ -16,4 +16,10 @@ describe("Google OAuth helpers", () => {
     expect(url.searchParams.get("scope")).toContain("email");
     expect(url.searchParams.get("state")).toBe("signed-state");
   });
+
+  it("uses the public API origin when the host is not localhost", () => {
+    expect(googleRedirectUri(3001, "https://hulum-api.example")).toBe(
+      "https://hulum-api.example/api/auth/google/callback",
+    );
+  });
 });

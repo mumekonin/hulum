@@ -219,10 +219,20 @@ voiceRouter.post("/action", async (req, res) => {
       return;
     }
     const includeList = wantsListWithAnalyze(text);
-    const gaps = (result.detail.gaps ?? []).map((item) => `${item.requirement} (${item.status})`);
+    const checks = result.detail.requirements.map((item) => ({
+      text: item.requirementText,
+      status: item.status,
+      reason: item.reason,
+    }));
+    const gaps = (result.detail.gaps ?? []).map((item) =>
+      item.remediation.trim()
+        ? `${item.requirement}: ${item.remediation} (${item.status})`
+        : `${item.requirement} (${item.status})`,
+    );
     const extra = {
       summary: result.detail.summary,
       gaps,
+      checks,
       sourceUrl: result.detail.opportunity.sourceUrl,
     };
     const reply = includeList
@@ -257,9 +267,17 @@ voiceRouter.post("/action", async (req, res) => {
   if (analysis) {
     const requirements = store.requirementResults.filter((item) => item.analysisId === analysis.id);
     const readiness = store.readinessItems.filter((item) => item.analysisId === analysis.id);
+    const checks = requirements.map((item) => ({
+      text: item.requirementText,
+      status: item.status,
+      reason: item.reason,
+    }));
     const gaps = requirements
       .filter((item) => item.status === "NOT_MET" || item.status === "UNCERTAIN")
-      .map((item) => `${item.requirementText} (${item.status})`);
+      .map((item) => {
+        const reason = item.reason.trim();
+        return reason === "" ? `${item.requirementText} (${item.status})` : `${item.requirementText}: ${reason} (${item.status})`;
+      });
 
     if (intent.intent === "EXPLAIN_DECISION") {
       const relatedOpportunity =
@@ -267,7 +285,9 @@ voiceRouter.post("/action", async (req, res) => {
       const relatedProfile = store.profiles.find((item) => item.userId === analysis.userId);
       ok(res, {
         intent: intent.intent,
-        reply: await spoken(replyExplain(language, analysis.decision, analysis.explanation ?? analysis.summary)),
+        reply: await spoken(
+          replyExplain(language, analysis.decision, analysis.explanation ?? analysis.summary, checks),
+        ),
         analysis:
           relatedOpportunity && relatedProfile
             ? toAnalysisDetail(analysis, relatedOpportunity, relatedProfile, requirements, readiness)

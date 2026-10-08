@@ -10,7 +10,11 @@ export type GoogleProfile = {
   name: string;
 };
 
-export function googleRedirectUri(port: number): string {
+/** Local callback, or `API_PUBLIC_URL` + `/api/auth/google/callback` on Render. */
+export function googleRedirectUri(port: number, publicOrigin?: string): string {
+  if (publicOrigin !== undefined && publicOrigin !== "") {
+    return `${publicOrigin}/api/auth/google/callback`;
+  }
   return `http://localhost:${String(port)}/api/auth/google/callback`;
 }
 

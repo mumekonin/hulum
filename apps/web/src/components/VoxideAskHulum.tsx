@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { usePathname, useRouter } from "next/navigation";
 import { VoxideClient, VoxideWidget, type VoxideStatus } from "@voxide/react";
 import { detectAskedLanguage, type LanguageCode } from "@hulum/shared";
@@ -32,7 +33,7 @@ import {
   VOXIDE_STARTERS,
   type VoxideTurn,
 } from "@/lib/voxide";
-import { isBrowserSpeaking, speakAloud, stopSpeaking } from "@/lib/speak";
+import { isBrowserSpeaking, primeSpeech, speakAloud, stopSpeaking } from "@/lib/speak";
 
 export type VoxideSessionIds = VoiceSessionIds;
 
@@ -463,6 +464,8 @@ export function VoxideAskHulum({
 
     publishVoxideClient(client);
     const releaseMute = muteAgentPlayback(client);
+    const unlockSpeech = () => primeSpeech();
+    window.addEventListener("pointerdown", unlockSpeech, true);
     void client.init().catch(() => {
       /* VoiceButton surfaces connect failures after init. */
     });
@@ -622,6 +625,8 @@ export function VoxideAskHulum({
           settleTimer = undefined;
         }
         settleText = "";
+        // A finished sentence often arrives without a streaming partial. Still read the answer.
+        heardSpeech = true;
         dispatchUser(heard.text);
       }
       showHulumOnly(heard.text);
@@ -663,6 +668,9 @@ export function VoxideAskHulum({
         return;
       }
       if (role === "user") {
+        if (!micLocked() && !isLoopText(text) && isAnswerableUtterance(text)) {
+          heardSpeech = true;
+        }
         dispatchUser(text);
         return;
       }
@@ -689,6 +697,7 @@ export function VoxideAskHulum({
         return;
       }
       if (status === "listening") {
+        primeSpeech();
         silenceTimer = setTimeout(() => {
           if (lastStatus === "listening" && !recoveringRef.current) {
             reportVoiceOpsEvent("VOICE_SILENCE_TIMEOUT", "voice");
@@ -707,6 +716,7 @@ export function VoxideAskHulum({
       }
       stopSpeaking();
       releaseMute();
+      window.removeEventListener("pointerdown", unlockSpeech, true);
       unsubSnap();
       unsubError();
       unsubTranscript();
@@ -717,12 +727,15 @@ export function VoxideAskHulum({
     };
   }, [client]);
 
-  // Ask HULUM has its own mic on this same client; the floating launcher would cover its input.
-  if (client === null || pathname === "/assistant") {
+  if (client === null) {
     return null;
   }
 
-  return <VoxideWidget client={client} theme={theme} title="Ask HULUM" position="bottom-right" />;
+  // Render on document.body so the page enter animation cannot turn this fixed popup into a scrolling box.
+  return createPortal(
+    <VoxideWidget client={client} theme={theme} title="Ask HULUM" position="bottom-right" />,
+    document.body,
+  );
 }
 
 export { hasVoxidePublicKey } from "@/lib/voxide";

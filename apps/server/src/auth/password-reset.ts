@@ -116,11 +116,20 @@ export function createPasswordResetService(deps: PasswordResetDeps): PasswordRes
       // Fragment, not query: keeps the token out of web-server access logs and Referer headers.
       const link = `${deps.clientOrigin}/reset-password#token=${token}`;
       const message = resetEmail(user.name, link);
-      // Sent after the response so timing does not reveal whether the account exists.
-      void mailer.send({ to: user.email, ...message }).catch((error: unknown) => {
+      try {
+        await mailer.send({ to: user.email, ...message });
+      } catch (error: unknown) {
         const reason = error instanceof Error ? error.message : "unknown error";
         logError(`Password reset email failed: ${reason}`);
-      });
+        const loginRejected = /535|BadCredentials|Invalid login|not accepted/i.test(reason);
+        throw new HttpError(
+          503,
+          "MAIL_UNAVAILABLE",
+          loginRejected
+            ? "Gmail rejected the sender login. The address you entered is fine. Update the mail app password in the server settings, restart the API, and try again."
+            : "HULUM could not send the reset email. Please try again.",
+        );
+      }
     },
 
     async verify(token): Promise<ResetTokenStatus> {

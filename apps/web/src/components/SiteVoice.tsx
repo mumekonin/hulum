@@ -1,6 +1,9 @@
 "use client";
 
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import { usePathname } from "next/navigation";
+import { isSignedIn } from "@/lib/storage";
 import { hasVoxidePublicKey } from "@/lib/voxide";
 
 const VoxideAskHulum = dynamic(
@@ -8,9 +11,16 @@ const VoxideAskHulum = dynamic(
   { ssr: false },
 );
 
-/** One Voxide widget for every page after login. */
+/** One floating Ask HULUM popup, on every page after sign-in. */
 export function SiteVoice() {
-  if (!hasVoxidePublicKey()) {
+  const pathname = usePathname();
+  const [show, setShow] = useState(false);
+
+  useEffect(() => {
+    setShow(hasVoxidePublicKey() && isSignedIn());
+  }, [pathname]);
+
+  if (!show) {
     return null;
   }
   return <VoxideAskHulum />;

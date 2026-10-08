@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { EB_Garamond, JetBrains_Mono, Source_Sans_3 } from "next/font/google";
+import { SiteVoice } from "@/components/SiteVoice";
 import { THEME_INIT_SCRIPT } from "@/lib/theme-script";
 import "./globals.css";
 
@@ -36,6 +37,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           Skip to main content
         </a>
         {children}
+        <SiteVoice />
       </body>
     </html>
   );

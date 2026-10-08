@@ -49,6 +49,11 @@ function clientKey(address: string | undefined): string {
   return address;
 }
 
+/** `req.ip` follows X-Forwarded-For once `trust proxy` is on (Render). */
+function clientAddress(req: { ip?: string; socket: { remoteAddress?: string } }): string {
+  return clientKey(req.ip || req.socket.remoteAddress);
+}
+
 export function explainRateLimitMiddleware(limiter: RateLimiter): RequestHandler {
   return (req, _res, next) => {
     if (
@@ -61,7 +66,7 @@ export function explainRateLimitMiddleware(limiter: RateLimiter): RequestHandler
       next();
       return;
     }
-    if (!limiter.allow(clientKey(req.socket.remoteAddress))) {
+    if (!limiter.allow(clientAddress(req))) {
       next(
         new HttpError(
           429,
@@ -81,7 +86,7 @@ export function authRateLimitMiddleware(limiter: RateLimiter): RequestHandler {
       next();
       return;
     }
-    if (!limiter.allow(`auth:${clientKey(req.socket.remoteAddress)}`)) {
+    if (!limiter.allow(`auth:${clientAddress(req)}`)) {
       next(
         new HttpError(429, "RATE_LIMITED", "Too many sign-in attempts. Please try again shortly."),
       );

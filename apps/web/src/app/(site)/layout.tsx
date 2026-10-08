@@ -1,7 +1,6 @@
 import { AppNav } from "@/components/AppNav";
 import { RequireAuth } from "@/components/RequireAuth";
 import { RequireProfile } from "@/components/RequireProfile";
-import { SiteVoice } from "@/components/SiteVoice";
 
 export default function SiteLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -12,7 +11,6 @@ export default function SiteLayout({ children }: { children: React.ReactNode }) 
           <RequireAuth>
             <RequireProfile>
               {children}
-              <SiteVoice />
             </RequireProfile>
           </RequireAuth>
         </main>

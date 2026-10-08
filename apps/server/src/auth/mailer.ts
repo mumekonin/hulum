@@ -25,6 +25,14 @@ function optional(value: string | undefined): string | undefined {
   return value.trim();
 }
 
+/** Gmail shows app passwords in groups of four. SMTP needs the 16 characters with no spaces. */
+function appPassword(value: string | undefined): string | undefined {
+  const trimmed = optional(value);
+  if (trimmed === undefined) return undefined;
+  const compact = trimmed.replace(/\s+/g, "");
+  return compact === "" ? undefined : compact;
+}
+
 /**
  * SMTP settings for password-reset email. Returns undefined until SMTP_HOST and MAIL_FROM are set,
  * so the API can say "not configured" instead of pretending an email was sent.
@@ -43,7 +51,7 @@ export function loadMailConfig(env: NodeJS.ProcessEnv = process.env): MailConfig
     port,
     secure,
     user: optional(env.SMTP_USER),
-    pass: optional(env.SMTP_PASS),
+    pass: appPassword(env.SMTP_PASS) ?? appPassword(env.SMTP_PASSWORD),
     from,
   };
 }

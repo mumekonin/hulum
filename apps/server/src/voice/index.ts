@@ -302,10 +302,20 @@ export function createVoiceService(deps: {
           }
           const detail = toAnalysisDetail(created, opportunity, profileView.profile);
           const includeList = wantsListWithAnalyze(input.text);
-          const gaps = detail.gaps.map((item) => `${item.requirement} (${item.status})`);
+          const checks = detail.requirements.map((item) => ({
+            text: item.requirementText,
+            status: item.status,
+            reason: item.reason,
+          }));
+          const gaps = detail.gaps.map((item) =>
+            item.remediation.trim()
+              ? `${item.requirement}: ${item.remediation} (${item.status})`
+              : `${item.requirement} (${item.status})`,
+          );
           const extra = {
             summary: detail.summary,
             gaps,
+            checks,
             sourceUrl: opportunity.sourceUrl,
           };
           const reply = includeList
@@ -355,9 +365,17 @@ export function createVoiceService(deps: {
         const profileView = await deps.profiles.getByUserId(analysis.userId);
         const requirements = analysis.requirements ?? [];
         const readiness = analysis.readiness ?? [];
+        const checks = requirements.map((item) => ({
+          text: item.text,
+          status: item.status,
+          reason: item.reason,
+        }));
         const gaps = requirements
           .filter((item) => item.status === RequirementStatus.NOT_MET || item.status === RequirementStatus.UNCERTAIN)
-          .map((item) => `${item.text} (${item.status})`);
+          .map((item) => {
+            const reason = item.reason?.trim() ?? "";
+            return reason === "" ? `${item.text} (${item.status})` : `${item.text}: ${reason} (${item.status})`;
+          });
         const detail =
           relatedOpportunity && profileView
             ? toAnalysisDetail(analysis, relatedOpportunity, profileView.profile)
@@ -375,7 +393,7 @@ export function createVoiceService(deps: {
           }
           return {
             intent: intent.intent,
-            reply: await spoken(replyExplain(language, analysis.decision, explanation)),
+            reply: await spoken(replyExplain(language, analysis.decision, explanation, checks)),
             analysis: detail,
             opportunity: relatedOpportunity,
           };

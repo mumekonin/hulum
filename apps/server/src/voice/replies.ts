@@ -90,19 +90,50 @@ export function replyNeedAnalysis(language: LanguageCode): string {
   );
 }
 
+export type SpokenCheck = {
+  text: string;
+  status: string;
+  reason?: string | null;
+};
+
+function statusWord(status: string): string {
+  if (status === "NOT_MET") return "not met";
+  if (status === "UNCERTAIN") return "uncertain";
+  if (status === "MET") return "met";
+  return status.toLowerCase().replace(/_/g, " ");
+}
+
+/** Say how the saved profile lines up with stored requirements. Facts already decided by the engine. */
+export function formatSpokenReasons(checks: SpokenCheck[]): string {
+  const usable = checks.filter((item) => item.text.trim() !== "");
+  const met = usable.filter((item) => item.status === "MET").slice(0, 3);
+  const open = usable.filter((item) => item.status === "NOT_MET" || item.status === "UNCERTAIN");
+  const chosen = [...met, ...open].slice(0, 6);
+  if (chosen.length === 0) {
+    return "";
+  }
+  const lines = chosen.map((item) => {
+    const reason = item.reason?.trim().replace(/\.$/, "") ?? "";
+    const named = `${item.text.trim()} is ${statusWord(item.status)}`;
+    return reason === "" ? named : `${named}. ${reason}`;
+  });
+  return ` Compared with your saved profile: ${lines.join(". ")}.`;
+}
+
 export function replyAnalysis(
   language: LanguageCode,
   title: string,
   decision: string,
   fitScore: number,
   nextAction: string,
-  extra?: { summary?: string; gaps?: string[]; sourceUrl?: string },
+  extra?: { summary?: string; gaps?: string[]; sourceUrl?: string; checks?: SpokenCheck[] },
 ): string {
   const fit = String(fitScore);
   const summary = extra?.summary?.trim() ? ` ${extra.summary.trim()}` : "";
+  const because = formatSpokenReasons(extra?.checks ?? []);
   const gapList = (extra?.gaps ?? []).filter((item) => item.trim() !== "");
   const gaps =
-    gapList.length === 0
+    because !== "" || gapList.length === 0
       ? ""
       : pick(
           language,
@@ -120,9 +151,9 @@ export function replyAnalysis(
     : "";
   return pick(
     language,
-    `${decision} for ${title}. Fit ${fit}%.${summary} Next: ${nextAction}.${gaps}${source}`,
-    `${decision} for ${title}. Fit ${fit}%.${summary} Next: ${nextAction}.${gaps}${source}`,
-    `${title}f murteen ${decision}. Waliin ${fit}%.${summary} Itti aanu: ${nextAction}.${gaps}${source}`,
+    `${decision} for ${title}. Fit ${fit}%.${summary}${because} Next: ${nextAction}.${gaps}${source}`,
+    `${decision} for ${title}. Fit ${fit}%.${summary}${because} Next: ${nextAction}.${gaps}${source}`,
+    `${title}f murteen ${decision}. Waliin ${fit}%.${summary}${because} Itti aanu: ${nextAction}.${gaps}${source}`,
   );
 }
 
@@ -134,7 +165,7 @@ export function replyListThenAnalysis(
   decision: string,
   fitScore: number,
   nextAction: string,
-  extra?: { summary?: string; gaps?: string[]; sourceUrl?: string },
+  extra?: { summary?: string; gaps?: string[]; sourceUrl?: string; checks?: SpokenCheck[] },
 ): string {
   return `${replyOpportunityList(language, items, type)} ${replyAnalysis(language, title, decision, fitScore, nextAction, extra)}`;
 }
@@ -157,8 +188,24 @@ export function replyDetails(language: LanguageCode, item: Opportunity, decision
   );
 }
 
-export function replyExplain(language: LanguageCode, decision: string, summary: string): string {
-  return pick(language, `${decision}. ${summary}`, `${decision}. ${summary}`, `Murteen ${decision}. ${summary}`);
+export function replyExplain(
+  language: LanguageCode,
+  decision: string,
+  summary: string,
+  checks?: SpokenCheck[],
+): string {
+  const because = formatSpokenReasons(checks ?? []);
+  const already = (checks ?? []).filter((item) => {
+    const reason = item.reason?.trim().slice(0, 40) ?? "";
+    return reason.length > 12 && summary.includes(reason);
+  });
+  const extra = already.length >= 2 ? "" : because;
+  return pick(
+    language,
+    `${decision}. ${summary}${extra}`,
+    `${decision}. ${summary}${extra}`,
+    `Murteen ${decision}. ${summary}${extra}`,
+  );
 }
 
 export function replyGaps(language: LanguageCode, gaps: string[]): string {

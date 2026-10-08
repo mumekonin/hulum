@@ -57,7 +57,7 @@ Out of v0.1: auto-apply, payments, native mobile, inventing listings, ScholarXIV
 | Explanation | Groq on stored analyses (`GROQ_API_KEY`, `GROQ_MODEL`) | Claude leftover env names |
 | Voice | Keyword intents + text/quick actions | Voxide browser widget |
 | Research | `docs/research/` + `/research` proxy when keyed | `scholarxiv.md` table empty by design; papers never decide |
-| Host | Local `npm run dev` | EthioDeploy / production — **not deployed** |
+| Host | Local `npm run dev` | API on Render, web on Vercel — not live until those services exist |
 
 ---
 
@@ -142,14 +142,15 @@ Set `CLIENT_URL` in `apps/server/.env` to the web origin (`http://localhost:3000
 
 ## Production configuration
 
-v0.1 is **not deployed**. When a host exists:
+The chosen hosts are **Render** (API) and **Vercel** (web). They are not live until you create the services. Steps: `docs/stark/deployment.md`.
 
 | Variable | Required in production | Role |
 |---|---|---|
 | `NODE_ENV` | yes (`production`) | Disables localhost CORS fallback |
 | `CLIENT_URL` | yes (web origin, no path) | CORS allowlist |
 | `PORT` | no (default `3001`) | API listen port |
-| `NEXT_PUBLIC_API_URL` | web build | Browser → API origin (`http://localhost:3001`) |
+| `NEXT_PUBLIC_API_URL` | web build | Browser → API origin (local `http://localhost:3001`, or the Render URL) |
+| `API_PUBLIC_URL` | API, when hosted | Google callback origin. Same Render URL, no path |
 | `STORE_PATH` | no | File-store path for tests only |
 | `CLAUDE_API_KEY` + `CLAUDE_MODEL` | no | Leftover names; v0.1 explain uses Groq |
 | `GROQ_API_KEY` + `GROQ_MODEL` | no | Optional explain of a stored analysis |

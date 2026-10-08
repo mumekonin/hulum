@@ -1,0 +1,50 @@
+# Render Blueprint for the HULUM API.
+# Dashboard: New → Blueprint → this repo. Fill every sync:false value there.
+# Do not put real secrets in this file.
+services:
+  - type: web
+    name: hulum-api
+    runtime: node
+    plan: free
+    region: frankfurt
+    buildCommand: npm install
+    startCommand: npm run start -w @hulum/server
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: NODE_VERSION
+        value: "22"
+      - key: PLAYWRIGHT_SKIP_BROWSER_DOWNLOAD
+        value: "1"
+      # Chromium is not installed on this instance. Turn the worker on only after a larger plan.
+      - key: INVESTIGATE_WORKER
+        value: "false"
+      - key: DATABASE_URL
+        sync: false
+      - key: CLIENT_URL
+        sync: false
+      - key: SESSION_SECRET
+        sync: false
+      - key: API_PUBLIC_URL
+        sync: false
+      - key: SMTP_HOST
+        value: smtp.gmail.com
+      - key: SMTP_PORT
+        value: "587"
+      - key: SMTP_USER
+        sync: false
+      - key: SMTP_PASSWORD
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+      - key: GROQ_API_KEY
+        sync: false
+      - key: GROQ_MODEL
+        value: openai/gpt-oss-20b
+      - key: GOOGLE_CLIENT_ID
+        sync: false
+      - key: GOOGLE_CLIENT_SECRET
+        sync: false
+      - key: SCHOLARXIV_API_KEY
+        sync: false

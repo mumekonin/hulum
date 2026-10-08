@@ -148,7 +148,7 @@ describe("password reset", () => {
     expect(f.tokens).toHaveLength(0);
   });
 
-  it("returns the same success when delivery fails, and logs without the token", async () => {
+  it("tells the user when delivery fails, and logs without the token", async () => {
     const logged: string[] = [];
     const failing: Mailer = {
       async send() {
@@ -158,10 +158,11 @@ describe("password reset", () => {
     const f = fixture({ mailer: failing, logError: (line) => logged.push(line) });
     await f.addUser("abeba@example.invalid", "old-password");
 
-    await expect(f.service.request("abeba@example.invalid")).resolves.toBeUndefined();
-    await vi.waitFor(() =>
-      expect(logged).toEqual(["Password reset email failed: SMTP connection refused"]),
-    );
+    await expect(f.service.request("abeba@example.invalid")).rejects.toMatchObject({
+      statusCode: 503,
+      code: "MAIL_UNAVAILABLE",
+    });
+    expect(logged).toEqual(["Password reset email failed: SMTP connection refused"]);
     const storedHash = f.tokens[0]?.token_hash ?? "";
     expect(logged.join("\n")).not.toContain(storedHash);
   });

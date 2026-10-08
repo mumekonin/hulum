@@ -28,6 +28,8 @@ export type AppEnv = {
   SESSION_SECRET: string | undefined;
   GOOGLE_CLIENT_ID: string | undefined;
   GOOGLE_CLIENT_SECRET: string | undefined;
+  /** Public API origin for the Google OAuth callback. Unset locally (localhost). */
+  API_PUBLIC_URL: string | undefined;
 };
 
 export type LoadEnvOptions = {
@@ -123,5 +125,6 @@ export function loadEnv(options: LoadEnvOptions = {}): AppEnv {
     SESSION_SECRET: optionalString(process.env.SESSION_SECRET),
     GOOGLE_CLIENT_ID: optionalString(process.env.GOOGLE_CLIENT_ID),
     GOOGLE_CLIENT_SECRET: optionalString(process.env.GOOGLE_CLIENT_SECRET),
+    API_PUBLIC_URL: parseClientUrl(process.env.API_PUBLIC_URL),
   };
 }

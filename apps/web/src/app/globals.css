@@ -50,12 +50,12 @@
   --hulum-skip: #e3938a;
   --hulum-skip-soft: #2c1b19;
 
-  --wl-bg: #090909;
-  --wl-surface: #111111;
-  --wl-soft: #181818;
+  --wl-bg: #121210;
+  --wl-surface: #1a1a17;
+  --wl-soft: #161613;
   --wl-ink: #f5f3ed;
   --wl-muted: #a7a59e;
-  --wl-line: #292929;
+  --wl-line: rgba(255, 255, 255, 0.08);
   --wl-accent: #a8b18f;
 
   color-scheme: dark;
@@ -107,6 +107,11 @@ html,
 body {
   background: var(--hulum-paper);
   color: var(--hulum-ink);
+}
+
+/* Ask HULUM stays a corner popup. It must not scroll with the page. */
+body > .vx-enter {
+  position: fixed !important;
 }
 
 body {
@@ -621,8 +626,13 @@ body {
 h1,
 h2,
 h3,
-.font-display {
+.font-display,
+.font-gw-serif {
   font-family: var(--font-gateway-serif), "EB Garamond", Georgia, serif;
+}
+
+.font-gw-mono {
+  font-family: var(--font-gateway-mono), "JetBrains Mono", ui-monospace, monospace;
 }
 
 /* One control language: 6px controls, shared hover, shared fields. */
@@ -748,8 +758,22 @@ h3,
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--hulum-ink) 14%, transparent);
 }
 
-.welcome-footer a:focus-visible {
-  outline-color: #f5f3ed;
+.welcome-footer a:focus-visible,
+.welcome-footer button:focus-visible {
+  outline-color: var(--wl-accent);
+}
+
+.welcome-footer .hulum-field:focus-visible {
+  border-color: var(--wl-accent);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--wl-accent) 32%, transparent);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .welcome-footer__rise {
+    animation: wl-rise 700ms cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-timeline: view();
+    animation-range: entry 0% cover 18%;
+  }
 }
 
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
