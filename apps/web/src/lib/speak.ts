@@ -20,12 +20,12 @@ export function isBrowserSpeaking(): boolean {
  */
 let speechGeneration = 0;
 let activeUtterance: SpeechSynthesisUtterance | null = null;
-let resumeTimer: ReturnType<typeof setInterval> | undefined;
+let resumeTimer: number | undefined;
 let speechUnlocked = false;
 
 function clearResume(): void {
   if (resumeTimer !== undefined) {
-    clearInterval(resumeTimer);
+    window.clearInterval(resumeTimer);
     resumeTimer = undefined;
   }
 }
