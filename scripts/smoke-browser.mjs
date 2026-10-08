@@ -31,7 +31,8 @@ async function main() {
   page.setDefaultTimeout(timeout);
 
   try {
-    await page.goto(`${WEB}/sign-in`, { waitUntil: "domcontentloaded" });
+    // Welcome lives at /. /sign-in is the email form, where Sign in is a button.
+    await page.goto(`${WEB}/`, { waitUntil: "domcontentloaded" });
     await page.getByText("HULUM", { exact: true }).first().waitFor();
     await page.getByText(/Know what is worth/i).first().waitFor();
     await page.getByRole("link", { name: /Get started|Sign in/i }).first().click();
