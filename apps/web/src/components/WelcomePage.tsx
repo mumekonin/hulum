@@ -8,10 +8,10 @@ const rise = "motion-safe:animate-[wl-rise_550ms_cubic-bezier(0.2,0.7,0.2,1)_bot
 
 export function WelcomePage() {
   return (
-    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-wl-bg px-3 font-sans text-wl-ink sm:px-6">
+    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-wl-bg font-sans text-wl-ink">
       <BackdropPattern />
 
-      <div className="relative my-auto flex w-full max-w-[1120px] flex-col self-center py-6 sm:py-10">
+      <div className="relative flex w-full flex-1 items-center justify-center px-3 py-6 sm:px-6 sm:py-10">
       <main
         id="main-content"
         tabIndex={-1}
@@ -79,8 +79,8 @@ export function WelcomePage() {
           <DecisionPath />
         </section>
       </main>
-      <WelcomeFooter />
       </div>
+      <WelcomeFooter />
     </div>
   );
 }

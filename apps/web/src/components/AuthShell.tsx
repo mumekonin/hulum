@@ -69,13 +69,6 @@ export function AuthShell({ children }: { children: React.ReactNode }) {
           >
             Know what is worth your time.
           </h1>
-          <div
-            className={`${authRise} mt-4 max-w-[300px] space-y-0.5 text-sm font-sans font-semibold not-italic leading-[1.7] text-ink [animation-delay:220ms] sm:space-y-1 sm:text-[15px] md:mt-6`}
-          >
-            <p>Understand opportunities.</p>
-            <p>Know where you stand.</p>
-            <p>Apply with confidence.</p>
-          </div>
         </section>
 
         <section className="flex flex-col justify-center px-6 py-7 sm:px-10 md:px-11 md:py-12">

@@ -748,6 +748,10 @@ h3,
   box-shadow: 0 0 0 3px color-mix(in srgb, var(--hulum-ink) 14%, transparent);
 }
 
+.welcome-footer a:focus-visible {
+  outline-color: #f5f3ed;
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
