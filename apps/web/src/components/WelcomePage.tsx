@@ -1,15 +1,17 @@
 import Link from "next/link";
 import { BrandMark } from "./BrandMark";
 import { ThemeToggle } from "./ThemeToggle";
+import { WelcomeFooter } from "./WelcomeFooter";
 import { DecisionPath } from "./WelcomeJourney";
 
 const rise = "motion-safe:animate-[wl-rise_550ms_cubic-bezier(0.2,0.7,0.2,1)_both]";
 
 export function WelcomePage() {
   return (
-    <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-wl-bg px-3 py-6 font-sans text-wl-ink sm:px-6 sm:py-10">
+    <div className="relative flex min-h-screen flex-col overflow-x-hidden bg-wl-bg px-3 font-sans text-wl-ink sm:px-6">
       <BackdropPattern />
 
+      <div className="relative my-auto flex w-full max-w-[1120px] flex-col self-center py-6 sm:py-10">
       <main
         id="main-content"
         tabIndex={-1}
@@ -77,6 +79,8 @@ export function WelcomePage() {
           <DecisionPath />
         </section>
       </main>
+      <WelcomeFooter />
+      </div>
     </div>
   );
 }
