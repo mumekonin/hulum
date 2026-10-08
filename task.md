@@ -742,9 +742,9 @@ It must perform meaningful HULUM actions and must not be decorative.
 
 - [x] **P0** Study Voxide integration requirements.
 - [x] **P0** Create development integration.
-- [-] **P0** Receive/process voice input. <!-- live mic / STT; text path is separate -->
+- [-] **P0** Receive/process voice input. <!-- 2026-10-07: recorded English speech through the browser mic input → Voxide STT → HULUM action works; owner mic re-test pending -->
 - [x] **P0** Connect voice to HULUM actions. <!-- widget tools + text → POST /api/voice/action -->
-- [-] **P0** Produce voice response. <!-- TTS; text reply shipped -->
+- [-] **P0** Produce voice response. <!-- HULUM's own answer is read aloud (browser speech); owner heard Voxide speech; owner re-test of HULUM answer pending -->
 - [x] **P0** Analyze an opportunity by voice. <!-- via text/widget tools calling the same action API -->
 - [x] **P0** Ask "Why?"
 - [x] **P0** Ask "What am I missing?"
@@ -1463,10 +1463,10 @@ However, STARK-required research and ideation documentation must be maintained t
 
 ## Gate 4 — Voice Slice
 
-- [ ] Voxide input works. <!-- live mic / STT -->
+- [-] Voxide input works. <!-- recorded speech via browser mic input recognized; owner mic re-test pending -->
 - [x] Voice intent works. <!-- text + widget tools → /api/voice/action -->
 - [x] HULUM action executes.
-- [ ] Voice response works. <!-- TTS; text reply shipped -->
+- [-] Voice response works. <!-- HULUM answer read aloud; owner re-test pending -->
 - [x] Failure fallback works.
 
 ## Gate 5 — Integrated MVP

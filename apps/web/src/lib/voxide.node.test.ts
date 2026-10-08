@@ -1,0 +1,40 @@
+import assert from "node:assert/strict";
+import { describe, it } from "node:test";
+import { canSpeakLocale, finishedUserUtterance, isHulumProductRequest } from "./voxide";
+
+describe("finishedUserUtterance", () => {
+  it("waits while the sentence is still streaming in", () => {
+    assert.equal(finishedUserUtterance([{ role: "user", text: " Show", partial: true }]), "");
+  });
+
+  it("treats a sentence as finished once the assistant starts answering", () => {
+    assert.equal(
+      finishedUserUtterance([
+        { role: "user", text: " Show me scholarships.", partial: true },
+        { role: "ai", text: "I'd love to help", partial: true },
+      ]),
+      "Show me scholarships.",
+    );
+  });
+
+  it("returns a final or typed sentence", () => {
+    assert.equal(finishedUserUtterance([{ role: "user", text: "Analyze for me" }]), "Analyze for me");
+    assert.equal(finishedUserUtterance([{ role: "ai", text: "Hello" }]), "");
+  });
+
+  it("does not hand a half-heard word to the product actions", () => {
+    const halfHeard = finishedUserUtterance([{ role: "user", text: " Show", partial: true }]);
+    assert.equal(isHulumProductRequest(halfHeard), false);
+  });
+});
+
+describe("canSpeakLocale", () => {
+  it("always speaks English", () => {
+    assert.equal(canSpeakLocale("en-US", []), true);
+  });
+
+  it("speaks Amharic only when the browser has an Amharic voice", () => {
+    assert.equal(canSpeakLocale("am-ET", [{ lang: "en-US" }]), false);
+    assert.equal(canSpeakLocale("am-ET", [{ lang: "am-ET" }]), true);
+  });
+});

@@ -6,6 +6,20 @@
 
 ---
 
+## 2026-10-07 — Voice: speech reaches HULUM and the answer is spoken
+
+Diagnosed with recorded English speech played into Edge's microphone input (`--use-file-for-fake-audio-capture`), keyed Voxide, local stack:
+
+- Voxide speech-to-text works: "Show me scholarships." and "Analyze for me." were transcribed correctly.
+- Voxide's model still refuses to call HULUM's tools ("I don't have the ability to search or display scholarships") even though the tool manifest upload returns 200. That is Voxide-side.
+- HULUM's widget acted on half-heard words ("Show") and only wrote its answer into the panel, so the owner heard the refusal and nothing useful.
+- Fixed: HULUM waits for the finished sentence, ends Voxide's spoken turn, runs the same product action, and reads its own answer aloud (browser speech, English; Amharic only if the browser has an Amharic voice).
+- After the fix: "Show me scholarships." → FILTER_OPPORTUNITIES list read aloud; "Analyze for me." on the second scholarship → SKIP, same as the Analyze my fit button.
+
+Still open: owner re-test with a physical microphone, Amharic speech (no Amharic test voice available), Voxide's own tool calling.
+
+---
+
 ## 2026-10-07 — First keyed microphone pass (local)
 
 Run by the owner in a real browser with `NEXT_PUBLIC_VOXIDE_KEY` set (`/api/sdk/init` 200).
