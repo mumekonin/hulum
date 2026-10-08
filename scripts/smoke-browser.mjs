@@ -10,7 +10,7 @@
 
 import { chromium } from "playwright";
 
-const WEB = process.env.WEB_URL ?? "http://127.0.0.1:3000";
+const WEB = process.env.WEB_URL ?? "http://localhost:3000";
 const timeout = 60_000;
 
 async function assertOk(response, label) {
@@ -23,7 +23,10 @@ async function assertOk(response, label) {
 async function main() {
   const email = `ci.browser.${String(Date.now())}@example.invalid`;
   console.log(`smoke:browser → ${WEB} (${email})`);
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium
+    .launch({ headless: true, channel: "msedge" })
+    .catch(() => chromium.launch({ headless: true, channel: "chrome" }))
+    .catch(() => chromium.launch({ headless: true }));
   const page = await browser.newPage();
   page.setDefaultTimeout(timeout);
 
@@ -137,7 +140,7 @@ async function main() {
       .click();
     await page.waitForURL(/\/assistant/);
     await page.getByRole("heading", { name: /Ask HULUM|ሁሉምን ጠይቅ/i }).waitFor();
-    await page.getByText(/Microphone unavailable|Type or use a quick action|ማይክሮፎን/i).first().waitFor();
+    await page.getByText(/never submits applications for you/i).first().waitFor();
 
     // Task 13: Oromo text quick actions (chrome shell stays English; no STT claim).
     await page.locator("select").filter({ has: page.locator('option[value="om"]') }).selectOption("om");
