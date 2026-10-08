@@ -32,6 +32,17 @@ HULUM records actual work. Do not invent history.
 ### Why
 "Forgot password?" opened a page whose button only toggled local state; no request or email existed. HULUM accounts live in its own `users` table (scrypt + JWT), not Supabase Auth, so the reset is built into that auth module.
 
+## 2026-10-07 — Phase 25 backup demo screenshots
+
+### Changed
+- `scripts/capture-demo-screenshots.mjs` + `npm run capture:demo-screenshots` writes the STARK shot-list PNGs.
+- `docs/demo/screenshots/`: required frames `01`–`06` captured from local stack (no video).
+- `task.md` Phase 25 backup row: screenshots in-repo; video still open.
+- `smoke:browser`: wait for Discover loading to finish before Analyze.
+
+### Why
+Phase 25 still had only a shot list. Judges need real local PNGs without inventing a recorded video or a public deploy.
+
 ## 2026-10-05 — Account menu on the sidebar
 
 ### Changed
@@ -86,6 +97,17 @@ Exact-string matching skipped real listings (Africa vs ET, “Currently enrolled
 
 ### Why
 Users saw highlights without a clean why, and general questions about an open opportunity were dropped as unsupported.
+
+## 2026-10-03 — smoke:browser analyze → APPLY/MAYBE/SKIP
+
+### Changed
+- `015_ci_smoke_investigator_row.sql`: one AI_EXTRACTED CI/local smoke listing (not curated seed reopen).
+- `smoke:browser`: Discover → Analyze my fit → decision + official source + Readiness.
+- `smoke:local`: analyze first catalog row; assert APPLY|MAYBE|SKIP.
+- CI step label + task-status / demo notes synced.
+
+### Why
+After Oromo/onboarding smokes, CI still never proved the core Analyze → decision path when the investigator catalog was empty.
 
 ## 2026-10-03 — Ask HULUM Oromo lang a11y + smoke:browser
 

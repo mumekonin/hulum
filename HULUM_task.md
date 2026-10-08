@@ -994,7 +994,7 @@ Interest: AI
 - [x] **P0** Test clean browser/device (`smoke:browser` on CI).
 - [ ] **P0** Test microphone.
 - [ ] **P0** Test production deployment.
-- [ ] **P1** Prepare backup video/screenshots.
+- [-] **P1** Prepare backup video/screenshots. <!-- PNGs in docs/demo/screenshots via capture:demo-screenshots; video still open -->
 
 ---
 

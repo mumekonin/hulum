@@ -10,7 +10,7 @@
 
 import { chromium } from "playwright";
 
-const WEB = process.env.WEB_URL ?? "http://127.0.0.1:3000";
+const WEB = process.env.WEB_URL ?? "http://localhost:3000";
 const timeout = 60_000;
 
 async function assertOk(response, label) {
@@ -23,7 +23,10 @@ async function assertOk(response, label) {
 async function main() {
   const email = `ci.browser.${String(Date.now())}@example.invalid`;
   console.log(`smoke:browser → ${WEB} (${email})`);
-  const browser = await chromium.launch({ headless: true });
+  const browser = await chromium
+    .launch({ headless: true, channel: "msedge" })
+    .catch(() => chromium.launch({ headless: true, channel: "chrome" }))
+    .catch(() => chromium.launch({ headless: true }));
   const page = await browser.newPage();
   page.setDefaultTimeout(timeout);
 
@@ -91,6 +94,35 @@ async function main() {
     await page.getByRole("link", { name: /Find opportunities/i }).click();
     await page.waitForURL(/\/opportunities/);
     await page.getByRole("heading", { name: /Find opportunities worth your time/i }).waitFor();
+    await page.getByText("Loading opportunities").waitFor({ state: "hidden", timeout: 90_000 });
+
+    // Core thesis: Discover → Analyze my fit → APPLY/MAYBE/SKIP + official source (CI row from 015).
+    const cards = page.locator("#opportunity-results li");
+    if ((await cards.count()) === 0) {
+      throw new Error(
+        "Discover catalog empty — run migrations including 015_ci_smoke_investigator_row.sql",
+      );
+    }
+    const analyzePromise = page.waitForResponse((response) => {
+      if (response.request().method() !== "POST") return false;
+      try {
+        return /\/api\/opportunities\/[^/]+\/analyze$/.test(new URL(response.url()).pathname);
+      } catch {
+        return false;
+      }
+    });
+    await cards.first().getByRole("link").first().click();
+    await page.waitForURL(/\/opportunities\//);
+    await page.getByRole("button", { name: "Analyze my fit" }).click();
+    await assertOk(await analyzePromise, "Analyze");
+    await page.getByRole("heading", { name: "HULUM decision" }).waitFor();
+    await page.getByLabel(/Decision (APPLY|MAYBE|SKIP)\./).waitFor();
+    await page.getByText(/Fit signal \d+\/100 · advisory only/).waitFor();
+    await page.getByRole("heading", { name: "Official source" }).waitFor();
+    await page
+      .getByText(/Always verify final eligibility and deadlines with the official organization/)
+      .waitFor();
+    await page.getByRole("heading", { name: "Readiness" }).waitFor();
 
     await page
       .getByRole("navigation", { name: "Primary" })
@@ -108,14 +140,14 @@ async function main() {
       .click();
     await page.waitForURL(/\/assistant/);
     await page.getByRole("heading", { name: /Ask HULUM|ሁሉምን ጠይቅ/i }).waitFor();
-    await page.getByText(/Microphone unavailable|Type or use a quick action|ማይክሮፎን/i).first().waitFor();
+    await page.getByText(/never submits applications for you/i).first().waitFor();
 
     // Task 13: Oromo text quick actions (chrome shell stays English; no STT claim).
     await page.locator("select").filter({ has: page.locator('option[value="om"]') }).selectOption("om");
     await page.getByRole("button", { name: /Carraa kana madaali/i }).first().waitFor();
 
     console.log(
-      "ok: welcome → register → onboarding → opportunities → screenshot → Ask HULUM text fallback → Oromo quick action",
+      "ok: welcome → register → onboarding → opportunities → analyze decision → screenshot → Ask HULUM text fallback → Oromo quick action",
     );
   } finally {
     await browser.close();

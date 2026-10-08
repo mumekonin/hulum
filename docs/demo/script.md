@@ -81,7 +81,7 @@ Do say: the engine decides; Groq may rephrase a stored analysis when `GROQ_API_K
 
 **Click:** Analyze my fit.
 
-**Say:** The same engine runs here and in Ask HULUM. Fit score is a signal only. Do not invent APPLY / MAYBE / SKIP before the result appears.
+**Say:** The same engine runs here and in Ask HULUM. Fit score is a signal only. Do not invent APPLY / MAYBE / SKIP before the result appears. (`smoke:browser` / `smoke:local` cover this path when migration `015` CI AI_EXTRACTED fixture or investigator catalog is present — not curated seed.)
 
 ### 2:10 — Decision (same page)
 
