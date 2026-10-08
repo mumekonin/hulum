@@ -5,8 +5,6 @@
 [![Live App](https://img.shields.io/badge/Live%20App-hulum--alpha.vercel.app-6366f1?style=flat-square&logo=vercel)](https://hulum-alpha.vercel.app)
 [![API Health](https://img.shields.io/badge/API-hulum--api.onrender.com-10b981?style=flat-square&logo=render)](https://hulum-api.onrender.com/api/health)
 [![Version](https://img.shields.io/badge/version-0.1.0-blue?style=flat-square)](package.json)
-[![Node](https://img.shields.io/badge/node-%3E%3D20-brightgreen?style=flat-square&logo=node.js)](package.json)
-[![License](https://img.shields.io/badge/license-private-lightgrey?style=flat-square)]()
 [![STARK Hackathon 2026](https://img.shields.io/badge/STARK%20Hackathon-2026-orange?style=flat-square)]()
 
 ---
