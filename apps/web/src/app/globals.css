@@ -211,3 +211,276 @@ h3,
 .skip-link:focus {
   top: 1rem;
 }
+
+/*
+ * Journey-page premium surfaces. Pointer light uses --mouse-x / --mouse-y
+ * written on the element (no React state). Hover motion is pointer-fine only.
+ */
+.hulum-surface {
+  --mouse-x: 50%;
+  --mouse-y: 50%;
+  --surface-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  --surface-glow: color-mix(in srgb, var(--hulum-ink) 7%, transparent);
+  --surface-sweep: color-mix(in srgb, var(--hulum-ink) 10%, transparent);
+  --surface-ripple: color-mix(in srgb, var(--hulum-ink) 20%, transparent);
+  position: relative;
+  transform: translateY(0) scale(1);
+  transition:
+    transform 240ms var(--surface-ease),
+    border-color 240ms var(--surface-ease),
+    box-shadow 240ms var(--surface-ease),
+    background-color 240ms var(--surface-ease);
+}
+
+.hulum-surface__fx {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.hulum-surface__glow,
+.hulum-surface__wash {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.hulum-surface__glow {
+  opacity: 0;
+  background: radial-gradient(
+    160px circle at var(--mouse-x) var(--mouse-y),
+    var(--surface-glow),
+    transparent 70%
+  );
+  transition: opacity 280ms var(--surface-ease);
+}
+
+.hulum-surface__body {
+  position: relative;
+  z-index: 1;
+}
+
+.hulum-surface__ripple {
+  position: absolute;
+  width: 8px;
+  height: 8px;
+  margin: -4px 0 0 -4px;
+  border-radius: 50%;
+  background: var(--surface-ripple);
+  pointer-events: none;
+  animation: hulum-surface-ripple 360ms var(--surface-ease) forwards;
+}
+
+@keyframes hulum-surface-ripple {
+  from {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  to {
+    transform: scale(14);
+    opacity: 0;
+  }
+}
+
+@keyframes hulum-surface-sweep {
+  from {
+    transform: translateX(-120%);
+    opacity: 0.7;
+  }
+  to {
+    transform: translateX(120%);
+    opacity: 0;
+  }
+}
+
+@keyframes hulum-surface-breathe {
+  0% {
+    transform: scale(0.5);
+    opacity: 0;
+  }
+  42% {
+    opacity: 0.45;
+  }
+  100% {
+    transform: scale(1.45);
+    opacity: 0;
+  }
+}
+
+.hulum-surface--apply {
+  --surface-glow: color-mix(in srgb, var(--hulum-apply) 16%, transparent);
+  --surface-sweep: color-mix(in srgb, var(--hulum-apply) 18%, transparent);
+  --surface-ripple: color-mix(in srgb, var(--hulum-apply) 28%, transparent);
+}
+
+.hulum-surface--maybe {
+  --surface-glow: color-mix(in srgb, var(--hulum-maybe) 16%, transparent);
+  --surface-ripple: color-mix(in srgb, var(--hulum-maybe) 28%, transparent);
+}
+
+.hulum-surface--skip {
+  --surface-glow: color-mix(in srgb, var(--hulum-skip) 12%, transparent);
+  --surface-sweep: color-mix(in srgb, var(--hulum-skip) 14%, transparent);
+  --surface-ripple: color-mix(in srgb, var(--hulum-skip) 22%, transparent);
+}
+
+.hulum-surface--primary {
+  --surface-glow: color-mix(in srgb, var(--hulum-paper) 16%, transparent);
+  --surface-sweep: color-mix(in srgb, var(--hulum-paper) 22%, transparent);
+  --surface-ripple: color-mix(in srgb, var(--hulum-paper) 28%, transparent);
+}
+
+.hulum-surface--secondary {
+  --surface-glow: color-mix(in srgb, var(--hulum-ink) 8%, transparent);
+  --surface-ripple: color-mix(in srgb, var(--hulum-ink) 16%, transparent);
+}
+
+.hulum-surface--apply .hulum-surface__wash,
+.hulum-surface--skip .hulum-surface__wash,
+.hulum-surface--primary .hulum-surface__wash {
+  background: linear-gradient(105deg, transparent 28%, var(--surface-sweep) 50%, transparent 72%);
+  transform: translateX(-120%);
+  opacity: 0;
+}
+
+.hulum-surface--maybe .hulum-surface__wash {
+  inset: auto;
+  left: var(--mouse-x);
+  top: var(--mouse-y);
+  width: 168px;
+  height: 168px;
+  margin: -84px 0 0 -84px;
+  border-radius: 50%;
+  background: radial-gradient(circle, var(--surface-glow) 0%, transparent 72%);
+  transform: scale(0.5);
+  opacity: 0;
+}
+
+.hulum-surface--secondary .hulum-surface__wash {
+  background: color-mix(in srgb, var(--hulum-ink) 4.5%, transparent);
+  transform: scaleX(0);
+  transform-origin: left center;
+  opacity: 1;
+  transition: transform 280ms var(--surface-ease);
+}
+
+.hulum-surface--primary .hulum-surface__body,
+.hulum-surface--secondary .hulum-surface__body {
+  display: inline-flex;
+  align-items: center;
+  min-height: inherit;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .hulum-surface:hover .hulum-surface__glow {
+    opacity: 1;
+  }
+
+  .hulum-surface--apply:hover,
+  .hulum-surface--maybe:hover,
+  .hulum-surface--skip:hover {
+    transform: translateY(-2px) scale(1.008);
+    box-shadow: 0 8px 22px -14px rgb(17 17 17 / 0.32);
+  }
+
+  .hulum-surface--apply:hover {
+    border-color: color-mix(in srgb, var(--hulum-line) 62%, var(--hulum-apply));
+    background-color: color-mix(in srgb, var(--hulum-surface) 90%, var(--hulum-apply-soft));
+    box-shadow:
+      0 8px 22px -14px rgb(17 17 17 / 0.32),
+      inset 3px 0 0 var(--hulum-apply);
+  }
+
+  .hulum-surface--maybe:hover {
+    border-color: color-mix(in srgb, var(--hulum-line) 62%, var(--hulum-maybe));
+    background-color: color-mix(in srgb, var(--hulum-surface) 90%, var(--hulum-maybe-soft));
+    box-shadow:
+      0 8px 22px -14px rgb(17 17 17 / 0.28),
+      inset 3px 0 0 var(--hulum-maybe);
+  }
+
+  .hulum-surface--skip:hover {
+    border-color: color-mix(in srgb, var(--hulum-line) 62%, var(--hulum-skip));
+    background-color: color-mix(in srgb, var(--hulum-surface) 92%, var(--hulum-skip-soft));
+    box-shadow:
+      0 8px 22px -14px rgb(17 17 17 / 0.3),
+      inset 3px 0 0 var(--hulum-skip);
+  }
+
+  .hulum-surface--primary:hover {
+    transform: translateY(-2px) scale(1.01);
+    background-color: color-mix(in srgb, var(--hulum-ink) 88%, #000);
+    box-shadow: 0 10px 24px -14px rgb(17 17 17 / 0.42);
+  }
+
+  .hulum-surface--secondary:hover {
+    transform: translateY(-2px) scale(1.006);
+    border-color: var(--hulum-ink);
+    box-shadow: 0 8px 20px -16px rgb(17 17 17 / 0.28);
+  }
+
+  .hulum-surface--apply:hover .hulum-surface__wash,
+  .hulum-surface--skip:hover .hulum-surface__wash,
+  .hulum-surface--primary:hover .hulum-surface__wash {
+    animation: hulum-surface-sweep 520ms var(--surface-ease);
+  }
+
+  .hulum-surface--maybe:hover .hulum-surface__wash {
+    animation: hulum-surface-breathe 680ms var(--surface-ease);
+  }
+
+  .hulum-surface--secondary:hover .hulum-surface__wash {
+    transform: scaleX(1);
+  }
+
+  [data-theme="dark"] .hulum-surface--apply:hover {
+    box-shadow:
+      0 10px 26px -16px rgb(0 0 0 / 0.7),
+      inset 3px 0 0 var(--hulum-apply);
+  }
+
+  [data-theme="dark"] .hulum-surface--maybe:hover {
+    box-shadow:
+      0 10px 26px -16px rgb(0 0 0 / 0.65),
+      inset 3px 0 0 var(--hulum-maybe);
+  }
+
+  [data-theme="dark"] .hulum-surface--skip:hover {
+    box-shadow:
+      0 10px 26px -16px rgb(0 0 0 / 0.65),
+      inset 3px 0 0 var(--hulum-skip);
+  }
+
+  [data-theme="dark"] .hulum-surface--primary:hover {
+    background-color: color-mix(in srgb, var(--hulum-ink) 92%, #fff);
+    box-shadow: 0 10px 26px -16px rgb(0 0 0 / 0.55);
+  }
+
+  [data-theme="dark"] .hulum-surface--secondary:hover {
+    box-shadow: 0 8px 22px -16px rgb(0 0 0 / 0.5);
+  }
+}
+
+.hulum-surface:active,
+.hulum-surface.is-pressed {
+  transform: translateY(1px) scale(0.988);
+  box-shadow: 0 1px 6px -3px rgb(17 17 17 / 0.22);
+  transition-duration: 100ms;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hulum-surface,
+  .hulum-surface:hover,
+  .hulum-surface:active,
+  .hulum-surface.is-pressed {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .hulum-surface__glow,
+  .hulum-surface__wash,
+  .hulum-surface__ripple {
+    display: none;
+  }
+}
