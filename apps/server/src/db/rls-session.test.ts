@@ -14,9 +14,9 @@ const hasDatabaseUrl = Boolean(process.env.DATABASE_URL?.trim());
 describe.skipIf(!hasDatabaseUrl)("hulum_app RLS isolation", () => {
   afterAll(async () => {
     await closePool();
-  });
+  }, 30_000);
 
-  it("lets user A read own profile and not user B under SET ROLE hulum_app", { timeout: 20_000 }, async () => {
+  it("lets user A read own profile and not user B under SET ROLE hulum_app", { timeout: 90_000 }, async () => {
     const pool = getPool();
     const role = await pool.query<{ exists: boolean }>(
       `select exists(select 1 from pg_roles where rolname = 'hulum_app') as exists`,

@@ -45,13 +45,13 @@ describe.skipIf(!hasDatabaseUrl)("postgres vertical slice", () => {
       await getPool().query("delete from opportunities where id = $1", [opportunityId]);
       opportunityId = undefined;
     }
-  });
+  }, 60_000);
 
   afterAll(async () => {
     await closePool();
-  });
+  }, 30_000);
 
-  it("persists profile, decide(), readiness, and a stored explanation decision", async () => {
+  it("persists profile, decide(), readiness, and a stored explanation decision", { timeout: 180_000 }, async () => {
     const inserted = await getPool().query<{ id: string }>(
       `insert into opportunities (
          title, organization, type, description, deadline,

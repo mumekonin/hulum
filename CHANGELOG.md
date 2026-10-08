@@ -2,6 +2,13 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-07 — Server tests against a slow database
+
+### Fixed
+- The investigate-worker and login rate-limit tests no longer open a database connection; they timed out whenever the remote database was slow.
+- Postgres-backed tests (RLS isolation, vertical slice) get time limits that fit a remote database.
+- New optional `DATABASE_CONNECT_TIMEOUT_MS` (default 5000) for the Postgres pool; the test config sets 30000. Full server suite: 334 passing against the remote dev database.
+
 ## 2026-10-07 — Profile redesign, profile photo, CV update
 
 ### Changed

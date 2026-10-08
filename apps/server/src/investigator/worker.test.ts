@@ -25,6 +25,8 @@ const env: AppEnv = {
   GOOGLE_CLIENT_SECRET: undefined,
 };
 
+const withoutDatabase = <T>(fn: () => Promise<T>): Promise<T> => fn();
+
 describe("investigate worker", () => {
   it("skips a tick while a run is in progress", async () => {
     let release: (() => void) | undefined;
@@ -55,6 +57,7 @@ describe("investigate worker", () => {
       },
       investigate,
       markStale,
+      withRls: withoutDatabase,
       log: (message) => logs.push(message),
     });
 
@@ -88,6 +91,7 @@ describe("investigate worker", () => {
         notes: [],
       }),
       markStale,
+      withRls: withoutDatabase,
       now: () => now,
       log: () => undefined,
     });
