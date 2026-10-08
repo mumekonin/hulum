@@ -1,5 +1,5 @@
 import { isReadinessStatus, type ReadinessItem } from "@hulum/shared";
-import { getPool } from "../db/pool.js";
+import { dbQuery } from "../db/rls-session.js";
 import { mapReadinessRow, type ReadinessRow } from "../analysis/mapper.js";
 
 const READINESS_COLUMNS = `
@@ -14,7 +14,7 @@ export type ReadinessStore = {
 export function createPgReadinessStore(): ReadinessStore {
   return {
     async getById(id: string): Promise<ReadinessItem | undefined> {
-      const result = await getPool().query<ReadinessRow>(
+      const result = await dbQuery<ReadinessRow>(
         `select ${READINESS_COLUMNS} from readiness_items where id = $1`,
         [id],
       );
@@ -29,7 +29,7 @@ export function createPgReadinessStore(): ReadinessStore {
       if (!isReadinessStatus(status)) {
         return undefined;
       }
-      const result = await getPool().query<ReadinessRow>(
+      const result = await dbQuery<ReadinessRow>(
         `update readiness_items set status = $1 where id = $2
          returning ${READINESS_COLUMNS}`,
         [status, id],

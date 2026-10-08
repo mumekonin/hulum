@@ -6,7 +6,7 @@ import { afterEach, describe, expect, it } from "vitest";
 import { errorHandler, notFoundHandler } from "../http/error-handler.js";
 import { createProfileRouter } from "./index.js";
 import type { DocumentStore } from "./documents.js";
-import { parseDocumentUpload } from "./documents.js";
+import { cleanFileName, parseDocumentUpload } from "./documents.js";
 import type { ProfileService } from "./service.js";
 
 const PNG_1X1 =
@@ -108,6 +108,36 @@ describe("parseDocumentUpload", () => {
   it("rejects a text-only body", () => {
     expect(() => parseDocumentUpload({ label: "CV" })).toThrow(/Upload a JPEG/);
   });
+
+  it("keeps a safe base file name and an optional replaced document id", () => {
+    const parsed = parseDocumentUpload({
+      label: "CV",
+      mimeType: "image/png",
+      fileBase64: PNG_1X1,
+      fileName: 'C:\\Users\\me\\Kidist "CV"\u0007.png',
+      replacesId: "44444444-4444-4444-8444-444444444444",
+    });
+    expect(parsed.fileName).toBe("Kidist CV.png");
+    expect(parsed.replacesId).toBe("44444444-4444-4444-8444-444444444444");
+  });
+
+  it("rejects a replaced id that is not a UUID", () => {
+    expect(() =>
+      parseDocumentUpload({
+        label: "CV",
+        mimeType: "image/png",
+        fileBase64: PNG_1X1,
+        replacesId: "../other",
+      }),
+    ).toThrow(/Upload a JPEG/);
+  });
+});
+
+describe("cleanFileName", () => {
+  it("returns null for missing or empty names", () => {
+    expect(cleanFileName(undefined)).toBeNull();
+    expect(cleanFileName("  /  ")).toBeNull();
+  });
 });
 
 describe("profile document routes", () => {
@@ -122,7 +152,7 @@ describe("profile document routes", () => {
 
   async function listen(): Promise<number> {
     const app = express();
-    app.use(express.json({ limit: "5mb" }));
+    app.use(express.json({ limit: "8mb" }));
     app.use("/api/profile", createProfileRouter(service, createMemoryDocuments()));
     app.use(notFoundHandler);
     app.use(errorHandler);

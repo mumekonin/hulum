@@ -11,12 +11,13 @@ HULUM is a **decision-support** product. It is not an official eligibility autho
 Browser (Next.js :3000)
         ↓  REST  { data, error }  →  http://localhost:3001
 Express API (:3001)
+        ├── JWT auth (`/api/auth/*`, `X-Hulum-Session`)
         ├── security headers + CORS (CLIENT_URL required in production)
         ├── packages/shared contracts
         ├── decide() + requirements/match  (APPLY / MAYBE / SKIP)
-        ├── PostgreSQL (DATABASE_URL)
-        ├── Groq explain() on stored analyses only
-        └── Voxide            not wired; text intents + backup UI
+        ├── PostgreSQL (DATABASE_URL) + investigator worker
+        ├── Groq explain() / screenshot vision on stored or uploaded evidence only
+        └── Voxide            optional widget (`NEXT_PUBLIC_VOXIDE_KEY`); text intents remain reliable
 ```
 
 A JSON file-store router (`createApp({ store: "file" })` + `decision/engine.ts`) remains for existing file-store tests. It is **not** what `npm run dev` starts.
@@ -49,10 +50,10 @@ Shared TypeScript types live in `packages/shared`. Web, mobile, and server must 
 
 ## What is on `main` today
 
-- `apps/web` — Next.js Abeba Tesfaye demo
-- `apps/server` — Express, Vitest, `{ data, error }` envelope; Postgres default
+- `apps/web` — Next.js site (welcome, `/sign-in`, onboarding, Discover, My opportunities, Readiness, screenshot, Ask HULUM)
+- `apps/server` — Express, Vitest, `{ data, error }` envelope; Postgres default; auth + investigator
 - `packages/shared` — contracts
-- `database/migrations` — PostgreSQL
+- `database/migrations` — PostgreSQL through `013` (seed closed)
 
 Do not put Groq or `decide()` in the browser.
 
@@ -69,13 +70,13 @@ Do not put Groq or `decide()` in the browser.
 
 | Path | Role |
 |---|---|
-| `apps/web` | Next.js App Router: `/` (welcome), `/sign-in`, `/verify`, `/forgot-password`, `/profile`, `/opportunities`, `/analysis/[id]`, `/assistant` |
-| `apps/server` | Express routes, matching, decision, readiness, optional model wording, voice-text |
+| `apps/web` | Next.js App Router: `/` (welcome), `/sign-in`, `/onboarding`, `/profile`, `/opportunities`, `/my-opportunities`, `/readiness`, `/assistant`, `/screenshot` (`/analysis/[id]` redirects to opportunity detail) |
+| `apps/server` | Express routes, matching, decision, readiness, optional model wording, voice-text, investigator |
 | `packages/shared` | Profile, Opportunity, Decision, RequirementStatus, Analysis, ReadinessItem, VoiceIntent, Zod schemas |
-| `database/migrations/001_init.sql` | Postgres/Supabase schema for when credentials exist |
-| `data/store.json` | Local persistence (gitignored) |
+| `database/migrations/` | `001`–`013` Postgres schema (seed closed; investigator sources; saved opps) |
+| `data/store.json` | File-store tests only (gitignored) |
 
-Frontend never receives Claude, Groq, or Voxide keys. `NEXT_PUBLIC_API_URL` is the only public env.
+Frontend never receives Claude, Groq, or Voxide **secret** keys. Publishable `NEXT_PUBLIC_VOXIDE_KEY` (`vox_pub_…`) is optional for the widget. `NEXT_PUBLIC_API_URL` is the API origin.
 
 ## Analyze path (`npm run dev` / Postgres)
 

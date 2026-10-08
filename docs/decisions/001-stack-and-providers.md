@@ -39,7 +39,7 @@ One package for enums, API envelope, Profile, Opportunity, Analysis, voice inten
 
 ### Data — PostgreSQL on Supabase
 
-Opportunities, profiles, analyses, requirement results, readiness, and voice **session metadata** (no audio, no transcript). Access today is `DATABASE_URL` + `pg`. RLS remains a later hardening item. Auth is P1; Task 35 did not add JWT.
+Opportunities, profiles, analyses, requirement results, readiness, and voice **session metadata** (no audio, no transcript). Access today is `DATABASE_URL` + `pg`. RLS policies exist; API still connects as table owner (non-owner role open). **JWT auth shipped** on tip of `main` (`X-Hulum-Session`).
 
 **Not chosen:** a JSON file store (not durable, not the spec). **Not chosen:** inventing opportunities at runtime.
 

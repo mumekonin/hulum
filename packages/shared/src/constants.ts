@@ -119,6 +119,9 @@ export type FitCategory = keyof typeof FIT_WEIGHTS;
 
 export const APPLY_MIN_SCORE = 75;
 
+/** Same rule for sign-up and password reset (server `assertPasswordStrength`). */
+export const PASSWORD_MIN_LENGTH = 8;
+
 export const DISCLAIMER =
   "HULUM's analysis is based on the information available from the opportunity source and your profile. Always verify final eligibility and deadlines with the official organization.";
 

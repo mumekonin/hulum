@@ -2,6 +2,7 @@ import cors from "cors";
 import express from "express";
 import { loadEnv, type AppEnv } from "./config/env.js";
 import { errorHandler as postgresErrorHandler, notFoundHandler } from "./http/error-handler.js";
+import { gzipJsonMiddleware } from "./http/gzip.js";
 import { createOpsRouter, opsRequestTimingMiddleware } from "./ops/index.js";
 import { analysisRouter } from "./routes/analysis.js";
 import { health } from "./routes/health.js";
@@ -13,8 +14,11 @@ import { createApiRouter } from "./routes/index.js";
 import { fail, errorHandler as fileStoreErrorHandler } from "./lib/http.js";
 import { allowedCorsOrigin, securityHeaders } from "./lib/security.js";
 import {
+  AUTH_RATE_LIMIT_MAX,
+  AUTH_RATE_LIMIT_WINDOW_MS,
   EXPLAIN_RATE_LIMIT_MAX,
   EXPLAIN_RATE_LIMIT_WINDOW_MS,
+  authRateLimitMiddleware,
   corsMiddleware,
   createRateLimiter,
   explainRateLimitMiddleware,
@@ -24,6 +28,7 @@ import {
 export type CreateAppOptions = {
   env?: AppEnv;
   explainLimiter?: RateLimiter;
+  authLimiter?: RateLimiter;
   /** Default `postgres` is `npm run dev` (ADR 001). Pass `file` for the JSON demo/tests. */
   store?: "file" | "postgres";
 };
@@ -41,24 +46,30 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
         windowMs: EXPLAIN_RATE_LIMIT_WINDOW_MS,
         max: EXPLAIN_RATE_LIMIT_MAX,
       });
+    const authLimiter =
+      options.authLimiter ??
+      createRateLimiter({
+        windowMs: AUTH_RATE_LIMIT_WINDOW_MS,
+        max: AUTH_RATE_LIMIT_MAX,
+      });
 
-    app.use((_req, res, next) => {
-      res.setHeader("X-Content-Type-Options", "nosniff");
-      next();
-    });
+    app.use(securityHeaders);
     app.use(corsMiddleware(env));
+    app.use(gzipJsonMiddleware());
     app.use((req, res, next) => {
       const isScreenshot = req.path === "/api/ai/screenshot-analyze";
       const isDocumentUpload =
         req.method === "POST" && /^\/api\/profile\/[^/]+\/documents$/.test(req.path);
       if (isScreenshot || isDocumentUpload) {
-        express.json({ limit: "5mb" })(req, res, next);
+        // 4 MB file → ~5.4 MB base64 plus JSON keys. 5mb rejected valid uploads.
+        express.json({ limit: "8mb" })(req, res, next);
         return;
       }
       express.json({ limit: "100kb" })(req, res, next);
     });
     app.use(opsRequestTimingMiddleware());
     app.use(explainRateLimitMiddleware(limiter));
+    app.use(authRateLimitMiddleware(authLimiter));
     app.use("/api", createApiRouter());
     app.use(notFoundHandler);
     app.use(postgresErrorHandler);

@@ -1,11 +1,11 @@
 # Demo rehearsal
 
-**Date:** 2026-09-25 (post JWT + closed catalog seed)  
+**Date:** 2026-10-02 (post product UI + investigator catalog)  
 **Script:** `docs/demo/script.md`  
 **Backup:** `docs/demo/backup.md`  
 **Persona:** Abeba Tesfaye (typed / pre-saved account)
 
-This rehearsal matches the **running product**: Postgres + JWT auth + investigator catalog. It is not a live judge session.
+This rehearsal matches the **running product**: Postgres + JWT auth + welcome / sign-in / onboarding + investigator catalog. It is not a live judge session.
 
 ---
 
@@ -13,11 +13,12 @@ This rehearsal matches the **running product**: Postgres + JWT auth + investigat
 
 | Step in the script | Check | Result |
 |---|---|---|
-| Gateway Sign in / Create account | `AuthGateway` / `AuthInduction` | Present |
-| Save Abeba profile facts | profile page `#profile-*` fields | Present |
-| Document photo upload | profile documents API | Present (optional in timed demo) |
-| Opportunities list | investigator catalog (may be empty) | Present |
-| Analyze → decision | analysis UI + `decide()` | Present |
+| Welcome `/` then Sign in / Create account | `WelcomePage` → `/sign-in` / Create account | Present |
+| Onboarding (first run) | 4 steps: about you, education, skills, CV | Present |
+| Save Abeba profile facts | profile page | Present |
+| Document / CV upload | profile documents API | Present (optional in timed demo) |
+| Discover opportunities list | investigator catalog (may be empty) | Present |
+| Analyze → decision | opportunity detail + `decide()` | Present |
 | Screenshot analyze | `/screenshot` | Present (backup when catalog empty) |
 | Ask HULUM text / quick actions | assistant + voice action tests | Present |
 | Voice unavailable / text-fallback | assistant UI | Present |
@@ -28,7 +29,7 @@ This rehearsal matches the **running product**: Postgres + JWT auth + investigat
 
 ## What was not run / not claimed
 
-- Microphone / Voxide STT
+- Microphone / Voxide STT without a keyed live pass
 - Production host
 - Recorded video / checked-in PNG pack
 - Seeded A2SV / UCT / Chevening cards or `POST /api/profile/demo`
@@ -39,4 +40,4 @@ If the live UI is down, use Path C in `docs/demo/backup.md`, `npm run smoke:loca
 
 ## What to say (unchanged)
 
-Engine decides. Claude explains only if a key is set. Official source (or screenshot evidence) last. Do not claim deploy, ScholarXiv papers, live speech, or a one-click demo profile.
+Engine decides. Groq explains only if a key is set. Official source (or screenshot evidence) last. Do not claim deploy, ScholarXIV as eligibility authority or archived paper log, live speech, or a one-click demo profile.

@@ -1,5 +1,6 @@
 import { createGroqChatClient } from "../ai/groq.js";
 import type { AppEnv } from "../config/env.js";
+import { withServiceRls } from "../db/rls-session.js";
 import { extractAfriworkJob } from "./extract-afriwork.js";
 import { extractOpportunities, type ExtractedOpportunity } from "./extract.js";
 import { pageContainsEvidence, stripHtml } from "./evidence.js";
@@ -69,6 +70,10 @@ function normalizeVisitUrl(raw: string): string | undefined {
 }
 
 export async function runInvestigation(env: AppEnv, now: Date = new Date()): Promise<InvestigationSummary> {
+  return withServiceRls(() => runInvestigationBody(env, now));
+}
+
+async function runInvestigationBody(env: AppEnv, now: Date): Promise<InvestigationSummary> {
   const notes: string[] = [];
   const officialDomains = await listOfficialDomains();
   const sources = await listEnabledSources();

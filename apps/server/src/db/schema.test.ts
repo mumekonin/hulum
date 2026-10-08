@@ -88,6 +88,60 @@ describe("010_profile_document_text.sql", () => {
   });
 });
 
+describe("014_hulum_app_role.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "014_hulum_app_role.sql"), "utf8");
+
+  it("creates hulum_app and owner policy for profile_documents", () => {
+    expect(sql).toContain("create role hulum_app");
+    expect(sql).toContain("grant hulum_app to");
+    expect(sql).toContain("profile_documents_owner_all");
+    expect(sql).toContain("app_current_user_id()");
+  });
+});
+
+describe("015_ci_smoke_investigator_row.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "015_ci_smoke_investigator_row.sql"), "utf8");
+
+  it("inserts one AI_EXTRACTED CI smoke row without reopening curated seed", () => {
+    expect(sql).toContain("AI_EXTRACTED");
+    expect(sql).toContain("CI / local smoke only");
+    expect(sql).toContain("00000000-0000-4000-8000-000000000015");
+    expect(sql).toMatch(/'AI_EXTRACTED'/);
+    expect(sql).not.toMatch(/verification_status[\s\S]*'VERIFIED'|,\s*'VERIFIED'\s*,/);
+    expect(sql).toContain("on conflict (id) do nothing");
+  });
+});
+
+describe("016_password_reset_tokens.sql", () => {
+  const sql = fs.readFileSync(path.join(migrationsDir(), "016_password_reset_tokens.sql"), "utf8");
+
+  it("stores hashed single-use tokens behind a service-only policy", () => {
+    expect(sql).toContain("create table if not exists password_reset_tokens");
+    expect(sql).toContain("token_hash text not null");
+    expect(sql).toContain("used_at timestamptz");
+    expect(sql).toContain("on delete cascade");
+    expect(sql).toContain("enable row level security");
+    expect(sql).toContain("current_setting('app.rls_bypass', true) = 'on'");
+    expect(sql).not.toMatch(/\btoken text\b/);
+  });
+});
+
+describe("017_profile_photo_and_file_names.sql", () => {
+  const sql = fs.readFileSync(
+    path.join(migrationsDir(), "017_profile_photo_and_file_names.sql"),
+    "utf8",
+  );
+
+  it("adds one owner-only photo per user and document file names", () => {
+    expect(sql).toContain("add column if not exists file_name text");
+    expect(sql).toContain("create table if not exists profile_photos");
+    expect(sql).toContain("user_id uuid primary key");
+    expect(sql).toContain("mime_type in ('image/jpeg', 'image/png', 'image/webp')");
+    expect(sql).toContain("enable row level security");
+    expect(sql).toContain("user_id = app_current_user_id()");
+  });
+});
+
 describe("011_saved_opportunities.sql", () => {
   const sql = fs.readFileSync(path.join(migrationsDir(), "011_saved_opportunities.sql"), "utf8");
 

@@ -2,6 +2,298 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-07 — How HULUM works premium surface motion
+
+### Changed
+- How HULUM works CTAs and APPLY / MAYBE / SKIP meaning cards use a shared `SurfaceMotion` layer: cursor-following light, restrained lift, directional sweep (APPLY / SKIP / Browse), discovery highlight (MAYBE), soft fill (Review your profile), and a tiny press ripple. Hover is fine-pointer only; touch gets press feedback; reduced motion keeps border/focus only.
+
+## 2026-10-07 — Voxide WebSocket empty error overlay
+
+### Fixed
+- After a spoken request, HULUM no longer calls `disconnect()` on the live Voxide socket. Closing it made the SDK `console.error("[Voxide WS] Error:", event)` with an empty Event (`{}`), which Next.js shows as a console overlay, and it dropped the call so you had to tap the mic again.
+- Playback of Voxide's own refusal is stopped with `interrupt()` instead, so the socket stays up and HULUM's answer can still be read aloud.
+
+## 2026-10-07 — Spoken requests get a spoken HULUM answer
+
+### Fixed
+- The voice widget waits until a spoken sentence is finished before acting. Before, it could act on the first word ("Show") and list everything instead of scholarships.
+- When HULUM answers a request, it ends Voxide's own reply, so Voxide's "I can't help with that" no longer plays over the answer.
+- HULUM's answer is read aloud with the browser's voice for spoken requests (typed requests stay silent). Amharic is read only when the browser has an Amharic voice; otherwise the answer stays as text.
+
+## 2026-10-07 — Voice analyzes the listing on screen
+
+### Fixed
+- Saying "Analyze for me" on an opportunity page now analyzes that opportunity. Before, after "Show me scholarships", voice kept the first scholarship in the list and analyzed it instead, so its decision could differ from the Analyze my fit button.
+- When voice moves to a different listing without analyzing it, the previous listing's analysis is no longer reused for "why?" or "what am I missing?".
+
+## 2026-10-07 — Server tests against a slow database
+
+### Fixed
+- The investigate-worker and login rate-limit tests no longer open a database connection; they timed out whenever the remote database was slow.
+- Postgres-backed tests (RLS isolation, vertical slice) get time limits that fit a remote database.
+- New optional `DATABASE_CONNECT_TIMEOUT_MS` (default 5000) for the Postgres pool; the test config sets 30000. Full server suite: 334 passing against the remote dev database.
+
+## 2026-10-07 — Profile redesign, profile photo, CV update
+
+### Changed
+- `/profile` is reorganized from one long field list into a profile: header (photo, name, field · education, location · languages, email, Edit profile), completeness bar from the existing calculation with "Add missing details" that focuses the first missing field, then Education, Skills & experience (chips + experience), Interests, Languages (+ reply language), CV, and Other documents.
+- Profile photo: add, change, or remove. Cropped to 512px and re-encoded in the browser (drops camera metadata such as GPS) and stored in `profile_photos` (migration `017`, owner-only RLS). Display-only; the decision engine never reads it.
+- CV: "Upload CV" only when there is none; once stored, the card shows the file name and date with View and Update CV (plus Download / Remove). Update swaps the file in one statement (`replacesId`), so there is never a duplicate CV record and the 8-document limit can't block an update.
+- Other documents get View and Update next to Remove. Uploads keep the original file name (`profile_documents.file_name`), shown in the list and used for downloads.
+- While documents load, or if loading fails, the CV card shows loading / Try again instead of a false "No CV uploaded yet".
+- The profile page uses a wider content column (72rem); the account button in the sidebar is highlighted on `/profile`.
+- `npm run smoke:profile` walks every state in a real browser (light/dark, desktop/tablet/mobile).
+
+## 2026-10-07 — MAYBE / SKIP badge hover
+
+### Changed
+- MAYBE and SKIP decision badges lift slightly on mouse hover, with a soft light that follows the cursor (MAYBE warm, SKIP tighter plus one left-to-right sweep). APPLY is unchanged.
+- Hover only, on devices with a fine pointer; nothing changes at rest, on touch, or (beyond border and shadow) with reduced motion. Badges stay read-only labels; the decision still comes only from the server.
+
+## 2026-10-07 — Working password reset
+
+### Changed
+- `/forgot-password` sends a real request (`POST /api/auth/password-reset/request`). It shows "If an account exists…" for any address, so it does not reveal accounts.
+- Email (SMTP via `SMTP_*`, `MAIL_FROM`) links to `CLIENT_URL/reset-password#token=…`. The token is single use, expires in 30 minutes, and only its SHA-256 hash is stored (`016_password_reset_tokens.sql`, service-only RLS).
+- New `/reset-password`: checks the link, then sets a new password with the sign-up rule (`PASSWORD_MIN_LENGTH` in shared). Used, expired, and malformed links each get a clear message and a "Request a new link" path.
+- A new request invalidates older links. Reset endpoints share the sign-in rate limit.
+- Without SMTP configured, the request returns `MAIL_UNAVAILABLE` instead of pretending an email was sent.
+- `npm run smoke:password-reset`: end-to-end check with a local SMTP inbox.
+
+### Why
+"Forgot password?" opened a page whose button only toggled local state; no request or email existed. HULUM accounts live in its own `users` table (scrypt + JWT), not Supabase Auth, so the reset is built into that auth module.
+
+## 2026-10-07 — Phase 25 backup demo screenshots
+
+### Changed
+- `scripts/capture-demo-screenshots.mjs` + `npm run capture:demo-screenshots` writes the STARK shot-list PNGs.
+- `docs/demo/screenshots/`: required frames `01`–`06` captured from local stack (no video).
+- `task.md` Phase 25 backup row: screenshots in-repo; video still open.
+- `smoke:browser`: wait for Discover loading to finish before Analyze.
+
+### Why
+Phase 25 still had only a shot list. Judges need real local PNGs without inventing a recorded video or a public deploy.
+
+## 2026-10-05 — Account menu on the sidebar
+
+### Changed
+- Sidebar identity (name and email) opens a compact account menu: **Profile** and **Log out**. Appearance (theme) sits in that menu on desktop.
+- Profile is no longer a separate nav item. The broken “Sign out” row beside the moon toggle is gone.
+
+### Why
+Sign out wrapped into an unreadable control, and Profile competed with the account strip.
+
+## 2026-10-05 — Widget questions use HULUM, not Gemini refusals
+
+### Changed
+- Typed or spoken Ask HULUM widget questions call `/api/voice/action` and the listing/decision is written into the widget transcript.
+- Gemini “I don’t have the tools” bubbles are replaced. The answer is no longer sent back through Gemini as a fake user prompt.
+
+### Why
+The Voxide panel answered “Show me scholarships” with a no-tools apology because Gemini did not call registered HULUM tools, and typed chat never reached the recovery path.
+
+## 2026-10-05 — Default Voxide voice launcher
+
+### Changed
+- Ask HULUM floating control uses Voxide’s default orange mic, as a **circle** (`launcherShape: circle`) instead of the pill bar.
+
+### Why
+The custom HULUM mark/mic replaced the familiar default widget.
+
+## 2026-10-05 — HULUM mark on the voice launcher and favicon
+
+### Changed
+- Ask HULUM floating launcher uses a professional microphone on the olive HULUM accent, not Voxide’s default orange pill. Dashboard appearance is overridden in code.
+- Favicon `app/icon.svg` uses the HULUM peak mark (light olive tile, dark-mode ink tile).
+
+### Why
+The default Voxide mic bar read as a third-party widget instead of HULUM.
+
+## 2026-10-05 — Profile + document-aware eligibility matching
+
+### Changed
+- Matcher compares the saved profile (and uploaded document text as evidence) to catalog wording: Ethiopia/`ET`/`Africa`, education rank vs enrollment prose, Computer Science/`computer_science`, English/`en`.
+- Reasons quote the profile fact that drove MET / MAYBE / SKIP. Optional experience and “confirm the official site” notes no longer force MAYBE.
+- Next step is rebuilt from the remaining gap (for example a missing transcript). `decide()` still owns APPLY / MAYBE / SKIP; OCR still cannot mark field or experience MET.
+
+### Why
+Exact-string matching skipped real listings (Africa vs ET, “Currently enrolled university student” vs `bachelor_in_progress`) even when the profile and CV matched.
+
+## 2026-10-05 — Clearer analysis reasons and Ask HULUM listing answers
+
+### Changed
+- Analysis summary now includes the stored matcher reasons (not only APPLY / MAYBE / SKIP headlines).
+- Opportunity page shows the requirement **reason** first, then the listing line.
+- Ask HULUM: "why / what do you think" uses stored requirement reasons (and Groq explain when available). Deadline, documents, eligibility, and similar questions answer from the stored listing. Off-topic questions with an open listing stay on those stored facts instead of "not a product action".
+
+### Why
+Users saw highlights without a clean why, and general questions about an open opportunity were dropped as unsupported.
+
+## 2026-10-03 — smoke:browser analyze → APPLY/MAYBE/SKIP
+
+### Changed
+- `015_ci_smoke_investigator_row.sql`: one AI_EXTRACTED CI/local smoke listing (not curated seed reopen).
+- `smoke:browser`: Discover → Analyze my fit → decision + official source + Readiness.
+- `smoke:local`: analyze first catalog row; assert APPLY|MAYBE|SKIP.
+- CI step label + task-status / demo notes synced.
+
+### Why
+After Oromo/onboarding smokes, CI still never proved the core Analyze → decision path when the investigator catalog was empty.
+
+## 2026-10-03 — Ask HULUM Oromo lang a11y + smoke:browser
+
+### Changed
+- Ask HULUM quick-action buttons: `lang` follows Reply-in (`am` / `om`), not Ethiopic regex only.
+- `smoke:browser`: select Afaan Oromo and assert Task 13 `Carraa kana madaali` chip.
+- Removed leftover local patch script; task-status synced.
+
+### Why
+Oromo chips shipped in Task 13 but a11y `lang` and CI browser smoke did not cover them.
+
+## 2026-10-03 — Task 13 Oromo Ask HULUM text quick actions
+
+### Changed
+- Ask HULUM Afaan Oromo: `QUICK_OM` chips + honest language hint; chrome stays English (ADR 004).
+- Client `listReply` Oromo strings align with server `replyOpportunityList`.
+- `task.md` / `HULUM_task.md`: Phase 13 third language = Oromo text path; STT still open.
+- Demo script + `voxide-languages.md` + task-status synced.
+
+### Why
+Server already understood Oromo intents; web still forced English quick actions after Amharic text UX shipped.
+
+## 2026-10-03 — Runtime hulum_app role with session RLS
+
+### Changed
+- `database/migrations/014_hulum_app_role.sql`: `hulum_app` + grants + `profile_documents` RLS.
+- API: `rlsRequestMiddleware` + `dbQuery` / `dbConnect` so request paths `SET LOCAL ROLE hulum_app`.
+- JWT (`SESSION_SECRET`) sets `app.current_user_id`; auth/investigator set `app.rls_bypass`; open local keeps bypass.
+- Investigator worker wraps DB work in `withServiceRls`.
+- Isolation test + docs / Phase 15 annotation.
+
+### Why
+RLS policies existed but the API connected as table owner and bypassed them.
+
+## 2026-10-03 — SRS §3–5 as-built Mermaid + Groq judge copy
+
+### Changed
+- `HULUM_Documentation.md` §3–5 diagrams/flows: `decide()` + optional Groq; local host; EthioDeploy target; NFR-03 RLS owner-bypass.
+- `docs/demo/script.md`: Do-say uses Groq when keyed.
+- Task 30 / Phase 10 titles and pipelines → Groq (`task.md`, `HULUM_task.md`, `team_assignments.md`).
+- `HULUM_GIT_WORKFLOW_v1.0.md`, ADR 001/002: match tip of tree.
+- `docs/stark/task-status.md`: tip-of-main index for this sync.
+
+### Why
+After §2 honesty, §3–§5 still diagrammed Claude deciding and EthioDeploy as live.
+
+## 2026-10-03 — SRS §2 NFR/limits + Groq-as-built copy
+
+### Changed
+- `HULUM_Documentation.md`: seed limitation note; NFR-02/08 Target/v0.1; language success criterion; closing points to local demo.
+- `team_assignments.md`: Claude → Groq in product boundary, Task 30, integration path, working rules.
+- `git-workflow.md`: STARK changelog example, analysis contract, Days 17–18 evidence.
+- `docs/stark/task-status.md`: tip-of-main index for this sync.
+
+### Why
+After §1.2.10, §2 NFRs and team/git-workflow still read as shipped trilingual voice and Claude while tip of tree is Groq-when-keyed + engine decides.
+
+## 2026-10-03 — SRS deliverables + Task 37–38 local verify
+
+### Changed
+- `HULUM_Documentation.md` §1.2.10 / NFR-05 / schedule: v0.1 status vs EthioDeploy target; scope note for investigator catalog.
+- `task.md` / `team_assignments.md`: Task 37–38 Verify = local/CI, not deployed host.
+- `task.md` / `HULUM_task.md`: Production configuration + Claude explanation annotations.
+- `docs/stark/task-status.md`: tip-of-main index for this sync.
+
+### Why
+SRS deliverables and Task 37 still read as EthioDeploy + trilingual Voxide while tip of `main` is local-only.
+
+## 2026-10-03 — Create account (/verify) OTP honesty
+
+### Changed
+- `/verify` (`AuthInduction`): notice + subtitle that route is JWT register, not email OTP; page metadata matches.
+- README + demo script: `/verify` = Create account, not OTP.
+- `docs/stark/task-status.md`: tip-of-main index for this sync.
+
+### Why
+`smoke:browser` and demos land on `/verify`; without on-page copy it still read like email verification after forgot-password was fixed.
+
+## 2026-10-02 — Recovery UI + ScholarXIV/seed judge honesty
+
+### Changed
+- `/forgot-password`: honest “email not connected” notice; Continue (no fake Send reset link delay).
+- README, narrative, research-questions, demo script/backup/rehearsal: `/research` when keyed; empty paper table; papers do not decide.
+- `task.md` / `HULUM_task.md`: seed/demo rows annotated (006 closed; investigator catalog).
+- `docs/stark/task-status.md`: tip-of-main index for this sync.
+
+### Why
+Recovery UI still advertised email reset, and STARK copy denied ScholarXIV “in the product” while `/research` is on `main`.
+
+## 2026-10-02 — Security / RLS / CI STARK supersession
+
+### Changed
+- `docs/stark/task-status.md`: mark HMAC / UI-only auth / `db:seed` CI history as superseded; tip of `main` = JWT + migrate + smokes.
+- `task.md` / `HULUM_task.md`: annotate RLS table-owner limit, JWT (no reset email), CI deploy N/A, branch-protection open.
+- `docs/product/hulum-flow.md`: `/verify` = Create account, not OTP.
+- `HULUM_Documentation.md`: SRS honesty banner pointing at tip of `main`.
+
+### Why
+Judge-facing STARK index still implied HMAC preview auth and seeded CI after JWT and migrate-only CI landed.
+
+## 2026-10-02 — Amharic / voice checkbox honesty sync
+
+### Changed
+- `task.md` / `HULUM_task.md`: Amharic = text UX (not STT); voice gates annotate text/widget vs live mic; Days 13–14 / Gate 4–6 / MVP Amharic rows honest.
+- `docs/product/research-questions.md`, `docs/research/voxide-languages.md`: Amharic text UX shipped; Voxide STT still unverified.
+- `docs/stark/task-status.md`: tip-of-main index for this sync.
+
+### Why
+Checkboxes still read as “Amharic voice” / “full voice flow” while only Ask HULUM text + widget tools were proven.
+
+## 2026-10-02 — Task 49 DONE + task.md / Oromo chrome honesty
+
+### Changed
+- `task.md` / `HULUM_task.md`: Task 49 DONE; EthioDeploy deploy reopened; voice demo = text path vs live mic; multilingual row honest.
+- Ask HULUM Afaan Oromo: English chrome + explain-language hint; no invented Oromo UI strings; STT locale stays `en-US` for `om`.
+
+### Why
+`rule.md` / `task.md` still claimed IN REVIEW UI, EthioDeploy, full Oromo multilingual, and “demonstrate voice” while mic and Oromo chrome were open/invented.
+
+## 2026-10-02 — Product docs + freeze notes match tip of main
+
+### Changed
+- Personas, hulum-flow, problem, ideation: JWT / onboarding / investigator (no seed APPLY triangle).
+- Day 19/20 changelog freeze docs + ADR 001: file-store is tests-only; tip of `main` is the product.
+- `smoke:browser` visits welcome `/` before Create account; CI step label updated.
+
+### Why
+Product and Day-20 freeze pages still described file-store seed demos after product UI landed.
+
+## 2026-10-02 — STARK cover matches product UI on main
+
+### Changed
+- `docs/stark/README.md`, `narrative.md`, `git-history.md`, `evidence.md`: tip of `main` is welcome / sign-in / onboarding / Discover.
+- `docs/architecture/overview.md`, verification docs, demo rehearsal + screenshot shot list: investigator catalog; analysis on `/opportunities/[id]`.
+
+### Why
+Judge entry still told people the web lived only on `feat/*` after product UI landed on `main`.
+
+## 2026-10-02 — STARK task-status honesty after product UI
+
+### Changed
+- `docs/stark/task-status.md`: tip-of-main index (JWT, onboarding, investigator, migrations through `013`, CI smokes; no seed APPLY / HMAC-as-auth).
+- `docs/stark/evidence.md`, `deployment.md`, `opportunity-import.md`: migrations / catalog import match investigator (seed closed).
+
+### Why
+Judges still saw Day-20 HMAC / seed rows as current after the product UI and catalog work landed.
+
+## 2026-10-02 — File-store fixture deadlines past calendar
+
+### Fixed
+- `opp-mastercard-uct` and remaining open file-store fixture deadlines in `test-opportunities.ts` moved to 2027 so Abeba→MAYBE UNCERTAIN tests do not SKIP after wall-clock expiry.
+
+### Why
+Critical `deadline_open` NOT_MET correctly yields SKIP; the fixture date had expired on the wall clock.
+
 ## 2026-10-02 — Welcome page, `/sign-in` route, and auth page redesign
 
 Contributor: Kidist (frontend). Branch `feat/product-ui-transformation`. One backend auth route changed (below); flagged for Mulualem. No migration, shared-contract, or `.env.example` changes.

@@ -1,5 +1,5 @@
 import type { Analysis, RequirementMatch } from "@hulum/shared";
-import { getPool } from "../db/pool.js";
+import { dbConnect, dbQuery } from "../db/rls-session.js";
 import type { DraftReadinessItem } from "../readiness/build.js";
 import {
   mapAnalysis,
@@ -41,13 +41,12 @@ const READINESS_COLUMNS = `
 async function loadChildren(
   analysisId: string,
 ): Promise<{ requirements: RequirementRow[]; readiness: ReadinessRow[] }> {
-  const pool = getPool();
   const [requirements, readiness] = await Promise.all([
-    pool.query<RequirementRow>(
+    dbQuery<RequirementRow>(
       `select ${REQUIREMENT_COLUMNS} from requirement_results where analysis_id = $1 order by id`,
       [analysisId],
     ),
-    pool.query<ReadinessRow>(
+    dbQuery<ReadinessRow>(
       `select ${READINESS_COLUMNS} from readiness_items where analysis_id = $1 order by priority, id`,
       [analysisId],
     ),
@@ -58,9 +57,11 @@ async function loadChildren(
 export function createPgAnalysisStore(): AnalysisStore {
   return {
     async create(input: PersistAnalysisInput): Promise<Analysis> {
-      const client = await getPool().connect();
+      const { client, release, ownsTransaction } = await dbConnect();
       try {
-        await client.query("begin");
+        if (ownsTransaction) {
+          await client.query("begin");
+        }
         const analysis = await client.query<AnalysisRow>(
           `insert into analyses (user_id, opportunity_id, decision, fit_score, summary, decision_audit)
            values ($1, $2, $3, $4, $5, $6::jsonb)
@@ -110,22 +111,26 @@ export function createPgAnalysisStore(): AnalysisStore {
           readinessRows.push(row);
         }
 
-        await client.query("commit");
+        if (ownsTransaction) {
+          await client.query("commit");
+        }
         return mapAnalysis(
           analysisRow,
           requirementRows.map(mapRequirementRow),
           readinessRows.map(mapReadinessRow),
         );
       } catch (error) {
-        await client.query("rollback");
+        if (ownsTransaction) {
+          await client.query("rollback");
+        }
         throw error;
       } finally {
-        client.release();
+        release();
       }
     },
 
     async getById(id: string): Promise<Analysis | undefined> {
-      const result = await getPool().query<AnalysisRow>(
+      const result = await dbQuery<AnalysisRow>(
         `select ${ANALYSIS_COLUMNS} from analyses where id = $1`,
         [id],
       );

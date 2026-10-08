@@ -1,6 +1,12 @@
 import Link from "next/link";
-import { TYPE_LABELS, type Decision, type Opportunity, type VerificationStatus } from "@hulum/shared";
+import {
+  TYPE_LABELS,
+  type Decision,
+  type Opportunity,
+  type VerificationStatus,
+} from "@hulum/shared";
 import { DecisionBadge } from "./DecisionBadge";
+import { catalogLabel } from "@/lib/discover";
 import { daysUntil, formatDeadline, requirementLines } from "@/lib/format";
 
 const VERIFICATION_LABELS: Record<VerificationStatus, string> = {
@@ -18,9 +24,9 @@ function listSummary(values: string[], max = 3): string {
 function eligibilitySummary(opportunity: Opportunity): string | null {
   const parts: string[] = [];
   if (opportunity.countryEligibility.length > 0)
-    parts.push(listSummary(opportunity.countryEligibility));
+    parts.push(listSummary(opportunity.countryEligibility.map(catalogLabel)));
   const education = requirementLines(opportunity.educationRequirements)[0];
-  if (education) parts.push(education);
+  if (education) parts.push(catalogLabel(education));
   return parts.length > 0 ? parts.join(" · ") : null;
 }
 
@@ -82,6 +88,35 @@ export function OpportunityRow({
           {VERIFICATION_LABELS[opportunity.verificationStatus]}
         </span>
       </div>
+    </article>
+  );
+}
+
+export function OpportunitySuggestionCard({ opportunity }: { opportunity: Opportunity }) {
+  const remaining = daysUntil(opportunity.deadline);
+  return (
+    <article className="flex h-full flex-col border border-line bg-surface p-5">
+      <p className="text-xs uppercase tracking-[0.14em] text-muted">
+        {TYPE_LABELS[opportunity.type]}
+      </p>
+      <h3 className="mt-3 font-display text-xl leading-snug">
+        <Link
+          href={`/opportunities/${opportunity.id}`}
+          className="hover:underline hover:decoration-line-strong hover:underline-offset-4"
+        >
+          {opportunity.title}
+        </Link>
+      </h3>
+      <p className="mt-1 text-sm text-muted">{opportunity.organization}</p>
+      <p className="mt-auto pt-5 text-sm">
+        <span className="text-muted">Deadline · </span>
+        {formatDeadline(opportunity.deadline)}
+        {remaining !== null && remaining >= 0 ? (
+          <span className="block text-muted">
+            {remaining} {remaining === 1 ? "day" : "days"} left
+          </span>
+        ) : null}
+      </p>
     </article>
   );
 }

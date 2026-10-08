@@ -1,8 +1,234 @@
-# Task status (post Day 20 sync)
+# Task status (honesty index)
 
-**Date:** 2026-09-25  
+**Date:** 2026-10-02  
 **Files:** `task.md`, `HULUM_task.md`  
-**Rule:** mark what the running product and tests already do. Do not mark Voxide STT, a production host, ScholarXiv live papers, or a browser pass that was not run.
+**Rule:** mark what the running product and tests already do. Do not mark Voxide STT, a production host, ScholarXiv live papers, branch-protection require-check, or a browser mic pass that was not run. Older sections below are historical — tip of `main` wins.
+
+---
+
+## 2026-10-07 — Voice: speech reaches HULUM and the answer is spoken
+
+Diagnosed with recorded English speech played into Edge's microphone input (`--use-file-for-fake-audio-capture`), keyed Voxide, local stack:
+
+- Voxide speech-to-text works: "Show me scholarships." and "Analyze for me." were transcribed correctly.
+- Voxide's model still refuses to call HULUM's tools ("I don't have the ability to search or display scholarships") even though the tool manifest upload returns 200. That is Voxide-side.
+- HULUM's widget acted on half-heard words ("Show") and only wrote its answer into the panel, so the owner heard the refusal and nothing useful.
+- Fixed: HULUM waits for the finished sentence, ends Voxide's spoken turn, runs the same product action, and reads its own answer aloud (browser speech, English; Amharic only if the browser has an Amharic voice).
+- After the fix: "Show me scholarships." → FILTER_OPPORTUNITIES list read aloud; "Analyze for me." on the second scholarship → SKIP, same as the Analyze my fit button.
+
+Still open: owner re-test with a physical microphone, Amharic speech (no Amharic test voice available), Voxide's own tool calling.
+
+---
+
+## 2026-10-07 — First keyed microphone pass (local)
+
+Run by the owner in a real browser with `NEXT_PUBLIC_VOXIDE_KEY` set (`/api/sdk/init` 200).
+
+- Spoken reply (TTS): heard.
+- Speech to text: **failed** — "Show me scholarships" was not recognized.
+- Amharic speech: recognized poorly.
+- Voice "Analyze for me" gave a different decision than the button. Cause: after a voice list, voice kept the first listed opportunity and analyzed it instead of the one on screen. Fixed: on `/opportunities/[id]` the listing on screen wins, and an analysis from another listing is dropped. Reproduced and confirmed fixed in a headless browser (typed into the widget).
+
+Still open: live STT (English and Amharic), Voxide Amharic quality, deploy, CI require-check (admin), backup video.
+
+---
+
+## 2026-10-07 — Profile redesign + photo + CV update
+
+- `/profile` reorganized into header, completeness, sections, CV card, and other documents. Same profile/documents API; no fields removed.
+- New: `017_profile_photo_and_file_names.sql` (`profile_photos`, `profile_documents.file_name`). Run `npm run db:migrate` on every environment.
+- CV update replaces the stored file in one statement (`replacesId`); no duplicate CV rows.
+- Verified locally with `npm run smoke:profile` (photo add/change/reload, CV upload/update/reload, edit/reload, documents add/update/view, documents load failure, themes, three widths).
+
+Still open: storage is Postgres `bytea` like existing documents (no Supabase Storage bucket in this project), so large-scale photo hosting/CDN is not in scope.
+
+---
+
+## 2026-10-07 — Password reset by email
+
+- `/forgot-password` sends `POST /api/auth/password-reset/request`; email links to `CLIENT_URL/reset-password#token=…` (single use, 30 minutes, SHA-256 hash stored in `016_password_reset_tokens.sql`).
+- `/reset-password` verifies the link, then `POST /api/auth/password-reset/confirm` sets a new scrypt hash. Same 8-character rule as sign-up.
+- HULUM auth is its own `users` table + JWT, not Supabase Auth, so reset lives in that auth module (SMTP via `SMTP_*` / `MAIL_FROM`).
+- Verified locally with `npm run smoke:password-reset` (local SMTP inbox): request → email → link → new password → sign in; old password and reused link rejected.
+
+Still open: delivery through a real SMTP provider (needs values in `apps/server/.env`), deploy, live mic/STT, CI require-check (admin), backup video.
+
+---
+
+## 2026-10-07 — Phase 25 backup demo screenshots
+
+- `npm run capture:demo-screenshots` → `docs/demo/screenshots/01`–`06` PNGs from local JWT + Abeba path.
+- Video still open (not recorded). Prefer `INVESTIGATE_WORKER=false` during capture.
+- `smoke:browser` waits for Discover load before Analyze (avoids empty-list false fail).
+
+Still open: deploy, live mic/STT, full app Oromo shell, CI require-check (admin), backup **video**.
+
+---
+
+## 2026-10-03 — smoke:browser analyze → decision
+
+- Migration `015_ci_smoke_investigator_row.sql`: one static **AI_EXTRACTED** row for CI/local smoke (not curated seed reopen / 006).
+- `smoke:browser`: Discover → Analyze my fit → HULUM decision + official source + Readiness; then screenshot / Ask HULUM / Oromo chip.
+- `smoke:local`: POST analyze when catalog non-empty; assert APPLY|MAYBE|SKIP (no hardcoded APPLY).
+
+Still open: deploy, live mic/STT, full app Oromo shell, CI require-check (admin), backup video/PNG files.
+
+---
+
+## 2026-10-03 — Ask HULUM Oromo lang a11y + smoke:browser
+
+- Quick-action buttons set `lang={om|am}` from Reply-in (not Ethiopic-only heuristic).
+- `smoke:browser`: after Ask HULUM, select Afaan Oromo and assert `Carraa kana madaali` chip.
+- Ask HULUM chrome shell stays English for Oromo (ADR 004); no invented full Oromo UI.
+
+Still open: deploy, live mic/STT, full app Oromo shell, CI require-check (admin), backup video/PNG files, password-reset email.
+
+---
+
+## 2026-10-03 — Task 13 Oromo Ask HULUM text quick actions
+
+- `assistant-copy.ts`: `QUICK_OM` + language hint; chrome stays English (ADR 004).
+- `text-actions.ts` `listReply`: Oromo list chrome matches server `replyOpportunityList`.
+- Phase 13 third language = Oromo **text** quick actions; live STT still open.
+
+Still open: deploy, live mic/STT, full Oromo UI shell, CI require-check (admin), backup video/PNG files, password-reset email.
+
+---
+
+## 2026-10-03 — Runtime hulum_app RLS (Task 35 residual)
+
+- Migration `014_hulum_app_role.sql`: `hulum_app` role + `profile_documents` owner policy.
+- API requests `SET LOCAL ROLE hulum_app`; JWT → `app.current_user_id`; auth/investigator → `app.rls_bypass`.
+- Open local (no `SESSION_SECRET`) still bypasses so UUID-in-body demos work; production with secret enforces user RLS.
+- Isolation test: `apps/server/src/db/rls-session.test.ts` (needs `DATABASE_URL` + migrate).
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email.
+
+---
+
+## 2026-10-03 — SRS §3–5 as-built Mermaid + Groq judge copy
+
+- `HULUM_Documentation.md` §3–5: `decide()` + optional Groq; EthioDeploy target; NFR-03 owner-bypass note.
+- Demo script Do-say: Groq when keyed (not Claude).
+- `task.md` / `HULUM_task.md` / `team_assignments.md`: Task 30/Phase 10 → Groq.
+- `HULUM_GIT_WORKFLOW_v1.0.md` + ADR 001/002: Groq / JWT / investigator catalog.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email, RLS non-owner role.
+
+---
+
+## 2026-10-03 — SRS §2 NFR/limits + Groq-as-built copy
+
+- `HULUM_Documentation.md`: §1.2.9 seed note; NFR-02/08 Target/v0.1; language success criterion; closing EthioDeploy → local demo.
+- `team_assignments.md`: integration path + rules + Task 30 → Groq (engine decides).
+- `git-workflow.md`: STARK example, analysis contract, Days 17–18 evidence → Groq.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email, RLS non-owner role, full SRS Ch.3–5 diagram pass.
+
+---
+
+## 2026-10-03 — SRS deliverables + Task 37–38 local verify
+
+- `HULUM_Documentation.md` §1.2.10: v0.1 status column (local host, investigator catalog, English voice path).
+- Task 37–38 Verify lines (`task.md`, `team_assignments.md`): local/CI smoke, not “deployed API”.
+- Days 15–16 Production configuration `[x]` annotated: config in code, no public host.
+- Claude explanation row: Groq explains; engine decides.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email, RLS non-owner role.
+
+---
+
+## 2026-10-03 — Create account (/verify) OTP honesty
+
+- `/verify`: visible notice that route is JWT register, not email OTP; metadata description matches.
+- README + demo script: `/verify` = Create account, not OTP.
+- AuthGateway/AuthInduction unchanged (already real `/api/auth/register` + `/login`).
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email, RLS non-owner role.
+
+---
+
+## 2026-10-02 — Recovery UI + ScholarXIV/seed judge copy
+
+- `/forgot-password`: no "Send reset link" / fake send delay; honest recovery copy visible before action.
+- README, narrative, research-questions, demo script/backup/rehearsal: `/research` proxy when keyed; empty `scholarxiv.md` table; papers do not decide.
+- `task.md` / `HULUM_task.md`: seed/demo opportunity rows annotated (006 closed; investigator catalog).
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email, RLS non-owner role.
+
+---
+
+## 2026-10-02 — Security / RLS / CI / STARK supersession
+
+- Phase 13/15/19/24 checkboxes annotated: Voxide verify = docs only; English e2e = text path; RLS policies exist but API is still table owner; JWT auth (no password-reset email/OTP); CI deploy workflow = N/A (no deploy job); branch-protection require-check still open.
+- Historical entries below that still say HMAC-as-auth, UI-only `/sign-in`/`/verify`, or `db:seed` in CI are **superseded** — tip of `main` is JWT + migrate + `smoke:local` + `smoke:browser`.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files, password-reset email, RLS non-owner role.
+
+---
+
+## 2026-10-02 — Amharic / voice checkbox honesty
+
+- Days 13–14: Amharic **text UX** checked; not live Amharic STT.
+- Phase 13 second language = Amharic Ask HULUM text; third language (Oromo) open.
+- Gate 4–6 / MVP: Voxide mic + TTS open; voice intent / actions via text + widget tools checked.
+- Research questions + `voxide-languages.md` match: text UX shipped, STT unverified.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
+
+---
+
+## 2026-10-02 — Task 49 DONE + task.md honesty (rule.md)
+
+- Task 49 marked DONE on tip of `main` (`#49`).
+- Reopened EthioDeploy deploy checkbox; documented decision stays checked.
+- Voice demo split: text/quick actions checked; live mic / Voxide STT open.
+- Multilingual research row: Amharic text UX only; Oromo UI/voice open.
+- Ask HULUM Oromo chrome → English + explain-language hint (ADR 004).
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
+
+---
+
+## 2026-10-02 — Product + freeze-doc honesty
+
+- Personas / hulum-flow / problem: JWT + onboarding + Discover; no seed APPLY triangle or local UUID guest.
+- Day 19/20 changelog freeze notes dated as historical; ADR 001 file-store superseded for runtime.
+- `smoke:browser` + CI label: welcome `/` → sign-in → onboarding.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
+
+---
+
+## 2026-10-02 — STARK cover: main is the product UI
+
+- STARK README / evidence / narrative / git-history: tip of `main` has welcome → sign-in → onboarding (no “clone main = no web”).
+- Architecture overview + verification docs: investigator catalog; seed closed; analysis lives on opportunity detail.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
+
+---
+
+## 2026-10-02 — Post product-UI honesty sync
+
+Shipped on tip of `main` (do **not** treat older HMAC / UI-preview / `db:seed` APPLY rows as current):
+
+- JWT Create account / Sign in (`/sign-in`), onboarding, Discover / My opportunities / Readiness product UI.
+- Investigator catalog (Afriwork / EthioScholarship sources among others); curated `db:seed` closed.
+- Migrations through `013`; CI = migrate + test + `smoke:local` (register + catalog list) + `smoke:browser` (sign-in → onboarding path).
+- File-store fixture deadlines bumped so UNCERTAIN→MAYBE failure-path tests stay calendar-honest.
+
+Still open (honest):
+
+| Item | Why |
+|---|---|
+| Production deploy / EthioDeploy | No public host |
+| Live Voxide mic STT/TTS as a verified demo | Needs keyed mic pass; text/quick actions remain reliable |
+| Afaan Oromo UI/voice | ADR 004 — no invented Oromo chrome |
+| Required status checks on `main` | Admin step (`docs/ops/branch-protection.md`) |
+| Backup video / screenshot PNG pack | Not checked in |
+| Password-reset email | Not wired |
+| API as non-owner DB role (RLS owner-bypass gone) | Still connects as table owner |
 
 ---
 
@@ -44,28 +270,34 @@ Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), back
 
 ## 2026-09-24 — Demo-triangle smoke + Amharic second language
 
-- `smoke:local` / CI: APPLY + MAYBE + SKIP for Abeba.
+> **Superseded (2026-10-02):** curated seed APPLY triangle closed (`006`); CI does not seed the catalog. Amharic text UX + Oromo English chrome remain true.
+
+- Historical: `smoke:local` once checked Abeba APPLY/MAYBE/SKIP via seed.
 - Amharic marked as second language (text UX); Oromo selector = explain language, English chrome.
 
-Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), browser click-through, backup video/PNG files.
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check (admin), backup video/PNG files.
 
 ---
 
 ## 2026-09-24 — CI smoke + Amharic demo text
 
-- CI runs `db:seed` + `smoke:local` after tests.
+> **Superseded (2026-10-02):** CI runs `db:migrate` + tests + `smoke:local` + `smoke:browser` — **no** `db:seed` (migration `006` closed catalog seed).
+
+- Historical note only: earlier CI ran `db:seed` + `smoke:local`.
 - Demo script Amharic text step; screenshot shot list (no images yet).
 
-Still open: deploy, live mic/STT, Oromo, CI require-check (admin), browser click-through, backup video/PNG files.
+Still open: deploy, live mic/STT, Oromo, CI require-check (admin), backup video/PNG files.
 
 ---
 
 ## 2026-09-24 — Amharic text UX + smoke:local
 
-- Ask HULUM Amharic chrome/quick actions (text only).
-- `npm run smoke:local` for local Abeba→A2SV APPLY check.
+> **Superseded note:** Abeba→A2SV seed APPLY path closed; Amharic text UX still shipped. Current `smoke:local` = register + catalog list (no seed triangle).
 
-Still open: deploy, live mic, Amharic STT / second-language e2e, CI require-check, browser tests, backup video.
+- Ask HULUM Amharic chrome/quick actions (text only).
+- Historical: `npm run smoke:local` once checked Abeba→A2SV APPLY via seed.
+
+Still open: deploy, live mic/STT, Oromo UI/voice, CI require-check, backup video.
 
 ---
 
@@ -109,28 +341,30 @@ Still open: deploy, live Voxide/mic, Amharic/Oromo, CI branch protection require
 
 ## 2026-09-24 — Session auth + RLS (still on this branch line)
 
-- HMAC session (`SESSION_SECRET` / `X-Hulum-Session`) for owned API routes; required in production.
-- RLS owner policies in migration 004 (table-owner API still bypasses until a non-owner role).
-- Fixed gateway UUID → profile create (POST with `userId`, not PATCH of missing row).
-- **Not claimed:** OAuth/JWT provider login, live Voxide mic, or a public deploy.
+> **Superseded (2026-10-02):** JWT register/login (+ optional Google) is wired on tip of `main`. Session is **JWT HS256** in `X-Hulum-Session` (header name kept; not HMAC-as-auth for judges). `/sign-in` and `/verify` call real `/api/auth/*`. `/forgot-password` stays honest “no email”.
+
+- Historical: early HMAC session for owned API routes.
+- RLS owner policies in migration 004 (table-owner API still bypasses until a non-owner role) — **still true**.
+- **Still not claimed:** live Voxide mic, password-reset email/OTP, or a public deploy.
 
 Still **open on purpose** (need real external evidence or product work):
 
 | Item | Why |
 |---|---|
-| Second/third language, mixed-language tests | ADR 004 — English e2e only |
+| Third language (Oromo UI/voice) | ADR 004 — Amharic text UX shipped; Oromo chrome English-only |
 | Live Voxide mic / voice response / demonstrate voice | Needs publishable key + mic pass |
 | Deploy / production secrets / production verify | No public host |
-| Browser/device / microphone test | Not run |
+| Microphone test | Not run as verified demo |
 | Block merges when checks fail | CI runs on PR; required branch protection not verified from this pass |
 | Backup video/screenshots | Not captured |
-| ScholarXIV live Papers API citations | No live paper pull claimed |
-
-Auth gateway / recovery / induction UIs on `/sign-in`, `/forgot-password`, `/verify` remain **UI previews**; API session HMAC is the real v0.1 auth when `SESSION_SECRET` is set.
+| ScholarXIV live Papers API citations | Archived paper table empty; `/research` live when keyed |
+| RLS non-owner DB role | API still connects as table owner |
 
 ---
 
 ## 2026-09-24 honesty sync
+
+> **Superseded (2026-10-02):** Phase 19 auth checkboxes **are** closed on `task.md` (JWT). Recovery (`/forgot-password`) stays honest “no email”. Do not read “Local UUID only” or “UI only auth” as current.
 
 Marked done because the repo already ships them:
 
@@ -145,17 +379,15 @@ Still **open on purpose** (need real external evidence or product work):
 
 | Item | Why |
 |---|---|
-| Second/third language, mixed-language tests | ADR 004 — English e2e only |
+| Third language (Oromo UI/voice) | ADR 004 — Amharic text UX shipped; Oromo open |
 | Live Voxide mic / voice response / demonstrate voice | Needs publishable key + mic pass |
 | Deploy / production secrets / production verify | No public host |
-| Browser/device / microphone test | Not run |
-| JWT authentication + authorization | Local UUID only; gateway UIs are previews |
-| Per-user RLS policies | Opportunities public-read only; user-scoped policies wait for auth |
+| Microphone test | Not run as verified demo |
+| JWT authentication + authorization | **DONE on main (JWT)**; password-reset email / OTP still open |
+| Per-user RLS as non-owner runtime | Policies in 004+; API still table owner |
 | Block merges when checks fail | CI runs on PR; required branch protection not verified from this pass |
 | Backup video/screenshots | Not captured |
-| ScholarXIV live Papers API citations | No live paper pull claimed |
-
-Auth gateway / recovery / induction UIs on `/sign-in`, `/forgot-password`, `/verify` are **UI only** — they do not close Phase 19 auth checkboxes.
+| ScholarXIV live Papers API citations | Archived paper table empty; `/research` live when keyed |
 
 ---
 

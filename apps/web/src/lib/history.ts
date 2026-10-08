@@ -47,3 +47,24 @@ export function matchesDecision(
   const decision = decisions.get(opportunityId);
   return filter === "unanalyzed" ? decision === undefined : decision === filter;
 }
+
+/** APPLY, then MAYBE, then unanalyzed, then SKIP. Does not call decide() in the browser. */
+function storedDecisionRank(opportunityId: string, decisions: Map<string, Decision>): number {
+  const decision = decisions.get(opportunityId);
+  if (decision === "APPLY") return 0;
+  if (decision === "MAYBE") return 1;
+  if (decision === "SKIP") return 3;
+  return 2;
+}
+
+export function sortByStoredDecision<T extends { id: string }>(
+  items: T[],
+  decisions: Map<string, Decision> | null,
+): T[] {
+  if (decisions === null || decisions.size === 0) {
+    return items;
+  }
+  return [...items].sort(
+    (a, b) => storedDecisionRank(a.id, decisions) - storedDecisionRank(b.id, decisions),
+  );
+}

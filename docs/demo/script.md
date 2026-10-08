@@ -4,6 +4,7 @@
 **Persona:** Abeba Tesfaye (typed facts — there is no “Use demo profile” button)  
 **Runtime:** local `npm run dev` — web `:3000`, API `:3001`  
 **Auth:** Create account / Sign in (JWT). Google optional if keys are set.  
+**Routes:** Create account uses `/verify` (JWT register only—not email OTP).  
 **Catalog:** investigator-filled (not `db:seed`). Cards may be empty until the worker has run.  
 **Voice:** Ask HULUM text + quick actions (ADR 003). Do not claim live Voxide or a microphone.
 
@@ -18,11 +19,11 @@ If Analyze fails or the catalog is empty, use `/screenshot` or Ask HULUM text. D
 - HULUM is the official eligibility authority.
 - Claude chooses APPLY / MAYBE / SKIP.
 - Voice speech is live.
-- ScholarXiv papers are in the running product.
+- ScholarXIV papers drive APPLY / MAYBE / SKIP (or that we archived paper citations in the repo).
 - The app is deployed to production / EthioDeploy.
 - There is a one-click Abeba demo profile or a seeded A2SV / Chevening catalog.
 
-Do say: the engine decides; Claude only explains if a key is set; always open the official source; the list comes from evidenced pages the investigator fetched.
+Do say: the engine decides; Groq may rephrase a stored analysis when `GROQ_API_KEY` is set (APPLY/MAYBE/SKIP unchanged); always open the official source; the list comes from evidenced pages the investigator fetched. `/research` is live ScholarXIV search with a server key; the STARK paper log stays empty until someone copies a real result.
 
 ---
 
@@ -58,7 +59,7 @@ Do say: the engine decides; Claude only explains if a key is set; always open th
 
 **Say:** Ethiopian students find opportunities. They still waste time on ones they cannot use. HULUM is a decision agent: one answer, then why, gaps, and what to prepare.
 
-**Click:** Sign in (pre-created account) or Create account → fill name / email / password → Create account.
+**Click:** Sign in (pre-created account) or Create account → fill name / email / password → Create account. Say the `/verify` URL is legacy naming if judges notice it.
 
 ### 0:40 — Profile `/profile` (first run: `/onboarding`)
 
@@ -80,7 +81,7 @@ Do say: the engine decides; Claude only explains if a key is set; always open th
 
 **Click:** Analyze my fit.
 
-**Say:** The same engine runs here and in Ask HULUM. Fit score is a signal only. Do not invent APPLY / MAYBE / SKIP before the result appears.
+**Say:** The same engine runs here and in Ask HULUM. Fit score is a signal only. Do not invent APPLY / MAYBE / SKIP before the result appears. (`smoke:browser` / `smoke:local` cover this path when migration `015` CI AI_EXTRACTED fixture or investigator catalog is present — not curated seed.)
 
 ### 2:10 — Decision (same page)
 
@@ -113,7 +114,7 @@ Type or click:
 
 **Click:** ምን ጎድሎኛል? or ምን ላዘጋጅ?
 
-**Afaan Oromo:** selecting it sets explain language only. Ask HULUM chrome stays English — do not demo invented Oromo UI copy.
+**Afaan Oromo (optional ~20s):** Reply in → Afaan Oromo → tap `Carraa kana madaali?` (or `Maalif?`). Say: Oromo text quick actions use server intent keywords; Ask HULUM chrome stays English; live Oromo STT is not claimed. (`smoke:browser` asserts the Oromo chip after language select.)
 
 ### 4:20 — Screenshot path (if catalog empty or Analyze fails)
 

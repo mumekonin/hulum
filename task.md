@@ -33,7 +33,7 @@ This is the master implementation checklist for HULUM.
 | 35 | API security and validation | Mulualem | DONE |
 | 36 | Integration testing | Mulualem + Kidist | DONE |
 | 48 | AI Opportunity Investigator | Mulualem | DONE |
-| 49 | Product UI transformation, onboarding, profile, Ask HULUM redesign | Kidist | IN REVIEW (`feat/product-ui-transformation`) |
+| 49 | Product UI transformation, onboarding, profile, Ask HULUM redesign | Kidist | DONE (`#49` / tip of `main`) |
 | 39 | Problem definition | Kidist + Mulualem | DONE |
 | 42 | Architecture decision record | Mulualem + Kidist | DONE |
 
@@ -212,12 +212,12 @@ hulum/
 
 ## Research questions
 
-- [-] Barriers to applying for eligible opportunities among Ethiopian students.
-- [-] Causes of opportunity application failure among African youth.
+- [-] Barriers to applying for eligible opportunities among Ethiopian students. <!-- 2026-10-07 ScholarXIV searched: no direct study; adjacent evidence in docs/research/scholarxiv.md; needs journal sources or interviews -->
+- [-] Causes of opportunity application failure among African youth. <!-- 2026-10-07: adjacent evidence only (credit barriers, fragmented programs); see docs/product/research-questions.md -->
 - [x] Responsible AI eligibility uncertainty.
 - [x] Opportunity matching and decision-support systems.
-- [-] Voice-first design for non-English speakers.
-- [x] Multilingual interaction for English/Amharic/Afaan Oromo users.
+- [x] Voice-first design for non-English speakers. <!-- 2026-10-07: answered from 3 ASR surveys/benchmarks (docs/research/scholarxiv.md); voice + text fallback -->
+- [x] Multilingual interaction for English/Amharic/Afaan Oromo users. <!-- 2026-10-07: answered from Amharic ASR, Oromo IR, code-switching papers; confirms ADR 004 -->
 - [x] Readiness support for scholarship/internship/job applications.
 - [x] Trust and verification of opportunity requirements.
 - [x] Human oversight when AI assists eligibility decisions.
@@ -239,7 +239,7 @@ ScholarXIV is part of the STARK ideation requirement.
 - [x] **P1** Explore ScholarXIV MCP integration.
 - [x] **P1** Explore ScholarXIV Papers API.
 - [x] **P1** Link research findings to product decisions.
-- [x] **P1** Preserve research evidence in repository documentation.
+- [x] **P1** Preserve research evidence in repository documentation. <!-- docs/research/ + scholarxiv.md log; live /research when keyed; paper table empty -->
 
 ## Required ideation narrative
 
@@ -344,7 +344,7 @@ Official opportunity source
 - [x] **P0** Explanation view.
 - [x] **P0** Requirement status view.
 - [x] **P0** Readiness checklist.
-- [-] **P0** Voice interaction.
+- [-] **P0** Voice interaction. <!-- live mic; Ask HULUM text/quick actions are shipped -->
 - [x] **P0** Official source/application link.
 - [x] **P1** Filters.
 - [x] **P1** Search.
@@ -426,7 +426,7 @@ Opportunity
 
 - [x] **P0** Define opportunity schema.
 - [x] **P0** Create database model.
-- [x] **P0** Create seed/demo opportunities.
+- [x] **P0** Create seed/demo opportunities. <!-- historical seed + file-store fixtures; curated db:seed closed (006); runtime catalog = investigator -->
 - [x] **P0** Store official source URL.
 - [x] **P0** Store application URL where available.
 - [x] **P0** Store verification status.
@@ -522,24 +522,24 @@ GET  /api/analyses/:id/readiness
 
 **Verify:** an analysis produces a useful readiness checklist.
 
-### Task 30 — Claude AI orchestration (Days 9–12)
+### Task 30 — Groq AI orchestration (Days 9–12)
 **Depends on:** stable analysis contract.
 
 > Team lock (2026-09-20, Kidist + Mulualem): Groq explains stored analysis. Claude is not used. The engine still owns APPLY/MAYBE/SKIP.
 
-Claude handles natural-language profile extraction, explanation, requirement
-explanation, readiness-plan language, contextual Q&A, and multilingual explanation.
+Groq handles natural-language profile extraction, explanation, requirement
+explanation, readiness-plan language, contextual Q&A, and multilingual explanation when keyed.
 
-Claude is not the sole authority for official deadlines, requirements, stored profile
+Groq is not the sole authority for official deadlines, requirements, stored profile
 facts, deterministic matching, or APPLY/MAYBE/SKIP.
 
-**Verify:** Claude explains structured analysis without silently changing the decision.
+**Verify:** Groq explains structured analysis without silently changing the decision.
 
 ### Task 31 — AI output validation (Days 10–12)
 **Depends on:** Task 30.
 
 ```text
-Claude output
+Groq output
     ↓
 Schema validation
     ↓
@@ -606,7 +606,7 @@ Team lock: Groq explains. The engine still owns APPLY / MAYBE / SKIP. No Voxide 
 > Deploy backend/database, configure production secrets, CORS, health checks,
 > logging, and environment configuration. Investigate EthioDeploy.
 
-**Verify:** deployed API passes health and smoke tests.
+**Verify:** local API passes health and smoke tests (`npm run dev`, CI). Production host verification stays open (`docs/stark/deployment.md`; Deploy rows below).
 
 ### Task 38 — Final technical sign-off (Day 20)
 **Coordinates:** whole team.
@@ -614,7 +614,7 @@ Team lock: Groq explains. The engine still owns APPLY / MAYBE / SKIP. No Voxide 
 > Run the complete production walkthrough covering profile, opportunity, decision,
 > AI explanation, readiness, voice, mobile/web integration, failure paths, and source links.
 
-**Verify:** final HULUM demo is reproducible from the deployed system.
+**Verify:** final HULUM demo is reproducible from the **local** stack (README + `docs/demo/script.md`), not from a public host until deploy is real.
 
 - [x] **P0** Define requirement schema.
 - [x] **P0** Define requirement categories.
@@ -665,7 +665,7 @@ HULUM must not present the result as a guarantee of admission, employment, fundi
 
 ---
 
-# 14. Phase 10 — AI / Claude Integration
+# 14. Phase 10 — AI / Groq Integration
 
 AI is an assistant, not the eligibility authority.
 
@@ -691,7 +691,7 @@ AI is an assistant, not the eligibility authority.
 
 ## Tasks
 
-- [x] **P0** Select/configure Claude provider.
+- [x] **P0** Select/configure Groq provider. <!-- GROQ_API_KEY; Claude env names legacy -->
 - [x] **P0** Define AI service.
 - [x] **P0** Define structured output schema.
 - [x] **P0** Implement output validation.
@@ -742,10 +742,10 @@ It must perform meaningful HULUM actions and must not be decorative.
 
 - [x] **P0** Study Voxide integration requirements.
 - [x] **P0** Create development integration.
-- [-] **P0** Receive/process voice input.
-- [x] **P0** Connect voice to HULUM actions.
-- [-] **P0** Produce voice response.
-- [x] **P0** Analyze an opportunity by voice.
+- [-] **P0** Receive/process voice input. <!-- 2026-10-07: recorded English speech through the browser mic input → Voxide STT → HULUM action works; owner mic re-test pending -->
+- [x] **P0** Connect voice to HULUM actions. <!-- widget tools + text → POST /api/voice/action -->
+- [-] **P0** Produce voice response. <!-- HULUM's own answer is read aloud (browser speech); owner heard Voxide speech; owner re-test of HULUM answer pending -->
+- [x] **P0** Analyze an opportunity by voice. <!-- via text/widget tools calling the same action API -->
 - [x] **P0** Ask "Why?"
 - [x] **P0** Ask "What am I missing?"
 - [x] **P0** Ask "What should I prepare?"
@@ -790,14 +790,14 @@ Initial target:
 
 Actual support depends on Voxide capabilities and quality.
 
-- [x] **P0** Verify Voxide supported languages.
+- [x] **P0** Verify Voxide supported languages. <!-- voxide-languages.md; no live mic proof -->
 - [x] **P0** Define language architecture.
 - [x] **P0** Implement language selection.
-- [x] **P0** Test one language end-to-end.
-- [x] **P0** Ensure core voice interaction works.
-- [x] **P1** Add second language.
-- [ ] **P1** Add third language if stable.
-- [x] **P1** Test mixed-language input.
+- [x] **P0** Test one language end-to-end. <!-- English Ask HULUM text path; not live STT -->
+- [x] **P0** Ensure core voice interaction works. <!-- text/quick actions + optional widget tools; live mic still open -->
+- [x] **P1** Add second language. <!-- Amharic Ask HULUM text UX; not live Amharic STT -->
+- [x] **P1** Add third language if stable. <!-- Oromo Ask HULUM text quick actions; English chrome; not live STT -->
+- [x] **P1** Test mixed-language input. <!-- English + Amharic + Oromo text keywords; not dual-language STT -->
 - [x] **P1** Test opportunity terminology.
 - [x] **P1** Test decision explanations.
 
@@ -881,7 +881,7 @@ audit_logs
 - [x] **P0** Persist analyses.
 - [x] **P0** Persist readiness state.
 - [x] **P1** Add indexes.
-- [x] **P1** Add security policies/RLS where applicable.
+- [x] **P1** Add security policies/RLS where applicable. <!-- 004+014: SET LOCAL ROLE hulum_app; JWT sets app.current_user_id; open local uses bypass -->
 - [x] **P1** Define retention strategy.
 
 ---
@@ -929,7 +929,7 @@ Analysis
 - [x] **P0** Decision result.
 - [x] **P0** Requirement breakdown.
 - [x] **P0** Readiness checklist.
-- [-] **P0** Voice interaction.
+- [-] **P0** Voice interaction. <!-- live mic; Ask HULUM text/quick actions are shipped -->
 - [x] **P0** Official source/application action.
 - [x] **P1** Search/filter.
 - [x] **P1** Error states.
@@ -984,8 +984,8 @@ The assistant must not become an unrestricted chatbot.
 - [x] **P0** Sanitize logs.
 - [x] **P0** Protect database access.
 - [x] **P0** Protect admin/debug routes if any.
-- [x] **P1** Add authentication if required.
-- [x] **P1** Add authorization if required.
+- [x] **P1** Add authentication if required. <!-- JWT + optional Google; password reset by email (SMTP_* + CLIENT_URL); no OTP -->
+- [x] **P1** Add authorization if required. <!-- JWT session scopes owned routes; not email OTP -->
 - [x] **P1** Review data exposure.
 - [x] **P1** Review retention.
 
@@ -1109,10 +1109,10 @@ Do not log unnecessary personal profile data or raw voice/conversation content.
 - [x] **P0** Configure production secrets.
 - [ ] **P0** Verify production analysis flow.
 - [ ] **P0** Verify production voice flow.
-- [x] **P1** Deploy on EthioDeploy if practical.
+- [ ] **P1** Deploy on EthioDeploy if practical.
 - [x] **P1** Document deployment decision.
 
-EthioDeploy is optional, but if used, document it as part of the implementation/deployment story.
+EthioDeploy is optional. Documented as **not deployed** (`docs/stark/deployment.md`). Do not mark deploy done without a real host.
 
 ---
 
@@ -1125,8 +1125,8 @@ EthioDeploy is optional, but if used, document it as part of the implementation/
 - [x] **P1** Run tests.
 - [x] **P1** Build frontend.
 - [x] **P1** Build backend.
-- [ ] **P1** Block merges when checks fail.
-- [x] **P1** Configure deployment workflow if appropriate.
+- [ ] **P1** Block merges when checks fail. <!-- admin: docs/ops/branch-protection.md -->
+- [x] **P1** Configure deployment workflow if appropriate. <!-- N/A — deployment.md; ci.yml has no deploy job -->
 
 ---
 
@@ -1156,18 +1156,19 @@ Interest: AI
 - [x] **P0** Show matched requirements.
 - [x] **P0** Show missing/uncertain requirements.
 - [x] **P0** Show readiness checklist.
-- [x] **P0** Demonstrate voice.
+- [x] **P0** Demonstrate Ask HULUM text / quick actions (same product actions as voice tools).
+- [ ] **P0** Demonstrate live microphone / Voxide STT (needs keyed mic pass). <!-- 2026-10-07 keyed pass: speech not recognized; spoken reply played -->
 - [x] **P0** Demonstrate English.
-- [x] **P1** Demonstrate Amharic if stable.
+- [x] **P1** Demonstrate Amharic text UX if stable (not live Amharic STT).
 - [x] **P0** Open official opportunity source.
 - [x] **P0** Show responsible-AI notice.
-- [x] **P1** Demonstrate a MAYBE case.
-- [x] **P1** Demonstrate a SKIP case.
+- [x] **P1** Demonstrate a MAYBE case (when catalog / fixtures allow; not seeded triangle).
+- [x] **P1** Demonstrate a SKIP case (when catalog / fixtures allow; not seeded triangle).
 - [x] **P0** Prepare backup mode for external-service failure.
-- [x] **P0** Test clean browser/device.
-- [ ] **P0** Test microphone.
+- [x] **P0** Test clean browser/device (`smoke:browser` on CI).
+- [-] **P0** Test microphone. <!-- 2026-10-07 local keyed pass: TTS heard; STT failed; Amharic recognized poorly; voice analyze used wrong listing (fixed) -->
 - [ ] **P0** Test production deployment.
-- [ ] **P1** Prepare backup video/screenshots.
+- [-] **P1** Prepare backup video/screenshots. <!-- PNGs in docs/demo/screenshots via capture:demo-screenshots; video still open -->
 
 ---
 
@@ -1230,7 +1231,7 @@ Never manufacture commits, dates, research activity, or progress.
 - [x] Profile API.
 - [x] Profile UI.
 - [x] Opportunity schema.
-- [x] Demo opportunity seeds.
+- [x] Demo opportunity seeds. <!-- historical seed + file-store fixtures; curated db:seed closed (006); runtime catalog = investigator -->
 
 ## Days 5–7 — Decision Engine
 
@@ -1264,20 +1265,20 @@ Never manufacture commits, dates, research activity, or progress.
 
 ## Days 13–14 — AI + Multilingual
 
-- [x] Claude explanation.
+- [x] Claude explanation. <!-- v0.1: Groq explains when keyed; engine owns APPLY/MAYBE/SKIP — docs/decisions/001 -->
 - [x] Structured AI output validation.
 - [x] Contextual assistant.
-- [x] Amharic voice/UX if stable.
-- [ ] Afaan Oromo if stable and quality is acceptable.
+- [x] Amharic text UX if stable (not live Amharic STT).
+- [x] Afaan Oromo text quick actions if stable (not live Oromo STT; English chrome ADR 004).
 
 ## Days 15–16 — Integration
 
 - [x] Full profile → opportunity → analysis flow.
 - [x] Full analysis → readiness flow.
-- [x] Full voice flow.
+- [x] Full Ask HULUM text / voice-tool flow (live mic STT/TTS still open).
 - [x] Error handling.
 - [x] Security review.
-- [x] Production configuration.
+- [x] Production configuration. <!-- CLIENT_URL, SESSION_SECRET, CORS validation in API code — no public host; see Phase 23 Deploy [ ] -->
 
 ## Days 17–18 — Deployment + Testing
 
@@ -1322,10 +1323,10 @@ The HULUM MVP requires these capabilities to work together:
 - [x] **P0** Decision explanation.
 - [x] **P0** Missing/uncertain requirements.
 - [x] **P0** Readiness checklist.
-- [ ] **P0** Voxide voice interaction.
-- [x] **P0** At least one stable language end-to-end.
+- [ ] **P0** Voxide voice interaction. <!-- keyed mic pass still required -->
+- [x] **P0** At least one stable language end-to-end. <!-- English -->
 - [x] **P0** English support.
-- [ ] **P0** Amharic support if Voxide quality is sufficient.
+- [ ] **P0** Amharic support if Voxide quality is sufficient. <!-- Amharic text UX shipped; Voxide STT quality unverified -->
 - [x] **P0** Official source/application link.
 - [x] **P0** Responsible-AI notice.
 - [ ] **P0** Working deployed prototype.
@@ -1462,18 +1463,18 @@ However, STARK-required research and ideation documentation must be maintained t
 
 ## Gate 4 — Voice Slice
 
-- [ ] Voxide input works.
-- [x] Voice intent works.
+- [-] Voxide input works. <!-- recorded speech via browser mic input recognized; owner mic re-test pending -->
+- [x] Voice intent works. <!-- text + widget tools → /api/voice/action -->
 - [x] HULUM action executes.
-- [ ] Voice response works.
+- [-] Voice response works. <!-- HULUM answer read aloud; owner re-test pending -->
 - [x] Failure fallback works.
 
 ## Gate 5 — Integrated MVP
 
 - [x] Profile → opportunity → analysis works.
 - [x] Analysis → readiness works.
-- [x] Voice → analysis works.
-- [x] Voice → explanation works.
+- [x] Voice → analysis works. <!-- via text/widget tools -->
+- [x] Voice → explanation works. <!-- via text/widget tools -->
 - [x] Official source link works.
 - [x] Responsible-AI notice works.
 
@@ -1481,7 +1482,7 @@ However, STARK-required research and ideation documentation must be maintained t
 
 - [ ] Production deployment works.
 - [x] Demo scenario is stable.
-- [ ] Voice works.
+- [ ] Voice works. <!-- keyed live mic -->
 - [x] Backup mode exists.
 - [x] Documentation is complete.
 - [x] Git history is truthful.

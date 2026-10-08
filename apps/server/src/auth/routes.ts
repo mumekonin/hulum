@@ -5,6 +5,14 @@ import { HttpError } from "../http/errors.js";
 import { issueOauthState, verifyOauthState } from "../security/jwt.js";
 import { SESSION_HEADER, authSigningSecret } from "../security/session.js";
 import { exchangeGoogleCode, googleAuthorizeUrl, googleRedirectUri } from "./google.js";
+import { createSmtpMailer, loadMailConfig, type Mailer } from "./mailer.js";
+import {
+  RESET_LINK_EXPIRED_MESSAGE,
+  RESET_LINK_INVALID_MESSAGE,
+  createPasswordResetService,
+  type PasswordResetService,
+} from "./password-reset.js";
+import { createPgPasswordResetStore } from "./reset-store.js";
 import { createAuthService, type AuthService } from "./service.js";
 import { createPgAuthStore } from "./store.js";
 
@@ -23,9 +31,25 @@ function clientOrigin(): string {
   return loadEnv({ fromFile: false }).CLIENT_URL ?? "http://localhost:3000";
 }
 
-export function createAuthRouter(service?: AuthService): Router {
+let defaultMailer: { mailer: Mailer | undefined } | undefined;
+
+function defaultResetService(): PasswordResetService {
+  if (defaultMailer === undefined) {
+    const config = loadMailConfig();
+    defaultMailer = { mailer: config === undefined ? undefined : createSmtpMailer(config) };
+  }
+  return createPasswordResetService({
+    users: createPgAuthStore(),
+    tokens: createPgPasswordResetStore(),
+    mailer: defaultMailer.mailer,
+    clientOrigin: clientOrigin(),
+  });
+}
+
+export function createAuthRouter(service?: AuthService, resetService?: PasswordResetService): Router {
   const router = Router();
   const getService = (): AuthService => service ?? defaultService();
+  const getResetService = (): PasswordResetService => resetService ?? defaultResetService();
 
   router.post("/register", async (req, res, next) => {
     try {
@@ -49,6 +73,45 @@ export function createAuthRouter(service?: AuthService): Router {
         password: asText(body.password, "password"),
       });
       res.status(200).json(ok(session));
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/password-reset/request", async (req, res, next) => {
+    try {
+      const body = req.body as Record<string, unknown>;
+      await getResetService().request(asText(body.email, "email"));
+      res.status(202).json(ok({ status: "requested" as const }));
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/password-reset/verify", async (req, res, next) => {
+    try {
+      const body = req.body as Record<string, unknown>;
+      const status = await getResetService().verify(asText(body.token, "token"));
+      if (status === "expired") {
+        throw new HttpError(400, "RESET_LINK_EXPIRED", RESET_LINK_EXPIRED_MESSAGE);
+      }
+      if (status === "invalid") {
+        throw new HttpError(400, "RESET_LINK_INVALID", RESET_LINK_INVALID_MESSAGE);
+      }
+      res.status(200).json(ok({ status }));
+    } catch (error) {
+      next(error);
+    }
+  });
+
+  router.post("/password-reset/confirm", async (req, res, next) => {
+    try {
+      const body = req.body as Record<string, unknown>;
+      await getResetService().confirm({
+        token: asText(body.token, "token"),
+        password: asText(body.password, "password"),
+      });
+      res.status(200).json(ok({ status: "updated" as const }));
     } catch (error) {
       next(error);
     }

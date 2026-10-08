@@ -1,4 +1,5 @@
 import type { AppEnv } from "../config/env.js";
+import { withServiceRls } from "../db/rls-session.js";
 import { INVESTIGATE_BUDGET_MS } from "./pool.js";
 import { markStaleExtracts } from "./store.js";
 import { runInvestigation, type InvestigationSummary } from "./run.js";
@@ -19,6 +20,7 @@ export type InvestigateWorkerDeps = {
   config?: InvestigateWorkerConfig;
   investigate?: (env: AppEnv, now?: Date) => Promise<InvestigationSummary>;
   markStale?: (cutoff: Date) => Promise<number>;
+  withRls?: <T>(fn: () => Promise<T>) => Promise<T>;
   now?: () => Date;
   log?: (message: string) => void;
   setTimeoutFn?: typeof setTimeout;
@@ -42,6 +44,7 @@ export function createInvestigateWorker(deps: InvestigateWorkerDeps): Investigat
   const config = deps.config ?? defaultConfig(deps.env);
   const investigate = deps.investigate ?? runInvestigation;
   const markStale = deps.markStale ?? markStaleExtracts;
+  const withRls = deps.withRls ?? withServiceRls;
   const nowFn = deps.now ?? (() => new Date());
   const log = deps.log ?? ((message: string) => console.log(message));
   const setTimeoutFn = deps.setTimeoutFn ?? setTimeout;
@@ -62,7 +65,7 @@ export function createInvestigateWorker(deps: InvestigateWorkerDeps): Investigat
     try {
       const now = nowFn();
       const summary = await investigate(deps.env, now);
-      const stale = await markStale(new Date(now.getTime() - config.staleAfterMs));
+      const stale = await withRls(() => markStale(new Date(now.getTime() - config.staleAfterMs)));
       log(
         `Investigate worker finished checked=${String(summary.checked)} saved=${String(summary.saved)} refreshed=${String(summary.refreshed ?? 0)} rejected=${String(summary.rejected)} stale=${String(stale)}`,
       );

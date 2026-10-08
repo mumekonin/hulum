@@ -1,5 +1,7 @@
 export const DEFAULT_INVESTIGATE_INTERVAL_MS = 30 * 60 * 1000;
 export const DEFAULT_INVESTIGATE_START_DELAY_MS = 0;
+/** Give the API time to answer the first page before Playwright starts. */
+export const DEV_INVESTIGATE_START_DELAY_MS = 20_000;
 export const DEFAULT_INVESTIGATE_STALE_AFTER_MS = 3 * 24 * 60 * 60 * 1000;
 export const MIN_INVESTIGATE_INTERVAL_MS = 60_000;
 
@@ -62,7 +64,9 @@ export function parseInvestigateWorkerConfig(input: {
   );
   const startDelayMs =
     parsePositiveInt(env.INVESTIGATE_START_DELAY_MS, "INVESTIGATE_START_DELAY_MS") ??
-    DEFAULT_INVESTIGATE_START_DELAY_MS;
+    (input.nodeEnv === "development"
+      ? DEV_INVESTIGATE_START_DELAY_MS
+      : DEFAULT_INVESTIGATE_START_DELAY_MS);
   const staleAfterMs =
     parsePositiveInt(env.INVESTIGATE_STALE_AFTER_MS, "INVESTIGATE_STALE_AFTER_MS") ??
     DEFAULT_INVESTIGATE_STALE_AFTER_MS;
@@ -94,7 +98,8 @@ export function parseInvestigateWorkerConfig(input: {
       onStart,
       startDelayMs,
       staleAfterMs,
-      disabledReason: "GROQ_API_KEY and GROQ_MODEL must be set for the investigator to extract listings.",
+      disabledReason:
+        "GROQ_API_KEY and GROQ_MODEL must be set for the investigator to extract listings.",
     };
   }
 

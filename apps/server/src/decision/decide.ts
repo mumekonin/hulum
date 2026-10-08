@@ -15,8 +15,8 @@ import {
   CRITICAL_REQUIREMENT_KEYS,
   FIT_SCORE_WEIGHTS,
   KEY_REQUIREMENT_KEYS,
-  NEXT_ACTION,
   fitScorePoints,
+  nextActionFrom,
 } from "./rules.js";
 
 function statusOf(matches: RequirementMatch[], key: string): RequirementStatus {
@@ -90,12 +90,7 @@ export function decide(profile: Profile, opportunity: Opportunity, clock: Clock)
     );
   }
 
-  const nextAction =
-    decision === Decision.APPLY
-      ? NEXT_ACTION.APPLY
-      : decision === Decision.SKIP
-        ? NEXT_ACTION.SKIP
-        : NEXT_ACTION.MAYBE;
+  const nextAction = nextActionFrom(decision, matches);
 
   const audit: DecisionAudit = {
     rulePath,
@@ -112,6 +107,7 @@ export function decide(profile: Profile, opportunity: Opportunity, clock: Clock)
   return {
     decision,
     fitScore: computeFitScore(matches),
+    matches,
     matchedRequirements,
     missingRequirements,
     uncertainRequirements,

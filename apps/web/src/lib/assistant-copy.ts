@@ -93,37 +93,27 @@ const QUICK_AM = [
   "ድገም",
 ];
 
+/** Oromo intent keywords already on the server (ADR 004). Chrome shell stays English. */
 const QUICK_OM = [
-  "Scholarshipwwan natti agarsiisi",
-  "Carraa kana madaali",
-  "Carraa kana ibsi",
+  "Carraa kana madaali?",
   "Maalif?",
   "Maal dhabe?",
-  "Maal qopheessuu qaba?",
+  "Qopheessi?",
+  "Carraawwan agarsiisi",
+  "Internshipwwan natti agarsiisi",
+  "Carraa kana ibsi",
   "Should I apply for this?",
-  "Tell me about this opportunity",
+  "Why did you say that?",
+  "What am I missing?",
+  "What should I prepare?",
+  "Repeat that",
 ];
 
+/** Afaan Oromo: text quick actions + explain language. Ask HULUM chrome stays English (ADR 004). */
 const OM: AssistantCopy = {
-  title: "HULUM gaafadhu",
-  intro:
-    "Sagaleen tarkaanfii HULUM dhugaa ta'e hojjechuu qaba. Barreeffamaafi tarkaanfii saffisaa yeroo hunda ni hojjeta. APPLY / MAYBE / SKIP hin uumamu.",
-  languageLegend: "Afaan",
+  ...EN,
   languageHint:
-    "Afaan Ingilizii, Amaaraa, ykn Afaan Oromootiin gaafadhu. Deebiin afaan gaaffii keessanii hordofa. STT Voxide amma hin mirkanaa'u.",
-  quickLegend: "Tarkaanfii saffisaa",
-  typePlaceholder: "HULUM gaafadhu…",
-  send: "Ergi",
-  micMissingTitle: "Maayikiroofoonii hin jiru",
-  micMissingBody:
-    "Barreessi ykn tarkaanfii saffisaa fayyadami. NEXT_PUBLIC_VOXIDE_KEY (vox_pub_…) kaa'i.",
-  voxideReadyTitle: "Voxide qophaa'eera",
-  voxideReadyBody:
-    "Gaafannoo sagalee ykn barreeffamaaf launcher Ask HULUM (gadi-mirga) fayyadami. APPLY / MAYBE / SKIP decide() irraa qofa dhufa.",
-  voiceIssueTitle: "Rakkoo sagalee",
-  typeRequest: "Gaaffii barreessi",
-  browseOpportunities: "Carraawwan ilaali",
-  showInternships: "Internshipwwan agarsiisi",
+    "Afaan Oromo quick actions and typed requests use the same intent keywords as the server (madaali, maalif, hanqina, qopheessi). Ask HULUM chrome stays English for v0.1 — no full Oromo UI shell (ADR 004). Live Oromo STT is not claimed.",
 };
 
 export function assistantCopy(language: LanguageCode): AssistantCopy {

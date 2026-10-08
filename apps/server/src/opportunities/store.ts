@@ -1,5 +1,5 @@
 import type { Opportunity } from "@hulum/shared";
-import { getPool } from "../db/pool.js";
+import { dbQuery } from "../db/rls-session.js";
 import { mapOpportunityRow, type OpportunityRow } from "./mapper.js";
 
 export type OpportunityStore = {
@@ -18,14 +18,14 @@ const SELECT_COLUMNS = `
 export function createPgOpportunityStore(): OpportunityStore {
   return {
     async list(): Promise<Opportunity[]> {
-      const result = await getPool().query<OpportunityRow>(
+      const result = await dbQuery<OpportunityRow>(
         `select ${SELECT_COLUMNS} from opportunities order by created_at desc, updated_at desc`,
       );
       return result.rows.map(mapOpportunityRow);
     },
 
     async getById(id: string): Promise<Opportunity | undefined> {
-      const result = await getPool().query<OpportunityRow>(
+      const result = await dbQuery<OpportunityRow>(
         `select ${SELECT_COLUMNS} from opportunities where id = $1`,
         [id],
       );

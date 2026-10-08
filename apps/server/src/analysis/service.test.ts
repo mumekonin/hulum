@@ -14,7 +14,7 @@ import { HttpError } from "../http/errors.js";
 import type { Clock } from "../services/common/clock.js";
 import { createAnalysisService } from "./service.js";
 import type { AnalysisStore, PersistAnalysisInput as StoreInput } from "./store.js";
-import { ANALYSIS_SUMMARY, analysisSummaryFor } from "./summary.js";
+import { ANALYSIS_SUMMARY } from "./summary.js";
 
 const clock: Clock = {
   now: () => new Date("2026-09-19T12:00:00.000Z"),
@@ -135,7 +135,6 @@ describe("analysis service", () => {
     expect(persisted).toBeDefined();
     expect(result.decision).toBe(Decision.APPLY);
     expect(result.fitScore).toBeGreaterThanOrEqual(90);
-    expect(result.summary).toBe(analysisSummaryFor(Decision.APPLY));
     expect(result.summary.startsWith(ANALYSIS_SUMMARY[Decision.APPLY])).toBe(true);
     expect(result.summary.includes("Always verify final eligibility")).toBe(true);
     expect(result.requirements.length).toBeGreaterThan(0);
@@ -143,7 +142,7 @@ describe("analysis service", () => {
     expect(result.readiness[0]?.title).toBe("No extra documents listed");
     expect(persisted?.userId).toBe(profile.userId);
     expect(persisted?.opportunityId).toBe(opportunity.id);
-    expect(persisted?.summary).toBe(analysisSummaryFor(Decision.APPLY));
+    expect(persisted?.summary.startsWith(ANALYSIS_SUMMARY[Decision.APPLY])).toBe(true);
     expect(persisted?.audit.rulePath).toBe("keys_met_no_uncertainty");
     expect(result.audit?.rulePath).toBe("keys_met_no_uncertainty");
   });
@@ -174,7 +173,7 @@ describe("analysis service", () => {
     expect(result.decision).toBe(Decision.SKIP);
     expect(persisted?.decision).toBe(Decision.SKIP);
     expect(persisted?.audit.rulePath).toBe("expired_override");
-    expect(result.summary).toBe(analysisSummaryFor(Decision.SKIP));
+    expect(result.summary.startsWith(ANALYSIS_SUMMARY[Decision.SKIP])).toBe(true);
   });
 
   it("returns 404 when the profile is missing", async () => {

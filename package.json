@@ -16,6 +16,7 @@
     "build:server": "npm run build -w @hulum/server",
     "typecheck:shared": "npm run typecheck -w @hulum/shared",
     "typecheck:server": "npm run typecheck -w @hulum/server",
+    "typecheck:web": "npm run typecheck -w @hulum/web",
     "lint": "eslint apps/server/src apps/web/src packages/shared/src",
     "format": "prettier --write \"apps/server/src/**/*.{ts,tsx}\" \"apps/web/src/**/*.{ts,tsx}\" \"packages/shared/src/**/*.{ts,tsx}\" eslint.config.mjs .prettierrc.json",
     "format:check": "prettier --check \"apps/server/src/**/*.{ts,tsx}\" \"apps/web/src/**/*.{ts,tsx}\" \"packages/shared/src/**/*.{ts,tsx}\" eslint.config.mjs .prettierrc.json",
@@ -26,7 +27,10 @@
     "db:seed": "npm run db:seed -w @hulum/server",
     "db:smoke": "npm run db:smoke -w @hulum/server",
     "smoke:local": "node scripts/smoke-local.mjs",
-    "smoke:browser": "node scripts/smoke-browser.mjs"
+    "smoke:browser": "node scripts/smoke-browser.mjs",
+    "smoke:password-reset": "node scripts/smoke-password-reset.mjs",
+    "smoke:profile": "node scripts/smoke-profile.mjs",
+    "capture:demo-screenshots": "node scripts/capture-demo-screenshots.mjs"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.5",

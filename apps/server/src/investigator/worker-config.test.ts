@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import {
   DEFAULT_INVESTIGATE_INTERVAL_MS,
-  DEFAULT_INVESTIGATE_START_DELAY_MS,
+  DEV_INVESTIGATE_START_DELAY_MS,
   MIN_INVESTIGATE_INTERVAL_MS,
   parseInvestigateWorkerConfig,
 } from "./worker-config.js";
@@ -16,8 +16,8 @@ describe("parseInvestigateWorkerConfig", () => {
     expect(config.enabled).toBe(true);
     expect(config.intervalMs).toBe(DEFAULT_INVESTIGATE_INTERVAL_MS);
     expect(config.onStart).toBe(true);
-    expect(config.startDelayMs).toBe(DEFAULT_INVESTIGATE_START_DELAY_MS);
-    expect(DEFAULT_INVESTIGATE_START_DELAY_MS).toBe(0);
+    expect(config.startDelayMs).toBe(DEV_INVESTIGATE_START_DELAY_MS);
+    expect(DEV_INVESTIGATE_START_DELAY_MS).toBe(20_000);
   });
 
   it("stays off in test unless explicitly enabled", () => {

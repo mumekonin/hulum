@@ -100,12 +100,12 @@ A judge should be able to follow this file → `docs/product/hulum-flow.md` → 
 
 ## 6. Prototype and what we have learned so far
 
-**Implemented:** vertical slice with demo persona Abeba Tesfaye. Example outcomes used in development: A2SV APPLY, Mastercard Foundation at UCT MAYBE, Chevening SKIP.
+**Implemented:** JWT Create account / onboarding / Discover vertical slice; typed Abeba walkthrough facts. Early development used file-store fixtures (A2SV APPLY / UCT MAYBE / Chevening SKIP) — those ids are **not** the live Postgres catalog (seed closed; investigator-filled).
 
 **Still open (not claimed as user-study results):**
 
 - Whether voice in Amharic increases completed analyses.
 - Whether MAYBE copy reduces false-certainty harm.
-- Whether the curated 12-opportunity set is enough for a live demo only (yes for demo; not a market catalog).
+- Whether an investigator-filled catalog is enough for a live demo when the list is empty (screenshot backup exists; not a market catalog claim).
 
 Further iteration belongs in CHANGELOG as it happens.

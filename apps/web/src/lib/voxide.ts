@@ -20,22 +20,67 @@ export function voiceLauncherClearance(): string {
 }
 
 /**
- * Widget STT locale hint. Public Voxide docs do not list Amharic/Oromo recognition.
- * Replies still follow the asked language on POST /api/voice/action.
+ * Widget STT locale hint. Public Voxide docs do not list verified Amharic/Oromo recognition.
+ * Use English STT for Oromo UI selection — do not invent an om-ET mic claim (ADR 004).
+ * Replies still follow the asked language on POST /api/voice/action when the model supports it.
  */
-export function voxideSpeechLocale(language: LanguageCode): "en-US" | "am-ET" | "om-ET" {
+export function voxideSpeechLocale(language: LanguageCode): "en-US" | "am-ET" {
   if (language === "am") {
     return "am-ET";
-  }
-  if (language === "om") {
-    return "om-ET";
   }
   return "en-US";
 }
 
+export type VoxideTurn = { role: "user" | "ai"; text: string; partial?: boolean };
+
+/**
+ * The latest thing the visitor said once Voxide has finished hearing it: marked final,
+ * or already followed by another message. Empty while the sentence is still streaming in.
+ */
+export function finishedUserUtterance(messages: VoxideTurn[]): string {
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    const row = messages[index];
+    if (row?.role !== "user") {
+      continue;
+    }
+    return row.partial === true && index === messages.length - 1 ? "" : row.text.trim();
+  }
+  return "";
+}
+
+/** English always has a system voice; other locales only when the browser lists one. */
+export function canSpeakLocale(locale: string, voices: ReadonlyArray<{ lang: string }>): boolean {
+  const base = locale.slice(0, 2).toLowerCase();
+  if (base === "en") {
+    return true;
+  }
+  return voices.some((voice) => voice.lang.toLowerCase().startsWith(base));
+}
+
+/**
+ * Voxide's WebSocket `onerror` is a browser Event. Logging it prints `{}`.
+ * That is not a spoken-recognition failure; skip treating it as one.
+ */
+export function isEmptyVoxideWsError(payload: unknown): boolean {
+  if (payload === undefined || payload === null) {
+    return true;
+  }
+  if (typeof payload === "string") {
+    return payload.trim() === "";
+  }
+  if (typeof payload !== "object") {
+    return false;
+  }
+  if ("message" in payload) {
+    const message = (payload as { message: unknown }).message;
+    return typeof message !== "string" || message.trim() === "";
+  }
+  return true;
+}
+
 /** Gemini refused or apologized instead of speaking the HULUM tool result. */
 export function isVoxideRefusal(text: string): boolean {
-  return /no (ability|tool|capability)|don'?t have (the )?(necessary )?(tools?|ability|capabilities)|do not have (the )?(necessary )?(tools?|ability)|cannot (help|do that|show|list|analyze)|i can'?t analyze|i('m| am) (not |un)able|lack(s)? (the )?(necessary )?(tools?|ability)|i have no ability|i('m| am) sorry|sorry[,.]? i|here to help with your next/i.test(
+  return /i('d| would) love to|still don'?t have|don'?t have (the )?(right |necessary )?tools?|do not have (the )?(right |necessary )?tools?|no (ability|tool|capability)|cannot (help|do that|show|list|analyze|display)|i can'?t (analyze|show|display|list)|i('m| am) (not |un)able|lack(s)? (the )?(right |necessary )?(tools?|ability)|i have no ability|i('m| am) sorry|sorry[,.]? i|here to help with your next/i.test(
     text,
   );
 }
@@ -60,9 +105,9 @@ export function isEchoOfReply(text: string, reply: string): boolean {
   return stored.startsWith(spoken) || spoken.startsWith(stored.slice(0, 48)) || stored.includes(spoken);
 }
 
-/** Ask Gemini Live to read the stored HULUM result and nothing else. */
-export function voxideSpeakOnly(reply: string): string {
-  return `Speak only this HULUM answer. Do not apologize. Do not say you lack ability. Say only: ${reply}`;
+/** Internal prompt we must never treat as a visitor question. */
+export function isHulumSpeakPrompt(text: string): boolean {
+  return /^speak only this hulum answer/i.test(text.trim());
 }
 
 /** True only for a short user command, not a list/result/apology echo. */
@@ -71,10 +116,10 @@ export function isHulumProductRequest(text: string): boolean {
   if (value.length < 4 || value.length > 160) {
     return false;
   }
-  if (isSpokenHulumResult(value) || isVoxideRefusal(value)) {
+  if (isSpokenHulumResult(value) || isVoxideRefusal(value) || isHulumSpeakPrompt(value)) {
     return false;
   }
-  return /\b(show|list|find|filter|open|analyze|analysis|anlysis|tell me|why |what (am|should)|prepare|extract|update profile|should i apply)\b|agarsiisi|madaali|ibsi|carraa|[\u1200-\u137F]/i.test(
+  return /\b(show|list|find|filter|open|analyze|analysis|anlysis|tell me|why |what (am|should)|prepare|extract|update profile|should i apply|scholarships?|internships?|fellowships?)\b|agarsiisi|madaali|ibsi|carraa|[\u1200-\u137F]/i.test(
     value,
   );
 }

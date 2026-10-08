@@ -1,4 +1,4 @@
-import { getPool } from "../db/pool.js";
+import { dbQuery } from "../db/rls-session.js";
 import { HttpError } from "../http/errors.js";
 
 function isPgError(error: unknown): error is { code: string } {
@@ -38,7 +38,7 @@ export function createPgAuthStore(): AuthStore {
   return {
     async createUser(input): Promise<AuthUserRow> {
       try {
-        const result = await getPool().query<AuthUserRow>(
+        const result = await dbQuery<AuthUserRow>(
           `insert into users (name, email, password_hash, google_sub)
            values ($1, $2, $3, $4)
            returning ${USER_COLUMNS}`,
@@ -58,7 +58,7 @@ export function createPgAuthStore(): AuthStore {
     },
 
     async findByEmail(email: string): Promise<AuthUserRow | undefined> {
-      const result = await getPool().query<AuthUserRow>(
+      const result = await dbQuery<AuthUserRow>(
         `select ${USER_COLUMNS} from users where lower(email) = lower($1)`,
         [email],
       );
@@ -66,7 +66,7 @@ export function createPgAuthStore(): AuthStore {
     },
 
     async findById(id: string): Promise<AuthUserRow | undefined> {
-      const result = await getPool().query<AuthUserRow>(
+      const result = await dbQuery<AuthUserRow>(
         `select ${USER_COLUMNS} from users where id = $1`,
         [id],
       );
@@ -74,7 +74,7 @@ export function createPgAuthStore(): AuthStore {
     },
 
     async findByGoogleSub(googleSub: string): Promise<AuthUserRow | undefined> {
-      const result = await getPool().query<AuthUserRow>(
+      const result = await dbQuery<AuthUserRow>(
         `select ${USER_COLUMNS} from users where google_sub = $1`,
         [googleSub],
       );
@@ -83,7 +83,7 @@ export function createPgAuthStore(): AuthStore {
 
     async linkGoogleSub(userId: string, googleSub: string): Promise<void> {
       try {
-        await getPool().query(`update users set google_sub = $2 where id = $1`, [userId, googleSub]);
+        await dbQuery(`update users set google_sub = $2 where id = $1`, [userId, googleSub]);
       } catch (error) {
         if (isPgError(error) && error.code === "23505") {
           throw new HttpError(409, "CONFLICT", "This Google account is already linked to another user.");
@@ -93,7 +93,7 @@ export function createPgAuthStore(): AuthStore {
     },
 
     async createEmptyProfile(userId: string): Promise<void> {
-      await getPool().query(
+      await dbQuery(
         // Unknown facts stay null so matching treats them as UNCERTAIN, never guessed.
         `insert into profiles (user_id, education_level, country, languages, skills, interests)
          values ($1, null, null, '{}', '{}', '{}')

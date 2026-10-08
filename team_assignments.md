@@ -38,9 +38,9 @@ Voice is a real product capability:
 Voice → Voxide → Intent → HULUM Action → Structured Result → Voice/Text Response
 ```
 
-Claude assists with natural-language understanding, explanations, profile extraction,
-and readiness language. The deterministic requirement and decision engine remains the
-source of truth for APPLY/MAYBE/SKIP.
+Groq assists with explanations, profile extraction, and readiness language when keyed
+(`docs/decisions/001-stack-and-providers.md`). The deterministic requirement and decision
+engine remains the source of truth for APPLY/MAYBE/SKIP.
 
 ---
 
@@ -342,22 +342,24 @@ GET  /api/analyses/:id/readiness
 
 **Verify:** an analysis produces a useful readiness checklist.
 
-### Task 30 — Claude AI orchestration (Days 9–12)
+### Task 30 — Groq AI orchestration (Days 9–12)
 **Depends on:** stable analysis contract.
 
-Claude handles natural-language profile extraction, explanation, requirement
-explanation, readiness-plan language, contextual Q&A, and multilingual explanation.
+> Team lock (2026-09-20, Kidist + Mulualem): Groq explains stored analysis. Claude is not used. The engine still owns APPLY/MAYBE/SKIP.
 
-Claude is not the sole authority for official deadlines, requirements, stored profile
+Groq handles natural-language profile extraction, explanation, requirement
+explanation, readiness-plan language, contextual Q&A, and multilingual explanation when keyed.
+
+Groq is not the sole authority for official deadlines, requirements, stored profile
 facts, deterministic matching, or APPLY/MAYBE/SKIP.
 
-**Verify:** Claude explains structured analysis without silently changing the decision.
+**Verify:** Groq explains structured analysis without silently changing the decision.
 
 ### Task 31 — AI output validation (Days 10–12)
 **Depends on:** Task 30.
 
 ```text
-Claude output
+Groq output
     ↓
 Schema validation
     ↓
@@ -408,7 +410,7 @@ final eligibility/deadline authority.
 Test:
 
 ```text
-Profile → Opportunity → Analysis → Matching → Decision → Claude → Readiness → Voice → UI
+Profile → Opportunity → Analysis → Matching → Decision → Groq explanation (optional) → Readiness → Voice → UI
 ```
 
 **Verify:** the core vertical slice uses real services and persisted data.
@@ -419,7 +421,7 @@ Profile → Opportunity → Analysis → Matching → Decision → Claude → Re
 > Deploy backend/database, configure production secrets, CORS, health checks,
 > logging, and environment configuration. Investigate EthioDeploy.
 
-**Verify:** deployed API passes health and smoke tests.
+**Verify:** local API passes health and smoke tests (`npm run dev`, CI). Production host verification stays open (`docs/stark/deployment.md`; Deploy rows in `task.md`).
 
 ### Task 38 — Final technical sign-off (Day 20)
 **Coordinates:** whole team.
@@ -427,7 +429,7 @@ Profile → Opportunity → Analysis → Matching → Decision → Claude → Re
 > Run the complete production walkthrough covering profile, opportunity, decision,
 > AI explanation, readiness, voice, mobile/web integration, failure paths, and source links.
 
-**Verify:** final HULUM demo is reproducible from the deployed system.
+**Verify:** final HULUM demo is reproducible from the **local** stack (README + `docs/demo/script.md`), not from a public host until deploy is real.
 
 ---
 
@@ -643,7 +645,7 @@ Final demo
 2. Shared contracts are agreed before dependent implementation.
 3. No silent API, database, decision, or voice-contract changes.
 4. The deterministic engine is the source of truth for APPLY/MAYBE/SKIP.
-5. Claude explains and assists; it does not silently override structured facts or official requirements.
+5. Groq explains and assists when keyed; it does not silently override structured facts or official requirements.
 6. Voxide voice must trigger real HULUM functionality.
 7. Official opportunity sources remain the final authority for eligibility and deadlines.
 8. Integrate early; do not wait until the last days.

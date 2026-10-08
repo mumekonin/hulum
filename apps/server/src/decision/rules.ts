@@ -1,4 +1,4 @@
-import { RequirementKey, RequirementStatus } from "@hulum/shared";
+import { Decision, RequirementKey, RequirementStatus, type RequirementMatch } from "@hulum/shared";
 
 /** Fit score weights. Product signal only, not a guarantee. Sum = 100. */
 export const FIT_SCORE_WEIGHTS = {
@@ -31,6 +31,28 @@ export const NEXT_ACTION = {
   MAYBE: "Verify the uncertain or missing requirements with the official source.",
   SKIP: "Find opportunities that match your current profile.",
 } as const;
+
+/** Rebuilds the next step from stored matcher reasons. Groq does not write this. */
+export function nextActionFrom(
+  decision: Decision,
+  matches: Array<Pick<RequirementMatch, "status" | "reason">>,
+): string {
+  const uncertain = matches.find((item) => item.status === RequirementStatus.UNCERTAIN);
+  const missing = matches.find((item) => item.status === RequirementStatus.NOT_MET);
+  if (decision === Decision.APPLY) {
+    return NEXT_ACTION.APPLY;
+  }
+  if (decision === Decision.SKIP) {
+    return missing ? `${NEXT_ACTION.SKIP} ${missing.reason}` : NEXT_ACTION.SKIP;
+  }
+  if (uncertain) {
+    return `${NEXT_ACTION.MAYBE} ${uncertain.reason}`;
+  }
+  if (missing) {
+    return `${NEXT_ACTION.MAYBE} ${missing.reason}`;
+  }
+  return NEXT_ACTION.MAYBE;
+}
 
 export function fitScorePoints(status: RequirementStatus, weight: number): number {
   if (status === RequirementStatus.MET || status === RequirementStatus.NOT_APPLICABLE) {

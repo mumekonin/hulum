@@ -19,7 +19,7 @@ export const testOpportunities: Opportunity[] = [
     type: "fellowship",
     description:
       "A2SV trains high-potential African software engineering students for internships and roles at global technology companies. The program is built around data structures, algorithms, and interview preparation.",
-    deadline: "2026-11-30",
+    deadline: "2027-11-30",
     countryEligibility: ["Africa"],
     educationRequirements: "Currently enrolled university student in computer science or a related field.",
     fieldRequirements: "Computer science, software engineering, or related STEM.",
@@ -48,7 +48,7 @@ export const testOpportunities: Opportunity[] = [
     type: "scholarship",
     description:
       "Generation Google Scholarships support students pursuing computer science degrees. Eligibility, regions, and deadlines change by cycle — always use Google's official scholarship page.",
-    deadline: "2026-12-15",
+    deadline: "2027-12-15",
     countryEligibility: ["Africa", "Europe", "Middle East"],
     educationRequirements: "Enrolled as a student in a computer science or related program.",
     fieldRequirements: "Computer science or a closely related field.",
@@ -78,7 +78,7 @@ export const testOpportunities: Opportunity[] = [
     type: "fellowship",
     description:
       "ALX offers software engineering and career-acceleration programmes for African talent. Admission criteria and cohort dates are published on the official ALX site.",
-    deadline: "2026-10-31",
+    deadline: "2027-10-31",
     countryEligibility: ["Africa"],
     educationRequirements: "Typically open to learners building a software career; university enrollment is helpful.",
     fieldRequirements: "Software engineering, computer science, or career switchers into tech.",
@@ -105,15 +105,15 @@ export const testOpportunities: Opportunity[] = [
     organization: "University of Cape Town / Mastercard Foundation",
     type: "scholarship",
     description:
-      "The Mastercard Foundation Scholars Program at UCT supports academically talented young people from Africa. Undergraduate applications for the published cycle close 30 September 2026. Apply through UCT, then the Scholars Program form.",
-    deadline: "2026-09-30",
+      "The Mastercard Foundation Scholars Program at UCT supports academically talented young people from Africa. Undergraduate applications for the published cycle close 30 September 2027. Apply through UCT, then the Scholars Program form.",
+    deadline: "2027-09-30",
     countryEligibility: ["Africa"],
     educationRequirements: "Applicants to a UCT bachelor's degree (or eligible postgraduate routes with a later deadline).",
     fieldRequirements: "Any UCT programme the applicant is academically eligible for.",
     experienceRequirements: "Not a professional work-experience scholarship.",
     languageRequirements: "English",
     documentRequirements: ["Academic transcripts", "Motivation statement", "Proof of financial need"],
-    otherRequirements: ["Must also complete a UCT academic application.", "Official undergraduate deadline: 30 September 2026."],
+    otherRequirements: ["Must also complete a UCT academic application.", "Official undergraduate deadline: 30 September 2027."],
     applicationUrl: "https://www.uct.ac.za/mastercardfdn/apply-mastercard-foundation-scholars-program",
     sourceUrl: "https://mastercardfdn.org/en/what-we-do/our-programs/mastercard-foundation-scholars-program/",
     sourceType: "official_organization",
@@ -124,7 +124,7 @@ export const testOpportunities: Opportunity[] = [
       { key: "education", category: "education", text: "Ready to apply for a university bachelor's programme", critical: true, matcher: { type: "education_min", level: "bachelor_in_progress", enrolledOk: true } },
       { key: "field", category: "field", text: "Field accepted by UCT admissions", critical: false, matcher: { type: "always_uncertain" } },
       { key: "language", category: "language", text: "English", critical: false, matcher: { type: "language", values: ["English"] } },
-      { key: "deadline", category: "deadline", text: "Undergraduate deadline 30 September 2026", critical: true, matcher: { type: "deadline_open" } },
+      { key: "deadline", category: "deadline", text: "Undergraduate deadline 30 September 2027", critical: true, matcher: { type: "deadline_open" } },
       { key: "need", category: "other", text: "Financial need / scholars criteria", critical: false, matcher: { type: "always_uncertain" } },
       { key: "documents", category: "documents", text: "Transcripts and motivation materials", critical: false, matcher: { type: "documents", values: ["Transcript", "Motivation statement"] } },
     ],
@@ -136,7 +136,7 @@ export const testOpportunities: Opportunity[] = [
     type: "fellowship",
     description:
       "YALI RLC East Africa is a leadership programme for young East African leaders. Eligibility typically includes East African nationality or residency and an age window. Confirm the live cohort on the official YALI East Africa site.",
-    deadline: "2026-10-20",
+    deadline: "2027-10-20",
     countryEligibility: ["Ethiopia", "Kenya", "Uganda", "Tanzania", "Rwanda", "Burundi", "South Sudan"],
     educationRequirements: "Emerging leaders; university study is common but not always the only path.",
     fieldRequirements: "Leadership across civic, public, and business tracks — not limited to computer science.",
@@ -165,7 +165,7 @@ export const testOpportunities: Opportunity[] = [
     type: "scholarship",
     description:
       "Chevening is the UK government's global scholarship for a one-year master's degree. Applicants normally need an undergraduate degree and at least two years' work experience. Ethiopia is an eligible Chevening country.",
-    deadline: "2026-11-04",
+    deadline: "2027-11-04",
     countryEligibility: ["Ethiopia"],
     educationRequirements: "Undergraduate degree that will enable a UK master's offer.",
     fieldRequirements: "Any subject with a UK university offer.",
@@ -193,7 +193,7 @@ export const testOpportunities: Opportunity[] = [
     type: "scholarship",
     description:
       "The Rhodes Scholarship funds postgraduate study at the University of Oxford. Constituencies, age limits, and academic requirements are strict. Use the official Rhodes Trust application overview.",
-    deadline: "2026-08-01",
+    deadline: "2027-08-01",
     countryEligibility: ["Africa", "Ethiopia"],
     educationRequirements: "Completed undergraduate degree meeting Oxford postgraduate entry.",
     fieldRequirements: "Any field Oxford can supervise.",
@@ -221,7 +221,7 @@ export const testOpportunities: Opportunity[] = [
     type: "fellowship",
     description:
       "Schwarzman Scholars is a one-year master's programme in global affairs at Tsinghua University in Beijing. Applicants need an undergraduate degree (or to complete one in time) and must apply through the official admissions site.",
-    deadline: "2026-09-10",
+    deadline: "2027-09-10",
     countryEligibility: ["Ethiopia", "Africa"],
     educationRequirements: "Bachelor's degree completed or completing in time for matriculation.",
     fieldRequirements: "Any undergraduate major; programme is global affairs.",
@@ -248,7 +248,7 @@ export const testOpportunities: Opportunity[] = [
     type: "internship",
     description:
       "The UN Internship Programme posts roles across the UN Secretariat. Typical eligibility is enrollment in a graduate programme, or a final-year undergraduate in some postings. Always read the specific vacancy.",
-    deadline: "2026-12-31",
+    deadline: "2027-12-31",
     countryEligibility: ["Ethiopia", "Africa"],
     educationRequirements: "Usually a graduate student or final-year undergraduate, depending on the vacancy.",
     fieldRequirements: "Varies by duty station and posting.",
@@ -276,7 +276,7 @@ export const testOpportunities: Opportunity[] = [
     type: "grant",
     description:
       "The TEF Entrepreneurship Programme supports African entrepreneurs with training, mentoring, and seed funding. It is a business programme, not a computer-science scholarship. Apply only via the Foundation.",
-    deadline: "2026-12-01",
+    deadline: "2027-12-01",
     countryEligibility: ["Africa"],
     educationRequirements: "Entrepreneurs; a formal degree is not the core gate.",
     fieldRequirements: "A viable African business idea.",
@@ -303,7 +303,7 @@ export const testOpportunities: Opportunity[] = [
     type: "scholarship",
     description:
       "DAAD EPOS-style scholarships support development-related postgraduate study in Germany. Typical gates include a completed bachelor's degree and relevant professional experience. Use the official DAAD scholarship finder.",
-    deadline: "2026-10-31",
+    deadline: "2027-10-31",
     countryEligibility: ["Ethiopia", "Africa"],
     educationRequirements: "Completed bachelor's degree.",
     fieldRequirements: "Development-related postgraduate courses listed by DAAD.",
@@ -331,7 +331,7 @@ export const testOpportunities: Opportunity[] = [
     type: "scholarship",
     description:
       "The Mandela Rhodes Scholarship supports postgraduate study in South Africa for young African leaders. Applicants generally need to qualify for honours or master's study and meet an age limit. Apply only through the Foundation.",
-    deadline: "2026-04-21",
+    deadline: "2027-04-21",
     countryEligibility: ["Africa"],
     educationRequirements: "Ready for honours or master's study in South Africa.",
     fieldRequirements: "Any field offered by a partner South African university.",

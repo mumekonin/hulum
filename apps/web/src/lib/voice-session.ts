@@ -27,11 +27,29 @@ export function writeVoiceSession(next: VoiceSessionIds): void {
     return;
   }
   if (next.opportunityId) {
+    const previous = window.sessionStorage.getItem(OPPORTUNITY_KEY);
+    if (previous !== next.opportunityId && !next.analysisId) {
+      window.sessionStorage.removeItem(ANALYSIS_KEY);
+    }
     window.sessionStorage.setItem(OPPORTUNITY_KEY, next.opportunityId);
   }
   if (next.analysisId) {
     window.sessionStorage.setItem(ANALYSIS_KEY, next.analysisId);
   }
+}
+
+export function pageOpportunityId(pathname: string): string | undefined {
+  const match = /^\/opportunities\/([^/?#]+)\/?$/.exec(pathname);
+  return match?.[1] ? decodeURIComponent(match[1]) : undefined;
+}
+
+/** The listing on screen wins over the last one voice touched; its analysis only if it belongs to that listing. */
+export function voiceContextFor(pathname: string, session: VoiceSessionIds): VoiceSessionIds {
+  const onPage = pageOpportunityId(pathname);
+  if (onPage === undefined || onPage === session.opportunityId) {
+    return session;
+  }
+  return { opportunityId: onPage };
 }
 
 export function clearVoiceSession(): void {

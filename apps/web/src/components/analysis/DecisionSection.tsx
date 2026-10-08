@@ -1,4 +1,9 @@
-import { OFFICIAL_SOURCE_NOTICE, type Analysis, type Requirement } from "@hulum/shared";
+import {
+  OFFICIAL_SOURCE_NOTICE,
+  type Analysis,
+  type Decision,
+  type ScreenshotDecisionView,
+} from "@hulum/shared";
 import { DecisionBadge } from "@/components/DecisionBadge";
 
 /** The stored summary ends with the official notice; the page shows that notice once, in the source panel. */
@@ -9,8 +14,25 @@ function headline(summary: string): string {
     : trimmed;
 }
 
-function requirementText(item: Requirement): string {
-  return item.text.trim() || item.key;
+export type DecisionViewItem = {
+  id: string;
+  text: string;
+  reason?: string | null;
+  evidence?: string | null;
+};
+
+export type DecisionViewModel = {
+  decision: Decision;
+  fitScore: number;
+  summary: string;
+  nextAction: string;
+  met: DecisionViewItem[];
+  uncertain: DecisionViewItem[];
+  notMet: DecisionViewItem[];
+};
+
+function itemText(item: DecisionViewItem): string {
+  return item.text.trim() || item.id;
 }
 
 function ReasonList({
@@ -20,7 +42,7 @@ function ReasonList({
   markClass,
 }: {
   title: string;
-  items: Requirement[];
+  items: DecisionViewItem[];
   mark: string;
   markClass: string;
 }) {
@@ -35,8 +57,10 @@ function ReasonList({
               {mark}
             </span>
             <div className="min-w-0">
-              <p className="leading-7">{requirementText(item)}</p>
-              {item.reason ? <p className="text-sm leading-6 text-muted">{item.reason}</p> : null}
+              <p className="leading-7">{item.reason?.trim() || itemText(item)}</p>
+              {item.reason?.trim() && itemText(item) !== item.reason.trim() ? (
+                <p className="text-sm leading-6 text-muted">{itemText(item)}</p>
+              ) : null}
             </div>
           </li>
         ))}
@@ -45,7 +69,7 @@ function ReasonList({
   );
 }
 
-function SkipTable({ items }: { items: Requirement[] }) {
+function SkipTable({ items }: { items: DecisionViewItem[] }) {
   if (items.length === 0) return null;
   return (
     <section className="mt-8">
@@ -70,7 +94,7 @@ function SkipTable({ items }: { items: Requirement[] }) {
           <tbody>
             {items.map((item) => (
               <tr key={item.id} className="border-b border-line align-top">
-                <td className="py-3 pr-4 leading-6">{requirementText(item)}</td>
+                <td className="py-3 pr-4 leading-6">{itemText(item)}</td>
                 <td className="py-3 pr-4 leading-6 text-muted">
                   {item.evidence?.trim() || item.reason?.trim() || "Not in your saved profile"}
                 </td>
@@ -84,16 +108,8 @@ function SkipTable({ items }: { items: Requirement[] }) {
   );
 }
 
-/**
- * Displays a stored analysis. The decision, summary, and next action all come from the
- * server (decide.ts); this component only groups requirements by their stored status.
- */
-export function DecisionSection({ analysis }: { analysis: Analysis }) {
-  const requirements = analysis.requirements ?? [];
-  const met = requirements.filter((item) => item.status === "MET");
-  const uncertain = requirements.filter((item) => item.status === "UNCERTAIN");
-  const notMet = requirements.filter((item) => item.status === "NOT_MET");
-  const isSkip = analysis.decision === "SKIP";
+export function DecisionView({ model }: { model: DecisionViewModel }) {
+  const isSkip = model.decision === "SKIP";
 
   return (
     <section
@@ -107,32 +123,67 @@ export function DecisionSection({ analysis }: { analysis: Analysis }) {
         HULUM decision
       </h2>
       <div className="mt-3 flex flex-wrap items-baseline gap-x-5 gap-y-2">
-        <DecisionBadge decision={analysis.decision} size="lg" />
+        <DecisionBadge decision={model.decision} size="lg" />
         <p
           className="text-sm text-muted"
-          aria-label={`Fit signal ${analysis.fitScore} out of 100. Advisory only; it does not change the decision.`}
+          aria-label={`Fit signal ${model.fitScore} out of 100. Advisory only; it does not change the decision.`}
         >
-          Fit signal {analysis.fitScore}/100 · advisory only
+          Fit signal {model.fitScore}/100 · advisory only
         </p>
       </div>
-      <p className="mt-5 max-w-2xl font-display text-2xl leading-snug">
-        {headline(analysis.summary)}
-      </p>
+      <p className="mt-5 max-w-2xl font-display text-2xl leading-snug">{headline(model.summary)}</p>
 
-      {isSkip ? <SkipTable items={notMet} /> : null}
+      {isSkip ? <SkipTable items={model.notMet} /> : null}
       <ReasonList
         title={isSkip ? "What still matched" : "Why"}
-        items={met}
+        items={model.met}
         mark="✓"
         markClass="text-apply"
       />
-      <ReasonList title="What to check" items={uncertain} mark="?" markClass="text-maybe" />
-      {isSkip ? null : <ReasonList title="Not met" items={notMet} mark="✕" markClass="text-skip" />}
+      <ReasonList title="What to check" items={model.uncertain} mark="?" markClass="text-maybe" />
+      {isSkip ? null : <ReasonList title="Not met" items={model.notMet} mark="✕" markClass="text-skip" />}
 
       <section className="mt-8 border-l-2 border-ink pl-4">
         <h3 className="text-xs font-medium uppercase tracking-[0.14em] text-muted">Next step</h3>
-        <p className="mt-1 leading-7">{analysis.nextAction}</p>
+        <p className="mt-1 leading-7">{model.nextAction}</p>
       </section>
     </section>
+  );
+}
+
+function linesToItems(prefix: string, lines: string[]): DecisionViewItem[] {
+  return lines.map((text, index) => ({ id: `${prefix}-${index}`, text }));
+}
+
+export function screenshotDecisionModel(view: ScreenshotDecisionView): DecisionViewModel {
+  return {
+    decision: view.decision,
+    fitScore: view.fitScore,
+    summary: view.summary,
+    nextAction: view.nextAction,
+    met: linesToItems("met", view.matched),
+    uncertain: linesToItems("uncertain", view.uncertain),
+    notMet: linesToItems("missing", view.missing),
+  };
+}
+
+/**
+ * Displays a stored analysis. The decision, summary, and next action all come from the
+ * server (decide.ts); this component only groups requirements by their stored status.
+ */
+export function DecisionSection({ analysis }: { analysis: Analysis }) {
+  const requirements = analysis.requirements ?? [];
+  return (
+    <DecisionView
+      model={{
+        decision: analysis.decision,
+        fitScore: analysis.fitScore,
+        summary: analysis.summary,
+        nextAction: analysis.nextAction,
+        met: requirements.filter((item) => item.status === "MET"),
+        uncertain: requirements.filter((item) => item.status === "UNCERTAIN"),
+        notMet: requirements.filter((item) => item.status === "NOT_MET"),
+      }}
+    />
   );
 }

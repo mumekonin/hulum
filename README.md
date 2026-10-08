@@ -26,8 +26,8 @@ A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that deci
 
 ## What v0.1 actually does
 
-- **Sign in** — email/password register + login (JWT in `X-Hulum-Session`). Optional Google OAuth when client id/secret are set.
-- **Onboarding and profile** — new accounts walk a 4-step setup (`/onboarding`); `/profile` shows what you saved, lets you edit it, and keeps a private CV (view, download, replace). No one-click Abeba demo button.
+- **Sign in** — email/password register + login (JWT in `X-Hulum-Session`). Create account at `/verify` (register only—not email OTP). Optional Google OAuth when client id/secret are set. **Forgot password?** emails a single-use 30-minute link to `/reset-password` when `SMTP_HOST` + `MAIL_FROM` are set; until then the page says email is unavailable.
+- **Onboarding and profile** — new accounts walk a 4-step setup (`/onboarding`); `/profile` is a structured profile (photo, identity, completeness, education, skills, interests, languages), lets you edit it, and keeps a private CV (Upload CV once, then View / Update CV) plus supporting documents. The photo is display-only and never read by the decision engine. No one-click Abeba demo button.
 - **Discover** — keyword search and filters over the stored catalog, including your stored decision. It never invents listings.
 - **My opportunities and Readiness** — saved listings, past APPLY / MAYBE / SKIP results, and preparation progress (`/my-opportunities`, `/readiness`).
 - **Opportunity catalog** — investigator-filled from evidenced pages (not a baked seed list). May be empty until the worker runs.
@@ -40,7 +40,7 @@ A TypeScript engine decides APPLY / MAYBE / SKIP. Claude never changes that deci
 - **Light and dark mode** — follows the OS until you choose.
 - **Backup mode** — Voice unavailable keeps typing and the rest of the UI.
 
-Out of v0.1: auto-apply, payments, native mobile, inventing listings, live ScholarXiv papers in the product, password-reset email, production deploy.
+Out of v0.1: auto-apply, payments, native mobile, inventing listings, ScholarXIV as decision input, production deploy.
 
 ---
 
@@ -56,7 +56,7 @@ Out of v0.1: auto-apply, payments, native mobile, inventing listings, live Schol
 | Decision | `apps/server/src/decision/decide.ts` | An LLM must not decide |
 | Explanation | Groq on stored analyses (`GROQ_API_KEY`, `GROQ_MODEL`) | Claude leftover env names |
 | Voice | Keyword intents + text/quick actions | Voxide browser widget |
-| Research | `docs/research/` (design-time) | ScholarXIV Papers API — **no papers retrieved yet** |
+| Research | `docs/research/` + `/research` proxy when keyed | `scholarxiv.md` table empty by design; papers never decide |
 | Host | Local `npm run dev` | EthioDeploy / production — **not deployed** |
 
 ---
@@ -118,7 +118,10 @@ GET    /api/auth/google
 POST   /api/profile
 GET    /api/profile/:userId
 PATCH  /api/profile/:userId
-POST   /api/profile/:userId/documents
+POST   /api/profile/:userId/documents      # optional replacesId swaps one file in place
+GET    /api/profile/:userId/photo
+POST   /api/profile/:userId/photo
+DELETE /api/profile/:userId/photo
 GET    /api/opportunities
 GET    /api/opportunities/:id
 POST   /api/opportunities/:id/analyze
@@ -155,6 +158,7 @@ v0.1 is **not deployed**. When a host exists:
 | `DATABASE_URL` / `SUPABASE_*` | yes for `npm run dev` | Postgres for the default API |
 | `SESSION_SECRET` | yes in production | JWT signing for `X-Hulum-Session` |
 | `GOOGLE_CLIENT_ID` / `GOOGLE_CLIENT_SECRET` | no | Optional Google OAuth |
+| `SMTP_HOST` / `SMTP_PORT` / `SMTP_SECURE` / `SMTP_USER` / `SMTP_PASS` / `MAIL_FROM` | no | Password reset email. Links use `CLIENT_URL` + `/reset-password` |
 
 The API refuses to start in production without `CLIENT_URL` and `SESSION_SECRET`.
 

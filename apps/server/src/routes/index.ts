@@ -3,6 +3,7 @@ import { analysisRouter, analyzeRouter } from "../analysis/index.js";
 import { profileExtractRouter } from "../ai/profileExtractRouter.js";
 import { screenshotRouter } from "../ai/screenshotRouter.js";
 import { authRouter } from "../auth/routes.js";
+import { rlsRequestMiddleware } from "../db/rls-middleware.js";
 import { analysisListRouter, savedRouter } from "../history/index.js";
 import { createOpsRouter } from "../ops/index.js";
 import { opportunityRouter } from "../opportunities/index.js";
@@ -15,6 +16,7 @@ import { healthRouter } from "./health.js";
 
 export function createApiRouter(): Router {
   const router = Router();
+  router.use(rlsRequestMiddleware());
   router.use("/health", healthRouter);
   router.use("/ops", createOpsRouter("postgres"));
   router.use("/auth", authRouter);

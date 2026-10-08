@@ -1,5 +1,5 @@
 import type { AnalysisSummary, Decision, OpportunityType, SavedOpportunity } from "@hulum/shared";
-import { getPool } from "../db/pool.js";
+import { dbQuery } from "../db/rls-session.js";
 import { HttpError } from "../http/errors.js";
 
 export type HistoryStore = {
@@ -38,7 +38,7 @@ function toSaved(row: SavedRow): SavedOpportunity {
 export function createPgHistoryStore(): HistoryStore {
   return {
     async listLatestAnalyses(userId, opportunityId) {
-      const result = await getPool().query<SummaryRow>(
+      const result = await dbQuery<SummaryRow>(
         `select * from (
            select distinct on (a.opportunity_id)
              a.id as analysis_id,
@@ -77,7 +77,7 @@ export function createPgHistoryStore(): HistoryStore {
     },
 
     async listSaved(userId) {
-      const result = await getPool().query<SavedRow>(
+      const result = await dbQuery<SavedRow>(
         `select opportunity_id, created_at from saved_opportunities
          where user_id = $1 order by created_at desc`,
         [userId],
@@ -87,7 +87,7 @@ export function createPgHistoryStore(): HistoryStore {
 
     async save(userId, opportunityId) {
       try {
-        const result = await getPool().query<SavedRow>(
+        const result = await dbQuery<SavedRow>(
           `insert into saved_opportunities (user_id, opportunity_id) values ($1, $2)
            on conflict (user_id, opportunity_id) do update set user_id = excluded.user_id
            returning opportunity_id, created_at`,
@@ -107,7 +107,7 @@ export function createPgHistoryStore(): HistoryStore {
     },
 
     async unsave(userId, opportunityId) {
-      const result = await getPool().query(
+      const result = await dbQuery(
         `delete from saved_opportunities where user_id = $1 and opportunity_id = $2`,
         [userId, opportunityId],
       );

@@ -99,6 +99,50 @@ describe("auth routes", () => {
     expect(ok.status).toBe(200);
   });
 
+  it("serves password reset request, verify, and confirm", async () => {
+    const stubAuth: AuthService = {
+      register: async () => session,
+      login: async () => session,
+      loginWithGoogle: async () => session,
+      me: async () => session,
+    };
+    const confirmed: Array<{ token: string; password: string }> = [];
+    const app = express();
+    app.use(express.json());
+    app.use(
+      "/api/auth",
+      createAuthRouter(stubAuth, {
+        request: async () => {},
+        verify: async (token) => (token === "good" ? "valid" : token === "old" ? "expired" : "invalid"),
+        confirm: async (input) => {
+          confirmed.push(input);
+        },
+      }),
+    );
+    app.use(notFoundHandler);
+    app.use(errorHandler);
+    const port = await listen(app);
+    const post = (path: string, body: unknown) =>
+      fetch(`http://127.0.0.1:${port}/api/auth/password-reset/${path}`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(body),
+      });
+
+    expect((await post("request", { email: "abeba@example.invalid" })).status).toBe(202);
+    expect((await post("request", {})).status).toBe(400);
+
+    expect((await post("verify", { token: "good" })).status).toBe(200);
+    const expired = await post("verify", { token: "old" });
+    expect(expired.status).toBe(400);
+    expect(((await expired.json()) as { error: { code: string } }).error.code).toBe("RESET_LINK_EXPIRED");
+    const invalid = await post("verify", { token: "nope" });
+    expect(((await invalid.json()) as { error: { code: string } }).error.code).toBe("RESET_LINK_INVALID");
+
+    expect((await post("confirm", { token: "good", password: "new-password" })).status).toBe(200);
+    expect(confirmed).toEqual([{ token: "good", password: "new-password" }]);
+  });
+
   it("sends the browser back to sign-in when Google is not configured", async () => {
     vi.stubEnv("GOOGLE_CLIENT_ID", "");
     vi.stubEnv("GOOGLE_CLIENT_SECRET", "");

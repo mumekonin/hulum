@@ -8,6 +8,8 @@
 **Duration:** September 9 – October 2, 2026
 **Location:** Addis Ababa, Ethiopia
 
+> **Honesty (tip of `main`):** This SRS is background only. For what the product actually ships, trust `README.md`, `docs/stark/narrative.md`, and tip of `main` — not EthioDeploy-as-live, Claude-as-decider, invent OAuth/OTP/mail, or old HMAC/UI-preview auth paths.
+
 ---
 
 ## Abbreviations/Acronyms
@@ -178,6 +180,8 @@ In scope for the hackathon build:
 - A seed database of at least 10 verified opportunities at launch.
 - Web deployment via EthioDeploy with a mobile-responsive UI.
 
+**v0.1 note:** runtime catalog is investigator-filled (not ≥10 curated seed); EthioDeploy is the target host, not the current one (`docs/stark/deployment.md`).
+
 Out of scope for the hackathon build (candidate for future phases):
 - Direct application submission on behalf of the user.
 - Payment processing or paid-tier features.
@@ -187,20 +191,23 @@ Out of scope for the hackathon build (candidate for future phases):
 ### 1.2.9 Limitations of the Project
 
 - The opportunity database is manually curated and verified during the hackathon window, so coverage is limited to seeded entries rather than the full universe of circulating opportunities.
+  **v0.1 note:** runtime catalog is investigator-filled Postgres; curated `db:seed` closed; list may be empty until the worker runs — not a shipped ≥10 curated seed set.
 - Voice recognition accuracy for Afaan Oromo may lag behind Amharic and English given relatively less mature language-model and speech tooling.
 - The system evaluates eligibility based on user-declared profile data; it does not independently verify credentials or documents.
 - Time constraints limit the depth of automated opportunity-source verification to spot-checks against official domains rather than a full trust-scoring pipeline.
 
 ### 1.2.10 Project Deliverables and Phases
 
-| Deliverable | Description |
-|---|---|
-| Working web application | Deployed on EthioDeploy, publicly accessible demo |
-| Source code repository | GitHub repo with daily commit history from Day 1 |
-| Seed opportunity database | ≥10 verified opportunities at launch |
-| Voice interaction layer | Amharic, English, Afaan Oromo via Voxide |
-| Demo script and backup video | For the October 2 live presentation |
-| STARK changelog entries | Recorded at every milestone |
+> **v0.1 (tip of `main`):** The third column is what judges can verify today. Original hackathon targets stay in *Description*; see `docs/stark/deployment.md`, `docs/stark/narrative.md`, `README.md`.
+
+| Deliverable | Description (hackathon target) | v0.1 status (tip of `main`) |
+|---|---|---|
+| Working web application | Public demo on EthioDeploy | **Local only** — `npm run dev`; no EthioDeploy URL (`docs/stark/deployment.md`) |
+| Source code repository | GitHub with daily commit history | **Shipped** — public repo + `CHANGELOG.md` |
+| Seed opportunity database | ≥10 verified opportunities at launch | **Investigator-filled Postgres**; curated `db:seed` closed (`006`); list may be empty until worker runs |
+| Voice interaction layer | Amharic, English, Afaan Oromo via Voxide | **English** text/quick actions + optional Voxide widget when keyed; **not** verified trilingual live mic/STT |
+| Demo script and backup video | October 2 live presentation | **Script + backup doc** — `docs/demo/script.md`, `docs/demo/backup.md`; no hosted demo URL |
+| STARK changelog entries | Recorded at every milestone | **Shipped** — root `CHANGELOG.md` + `docs/stark/*` |
 
 ### 1.2.11 Work Breakdown and Coordination
 
@@ -227,7 +234,7 @@ The team is motivated by a gap they have personally observed: Ethiopian peers wh
 | 1 | Days 1–3 | Foundation | Repo, schema, Supabase setup, 10 seed opportunities |
 | 2 | Days 4–10 | AI Engine | APPLY/MAYBE/SKIP core loop, readiness checklist |
 | 3 | Days 11–14 | Voice | Voxide integration — English, Amharic, Afaan Oromo |
-| 4 | Days 15–20 | Polish | UI refinement, mobile responsiveness, EthioDeploy production deployment |
+| 4 | Days 15–20 | Polish | UI refinement, mobile responsiveness, production **configuration** in code (**host not deployed**) |
 | 5 | Days 21–24 | Demo Prep | Demo script, rehearsal, backup video, final changelog |
 
 ---
@@ -266,6 +273,7 @@ HULUM is a web-based (mobile-responsive), voice-first application. Its scope cov
 - **Objective:** Reduce decision time per opportunity. **Success criterion:** A user receives an APPLY/MAYBE/SKIP decision within seconds of selecting an opportunity, not hours of manual research.
 - **Objective:** Increase applications among eligible users. **Success criterion:** Users presented with an APPLY decision and a readiness checklist proceed to prepare/apply at a higher rate than baseline self-assessment.
 - **Objective:** Extend access via language. **Success criterion:** Non-English-first users can complete profile setup and receive decisions entirely by voice in Amharic or Afaan Oromo.
+  **v0.1:** not met for live voice; English text/quick actions are the stable path; Amharic quick-action strings exist; Oromo UI/voice open (README, ADR 004).
 
 ### 2.1.7 General Description
 
@@ -294,13 +302,13 @@ HULUM operates as a three-part loop: **profile capture** (voice or text), **oppo
 | ID | Requirement |
 |---|---|
 | NFR-01 (Performance) | The system shall return an eligibility decision within a few seconds of a user requesting evaluation. |
-| NFR-02 (Usability) | The voice interface shall support natural, conversational speech in Amharic, English, and Afaan Oromo without requiring users to learn rigid command phrases. |
-| NFR-03 (Security) | User profile data shall be protected using Supabase Row-Level Security (RLS), restricting access to the owning user. |
+| NFR-02 (Usability) | **Target:** conversational speech in Amharic, English, and Afaan Oromo. **v0.1:** English text + quick actions; optional Voxide widget when keyed; **not** verified trilingual live mic/STT (`docs/demo/backup.md`, README). |
+| NFR-03 (Security) | **Target:** owner-scoped RLS in Postgres. **v0.1:** policies in migrations `004`/`011`; API connects as table owner (owner bypasses RLS); JWT + route checks enforce ownership until a non-owner DB role (`database/README.md`). |
 | NFR-04 (Reliability) | Opportunity records shall be verified against official sources before being surfaced to users, to avoid recommending expired or fraudulent postings. |
-| NFR-05 (Availability) | The production system shall be deployed and reachable via EthioDeploy for the duration of the hackathon evaluation window and beyond. |
+| NFR-05 (Availability) | **Target:** production reachable via EthioDeploy for evaluation. **v0.1:** local dev + CI smokes only — not deployed (`docs/stark/deployment.md`). |
 | NFR-06 (Maintainability) | The AI evaluation logic shall be isolated from the profile and database layers so that reasoning prompts can be refined independently of the data model. |
 | NFR-07 (Scalability) | The database schema shall support growth from an initial 10 seed opportunities to a much larger curated catalog without redesign. |
-| NFR-08 (Localization) | All decision explanations shall be deliverable in the user's chosen language (Amharic, English, or Afaan Oromo). |
+| NFR-08 (Localization) | **Target:** explanations in the user's chosen language (Amharic, English, or Afaan Oromo). **v0.1:** English UI/explain path; Amharic quick-action strings; Groq when keyed — not full trilingual explain. |
 
 ## 2.2 Current (Existing) System Description
 
@@ -363,9 +371,10 @@ HULUM's analysis and design use standard object-oriented artifacts — use case 
 | Student Applicant | Primary actor; creates a profile and evaluates opportunities |
 | Young Professional | Secondary actor; same interactions as Student Applicant with different opportunity focus |
 | System Administrator | Curates and verifies opportunity records |
-| Claude API (AI Engine) | Supporting actor; performs profile extraction and eligibility reasoning |
-| Voxide (Voice Service) | Supporting actor; performs speech-to-text and text-to-speech |
-| Supabase (Data Store) | Supporting actor; persists profiles, opportunities, and evaluation history |
+| Express `decide()` (engine) | Supporting actor; owns APPLY / MAYBE / SKIP and requirement matching |
+| Groq (optional) | Supporting actor; extract/explain when `GROQ_API_KEY` is set — never sets the decision |
+| Voxide (Voice Service) | Supporting actor; optional browser widget when keyed — not verified trilingual live mic |
+| Postgres (Data Store) | Supporting actor; persists profiles, opportunities, and evaluation history (Supabase-hosted Postgres OK) |
 
 ### 3.2.4 Use Case Diagram
 
@@ -374,9 +383,10 @@ flowchart LR
     Student([Student Applicant])
     Professional([Young Professional])
     Admin([System Administrator])
-    Claude[[Claude API]]
-    Voxide[[Voxide Voice Service]]
-    Supabase[[Supabase DB]]
+    Engine[[Express decide]]
+    Groq[[Groq optional]]
+    Voxide[[Voxide optional widget]]
+    DB[[Postgres]]
 
     Student --> UC1(Create Profile by Voice)
     Student --> UC2(Create/Edit Profile by Text)
@@ -397,13 +407,14 @@ flowchart LR
 
     UC1 -.-> Voxide
     UC7 -.-> Voxide
-    UC1 -.-> Claude
-    UC4 -.-> Claude
-    UC5 -.-> Claude
-    UC6 -.-> Claude
-    UC3 -.-> Supabase
-    UC4 -.-> Supabase
-    UC8 -.-> Supabase
+    UC1 -.-> Groq
+    UC4 --> Engine
+    UC4 -.-> Groq
+    UC5 --> Engine
+    UC6 --> Engine
+    UC3 -.-> DB
+    UC4 -.-> DB
+    UC8 -.-> DB
 ```
 
 ### 3.2.5 Use Case Description (Detailed/Textual)
@@ -413,9 +424,9 @@ flowchart LR
 | Field | Description |
 |---|---|
 | Use Case ID | UC-04 |
-| Actors | Student Applicant, Young Professional, Claude API, Supabase |
+| Actors | Student Applicant, Young Professional, Express API / `decide()`, Postgres; Groq optional |
 | Precondition | User has a saved profile and has selected an opportunity |
-| Main Flow | 1. User selects an opportunity from the browse screen. 2. System retrieves the opportunity's structured requirements from Supabase. 3. System sends the user profile and opportunity requirements to the Claude API for comparison. 4. Claude API returns a decision (APPLY/MAYBE/SKIP), a fit score (0–100), and reasoning. 5. System displays the decision screen with the result and stores the evaluation in history. |
+| Main Flow | 1. User selects an opportunity from the browse screen. 2. System retrieves the opportunity's structured requirements from Postgres. 3. Backend runs **`decide(profile, opportunity)`** (deterministic). 4. System stores the analysis and displays APPLY/MAYBE/SKIP, fit score, and engine summary. 5. Optional: Groq rephrases the stored summary when keyed (decision unchanged). |
 | Alternate Flow | If profile data is insufficient for a confident decision, the system requests the missing field(s) from the user before finalizing the evaluation. |
 | Postcondition | An evaluation record is created and linked to the user and opportunity. |
 
@@ -424,9 +435,9 @@ flowchart LR
 | Field | Description |
 |---|---|
 | Use Case ID | UC-01 |
-| Actors | Student Applicant, Voxide, Claude API |
-| Precondition | User has opened the voice onboarding screen and selected a language |
-| Main Flow | 1. User speaks a self-description. 2. Voxide converts speech to text in the selected language. 3. Claude API extracts structured profile fields from the transcript. 4. System displays the extracted profile for confirmation. 5. User confirms or edits; profile is saved to Supabase. |
+| Actors | Student Applicant; Voxide optional; Groq optional; Postgres |
+| Precondition | User has opened profile setup (text or optional voice widget when keyed) |
+| Main Flow | 1. User enters or speaks a self-description. 2. Optional Voxide converts speech to text when keyed. 3. Optional Groq extracts structured profile fields when keyed. 4. System displays the proposed fields for confirmation. 5. User confirms or edits; profile is saved to Postgres. |
 | Alternate Flow | If transcription confidence is low, the system asks the user to repeat or switch to text input. |
 | Postcondition | A structured `Profile` record exists for the user. |
 
@@ -435,9 +446,9 @@ flowchart LR
 | Field | Description |
 |---|---|
 | Use Case ID | UC-06 |
-| Actors | Student Applicant, Claude API |
+| Actors | Student Applicant, Express API / engine; Groq optional; Voxide optional |
 | Precondition | An opportunity has been evaluated as APPLY or MAYBE |
-| Main Flow | 1. User opens the readiness checklist for the evaluated opportunity. 2. System requests a document-by-document action plan from the Claude API based on the gap analysis. 3. System displays the checklist with checkable items. 4. System speaks the first next action aloud via Voxide. |
+| Main Flow | 1. User opens the readiness checklist for the evaluated opportunity. 2. System builds checklist items from engine gap analysis (optional Groq wording when keyed). 3. System displays the checklist with checkable items. 4. Optional: Voxide widget may speak a next action when keyed — not claimed as default demo path. |
 | Postcondition | The checklist is saved and its completion state persists across sessions. |
 
 ## 3.3 Sequence Diagramming
@@ -449,18 +460,23 @@ sequenceDiagram
     actor U as Student Applicant
     participant FE as Next.js Frontend
     participant BE as Express API
-    participant DB as Supabase
-    participant AI as Claude API
+    participant DB as Postgres
+    participant Engine as decide
+    participant Groq as Groq optional
 
     U->>FE: Select opportunity
-    FE->>BE: POST /evaluate {userId, opportunityId}
+    FE->>BE: Analyze opportunity
     BE->>DB: Fetch profile(userId)
     DB-->>BE: profile
     BE->>DB: Fetch opportunity(opportunityId)
     DB-->>BE: opportunity requirements
-    BE->>AI: Compare(profile, requirements)
-    AI-->>BE: {decision, fitScore, reasoning, gaps}
+    BE->>Engine: decide(profile, opportunity)
+    Engine-->>BE: {decision, fitScore, summary, gaps}
     BE->>DB: Store evaluation record
+    opt GROQ_API_KEY set
+      BE->>Groq: Rephrase stored summary
+      Groq-->>BE: explanation text
+    end
     BE-->>FE: {decision, fitScore, reasoning, gaps}
     FE-->>U: Render Decision Screen
 ```
@@ -471,16 +487,20 @@ sequenceDiagram
 sequenceDiagram
     actor U as Student Applicant
     participant FE as Next.js Frontend
-    participant VX as Voxide
-    participant AI as Claude API
-    participant DB as Supabase
+    participant VX as Voxide optional
+    participant Groq as Groq optional
+    participant DB as Postgres
 
-    U->>FE: Speak self-description
-    FE->>VX: Audio stream (language = am/en/om)
-    VX-->>FE: Transcribed text
-    FE->>AI: Extract structured profile(text)
-    AI-->>FE: {education, field, country, experience, documents}
-    FE-->>U: Show extracted profile for confirmation
+    U->>FE: Enter or speak self-description
+    opt Voxide keyed
+      FE->>VX: Audio stream
+      VX-->>FE: Transcribed text
+    end
+    opt GROQ_API_KEY set
+      FE->>Groq: Extract structured profile(text)
+      Groq-->>FE: proposed fields
+    end
+    FE-->>U: Show proposed profile for confirmation
     U->>FE: Confirm
     FE->>DB: Save profile
     DB-->>FE: profileId
@@ -658,7 +678,7 @@ There is no prior HULUM system; the "current" state for the target user is a man
 
 #### 4.1.4.1 Overview
 
-HULUM follows a layered client-server architecture: a Next.js/TypeScript frontend, a Node.js/Express backend API, a Supabase (PostgreSQL) persistence layer with Row-Level Security, an AI reasoning layer built on the Claude API, a voice layer via Voxide, and a research layer via the Scholarxiv Papers API/MCP server that informs (but does not sit in the runtime path of) product decisions.
+HULUM follows a layered client-server architecture: a Next.js/TypeScript frontend, a Node.js/Express backend API, PostgreSQL persistence (often Supabase-hosted) with RLS policies present but API still connecting as table owner, a **deterministic `decide()` engine**, optional **Groq** for extract/explain when keyed, optional Voxide browser widget when keyed, and a research layer via ScholarXIV (`/research` when keyed) that does not set APPLY/MAYBE/SKIP. **v0.1 host:** local `npm run dev` — EthioDeploy is target only (`docs/stark/deployment.md`).
 
 #### 4.1.4.2 Software Architecture
 
@@ -670,35 +690,39 @@ flowchart TB
 
     subgraph Server
       BE[Node.js + Express API]
+      Engine[decide engine]
     end
 
     subgraph Data
-      DB[(Supabase\nPostgreSQL + RLS)]
+      DB[(Postgres\nRLS policies; owner bypass)]
     end
 
     subgraph AI
-      Claude[Claude API\nclaude-sonnet-4-6]
+      Groq[Groq optional\nextract / explain]
     end
 
     subgraph Voice
-      VX[Voxide\nAmharic / English / Afaan Oromo]
+      VX[Voxide optional widget]
     end
 
     subgraph Research
-      SX[Scholarxiv Papers API + MCP Server]
+      SX[ScholarXIV /research when keyed]
     end
 
     subgraph Hosting
-      ED[EthioDeploy]
+      Local[Local npm run dev v0.1]
+      ED[EthioDeploy target only]
     end
 
     FE <--> BE
+    BE --> Engine
     BE <--> DB
-    BE <--> Claude
-    FE <--> VX
-    BE -.consulted during design.-> SX
-    FE --- ED
-    BE --- ED
+    BE -.-> Groq
+    FE -.-> VX
+    BE -.-> SX
+    FE --- Local
+    BE --- Local
+    Local -.-> ED
 ```
 
 #### 4.1.4.3 System Decomposition
@@ -707,8 +731,8 @@ flowchart TB
 |---|---|
 | Frontend Subsystem | Voice/text capture, screen rendering, navigation, playback of spoken responses |
 | Backend/API Subsystem | Request orchestration, business logic, profile/opportunity CRUD, calling AI and voice services |
-| AI Reasoning Subsystem | Profile extraction, eligibility comparison, fit scoring, gap analysis, checklist generation |
-| Voice Subsystem | Speech-to-text and text-to-speech across three languages |
+| AI Reasoning Subsystem | Deterministic matching/`decide()`; optional Groq extract/explain when keyed |
+| Voice Subsystem | Optional Voxide widget when keyed; English text/quick actions are the stable path |
 | Data Subsystem | Persistent storage of users, profiles, opportunities, evaluations, checklists |
 | Research Subsystem | Supplies research findings that shape prompt design and UX copy (offline/design-time use) |
 
@@ -731,23 +755,26 @@ flowchart LR
 
 | Component | Environment |
 |---|---|
-| Frontend | Static/SSR Next.js app served via EthioDeploy |
-| Backend API | Node.js runtime container on EthioDeploy |
-| Database | Managed Supabase Postgres instance (cloud) |
-| AI Engine | External Claude API over HTTPS |
-| Voice Service | External Voxide API over HTTPS/WebSocket |
+| Frontend | Next.js on local `:3000` (EthioDeploy = target) |
+| Backend API | Express on local `:3001` (EthioDeploy = target) |
+| Database | Postgres via `DATABASE_URL` (often Supabase-hosted) |
+| Decision engine | In-process `decide()` in Express |
+| Explanation / extract | External Groq over HTTPS when keyed |
+| Voice Service | Optional `@voxide/react` widget when keyed |
 | Client Devices | Mobile and desktop browsers (Ethiopian users, primarily mobile) |
 
 #### 4.1.4.6 Deployment Modeling
 
 ```mermaid
 flowchart TB
-    User[User Device\nMobile Browser] -->|HTTPS| ED[EthioDeploy Edge]
-    ED --> FE[Next.js Frontend Instance]
-    FE -->|REST| BE[Express API Instance]
-    BE -->|SQL| Supabase[(Supabase Postgres)]
-    BE -->|HTTPS| Claude[Claude API]
-    FE -->|HTTPS/WebSocket| Voxide[Voxide Voice API]
+    User[User Device\nBrowser] -->|HTTP| Local[Local npm run dev]
+    Local --> FE[Next.js :3000]
+    FE -->|REST| BE[Express :3001]
+    BE -->|SQL| DB[(Postgres)]
+    BE --> Engine[decide]
+    BE -.->|optional| Groq[Groq]
+    FE -.->|optional widget| Voxide[Voxide]
+    Local -.->|target only| ED[EthioDeploy]
 ```
 
 #### 4.1.4.7 Persistent Data Management
@@ -983,4 +1010,4 @@ interface AIReasoningService {
 
 ## Closing Statement
 
-HULUM does not just find opportunities — it tells a user which ones are worth their time, and exactly what to do next. This document formalizes that promise into a requirement, design, and object model intended to guide a 24-day build from Day 1 foundation work to an October 2 live demonstration on EthioDeploy.
+HULUM does not just find opportunities — it tells a user which ones are worth their time, and exactly what to do next. This document formalizes that promise into a requirement, design, and object model intended to guide a 24-day build from Day 1 foundation work to a reproducible local demo (`README.md`, `docs/demo/script.md`). EthioDeploy / public host remains open (`docs/stark/deployment.md`).

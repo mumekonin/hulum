@@ -4,7 +4,7 @@
 **Live walkthrough:** `docs/demo/script.md` (about 6 minutes)  
 **This file:** shorter path if speech, Analyze, catalog, or the browser UI fails.
 
-There is **no recorded video and no screenshot PNG pack** in this repository. Do not show a fake deploy or claim a microphone.
+There is **no recorded video** in this repository. Required backup **PNG** frames live under `docs/demo/screenshots/` (`npm run capture:demo-screenshots`). Do not show a fake deploy or claim a microphone.
 
 **Current product facts (do not invent older paths):**
 
@@ -19,7 +19,7 @@ There is **no recorded video and no screenshot PNG pack** in this repository. Do
 
 - Live Voxide / STT
 - Claude chooses APPLY / MAYBE / SKIP
-- ScholarXiv papers in the running app
+- ScholarXIV papers drive APPLY / MAYBE / SKIP, or that archived paper citations exist in the repo
 - Production / EthioDeploy
 - One-click demo profile or seeded catalog cards
 
