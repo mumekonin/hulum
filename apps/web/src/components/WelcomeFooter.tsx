@@ -24,8 +24,8 @@ const linkClass =
 export function WelcomeFooter() {
   return (
     <footer className="welcome-footer relative bg-[#0B0B0B] text-[#F5F3ED]">
-      <div className="mx-auto w-full max-w-[1120px] px-5 pb-10 pt-16 sm:px-8 sm:pt-20">
-        <div className="grid items-center gap-10 lg:grid-cols-[minmax(0,1fr)_minmax(280px,440px)_minmax(0,1fr)] lg:gap-8">
+      <div className="mx-auto w-full max-w-[1120px] px-5 pb-6 pt-8 sm:px-8">
+        <div className="grid items-center gap-8 lg:grid-cols-[minmax(0,1fr)_minmax(280px,440px)_minmax(0,1fr)] lg:gap-8">
           <div className="order-2 grid gap-8 sm:grid-cols-2 lg:order-1 lg:grid-cols-1 lg:justify-self-start">
             <NavGroup label="Explore" links={explore} />
             <NavGroup label="Account" links={account} />
@@ -53,7 +53,7 @@ export function WelcomeFooter() {
           </div>
         </div>
 
-        <div className="mt-8 border-t border-white/12 pt-4 lg:mt-10">
+        <div className="mt-6 border-t border-white/12 pt-4">
           <p className="text-[13px] text-[#A7A39B]">© 2026 HULUM</p>
         </div>
       </div>
@@ -63,7 +63,7 @@ export function WelcomeFooter() {
 
 function BrandCard() {
   return (
-    <div className="order-1 mx-auto w-full max-w-[440px] rounded-[20px] border border-[#E4E2DB] bg-[#F7F6F2] px-8 py-9 text-center text-[#111111] shadow-[0_18px_40px_-28px_rgba(0,0,0,0.55)] lg:order-2">
+    <div className="order-1 mx-auto w-full max-w-[440px] rounded-[20px] border border-[#E4E2DB] bg-[#F7F6F2] px-7 py-6 text-center text-[#111111] shadow-[0_18px_40px_-28px_rgba(0,0,0,0.55)] lg:order-2">
       <Link href="/" className="inline-flex items-center gap-2.5 text-[#111111]">
         <BrandMark />
         <span className="font-gw-serif text-[21px] font-semibold tracking-[0.08em]">HULUM</span>

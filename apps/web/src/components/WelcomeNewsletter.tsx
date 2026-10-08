@@ -34,7 +34,7 @@ export function WelcomeNewsletter() {
         : null;
 
   return (
-    <form className="mt-5" onSubmit={onSubmit} noValidate>
+    <form className="mt-4" onSubmit={onSubmit} noValidate>
       <p className="text-[13px] leading-5 text-[#5E5B55]">
         Stay informed about opportunities, useful updates, and what matters to you.
       </p>
