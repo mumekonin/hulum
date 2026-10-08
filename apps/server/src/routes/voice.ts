@@ -9,6 +9,7 @@ import { createGroqChatClient } from "../ai/groq.js";
 import { loadEnv } from "../config/env.js";
 import {
   formatProfileGaps,
+  formatProfileSummary,
   parseVoiceIntent,
   stripProfileExtractDescription,
   wantsListWithAnalyze,
@@ -146,6 +147,18 @@ voiceRouter.post("/action", async (req, res) => {
   }
 
   if (intent.intent === "UPDATE_PROFILE") {
+    if (intent.replyHint === "profile_summary") {
+      const profile = store.profiles.find((item) => item.userId === userId);
+      if (!profile) {
+        fail(res, "Create a profile before asking HULUM.", 404, "PROFILE_NOT_FOUND");
+        return;
+      }
+      ok(res, {
+        intent: intent.intent,
+        reply: await spoken(formatProfileSummary(profile, profile.name)),
+      });
+      return;
+    }
     if (intent.replyHint === "profile_gaps") {
       const profile = store.profiles.find((item) => item.userId === userId);
       if (!profile) {

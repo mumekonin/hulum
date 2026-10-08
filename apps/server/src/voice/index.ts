@@ -41,6 +41,7 @@ import type { Clock } from "../services/common/clock.js";
 import { systemClock } from "../services/common/clock.js";
 import {
   formatProfileGaps,
+  formatProfileSummary,
   parseVoiceIntent,
   stripProfileExtractDescription,
   wantsListWithAnalyze,
@@ -237,6 +238,19 @@ export function createVoiceService(deps: {
       }
 
       if (intent.intent === "UPDATE_PROFILE") {
+        if (intent.replyHint === "profile_summary") {
+          const profileView = await deps.profiles.getByUserId(input.userId);
+          if (profileView === undefined) {
+            return {
+              intent: intent.intent,
+              reply: await spoken(replyNeedProfile(language)),
+            };
+          }
+          return {
+            intent: intent.intent,
+            reply: await spoken(formatProfileSummary(profileView.profile, profileView.name)),
+          };
+        }
         if (intent.replyHint === "profile_gaps") {
           const profileView = await deps.profiles.getByUserId(input.userId);
           if (profileView === undefined) {

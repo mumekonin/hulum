@@ -1,5 +1,11 @@
 import { describe, expect, it } from "vitest";
-import { formatProfileGaps, parseVoiceIntent, stripProfileExtractDescription, wantsListWithAnalyze } from "./intents.js";
+import {
+  formatProfileGaps,
+  formatProfileSummary,
+  parseVoiceIntent,
+  stripProfileExtractDescription,
+  wantsListWithAnalyze,
+} from "./intents.js";
 
 describe("parseVoiceIntent", () => {
   it("maps documented English and Amharic utterances to product intents", () => {
@@ -30,6 +36,11 @@ describe("parseVoiceIntent", () => {
       { text: "እድሎች", intent: "SHOW_OPPORTUNITIES" },
       { text: "Open this opportunity", intent: "OPEN_OPPORTUNITY" },
       { text: "Tell me about this opportunity", intent: "OPEN_OPPORTUNITY" },
+      {
+        text: "tell me about me based on my profile",
+        intent: "UPDATE_PROFILE",
+        replyHint: "profile_summary",
+      },
       { text: "Update profile", intent: "UPDATE_PROFILE" },
       {
         text: "Extract profile from this: I study CS in Addis Ababa",
@@ -93,6 +104,33 @@ describe("parseVoiceIntent", () => {
         "Scholarships: Gotoh Tokyu Group Scholarship 2027 in Turkey (Fully Funded) — Tokyo City University",
       ).intent,
     ).toBe("UNSUPPORTED");
+  });
+});
+
+describe("formatProfileSummary", () => {
+  it("reads saved profile facts and does not mention a listing", () => {
+    const reply = formatProfileSummary(
+      {
+        id: "p",
+        userId: "u",
+        educationLevel: "bachelor_in_progress",
+        fieldOfStudy: "computer_science",
+        graduationYear: 2027,
+        country: "ET",
+        city: "Addis Ababa",
+        languages: ["English"],
+        skills: ["Python"],
+        experience: "one internship",
+        interests: ["AI"],
+        createdAt: "2026-09-19T00:00:00.000Z",
+        updatedAt: "2026-09-19T00:00:00.000Z",
+      },
+      "Abeba",
+    );
+    expect(reply).toContain("Abeba");
+    expect(reply).toContain("computer science");
+    expect(reply).toContain("not a job listing");
+    expect(reply).not.toContain("Audio specialist");
   });
 });
 

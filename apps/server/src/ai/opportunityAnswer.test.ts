@@ -72,6 +72,10 @@ describe("answerFromStoredFacts", () => {
   it("does not treat weather as a listing fact", () => {
     expect(answerFromStoredFacts("What's the weather in Addis?", opportunity)).toBeUndefined();
   });
+
+  it("does not describe the listing when the question is about the person", () => {
+    expect(answerFromStoredFacts("tell me about me based on my profile", opportunity)).toBeUndefined();
+  });
 });
 
 describe("isUnsafeOpportunityAnswer", () => {

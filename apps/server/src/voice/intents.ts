@@ -3,6 +3,7 @@ import {
   type LanguageCode,
   type Opportunity,
   type OpportunityType,
+  type Profile,
   type VoiceIntent,
 } from "@hulum/shared";
 
@@ -12,8 +13,19 @@ export type ParsedIntent = {
   type?: OpportunityType;
   decision?: Decision;
   /** Narrower handler hint without expanding the Task 22 lock set. */
-  replyHint?: "profile_gaps" | "clarify_uncertain" | "profile_extract";
+  replyHint?: "profile_gaps" | "profile_summary" | "clarify_uncertain" | "profile_extract";
 };
+
+/** The visitor asked about themselves, not about the open listing. */
+export function isProfileSelfQuestion(text: string): boolean {
+  const value = text.trim();
+  if (/this (opportunity|listing|scholarship|internship|job|fellowship)|about this\b/i.test(value)) {
+    return false;
+  }
+  return /\b(about me|who am i|myself|my profile|based on (my|the) profile|describe me|what do you know about me)\b/i.test(
+    value,
+  );
+}
 
 const TYPE_WORDS: Array<[RegExp, OpportunityType]> = [
   [/\binternship|ኢንተርንሺፕ|internshipwwan|hojii barumsaa/i, "internship"],
@@ -77,6 +89,9 @@ export function parseVoiceIntent(text: string, _language: LanguageCode = "en"): 
     )
   ) {
     return { intent: "UPDATE_PROFILE", replyHint: "profile_gaps" };
+  }
+  if (isProfileSelfQuestion(value)) {
+    return { intent: "UPDATE_PROFILE", replyHint: "profile_summary" };
   }
   if (
     /clarif(y|ication)|which requirements.*(uncertain|unclear)|explain.*(uncertain|unclear).*requirement/i.test(
@@ -149,6 +164,33 @@ const PROFILE_FIELD_LABELS: Record<string, string> = {
   experience: "experience",
   interests: "interests",
 };
+
+function plain(value: string): string {
+  return value.trim().replace(/_/g, " ");
+}
+
+/** Speak only facts saved on the profile. Never substitute the open listing. */
+export function formatProfileSummary(profile: Profile, displayName?: string): string {
+  const facts: string[] = [];
+  const name = profile.name?.trim() || displayName?.trim();
+  if (name) facts.push(`Name: ${name}`);
+  if (profile.educationLevel) facts.push(`Education: ${plain(String(profile.educationLevel))}`);
+  if (profile.fieldOfStudy?.trim()) facts.push(`Field of study: ${plain(profile.fieldOfStudy)}`);
+  if (profile.graduationYear) facts.push(`Graduation year: ${profile.graduationYear}`);
+  const place = [profile.city, profile.country].map((part) => part?.trim() ?? "").filter(Boolean).join(", ");
+  if (place) facts.push(`Location: ${place}`);
+  if (profile.languages.length > 0) facts.push(`Languages: ${profile.languages.join(", ")}`);
+  if (profile.skills.length > 0) facts.push(`Skills: ${profile.skills.join(", ")}`);
+  if (profile.experience?.trim()) facts.push(`Experience: ${plain(profile.experience)}`);
+  if (typeof profile.yearsExperience === "number" && profile.yearsExperience > 0) {
+    facts.push(`Years of experience: ${profile.yearsExperience}`);
+  }
+  if (profile.interests.length > 0) facts.push(`Interests: ${profile.interests.join(", ")}`);
+  if (facts.length === 0) {
+    return "Your profile does not have saved facts yet. Open Profile and add education, field, location, and skills. Voice cannot change those facts until you save them.";
+  }
+  return `Here is your saved profile, not a job listing. ${facts.join(". ")}. Ask to analyze an opportunity when you want APPLY, MAYBE, or SKIP.`;
+}
 
 export function formatProfileGaps(missing: string[]): string {
   if (missing.length === 0) {

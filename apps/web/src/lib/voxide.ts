@@ -33,19 +33,67 @@ export function voxideSpeechLocale(language: LanguageCode): "en-US" | "am-ET" {
 
 export type VoxideTurn = { role: "user" | "ai"; text: string; partial?: boolean };
 
-/**
- * The latest thing the visitor said once Voxide has finished hearing it: marked final,
- * or already followed by another message. Empty while the sentence is still streaming in.
- */
-export function finishedUserUtterance(messages: VoxideTurn[]): string {
+/** Latest visitor line, including a sentence the recognizer is still hearing. */
+export function latestUserUtterance(messages: readonly VoxideTurn[]): {
+  text: string;
+  streaming: boolean;
+} {
   for (let index = messages.length - 1; index >= 0; index -= 1) {
     const row = messages[index];
     if (row?.role !== "user") {
       continue;
     }
-    return row.partial === true && index === messages.length - 1 ? "" : row.text.trim();
+    return { text: row.text.trim(), streaming: row.partial === true };
   }
-  return "";
+  return { text: "", streaming: false };
+}
+
+/**
+ * The latest thing the visitor said once recognition has closed the sentence.
+ * A still-streaming line stays unfinished even if the live agent has already started talking.
+ */
+export function finishedUserUtterance(messages: readonly VoxideTurn[]): string {
+  const heard = latestUserUtterance(messages);
+  if (heard.text === "" || heard.streaming) {
+    return "";
+  }
+  return heard.text;
+}
+
+/**
+ * Transcript shown for a HULUM answer.
+ * Drops the live agent's own lines after the latest question so filler is not left on screen.
+ * Earlier HULUM answers stay. Pass `answer` to append the reply that should be read aloud.
+ */
+export function hulumTranscript(messages: readonly VoxideTurn[], answer?: string): VoxideTurn[] {
+  let lastUser = -1;
+  for (let index = 0; index < messages.length; index += 1) {
+    const row = messages[index];
+    if (row?.role === "user" && !isHulumSpeakPrompt(row.text)) {
+      lastUser = index;
+    }
+  }
+  const kept = messages.filter((row, index) => {
+    if (row.role === "user" && isHulumSpeakPrompt(row.text)) {
+      return false;
+    }
+    if (row.role !== "ai") {
+      return true;
+    }
+    if (isVoxideRefusal(row.text)) {
+      return false;
+    }
+    return index < lastUser;
+  });
+  const text = answer?.trim() ?? "";
+  if (text === "") {
+    return kept;
+  }
+  const last = kept[kept.length - 1];
+  if (last?.role === "ai" && last.text === text) {
+    return kept;
+  }
+  return [...kept, { role: "ai", text }];
 }
 
 /** English always has a system voice; other locales only when the browser lists one. */
@@ -96,13 +144,38 @@ export function isSpokenHulumResult(text: string): boolean {
   ) || /fit \d+%|always verify final eligibility|confirm eligibility there/i.test(value);
 }
 
+function normalizedSpeech(value: string): string {
+  return value
+    .toLowerCase()
+    .replace(/[^a-z0-9\u1200-\u137f\s]/gi, " ")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+/** The microphone heard HULUM's own answer, or a fragment of it. */
 export function isEchoOfReply(text: string, reply: string): boolean {
-  const spoken = text.trim();
-  const stored = reply.trim();
+  const spoken = normalizedSpeech(text);
+  const stored = normalizedSpeech(reply);
   if (spoken.length < 8 || stored.length < 8) {
     return false;
   }
-  return stored.startsWith(spoken) || spoken.startsWith(stored.slice(0, 48)) || stored.includes(spoken);
+  if (stored.includes(spoken) || spoken.includes(stored)) {
+    return true;
+  }
+  const words = spoken.split(" ").filter((word) => word.length > 3);
+  if (words.length < 2) {
+    return false;
+  }
+  const hits = words.filter((word) => stored.includes(word)).length;
+  return hits >= 2 && hits / words.length >= 0.6;
+}
+
+/** A request to stop talking. Not a question. */
+export function isStopCommand(text: string): boolean {
+  const value = normalizedSpeech(text);
+  return /^(stop|stop talking|stop speaking|quiet|be quiet|shut up|cancel|enough|that is enough|thats enough)$/.test(
+    value,
+  );
 }
 
 /** Internal prompt we must never treat as a visitor question. */
@@ -122,6 +195,17 @@ export function isHulumProductRequest(text: string): boolean {
   return /\b(show|list|find|filter|open|analyze|analysis|anlysis|tell me|why |what (am|should)|prepare|extract|update profile|should i apply|scholarships?|internships?|fellowships?)\b|agarsiisi|madaali|ibsi|carraa|[\u1200-\u137F]/i.test(
     value,
   );
+}
+
+/**
+ * A real HULUM request worth answering aloud.
+ * Background noise, echoes of the last answer, and "stop" are not requests.
+ */
+export function isAnswerableUtterance(text: string): boolean {
+  if (isStopCommand(text)) {
+    return false;
+  }
+  return isHulumProductRequest(text);
 }
 
 export const VOXIDE_STARTERS = [

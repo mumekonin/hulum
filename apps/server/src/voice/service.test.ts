@@ -303,6 +303,34 @@ describe("createVoiceService", () => {
     expect(result.reply).toMatch(/Gosa|Guyyaa xumuraa|Madda|Murteen kuufame/);
   });
 
+  it("describes the saved profile when asked about the person, not the open listing", async () => {
+    const service = createVoiceService({
+      profiles: { getByUserId: async () => profileView },
+      opportunities: {
+        list: async () => [opportunity],
+        getById: async () => opportunity,
+      },
+      analyses: {
+        analyze: async () => {
+          throw new Error("analyze should not run");
+        },
+        getById: async () => undefined,
+      },
+      clock,
+    });
+    const result = await service.handleAction({
+      userId: profile.userId,
+      text: "tell me about me based on my profile",
+      language: "en",
+      opportunityId: opportunity.id,
+    });
+    expect(result.intent).toBe("UPDATE_PROFILE");
+    expect(result.reply).toContain("computer science");
+    expect(result.reply).toContain("Addis Ababa");
+    expect(result.reply).not.toContain(opportunity.title);
+    expect(result.reply).not.toContain("Audio");
+  });
+
   it("answers a deadline question from the stored listing", async () => {
     const service = createVoiceService({
       profiles: { getByUserId: async () => profileView },

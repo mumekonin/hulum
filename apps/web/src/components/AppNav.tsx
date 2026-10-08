@@ -23,6 +23,8 @@ const moreLinks: NavLink[] = [
   { href: "/research", label: "Research" },
 ];
 
+const profileLink: NavLink = { href: "/profile", label: "Profile" };
+
 function isCurrent(pathname: string, href: string): boolean {
   return pathname === href || pathname.startsWith(`${href}/`);
 }

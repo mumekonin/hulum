@@ -18,19 +18,21 @@ import {
   type VoiceSessionIds,
 } from "@/lib/voice-session";
 import {
+  hulumTranscript,
+  isAnswerableUtterance,
   isEchoOfReply,
-  isHulumProductRequest,
+  isStopCommand,
   isHulumSpeakPrompt,
   isSpokenHulumResult,
-  finishedUserUtterance,
   isEmptyVoxideWsError,
   isVoxideRefusal,
+  latestUserUtterance,
   readVoxidePublicKey,
   voxideSpeechLocale,
   VOXIDE_STARTERS,
   type VoxideTurn,
 } from "@/lib/voxide";
-import { speakAloud, stopSpeaking } from "@/lib/speak";
+import { isBrowserSpeaking, speakAloud, stopSpeaking } from "@/lib/speak";
 
 export type VoxideSessionIds = VoiceSessionIds;
 
@@ -99,13 +101,46 @@ function widgetMessages(client: VoxideClient): WidgetMessage[] {
   }));
 }
 
-function lastProductUtterance(client: VoxideClient, fallback: string): string {
-  const finished = finishedUserUtterance(widgetMessages(client));
-  return isHulumProductRequest(finished) ? finished : fallback;
+function lastAnswerableUtterance(client: VoxideClient, fallback: string): string {
+  const heard = latestUserUtterance(widgetMessages(client));
+  if (!heard.streaming && isAnswerableUtterance(heard.text)) {
+    return heard.text;
+  }
+  return isAnswerableUtterance(fallback) ? fallback : "";
 }
 
-/** Pause after the last streamed word before treating a spoken sentence as finished. */
-const SPEECH_SETTLE_MS = 1_000;
+/**
+ * Pause after the last streamed word before answering.
+ * Long enough that a short pause does not cut the question off at the first words.
+ */
+const SPEECH_SETTLE_MS = 1_600;
+
+type AgentPlayback = {
+  _voicePlayAudioChunk?: (data: string) => void;
+  _voiceStopPlayback?: () => void;
+};
+
+/**
+ * Drop the live model's own audio. That voice (often the higher, female one) adds its own
+ * commentary on top of the browser voice that reads HULUM's answer.
+ */
+function muteAgentPlayback(client: VoxideClient): () => void {
+  const raw = client as unknown as AgentPlayback;
+  const stop = () => {
+    try {
+      raw._voiceStopPlayback?.call(client);
+    } catch {
+      /* Playback may already be closed. */
+    }
+  };
+  raw._voicePlayAudioChunk = () => {
+    stop();
+  };
+  stop();
+  return () => {
+    delete raw._voicePlayAudioChunk;
+  };
+}
 
 type VoiceSnapshotWriter = (patch: { messages: WidgetMessage[] }) => void;
 
@@ -117,27 +152,25 @@ function voiceSnapshotWriter(client: VoxideClient): VoiceSnapshotWriter | null {
   return write.bind(client);
 }
 
-/** Put the HULUM answer in the widget transcript. Do not send it back through Gemini. */
+/** Put the HULUM answer in the widget transcript. Do not send it back through the live model. */
 function presentAssistantText(client: VoxideClient, text: string): void {
   const write = voiceSnapshotWriter(client);
   if (write === null) {
     return;
   }
-  const next = widgetMessages(client).filter((row) => {
-    if (row.role === "ai" && isVoxideRefusal(row.text)) {
-      return false;
-    }
-    if (row.role === "user" && isHulumSpeakPrompt(row.text)) {
-      return false;
-    }
-    return true;
-  });
-  const last = next[next.length - 1];
-  if (last?.role === "ai" && last.text === text) {
-    write({ messages: next });
+  write({ messages: hulumTranscript(widgetMessages(client), text) });
+}
+
+function hideAgentChatter(client: VoxideClient): void {
+  const write = voiceSnapshotWriter(client);
+  if (write === null) {
     return;
   }
-  next.push({ role: "ai", text });
+  const current = widgetMessages(client);
+  const next = hulumTranscript(current);
+  if (next.length === current.length && next.every((row, index) => row.text === current[index]?.text)) {
+    return;
+  }
   write({ messages: next });
 }
 
@@ -429,6 +462,7 @@ export function VoxideAskHulum({
     }
 
     publishVoxideClient(client);
+    const releaseMute = muteAgentPlayback(client);
     void client.init().catch(() => {
       /* VoiceButton surfaces connect failures after init. */
     });
@@ -449,19 +483,22 @@ export function VoxideAskHulum({
       isEchoOfReply(text, lastReplyRef.current);
 
     const rememberUser = (text: string) => {
-      if (text.length >= 4 && isHulumProductRequest(text) && !isLoopText(text)) {
+      if (isAnswerableUtterance(text) && !isLoopText(text)) {
         lastUserRef.current = text;
       }
     };
 
     let heardSpeech = false;
+    /** Ignore the microphone while an answer is being read, plus a short tail so the mic does not hear itself. */
+    let ignoreMicUntil = 0;
+    const micLocked = () => Date.now() < ignoreMicUntil || isBrowserSpeaking();
 
     const speakHulumReply = (utterance: string) => {
       const value = utterance.trim();
       if (
         recoveringRef.current ||
         spokeForRef.current === value ||
-        !isHulumProductRequest(value) ||
+        !isAnswerableUtterance(value) ||
         isLoopText(value)
       ) {
         return;
@@ -483,7 +520,13 @@ export function VoxideAskHulum({
           client.interrupt();
           presentAssistantText(client, reply);
           if (spoken) {
-            speakAloud(reply, speechLocaleRef.current);
+            ignoreMicUntil = Date.now() + 120_000;
+            const started = speakAloud(reply, speechLocaleRef.current, () => {
+              ignoreMicUntil = Date.now() + 1_200;
+            });
+            if (!started) {
+              ignoreMicUntil = 0;
+            }
           }
         })
         .finally(() => {
@@ -499,8 +542,8 @@ export function VoxideAskHulum({
         presentAssistantText(client, lastReplyRef.current);
         return;
       }
-      const lastUser = lastProductUtterance(client, lastUserRef.current);
-      if (!isHulumProductRequest(lastUser) || isLoopText(lastUser)) {
+      const lastUser = lastAnswerableUtterance(client, lastUserRef.current);
+      if (!isAnswerableUtterance(lastUser) || isLoopText(lastUser)) {
         return;
       }
       speakHulumReply(lastUser);
@@ -508,28 +551,80 @@ export function VoxideAskHulum({
 
     let lastDispatchedUser = "";
     let settleTimer: ReturnType<typeof setTimeout> | undefined;
+    let settleText = "";
+    let applyingTranscript = false;
+    let agentCut = false;
     const dispatchUser = (text: string) => {
-      if (text === "" || text === lastDispatchedUser || !isHulumProductRequest(text)) {
+      if (isStopCommand(text)) {
+        stopSpeaking();
+        client.interrupt();
+        ignoreMicUntil = Date.now() + 1_200;
+        return;
+      }
+      if (
+        micLocked() ||
+        text === "" ||
+        text === lastDispatchedUser ||
+        !isAnswerableUtterance(text) ||
+        isLoopText(text)
+      ) {
         return;
       }
       lastDispatchedUser = text;
       rememberUser(text);
       speakHulumReply(text);
     };
+    const showHulumOnly = (heardText: string) => {
+      if (applyingTranscript || !isAnswerableUtterance(heardText)) {
+        return;
+      }
+      applyingTranscript = true;
+      if (spokeForRef.current === heardText && lastReplyRef.current.trim() !== "") {
+        presentAssistantText(client, lastReplyRef.current);
+      } else {
+        hideAgentChatter(client);
+      }
+      applyingTranscript = false;
+    };
     const unsubSnap = client.subscribe(() => {
+      if (applyingTranscript) {
+        return;
+      }
       const messages = widgetMessages(client);
-      const last = messages[messages.length - 1];
-      if (settleTimer !== undefined) {
-        clearTimeout(settleTimer);
-        settleTimer = undefined;
-      }
-      if (last?.role === "user" && last.partial === true) {
-        heardSpeech = true;
+      const heard = latestUserUtterance(messages);
+      if (isStopCommand(heard.text)) {
         stopSpeaking();
-        const streaming = last.text.trim();
-        settleTimer = setTimeout(() => dispatchUser(streaming), SPEECH_SETTLE_MS);
+        client.interrupt();
+        ignoreMicUntil = Date.now() + 1_200;
+        return;
       }
-      dispatchUser(lastProductUtterance(client, ""));
+      if (micLocked() || isLoopText(heard.text)) {
+        return;
+      }
+      if (heard.streaming) {
+        heardSpeech = true;
+        if (heard.text !== settleText) {
+          settleText = heard.text;
+          agentCut = false;
+          stopSpeaking();
+          if (settleTimer !== undefined) {
+            clearTimeout(settleTimer);
+          }
+          const pending = heard.text;
+          settleTimer = setTimeout(() => {
+            settleTimer = undefined;
+            dispatchUser(pending);
+          }, SPEECH_SETTLE_MS);
+        }
+      } else if (heard.text !== "") {
+        if (settleTimer !== undefined) {
+          clearTimeout(settleTimer);
+          settleTimer = undefined;
+        }
+        settleText = "";
+        dispatchUser(heard.text);
+      }
+      showHulumOnly(heard.text);
       const refusal = [...messages].reverse().find((row) => row.role === "ai" && isVoxideRefusal(row.text));
       if (refusal !== undefined) {
         recoverIfRefused(refusal.text);
@@ -581,8 +676,11 @@ export function VoxideAskHulum({
     const unsubStatus = client.on("status", (status: VoxideStatus) => {
       lastStatus = status;
       clearSilence();
-      if (status === "speaking" && recoveringRef.current) {
-        client.interrupt();
+      if (status === "speaking") {
+        if (!agentCut) {
+          agentCut = true;
+          client.interrupt();
+        }
         return;
       }
       if (status === "error") {
@@ -592,7 +690,7 @@ export function VoxideAskHulum({
       }
       if (status === "listening") {
         silenceTimer = setTimeout(() => {
-          if (lastStatus === "listening") {
+          if (lastStatus === "listening" && !recoveringRef.current) {
             reportVoiceOpsEvent("VOICE_SILENCE_TIMEOUT", "voice");
             onVoiceIssueRef.current?.(
               `No speech detected for a while (silence/timeout). ${TEXT_FALLBACK_HINT}`,
@@ -608,6 +706,7 @@ export function VoxideAskHulum({
         clearTimeout(settleTimer);
       }
       stopSpeaking();
+      releaseMute();
       unsubSnap();
       unsubError();
       unsubTranscript();

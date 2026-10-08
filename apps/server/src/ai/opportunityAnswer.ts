@@ -119,7 +119,13 @@ export function answerFromStoredFacts(
   ) {
     return `${analysisWhy(analysis)} ${OFFICIAL_SOURCE_NOTICE}`;
   }
-  if (/requirement|eligibility|what (is|does) this|tell me about|about this|details|explain/i.test(question)) {
+  if (
+    /\b(about me|who am i|myself|my profile)\b/i.test(question) &&
+    !/about this\b|this (opportunity|listing)/i.test(question)
+  ) {
+    return undefined;
+  }
+  if (/requirement|eligibility|what (is|does) this|tell me about (this|the|it)\b|about this|details|explain/i.test(question)) {
     return fallbackOpportunityAnswer(opportunity, analysis);
   }
   return undefined;
