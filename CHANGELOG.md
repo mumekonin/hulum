@@ -2,6 +2,12 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-07 — Voice analyzes the listing on screen
+
+### Fixed
+- Saying "Analyze for me" on an opportunity page now analyzes that opportunity. Before, after "Show me scholarships", voice kept the first scholarship in the list and analyzed it instead, so its decision could differ from the Analyze my fit button.
+- When voice moves to a different listing without analyzing it, the previous listing's analysis is no longer reused for "why?" or "what am I missing?".
+
 ## 2026-10-07 — Profile redesign, profile photo, CV update
 
 ### Changed

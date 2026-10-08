@@ -13,6 +13,7 @@ import {
   HULUM_VOICE_ROUTES,
   publishVoiceReply,
   readVoiceSession,
+  voiceContextFor,
   writeVoiceSession,
   type VoiceSessionIds,
 } from "@/lib/voice-session";
@@ -152,6 +153,8 @@ export function VoxideAskHulum({
 }: Props) {
   const router = useRouter();
   const pathname = usePathname();
+  const pathnameRef = useRef(pathname);
+  pathnameRef.current = pathname;
   const theme = useTheme();
   const sessionRef = useRef<VoiceSessionIds>(session ?? readVoiceSession());
   if (session) {
@@ -201,7 +204,10 @@ export function VoxideAskHulum({
       onErrorRef.current?.(needProfile);
       return needProfile;
     }
-    const current = { ...readVoiceSession(), ...sessionRef.current };
+    const current = voiceContextFor(pathnameRef.current, {
+      ...readVoiceSession(),
+      ...sessionRef.current,
+    });
     const asked = detectAskedLanguage(utterance, languageRef.current);
     const response = await runTextAction({
       userId,
@@ -392,14 +398,17 @@ export function VoxideAskHulum({
       },
     });
 
-    ai.bindState(() => ({
-      page: pathname,
-      opportunityId: sessionRef.current.opportunityId ?? null,
-      analysisId: sessionRef.current.analysisId ?? null,
-      language: languageRef.current,
-      canAnalyze: true,
-      canListScholarships: true,
-    }));
+    ai.bindState(() => {
+      const context = voiceContextFor(pathnameRef.current, sessionRef.current);
+      return {
+        page: pathnameRef.current,
+        opportunityId: context.opportunityId ?? null,
+        analysisId: context.analysisId ?? null,
+        language: languageRef.current,
+        canAnalyze: true,
+        canListScholarships: true,
+      };
+    });
 
     return ai;
   }, [publicKey, router]);

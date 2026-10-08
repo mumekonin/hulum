@@ -1157,7 +1157,7 @@ Interest: AI
 - [x] **P0** Show missing/uncertain requirements.
 - [x] **P0** Show readiness checklist.
 - [x] **P0** Demonstrate Ask HULUM text / quick actions (same product actions as voice tools).
-- [ ] **P0** Demonstrate live microphone / Voxide STT (needs keyed mic pass).
+- [ ] **P0** Demonstrate live microphone / Voxide STT (needs keyed mic pass). <!-- 2026-10-07 keyed pass: speech not recognized; spoken reply played -->
 - [x] **P0** Demonstrate English.
 - [x] **P1** Demonstrate Amharic text UX if stable (not live Amharic STT).
 - [x] **P0** Open official opportunity source.
@@ -1166,7 +1166,7 @@ Interest: AI
 - [x] **P1** Demonstrate a SKIP case (when catalog / fixtures allow; not seeded triangle).
 - [x] **P0** Prepare backup mode for external-service failure.
 - [x] **P0** Test clean browser/device (`smoke:browser` on CI).
-- [ ] **P0** Test microphone.
+- [-] **P0** Test microphone. <!-- 2026-10-07 local keyed pass: TTS heard; STT failed; Amharic recognized poorly; voice analyze used wrong listing (fixed) -->
 - [ ] **P0** Test production deployment.
 - [-] **P1** Prepare backup video/screenshots. <!-- PNGs in docs/demo/screenshots via capture:demo-screenshots; video still open -->
 
