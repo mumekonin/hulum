@@ -2,6 +2,12 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-08 — Profile photo upload body limit
+
+### Fixed
+- `POST /api/profile/:userId/photo` used the default 100kb JSON limit, so a cropped 512px JPEG (base64) was often rejected before it reached the database. Photo uploads now share the 8mb limit with document and screenshot uploads.
+- Default Postgres connect timeout raised from 5s to 15s so a cold remote database is less likely to surface as “could not reach the database” on the first profile photo request.
+
 ## 2026-10-07 — How HULUM works premium surface motion
 
 ### Changed

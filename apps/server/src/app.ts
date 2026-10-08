@@ -60,7 +60,10 @@ export function createApp(options: CreateAppOptions = {}): express.Express {
       const isScreenshot = req.path === "/api/ai/screenshot-analyze";
       const isDocumentUpload =
         req.method === "POST" && /^\/api\/profile\/[^/]+\/documents$/.test(req.path);
-      if (isScreenshot || isDocumentUpload) {
+      const isPhotoUpload =
+        req.method === "POST" && /^\/api\/profile\/[^/]+\/photo$/.test(req.path);
+      if (isScreenshot || isDocumentUpload || isPhotoUpload) {
+        // Profile photos (≤2 MB) and documents (≤4 MB) arrive as base64 JSON.
         // 4 MB file → ~5.4 MB base64 plus JSON keys. 5mb rejected valid uploads.
         express.json({ limit: "8mb" })(req, res, next);
         return;

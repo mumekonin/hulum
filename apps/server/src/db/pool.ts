@@ -3,7 +3,8 @@ import { requireDatabaseUrl } from "./client.js";
 
 let pool: pg.Pool | undefined;
 
-const DEFAULT_CONNECT_TIMEOUT_MS = 5_000;
+/** Remote Postgres (e.g. Neon cold start) often needs more than 5s on the first connect. */
+const DEFAULT_CONNECT_TIMEOUT_MS = 15_000;
 
 export function connectTimeoutMs(raw = process.env.DATABASE_CONNECT_TIMEOUT_MS): number {
   const value = Number(raw);

@@ -77,6 +77,13 @@ export function createPgPhotoStore(): PhotoStore {
         if (isPgError(error) && error.code === "23503") {
           throw new HttpError(404, "NOT_FOUND", "Sign in first, then add a profile photo.");
         }
+        if (isPgError(error) && error.code === "42P01") {
+          throw new HttpError(
+            503,
+            "DATABASE_UNAVAILABLE",
+            "Profile photos need database migration 017. Run npm run db:migrate, then try again.",
+          );
+        }
         throw error;
       }
     },
