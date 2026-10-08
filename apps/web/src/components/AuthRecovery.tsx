@@ -11,6 +11,7 @@ import {
   authInputClass,
   authLabelClass,
   authPrimaryButtonClass,
+  authTextLinkClass,
 } from "./AuthShell";
 
 type Phase = "idle" | "sending" | "sent";
@@ -108,7 +109,7 @@ export function AuthRecovery() {
           <button
             type="button"
             onClick={useDifferentEmail}
-            className="font-semibold text-gw-primary underline-offset-2 transition-colors hover:underline"
+            className={`${authTextLinkClass} font-semibold text-ink`}
           >
             Use a different email
           </button>
@@ -118,7 +119,7 @@ export function AuthRecovery() {
       <p className="mt-6 text-center text-[14px] text-gw-muted">
         <Link
           href="/sign-in"
-          className="font-semibold text-gw-primary underline-offset-2 transition-colors hover:underline"
+          className={`${authTextLinkClass} font-semibold text-ink`}
         >
           Back to sign in
         </Link>

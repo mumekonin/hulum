@@ -22,6 +22,7 @@ import {
   authInputClass,
   authLabelClass,
   authPrimaryButtonClass,
+  authTextLinkClass,
 } from "./AuthShell";
 
 type Phase =
@@ -174,7 +175,7 @@ export function AuthResetPassword() {
         <p className="mt-6 text-center text-[14px] text-gw-muted">
           <Link
             href="/sign-in"
-            className="font-semibold text-gw-primary underline-offset-2 transition-colors hover:underline"
+            className={`${authTextLinkClass} font-semibold text-ink`}
           >
             Back to sign in
           </Link>
@@ -246,7 +247,7 @@ export function AuthResetPassword() {
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-0 px-3.5 text-[13px] font-medium text-gw-muted transition-colors hover:text-gw-primary"
+              className="auth-reveal absolute inset-y-0 right-0 px-3.5 text-[13px] font-medium text-muted hover:text-ink"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide passwords" : "Show passwords"}
             >
@@ -287,7 +288,7 @@ export function AuthResetPassword() {
       <p className="mt-6 text-center text-[14px] text-gw-muted">
         <Link
           href="/sign-in"
-          className="font-semibold text-gw-primary underline-offset-2 transition-colors hover:underline"
+          className={`${authTextLinkClass} font-semibold text-ink`}
         >
           Back to sign in
         </Link>

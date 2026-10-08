@@ -23,6 +23,7 @@ import {
 } from "@/lib/profile-form";
 import { PROFILE_FIELD_LABELS } from "@/lib/text-actions";
 import { getUserId, setSessionToken, setUserId } from "@/lib/storage";
+import { btnPrimary, btnSecondary, fieldClass } from "@/lib/ui";
 
 const STEPS = ["About you", "Education", "Skills and experience", "Your CV"] as const;
 
@@ -50,8 +51,7 @@ const EMPTY: Form = {
   interests: "",
 };
 
-const inputClass =
-  "min-h-11 w-full border border-line-strong bg-surface px-3 py-2 focus:border-ink";
+const inputClass = fieldClass;
 
 function formFrom(view: ProfileView): Form {
   const p = view.profile;
@@ -260,13 +260,13 @@ export default function OnboardingPage() {
         <div className="mt-8 flex flex-wrap gap-3">
           <Link
             href="/opportunities"
-            className="inline-flex min-h-11 items-center bg-ink px-5 text-paper"
+            className={btnPrimary}
           >
             Find opportunities
           </Link>
           <Link
             href="/assistant"
-            className="inline-flex min-h-11 items-center border border-line-strong px-5 hover:border-ink"
+            className={btnSecondary}
           >
             Ask HULUM
           </Link>
@@ -322,7 +322,7 @@ export default function OnboardingPage() {
               type="file"
               accept={DOCUMENT_ACCEPT}
               onChange={(event) => setCvName(event.target.files?.[0]?.name ?? null)}
-              className="min-h-11 border border-line-strong bg-surface px-3 py-2 file:mr-3 file:border-0 file:bg-ink file:px-3 file:py-1.5 file:text-paper"
+              className={`${fieldClass} file:mr-3 file:border-0 file:bg-ink file:px-3 file:py-1.5 file:text-paper`}
             />
           </label>
           <p className="border-l-2 border-line-strong pl-3 text-sm text-muted">
@@ -333,7 +333,7 @@ export default function OnboardingPage() {
             <button
               type="submit"
               disabled={saving || cvName === null}
-              className="min-h-11 bg-ink px-5 text-paper disabled:opacity-60"
+              className={btnPrimary}
             >
               {saving ? "Uploading…" : "Upload and finish"}
             </button>
@@ -486,7 +486,7 @@ export default function OnboardingPage() {
             <button
               type="submit"
               disabled={saving}
-              className="min-h-11 bg-ink px-5 text-paper disabled:opacity-60"
+              className={btnPrimary}
             >
               {saving ? "Saving…" : "Continue"}
             </button>

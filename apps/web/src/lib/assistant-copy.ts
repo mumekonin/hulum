@@ -31,7 +31,7 @@ const EN: AssistantCopy = {
   send: "Send",
   micMissingTitle: "Microphone unavailable",
   micMissingBody:
-    "Type or use a quick action. Set NEXT_PUBLIC_VOXIDE_KEY to a publishable vox_pub_… key and whitelist http://localhost:3000 in the Voxide dashboard.",
+    "Type your question, or use a quick action.",
   voxideReadyTitle: "Voxide widget ready",
   voxideReadyBody:
     "The Ask HULUM launcher stays on every page after login. Say show me scholarships, then analyze for me. APPLY / MAYBE / SKIP still come from decide(). If the mic fails, type or use a quick action.",
@@ -53,7 +53,7 @@ const AM: AssistantCopy = {
   send: "ላክ",
   micMissingTitle: "ማይክሮፎን አይገኝም",
   micMissingBody:
-    "ይጻፉ ወይም ፈጣን እርምጃ ይጠቀሙ። NEXT_PUBLIC_VOXIDE_KEY (vox_pub_…) ያስቀምጡ እና http://localhost:3000 በVoxide dashboard ያስገቡ።",
+    "ይጻፉ ወይም ፈጣን እርምጃ ይጠቀሙ።",
   voxideReadyTitle: "የVoxide መግብር ዝግጁ ነው",
   voxideReadyBody:
     "ለድምጽ ወይም ለጽሑፍ የAsk HULUM ማስጀመሪያውን (ታች-ቀኝ) ይጠቀሙ። APPLY / MAYBE / SKIP ከአገልጋዩ decide() ብቻ ይመጣሉ። ማይክ ካልሰራ ይጻፉ።",

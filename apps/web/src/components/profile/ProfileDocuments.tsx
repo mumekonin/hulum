@@ -8,15 +8,13 @@ import {
   documentFileName,
   uploadedWhen,
 } from "@/lib/profile-form";
+import { btnGhost, btnPrimary, btnSecondary, fieldClass } from "@/lib/ui";
 
 export type DocumentFeedback = { kind: "done" | "error"; text: string } | null;
 
-const quietButton =
-  "inline-flex min-h-11 items-center px-2 text-sm text-muted underline underline-offset-4 transition-colors hover:text-ink disabled:opacity-60";
-const outlineButton =
-  "inline-flex min-h-11 items-center justify-center border border-line-strong bg-surface px-4 text-sm transition-colors hover:border-ink disabled:opacity-60";
-const primaryButton =
-  "inline-flex min-h-11 items-center justify-center bg-ink px-5 text-sm text-paper transition-opacity hover:opacity-90 disabled:opacity-60";
+const quietButton = btnGhost;
+const outlineButton = btnSecondary;
+const primaryButton = btnPrimary;
 
 function HiddenFileInput({
   inputRef,
@@ -104,7 +102,8 @@ export function CvCard({
           <div className="flex min-w-0 items-center gap-4">
             <FileIcon mimeType={cv.mimeType} />
             <div className="min-w-0">
-              <p className="truncate font-medium" title={documentFileName(cv)}>
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-muted">Current CV</p>
+              <p className="mt-1 truncate font-medium" title={documentFileName(cv)}>
                 {documentFileName(cv)}
               </p>
               <p className="mt-0.5 text-sm text-muted">
@@ -309,7 +308,7 @@ export function OtherDocuments({
             onChange={(event) => setLabel(event.target.value)}
             placeholder="Transcript"
             maxLength={80}
-            className="min-h-11 w-full border border-line-strong bg-surface px-3 py-2 focus:border-ink"
+            className={fieldClass}
           />
         </label>
         <label className="grid min-w-0 gap-1 text-sm">
@@ -318,7 +317,7 @@ export function OtherDocuments({
             ref={addFileRef}
             type="file"
             accept={DOCUMENT_ACCEPT}
-            className="min-h-11 w-full min-w-0 border border-line-strong bg-surface px-3 py-2 text-sm file:mr-3 file:border-0 file:bg-ink file:px-3 file:py-1 file:text-paper"
+            className={`${fieldClass} file:mr-3 file:border-0 file:bg-ink file:px-3 file:py-1 file:text-paper`}
           />
         </label>
         <button type="submit" disabled={locked} className={outlineButton}>

@@ -14,12 +14,10 @@ import {
   authInputClass,
   authLabelClass,
   authPrimaryButtonClass,
+  authTextLinkClass,
 } from "./AuthShell";
 
 const EMAIL_KEY = "hulum.gatewayEmail";
-
-const REGISTER_HONESTY =
-  "This page creates your account with email and password (JWT). The URL is /verify for history only—there is no email verification code or OTP step.";
 
 export function AuthInduction() {
   const router = useRouter();
@@ -60,12 +58,10 @@ export function AuthInduction() {
     <AuthShell>
       <AuthHeading
         title="Create your account."
-        subtitle="Register with email and password—no verification code step."
+        subtitle="Use your name, email, and a password."
       />
 
-      <AuthNotice className="mt-6">{REGISTER_HONESTY}</AuthNotice>
-
-      {notice ? <AuthNotice className="mt-4">{notice}</AuthNotice> : null}
+      {notice ? <AuthNotice className="mt-6">{notice}</AuthNotice> : null}
 
       <form className="mt-7 flex flex-col gap-4" onSubmit={createAccount}>
         <div className="flex flex-col gap-1.5">
@@ -122,7 +118,7 @@ export function AuthInduction() {
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-0 px-3.5 text-[13px] font-medium text-gw-muted transition-colors hover:text-gw-primary"
+              className="auth-reveal absolute inset-y-0 right-0 px-3.5 text-[13px] font-medium text-muted hover:text-ink"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
@@ -143,7 +139,7 @@ export function AuthInduction() {
         Already have an account?{" "}
         <Link
           href="/sign-in"
-          className="font-semibold text-gw-primary underline-offset-2 transition-colors hover:underline"
+          className={`${authTextLinkClass} font-semibold text-ink`}
         >
           Sign in
         </Link>

@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { btnPrimary, btnSecondary } from "@/lib/ui";
 
 type Action = { label: string; onClick: () => void } | { label: string; href: string };
 
@@ -42,9 +43,7 @@ export function StatusPanel({
 
 function ActionControl({ action, kind }: { action: Action; kind: "primary" | "secondary" }) {
   const className =
-    kind === "primary"
-      ? "inline-flex min-h-11 items-center bg-ink px-4 py-2 text-sm text-paper transition-opacity hover:opacity-90"
-      : "inline-flex min-h-11 items-center border border-line-strong px-4 py-2 text-sm transition-colors hover:border-ink";
+    kind === "primary" ? btnPrimary : btnSecondary;
 
   if ("href" in action) {
     return (

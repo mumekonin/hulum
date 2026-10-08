@@ -104,7 +104,7 @@ function pluralType(type: OpportunityType): string {
 }
 
 const selectClass =
-  "min-h-11 w-full border border-line bg-surface px-3 text-sm normal-case tracking-normal text-ink";
+  "hulum-field min-h-11 w-full border border-line bg-surface px-3 text-sm normal-case tracking-normal text-ink";
 
 export default function DiscoverPage() {
   const [all, setAll] = useState<Opportunity[]>([]);

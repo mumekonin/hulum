@@ -3,7 +3,7 @@ import { AuthInduction } from "@/components/AuthInduction";
 
 export const metadata: Metadata = {
   title: "Create account",
-  description: "Register with email and password. No email verification code (OTP).",
+  description: "Create a HULUM account with your name, email, and a password.",
 };
 
 export default function VerifyPage() {

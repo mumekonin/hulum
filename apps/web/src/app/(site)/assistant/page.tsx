@@ -17,6 +17,7 @@ import { StatusPanel } from "@/components/StatusPanel";
 import { hasVoxidePublicKey } from "@/lib/voxide";
 import { api, isNotFound, userFacingError } from "@/lib/api";
 import { assistantCopy, assistantQuickActions } from "@/lib/assistant-copy";
+import { btnPrimary } from "@/lib/ui";
 import {
   hulumMessageFrom,
   messageId,
@@ -581,13 +582,13 @@ function AssistantInner() {
                 placeholder={
                   language === "en" ? "Ask HULUM about an opportunity…" : copy.typePlaceholder
                 }
-                className="min-h-12 min-w-0 flex-1 border border-line-strong bg-surface px-4 focus:border-ink"
+                className="hulum-field min-h-12 min-w-0 flex-1 border border-line-strong bg-surface px-4"
                 disabled={Boolean(pending)}
                 autoComplete="off"
               />
               <button
                 disabled={Boolean(pending) || text.trim() === ""}
-                className="min-h-12 bg-ink px-5 text-paper disabled:opacity-60"
+                className={btnPrimary}
               >
                 {copy.send}
               </button>

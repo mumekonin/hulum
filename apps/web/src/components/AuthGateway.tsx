@@ -14,6 +14,7 @@ import {
   authInputClass as inputClass,
   authLabelClass as labelClass,
   authPrimaryButtonClass,
+  authTextLinkClass,
 } from "./AuthShell";
 
 type SimState = "idle" | "google-loading" | "submit-loading" | "error" | "notice";
@@ -83,7 +84,7 @@ export function AuthGateway() {
         type="button"
         disabled={busy}
         onClick={triggerGoogle}
-        className="mt-7 flex h-[50px] w-full items-center justify-center gap-2.5 rounded-lg border border-[#d9d6d0] bg-white text-[14px] font-semibold text-gw-primary transition-colors hover:border-[#bfbcb5] hover:bg-[#f6f5f2] disabled:opacity-60 dark:border-[#333] dark:bg-[#1a1a1a] dark:hover:border-[#444] dark:hover:bg-[#202020]"
+        className="auth-google hulum-btn hulum-btn-secondary mt-7 flex h-12 w-full items-center justify-center gap-2.5 rounded-md border border-line bg-surface text-[14px] font-semibold text-ink hover:bg-surface-muted disabled:opacity-60"
       >
         {sim === "google-loading" ? (
           <span className="h-4 w-4 animate-spin rounded-full border-2 border-gw-primary border-t-transparent" />
@@ -94,11 +95,11 @@ export function AuthGateway() {
       </button>
 
       <div className="my-5 flex items-center gap-3" aria-hidden>
-        <span className="h-px flex-1 bg-[#ecebe6] dark:bg-[#262626]" />
-        <span className="font-gw-mono text-[10px] uppercase tracking-[0.2em] text-[#9a978f] dark:text-[#6b6964]">
+        <span className="h-px flex-1 bg-line" />
+        <span className="font-gw-mono text-[10px] uppercase tracking-[0.14em] text-muted">
           or
         </span>
-        <span className="h-px flex-1 bg-[#ecebe6] dark:bg-[#262626]" />
+        <span className="h-px flex-1 bg-line" />
       </div>
 
       <form className="flex flex-col gap-4" onSubmit={signIn}>
@@ -126,7 +127,7 @@ export function AuthGateway() {
             </label>
             <Link
               href="/forgot-password"
-              className="text-[13px] text-gw-muted underline-offset-2 transition-colors hover:text-gw-primary hover:underline"
+              className={`${authTextLinkClass} text-[13px] font-medium text-gw-muted hover:text-gw-primary`}
             >
               Forgot password?
             </Link>
@@ -146,7 +147,7 @@ export function AuthGateway() {
             />
             <button
               type="button"
-              className="absolute inset-y-0 right-0 px-3.5 text-[13px] font-medium text-gw-muted transition-colors hover:text-gw-primary"
+              className="auth-reveal absolute inset-y-0 right-0 px-3.5 text-[13px] font-medium text-gw-muted hover:text-gw-primary"
               onClick={() => setShowPassword((v) => !v)}
               aria-label={showPassword ? "Hide password" : "Show password"}
             >
@@ -165,10 +166,7 @@ export function AuthGateway() {
 
       <p className="mt-6 text-center text-[14px] text-gw-muted">
         Don&apos;t have an account?{" "}
-        <Link
-          href="/verify"
-          className="font-semibold text-gw-primary underline-offset-2 transition-colors hover:underline"
-        >
+        <Link href="/verify" className={`${authTextLinkClass} font-semibold text-gw-primary`}>
           Create account
         </Link>
       </p>

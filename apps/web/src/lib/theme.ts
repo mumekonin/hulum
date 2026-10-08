@@ -16,7 +16,12 @@ export function currentTheme(): Theme {
 }
 
 export function setTheme(theme: Theme): void {
-  document.documentElement.dataset.theme = theme;
+  const root = document.documentElement;
+  root.classList.add("theme-settle");
+  window.requestAnimationFrame(() => {
+    root.dataset.theme = theme;
+    window.setTimeout(() => root.classList.remove("theme-settle"), 320);
+  });
   try {
     window.localStorage.setItem(THEME_KEY, theme);
   } catch {

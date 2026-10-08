@@ -27,6 +27,7 @@ import {
 } from "@/lib/profile-form";
 import { PROFILE_FIELD_LABELS } from "@/lib/text-actions";
 import { getLanguage, getUserId, setLanguage, setSessionToken } from "@/lib/storage";
+import { btnPrimary } from "@/lib/ui";
 import { StatusPanel } from "@/components/StatusPanel";
 import { ProfilePhoto } from "@/components/profile/ProfilePhoto";
 import {
@@ -474,7 +475,7 @@ export default function ProfilePage() {
             <button
               type="button"
               onClick={() => startEditing()}
-              className="min-h-11 shrink-0 self-start bg-ink px-5 text-paper transition-opacity hover:opacity-90 sm:self-center"
+              className={`${btnPrimary} shrink-0 self-start sm:self-center`}
             >
               Edit profile
             </button>

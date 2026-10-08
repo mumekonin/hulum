@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import { TYPE_LABELS, type Analysis, type Opportunity, type ReadinessItem } from "@hulum/shared";
-import { DecisionAuditPanel } from "@/components/DecisionAuditPanel";
+import { btnPrimary } from "@/lib/ui";
 import { StatusPanel } from "@/components/StatusPanel";
 import { DecisionSection } from "@/components/analysis/DecisionSection";
 import { OfficialSourcePanel } from "@/components/analysis/OfficialSourcePanel";
@@ -215,7 +215,6 @@ export default function OpportunityDetailPage() {
                     Why this decision? Ask HULUM
                   </Link>
                 </div>
-                {analysis.audit ? <DecisionAuditPanel audit={analysis.audit} /> : null}
               </>
             ) : (
               <section
@@ -233,7 +232,7 @@ export default function OpportunityDetailPage() {
                   type="button"
                   onClick={() => void analyze()}
                   disabled={analyzing}
-                  className="mt-5 inline-flex min-h-11 items-center bg-ink px-5 text-sm text-paper transition-opacity hover:opacity-90 disabled:opacity-60"
+                  className={`mt-5 ${btnPrimary}`}
                 >
                   {analyzing ? "Analyzing your fit…" : "Analyze my fit"}
                 </button>

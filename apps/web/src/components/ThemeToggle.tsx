@@ -12,9 +12,11 @@ export function ThemeToggle({ className = "" }: { className?: string }) {
       onClick={() => setTheme(next)}
       aria-label={`Switch to ${next} mode`}
       title={`Switch to ${next} mode`}
-      className={`inline-flex h-11 w-11 items-center justify-center text-muted transition-colors hover:text-ink ${className}`}
+      className={`inline-flex h-11 w-11 items-center justify-center text-muted transition-colors duration-200 hover:text-ink ${className}`}
     >
-      {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+      <span key={theme} className="auth-theme-icon inline-flex">
+        {theme === "dark" ? <SunIcon /> : <MoonIcon />}
+      </span>
     </button>
   );
 }

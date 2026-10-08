@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { SurfaceMotion } from "@/components/SurfaceMotion";
+import { labelClass, pageTitle } from "@/lib/ui";
 
 export const metadata: Metadata = { title: "How HULUM works" };
 
@@ -52,10 +53,8 @@ const journey = [
 export default function JourneyPage() {
   return (
     <section className="max-w-4xl">
-      <p className="text-sm uppercase tracking-[0.2em] text-forest">
-        Your AI opportunity decision agent
-      </p>
-      <h1 className="mt-4 font-display text-5xl leading-tight md:text-6xl">
+      <p className={labelClass}>Your AI opportunity decision agent</p>
+      <h1 className={`mt-4 ${pageTitle}`}>
         Don’t collect more opportunities. Decide which ones are worth your time.
       </h1>
       <p className="mt-6 max-w-2xl text-lg leading-8 text-muted">
@@ -66,16 +65,22 @@ export default function JourneyPage() {
         <SurfaceMotion
           href="/opportunities"
           variant="primary"
-          className="inline-flex min-h-11 items-center bg-ink px-5 py-3 text-paper"
+          className="inline-flex min-h-11 items-center gap-2 bg-ink px-5 py-3 text-paper"
         >
           Browse opportunities
+          <span aria-hidden className="hulum-arrow">
+            →
+          </span>
         </SurfaceMotion>
         <SurfaceMotion
           href="/profile"
           variant="secondary"
-          className="inline-flex min-h-11 items-center border border-ink px-5 py-3"
+          className="inline-flex min-h-11 items-center gap-2 border border-ink px-5 py-3"
         >
           Review your profile
+          <span aria-hidden className="hulum-arrow">
+            →
+          </span>
         </SurfaceMotion>
       </div>
 

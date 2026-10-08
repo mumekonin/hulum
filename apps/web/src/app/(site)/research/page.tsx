@@ -3,6 +3,7 @@
 import { FormEvent, useState } from "react";
 import { StatusPanel } from "@/components/StatusPanel";
 import { api, userFacingError } from "@/lib/api";
+import { btnPrimary, fieldClass, pageTitle } from "@/lib/ui";
 
 type ResearchPaper = {
   id: string;
@@ -61,7 +62,7 @@ export default function ResearchPage() {
 
   return (
     <section>
-      <h1 className="font-display text-4xl">Research</h1>
+      <h1 className={pageTitle}>Research</h1>
       <p className="mt-2 max-w-2xl text-muted">
         ScholarXIV papers inform HULUM’s design. They are not opportunity listings and they do not
         set APPLY, MAYBE, or SKIP.
@@ -74,10 +75,10 @@ export default function ResearchPage() {
             id="research-query"
             value={query}
             onChange={(event) => setQuery(event.target.value)}
-            className="min-h-11 border border-ink bg-surface px-3"
+            className={fieldClass}
           />
         </label>
-        <button type="submit" className="mt-6 inline-flex min-h-11 items-center bg-ink px-5 text-paper">
+        <button type="submit" className={`mt-6 ${btnPrimary}`}>
           Search ScholarXIV
         </button>
       </form>
@@ -103,7 +104,7 @@ export default function ResearchPage() {
 
       {error ? (
         <StatusPanel variant="error" title="We couldn't search ScholarXIV" primary={{ label: "Try again", onClick: () => void runSearch(query) }}>
-          {error} Put <code>SCHOLARXIV_API_KEY</code> in <code>apps/server/.env</code> and restart the API.
+          {error}
         </StatusPanel>
       ) : null}
 
@@ -133,7 +134,6 @@ export default function ResearchPage() {
                     DOI
                   </a>
                 ) : null}
-                <span className="text-muted">{paper.extractedID}</span>
               </div>
             </li>
           ))}

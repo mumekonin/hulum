@@ -1,5 +1,6 @@
 import { OFFICIAL_SOURCE_NOTICE, type Opportunity } from "@hulum/shared";
 import { ExternalLink } from "@/components/ExternalLink";
+import { btnPrimary, btnSecondary } from "@/lib/ui";
 
 /** Links only to URLs stored on the opportunity. applicationUrl wins when present. */
 export function OfficialSourcePanel({ opportunity }: { opportunity: Opportunity }) {
@@ -27,14 +28,14 @@ export function OfficialSourcePanel({ opportunity }: { opportunity: Opportunity 
       </p>
       <ExternalLink
         href={primaryHref}
-        className="mt-4 flex min-h-11 w-full items-center justify-center bg-ink px-4 text-sm text-paper transition-opacity hover:opacity-90"
+        className={`mt-4 w-full ${btnPrimary}`}
       >
         {primaryLabel}
       </ExternalLink>
       {showSourceLink ? (
         <ExternalLink
           href={opportunity.sourceUrl}
-          className="mt-2 flex min-h-11 w-full items-center justify-center border border-line-strong px-4 text-sm hover:border-ink"
+          className={`mt-2 w-full ${btnSecondary}`}
         >
           View official opportunity
         </ExternalLink>

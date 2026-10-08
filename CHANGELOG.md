@@ -2,6 +2,21 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-08 — Shared controls across the product
+
+### Changed
+- Primary and secondary actions share one button: 6px corners, a 1px lift, and a small press. Fields share one focus ring. Page titles and labels use one scale.
+- Sign-in colors come from the same ink, paper, and border tokens as the signed-in app. The three principles stay visible on a phone.
+- Get started keeps its sweep and arrow, and no longer nudges while idle. APPLY, MAYBE, and SKIP share one quiet lift. Browse and Review move their arrows a few pixels.
+- The decision audit panel is no longer shown on the opportunity page. A saved CV is labeled Current CV, with Update CV beside it.
+
+## 2026-10-08 — Sign-in page polish
+
+### Changed
+- The three sign-in principles are semi-bold, upright, and unquoted. The panel eases in; the form follows a moment later.
+- Sign in and Continue with Google lift slightly on hover and compress on press. Fields use a quiet ink focus ring. Forgot password and Create account underline on hover. Show/Hide and the theme icon ease instead of snapping.
+- Reduced motion keeps color and focus changes and skips the entrance and the lift.
+
 ## 2026-10-08 — Brand mark, quote cleanup, Get started motion
 
 ### Changed

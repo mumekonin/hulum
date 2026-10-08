@@ -9,6 +9,7 @@ import { StatusPanel } from "@/components/StatusPanel";
 import { api, userFacingError } from "@/lib/api";
 import { requirementLines } from "@/lib/format";
 import { getUserId } from "@/lib/storage";
+import { btnPrimary } from "@/lib/ui";
 
 const MAX_BYTES = 4 * 1024 * 1024;
 const ALLOWED = new Set(["image/jpeg", "image/png", "image/webp"]);
@@ -151,7 +152,7 @@ export default function ScreenshotPage() {
         <button
           type="submit"
           disabled={busy}
-          className="min-h-11 border border-ink bg-ink px-4 py-2 text-sm text-paper disabled:opacity-60"
+          className={btnPrimary}
         >
           {busy ? "Reading screenshot…" : "Analyze screenshot"}
         </button>

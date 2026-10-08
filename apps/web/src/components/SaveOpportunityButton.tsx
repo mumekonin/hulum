@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { userFacingError } from "@/lib/api";
+import { btnSecondary } from "@/lib/ui";
 import { fetchSaved, saveOpportunity, unsaveOpportunity } from "@/lib/history";
 
 export function SaveOpportunityButton({ opportunityId }: { opportunityId: string }) {
@@ -49,7 +50,7 @@ export function SaveOpportunityButton({ opportunityId }: { opportunityId: string
         onClick={() => void toggle()}
         disabled={saved === null || busy}
         aria-pressed={saved === true}
-        className="flex min-h-11 w-full items-center justify-center border border-line-strong px-4 text-sm hover:border-ink disabled:opacity-60"
+        className={`w-full ${btnSecondary}`}
       >
         {saved ? "Saved · Remove" : "Save opportunity"}
       </button>

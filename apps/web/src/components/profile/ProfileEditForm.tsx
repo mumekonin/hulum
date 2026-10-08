@@ -12,6 +12,7 @@ import { LANGUAGE_OPTIONS } from "@/lib/languages";
 import { PROFILE_FIELD_LABELS } from "@/lib/text-actions";
 import { voiceLauncherClearance } from "@/lib/voxide";
 import { StatusPanel } from "@/components/StatusPanel";
+import { btnGhost, btnPrimary, btnSecondary, fieldClass } from "@/lib/ui";
 
 export type ProfileForm = {
   educationLevel: string;
@@ -26,10 +27,8 @@ export type ProfileForm = {
   preferredLanguage: LanguageCode;
 };
 
-const inputClass =
-  "min-h-11 w-full border border-line-strong bg-surface px-3 py-2 focus:border-ink";
-const secondaryButton =
-  "inline-flex min-h-11 items-center border border-line-strong px-3 text-sm transition-colors hover:border-ink disabled:opacity-60";
+const inputClass = fieldClass;
+const secondaryButton = btnSecondary;
 const card = "border border-line bg-surface p-5 sm:p-7";
 const legend = "font-display text-2xl";
 
@@ -178,7 +177,7 @@ export function ProfileEditForm({
                 <button
                   type="button"
                   onClick={applyProposal}
-                  className="min-h-11 bg-ink px-4 text-sm text-paper"
+                  className={btnPrimary}
                 >
                   Use these in the form
                 </button>
@@ -344,7 +343,7 @@ export function ProfileEditForm({
         <button
           type="submit"
           disabled={saving}
-          className="min-h-11 bg-ink px-5 text-paper disabled:opacity-60"
+          className={btnPrimary}
         >
           {saving ? "Saving…" : "Save profile"}
         </button>
@@ -352,7 +351,7 @@ export function ProfileEditForm({
           type="button"
           onClick={onCancel}
           disabled={saving}
-          className="min-h-11 px-2 text-muted underline underline-offset-4 hover:text-ink"
+          className={btnGhost}
         >
           Cancel
         </button>
