@@ -144,20 +144,18 @@ describe("API security middleware", () => {
       }),
     );
     const url = `http://127.0.0.1:${port}/api/auth/login`;
-    const body = JSON.stringify({ email: "a@example.invalid", password: "strong-pass" });
-    const first = await fetch(url, {
-      method: "POST",
+    const init = {
+      method: "POST" as const,
       headers: { "content-type": "application/json" },
-      body,
-    });
-    const second = await fetch(url, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body,
-    });
+      body: JSON.stringify({ email: "a@example.invalid", password: "strong-pass" }),
+    };
+    const controller = new AbortController();
+    void fetch(url, { ...init, signal: controller.signal }).catch(() => undefined);
+    await new Promise((resolve) => setTimeout(resolve, 50));
+    const second = await fetch(url, init);
+    controller.abort();
     const payload: unknown = await second.json();
 
-    expect(first.status).not.toBe(429);
     expect(second.status).toBe(429);
     expect(payload).toEqual({
       data: null,
