@@ -11,13 +11,21 @@ const VoxideAskHulum = dynamic(
   { ssr: false },
 );
 
+const PUBLIC_PREFIXES = ["/sign-in", "/verify", "/forgot-password", "/reset-password", "/privacy", "/terms", "/auth"];
+
+/** Welcome, sign-in, and legal pages stay free of the microphone, even if this browser still has a session. */
+function isPublicPage(pathname: string): boolean {
+  if (pathname === "/") return true;
+  return PUBLIC_PREFIXES.some((prefix) => pathname === prefix || pathname.startsWith(`${prefix}/`));
+}
+
 /** One floating Ask HULUM popup, on every page after sign-in. */
 export function SiteVoice() {
   const pathname = usePathname();
   const [show, setShow] = useState(false);
 
   useEffect(() => {
-    setShow(hasVoxidePublicKey() && isSignedIn());
+    setShow(hasVoxidePublicKey() && isSignedIn() && !isPublicPage(pathname));
   }, [pathname]);
 
   if (!show) {
