@@ -9,7 +9,7 @@ Built for Ethiopian students and young professionals (STARK Hackathon 2026). Tea
 **Try it:** [https://hulum-alpha.vercel.app](https://hulum-alpha.vercel.app)  
 **API health:** [https://hulum-api.onrender.com/api/health](https://hulum-api.onrender.com/api/health)
 
-The free API sleeps when idle. The first open can take about a minute. Create an account, finish onboarding, then open Discover. The problem statement is [docs/product/problem.md](docs/product/problem.md). Judges: [docs/stark/README.md](docs/stark/README.md), then [docs/demo/script.md](docs/demo/script.md).
+The free API sleeps when idle. The first open can take about a minute. Create an account, finish onboarding, then open Discover.
 
 ---
 
@@ -59,7 +59,7 @@ Out of v0.1: auto-apply, payments, native mobile, inventing listings, and using 
 | Decision | `apps/server/src/decision/decide.ts` | An LLM must not decide |
 | Explanation | Groq on stored analyses (`GROQ_API_KEY`, `GROQ_MODEL`) | Claude leftover env names |
 | Voice | Ask HULUM text, plus the Voxide microphone when the key allows the site | Amharic/Oromo recognition quality is not a claimed result |
-| Research | `docs/research/` and `/research` when a server key is set | The paper log in `scholarxiv.md` stays empty; papers never decide |
+| Research | `/research` when a server key is set | Papers never decide APPLY / MAYBE / SKIP |
 | Host | [hulum-alpha.vercel.app](https://hulum-alpha.vercel.app) and [hulum-api.onrender.com](https://hulum-api.onrender.com) | Local `npm run dev` still works |
 
 ---
@@ -71,12 +71,8 @@ hulum/
 ├── apps/web/          # Next.js: /, /onboarding, /opportunities, /opportunities/[id], /my-opportunities, /readiness, /assistant, /profile, /screenshot, /research
 ├── apps/server/       # Express API (Postgres + JWT auth + investigator worker)
 ├── packages/shared/   # Zod + Task 22 contracts
-├── database/          # Postgres migrations
-├── docs/              # Product, research, ADRs, demo script, STARK evidence
-└── CHANGELOG.md
+└── database/          # Postgres migrations
 ```
-
-Judges: start at `docs/stark/README.md` (submission package), then `docs/demo/script.md`.
 
 ---
 
@@ -100,13 +96,13 @@ Set `DATABASE_URL` and `CLIENT_URL=http://localhost:3000` in local `.env` before
 
 API-only: `cp apps/server/.env.example apps/server/.env` then `npm run db:migrate` and `npm run dev:server`.
 
-See `database/README.md` for migrate/smoke. Judge walkthrough: `docs/demo/script.md`.
+`npm run db:migrate` applies the SQL files in `database/migrations`.
 
 ---
 
 ## Shared contracts
 
-Web and server import types from `@hulum/shared`. Task 22 lock notes are in `packages/shared/README.md`. Ask HULUM uses `SHOW_MISSING_REQUIREMENTS` (not `SHOW_GAPS`).
+Web and server import types from `@hulum/shared`. Ask HULUM uses `SHOW_MISSING_REQUIREMENTS` (not `SHOW_GAPS`).
 
 ---
 
@@ -145,7 +141,7 @@ Set `CLIENT_URL` in `apps/server/.env` to the web origin (`http://localhost:3000
 
 ## Production configuration
 
-Live hosts: **Vercel** serves the site and **Render** serves the API. Setup notes: `docs/stark/deployment.md`.
+Live hosts: **Vercel** serves the site and **Render** serves the API. `render.yaml` is the API blueprint. `apps/web/vercel.json` builds the site from this repo.
 
 | Variable | Required in production | Role |
 |---|---|---|
