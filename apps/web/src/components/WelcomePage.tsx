@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { BrandMark } from "./BrandMark";
 import { ThemeToggle } from "./ThemeToggle";
+import { DecisionPath } from "./WelcomeJourney";
 
 const rise = "motion-safe:animate-[wl-rise_550ms_cubic-bezier(0.2,0.7,0.2,1)_both]";
 
@@ -80,92 +81,6 @@ export function WelcomePage() {
         </section>
       </main>
     </div>
-  );
-}
-
-const SOURCES = [70, 140, 210, 280, 350];
-
-function DecisionPath() {
-  return (
-    <svg
-      viewBox="0 0 420 500"
-      className="h-auto w-full max-w-[280px] overflow-visible sm:max-w-[320px] lg:max-w-[400px]"
-      role="img"
-      aria-label="Many opportunities lead to fit, then readiness, then one decision: apply, maybe, or skip."
-    >
-      <g className="stroke-wl-line" fill="none" strokeWidth="1">
-        <circle cx="210" cy="400" r="70" />
-        <circle cx="210" cy="400" r="120" strokeDasharray="2 5" />
-        <circle cx="210" cy="400" r="175" opacity="0.6" />
-      </g>
-
-      <text
-        x="210"
-        y="52"
-        textAnchor="middle"
-        className="fill-wl-muted font-gw-mono text-[11px] tracking-[0.22em]"
-      >
-        OPPORTUNITIES
-      </text>
-
-      {SOURCES.map((x) => (
-        <path
-          key={`path-${x}`}
-          d={`M ${x} 99 C ${x} 150, 210 140, 210 188`}
-          fill="none"
-          strokeWidth={x === 280 ? 1.25 : 1}
-          className={x === 280 ? "stroke-wl-ink" : "stroke-wl-line"}
-        />
-      ))}
-      {SOURCES.map((x) => (
-        <circle
-          key={`node-${x}`}
-          cx={x}
-          cy="92"
-          r="7"
-          strokeWidth="1.25"
-          className={x === 280 ? "fill-wl-ink stroke-wl-ink" : "fill-wl-soft stroke-wl-muted"}
-        />
-      ))}
-
-      <path d="M210 210 V 278 M210 302 V 378" className="stroke-wl-ink" strokeWidth="1.25" />
-
-      <Stage y={198} step="02" label="FIT" />
-      <Stage y={290} step="03" label="READINESS" />
-
-      <circle cx="210" cy="400" r="22" className="fill-none stroke-wl-accent" strokeWidth="1" />
-      <circle cx="210" cy="400" r="10" className="fill-wl-accent" />
-      <text x="246" y="396" className="fill-wl-ink font-gw-mono text-[11px] tracking-[0.2em]">
-        DECISION
-      </text>
-      <text x="246" y="412" className="fill-wl-muted font-gw-mono text-[10px] tracking-[0.12em]">
-        04
-      </text>
-
-      <text
-        x="210"
-        y="466"
-        textAnchor="middle"
-        className="fill-wl-ink font-gw-serif text-[19px] italic"
-      >
-        Apply · Maybe · Skip
-      </text>
-    </svg>
-  );
-}
-
-function Stage({ y, step, label }: { y: number; step: string; label: string }) {
-  return (
-    <g>
-      <circle cx="210" cy={y} r="11" className="fill-wl-surface stroke-wl-ink" strokeWidth="1.25" />
-      <circle cx="210" cy={y} r="3" className="fill-wl-ink" />
-      <text x="236" y={y - 2} className="fill-wl-ink font-gw-mono text-[11px] tracking-[0.2em]">
-        {label}
-      </text>
-      <text x="236" y={y + 14} className="fill-wl-muted font-gw-mono text-[10px] tracking-[0.12em]">
-        {step}
-      </text>
-    </g>
   );
 }
 

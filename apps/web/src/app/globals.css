@@ -159,6 +159,261 @@ body {
   }
 }
 
+/*
+ * Welcome diagram journey. Attribute-driven so the sequence does not
+ * re-render React. Hover light and pulses stay inside the node.
+ */
+.wl-journey__opp-scale,
+.wl-journey__ring,
+.wl-journey__core,
+.wl-journey__decision-core,
+.wl-journey__decision-ring,
+.wl-journey__halos circle,
+.wl-journey__pulse {
+  transform-box: fill-box;
+  transform-origin: center;
+}
+
+.wl-journey__ring,
+.wl-journey__core,
+.wl-journey__decision-ring,
+.wl-journey__decision-core,
+.wl-journey__halos circle {
+  transition:
+    transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
+    stroke 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    stroke-width 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wl-journey__src,
+.wl-journey__stem {
+  transition: stroke 420ms cubic-bezier(0.22, 1, 0.36, 1), stroke-width 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wl-journey__opp-ring {
+  opacity: 0;
+  transition: opacity 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wl-journey__opp-dot {
+  transition: fill 420ms cubic-bezier(0.22, 1, 0.36, 1), stroke 420ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wl-journey__opp-scale {
+  transition: transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wl-journey[data-source="0"] .wl-journey__opp[data-i="0"] .wl-journey__opp-scale,
+.wl-journey[data-source="1"] .wl-journey__opp[data-i="1"] .wl-journey__opp-scale,
+.wl-journey[data-source="2"] .wl-journey__opp[data-i="2"] .wl-journey__opp-scale,
+.wl-journey[data-source="3"] .wl-journey__opp[data-i="3"] .wl-journey__opp-scale,
+.wl-journey[data-source="4"] .wl-journey__opp[data-i="4"] .wl-journey__opp-scale {
+  transform: scale(1.22);
+}
+
+.wl-journey[data-source="0"] .wl-journey__opp[data-i="0"] .wl-journey__opp-ring,
+.wl-journey[data-source="1"] .wl-journey__opp[data-i="1"] .wl-journey__opp-ring,
+.wl-journey[data-source="2"] .wl-journey__opp[data-i="2"] .wl-journey__opp-ring,
+.wl-journey[data-source="3"] .wl-journey__opp[data-i="3"] .wl-journey__opp-ring,
+.wl-journey[data-source="4"] .wl-journey__opp[data-i="4"] .wl-journey__opp-ring {
+  opacity: 0.85;
+}
+
+.wl-journey[data-source="0"] .wl-journey__opp[data-i="0"] .wl-journey__opp-dot,
+.wl-journey[data-source="1"] .wl-journey__opp[data-i="1"] .wl-journey__opp-dot,
+.wl-journey[data-source="2"] .wl-journey__opp[data-i="2"] .wl-journey__opp-dot,
+.wl-journey[data-source="3"] .wl-journey__opp[data-i="3"] .wl-journey__opp-dot,
+.wl-journey[data-source="4"] .wl-journey__opp[data-i="4"] .wl-journey__opp-dot {
+  fill: var(--wl-ink);
+  stroke: var(--wl-ink);
+}
+
+.wl-journey[data-source="0"] .wl-journey__src[data-i="0"],
+.wl-journey[data-source="1"] .wl-journey__src[data-i="1"],
+.wl-journey[data-source="2"] .wl-journey__src[data-i="2"],
+.wl-journey[data-source="3"] .wl-journey__src[data-i="3"],
+.wl-journey[data-source="4"] .wl-journey__src[data-i="4"] {
+  stroke: var(--wl-ink);
+  stroke-width: 1.35;
+}
+
+.wl-journey[data-flow="src"] .wl-journey__stem--a,
+.wl-journey[data-node="fit"] .wl-journey__stem--a,
+.wl-journey[data-flow="ready"] .wl-journey__stem--a,
+.wl-journey[data-node="ready"] .wl-journey__stem--a,
+.wl-journey[data-flow="decision"] .wl-journey__stem--b,
+.wl-journey[data-node="decision"] .wl-journey__stem--b {
+  stroke-width: 1.6;
+}
+
+.wl-journey__particle {
+  pointer-events: none;
+}
+
+.wl-journey__hit {
+  pointer-events: all;
+}
+
+.wl-journey__light {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wl-journey__node {
+  cursor: default;
+  outline: none;
+}
+
+.wl-journey__pulse {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.wl-journey__label,
+.wl-journey__step {
+  transition: fill 220ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wl-journey[data-node="fit"] .wl-journey__node--fit .wl-journey__ring,
+.wl-journey[data-node="ready"] .wl-journey__node--ready .wl-journey__ring {
+  transform: scale(1.08);
+}
+
+.wl-journey[data-node="fit"] .wl-journey__node--fit .wl-journey__core,
+.wl-journey[data-node="ready"] .wl-journey__node--ready .wl-journey__core {
+  transform: scale(1.35);
+}
+
+.wl-journey[data-node="ready"] .wl-journey__node--ready .wl-journey__ring {
+  transform: scale(1.12);
+}
+
+.wl-journey[data-node="fit"] .wl-journey__pulse--fit,
+.wl-journey[data-node="ready"] .wl-journey__pulse--ready,
+.wl-journey[data-node="decision"] .wl-journey__pulse--decision {
+  animation: wl-journey-pulse 560ms cubic-bezier(0.22, 1, 0.36, 1) forwards;
+}
+
+.wl-journey[data-node="decision"] .wl-journey__decision-core {
+  animation: wl-journey-decision 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wl-journey[data-node="decision"] .wl-journey__decision-ring {
+  animation: wl-journey-decision-ring 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.wl-journey[data-node="decision"] .wl-journey__node--decision .wl-journey__step {
+  fill: var(--wl-ink);
+}
+
+.wl-journey[data-hover="fit"][data-source="0"] .wl-journey__src[data-i="0"],
+.wl-journey[data-hover="fit"][data-source="1"] .wl-journey__src[data-i="1"],
+.wl-journey[data-hover="fit"][data-source="2"] .wl-journey__src[data-i="2"],
+.wl-journey[data-hover="fit"][data-source="3"] .wl-journey__src[data-i="3"],
+.wl-journey[data-hover="fit"][data-source="4"] .wl-journey__src[data-i="4"],
+.wl-journey[data-hover="fit"] .wl-journey__stem--a,
+.wl-journey[data-hover="ready"] .wl-journey__stem--a,
+.wl-journey[data-hover="ready"] .wl-journey__stem--b,
+.wl-journey[data-hover="decision"] .wl-journey__stem--b {
+  stroke: var(--wl-ink);
+  stroke-width: 1.7;
+}
+
+.wl-journey__node:active .wl-journey__ring,
+.wl-journey__node--decision:active .wl-journey__decision-ring {
+  stroke-width: 1.7;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .wl-journey__node--fit:hover .wl-journey__ring,
+  .wl-journey__node--fit:focus-visible .wl-journey__ring,
+  .wl-journey__node--ready:hover .wl-journey__ring,
+  .wl-journey__node--ready:focus-visible .wl-journey__ring,
+  .wl-journey__node--decision:hover .wl-journey__decision-ring,
+  .wl-journey__node--decision:focus-visible .wl-journey__decision-ring {
+    transform: scale(1.05);
+    stroke-width: 1.7;
+  }
+
+  .wl-journey__node--decision:hover .wl-journey__decision-core,
+  .wl-journey__node--decision:focus-visible .wl-journey__decision-core {
+    transform: scale(1.06);
+  }
+
+  .wl-journey__node:hover .wl-journey__light,
+  .wl-journey__node:focus-visible .wl-journey__light {
+    opacity: 1;
+  }
+
+  .wl-journey__node:hover .wl-journey__step,
+  .wl-journey__node:focus-visible .wl-journey__step {
+    fill: var(--wl-ink);
+  }
+
+  .wl-journey:has(.wl-journey__node--decision:hover) .wl-journey__halos circle,
+  .wl-journey:has(.wl-journey__node--decision:focus-visible) .wl-journey__halos circle {
+    transform: scale(1.025);
+    stroke: color-mix(in srgb, var(--wl-ink) 55%, var(--wl-line));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wl-journey__particle,
+  .wl-journey__pulse {
+    display: none;
+  }
+
+  .wl-journey__opp-scale,
+  .wl-journey__ring,
+  .wl-journey__core,
+  .wl-journey__decision-core,
+  .wl-journey__decision-ring,
+  .wl-journey__halos circle {
+    transform: none !important;
+    animation: none !important;
+    transition: stroke 180ms linear, fill 180ms linear, opacity 180ms linear, stroke-width 180ms linear;
+  }
+}
+
+@keyframes wl-journey-pulse {
+  0% {
+    opacity: 0.4;
+    transform: scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.85);
+  }
+}
+
+@keyframes wl-journey-decision {
+  0% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.08);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@keyframes wl-journey-decision-ring {
+  0% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  42% {
+    opacity: 1;
+    transform: scale(1.06);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
 h1,
 h2,
 h3,

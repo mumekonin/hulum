@@ -2,6 +2,11 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-08 — Welcome journey diagram motion
+
+### Changed
+- The welcome page diagram (opportunities → fit → readiness → decision) now plays a slow sequential journey: one opportunity dot at a time, a small signal along that path, then FIT, READINESS, and a single DECISION pulse. Hover and keyboard focus on FIT, READINESS, and DECISION highlight the connected path and a quiet cursor light. Reduced motion keeps the diagram still.
+
 ## 2026-10-08 — Profile photo upload body limit
 
 ### Fixed
