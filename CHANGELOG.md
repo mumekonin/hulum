@@ -2,6 +2,12 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-07 — Voxide WebSocket empty error overlay
+
+### Fixed
+- After a spoken request, HULUM no longer calls `disconnect()` on the live Voxide socket. Closing it made the SDK `console.error("[Voxide WS] Error:", event)` with an empty Event (`{}`), which Next.js shows as a console overlay, and it dropped the call so you had to tap the mic again.
+- Playback of Voxide's own refusal is stopped with `interrupt()` instead, so the socket stays up and HULUM's answer can still be read aloud.
+
 ## 2026-10-07 — Spoken requests get a spoken HULUM answer
 
 ### Fixed

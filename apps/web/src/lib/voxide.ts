@@ -57,6 +57,27 @@ export function canSpeakLocale(locale: string, voices: ReadonlyArray<{ lang: str
   return voices.some((voice) => voice.lang.toLowerCase().startsWith(base));
 }
 
+/**
+ * Voxide's WebSocket `onerror` is a browser Event. Logging it prints `{}`.
+ * That is not a spoken-recognition failure; skip treating it as one.
+ */
+export function isEmptyVoxideWsError(payload: unknown): boolean {
+  if (payload === undefined || payload === null) {
+    return true;
+  }
+  if (typeof payload === "string") {
+    return payload.trim() === "";
+  }
+  if (typeof payload !== "object") {
+    return false;
+  }
+  if ("message" in payload) {
+    const message = (payload as { message: unknown }).message;
+    return typeof message !== "string" || message.trim() === "";
+  }
+  return true;
+}
+
 /** Gemini refused or apologized instead of speaking the HULUM tool result. */
 export function isVoxideRefusal(text: string): boolean {
   return /i('d| would) love to|still don'?t have|don'?t have (the )?(right |necessary )?tools?|do not have (the )?(right |necessary )?tools?|no (ability|tool|capability)|cannot (help|do that|show|list|analyze|display)|i can'?t (analyze|show|display|list)|i('m| am) (not |un)able|lack(s)? (the )?(right |necessary )?(tools?|ability)|i have no ability|i('m| am) sorry|sorry[,.]? i|here to help with your next/i.test(
