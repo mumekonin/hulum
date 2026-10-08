@@ -23,6 +23,7 @@ import {
   isHulumSpeakPrompt,
   isSpokenHulumResult,
   finishedUserUtterance,
+  isEmptyVoxideWsError,
   isVoxideRefusal,
   readVoxidePublicKey,
   voxideSpeechLocale,
@@ -469,8 +470,9 @@ export function VoxideAskHulum({
       heardSpeech = false;
       recoveringRef.current = true;
       lastUserRef.current = value;
-      // Voxide's model may still refuse out loud; ending its turn keeps that from playing over HULUM's answer.
-      client.disconnect();
+      // Stop Voxide playback only. disconnect() closes the live socket and the SDK
+      // logs `[Voxide WS] Error: {}` (empty Event) — Next.js shows that as an overlay.
+      client.interrupt();
       void runOrFail(value)
         .then((reply) => {
           if (reply.trim() === "" || isVoxideRefusal(reply)) {
@@ -478,6 +480,7 @@ export function VoxideAskHulum({
           }
           spokeForRef.current = value;
           lastReplyRef.current = reply;
+          client.interrupt();
           presentAssistantText(client, reply);
           if (spoken) {
             speakAloud(reply, speechLocaleRef.current);
@@ -534,12 +537,17 @@ export function VoxideAskHulum({
     });
 
     const unsubError = client.on("error", (payload: unknown) => {
+      if (isEmptyVoxideWsError(payload)) {
+        return;
+      }
       clearSilence();
       reportVoiceOpsEvent("VOICE_RECOGNITION_FAILED", "voice");
       const detail =
         payload && typeof payload === "object" && "message" in payload
           ? String((payload as { message: unknown }).message)
-          : "";
+          : typeof payload === "string"
+            ? payload
+            : "";
       onVoiceIssueRef.current?.(recognitionFailureMessage(detail || undefined));
     });
 
@@ -573,6 +581,10 @@ export function VoxideAskHulum({
     const unsubStatus = client.on("status", (status: VoxideStatus) => {
       lastStatus = status;
       clearSilence();
+      if (status === "speaking" && recoveringRef.current) {
+        client.interrupt();
+        return;
+      }
       if (status === "error") {
         reportVoiceOpsEvent("VOICE_SESSION_ERROR", "session");
         onVoiceIssueRef.current?.(`Voice session error. ${TEXT_FALLBACK_HINT}`);

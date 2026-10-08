@@ -1,6 +1,11 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import { canSpeakLocale, finishedUserUtterance, isHulumProductRequest } from "./voxide";
+import {
+  canSpeakLocale,
+  finishedUserUtterance,
+  isEmptyVoxideWsError,
+  isHulumProductRequest,
+} from "./voxide";
 
 describe("finishedUserUtterance", () => {
   it("waits while the sentence is still streaming in", () => {
@@ -25,6 +30,20 @@ describe("finishedUserUtterance", () => {
   it("does not hand a half-heard word to the product actions", () => {
     const halfHeard = finishedUserUtterance([{ role: "user", text: " Show", partial: true }]);
     assert.equal(isHulumProductRequest(halfHeard), false);
+  });
+});
+
+describe("isEmptyVoxideWsError", () => {
+  it("treats the SDK's empty Event as noise, not a recognition failure", () => {
+    assert.equal(isEmptyVoxideWsError({}), true);
+    assert.equal(isEmptyVoxideWsError(undefined), true);
+    assert.equal(isEmptyVoxideWsError({ type: "error" }), true);
+    assert.equal(isEmptyVoxideWsError({ message: "   " }), true);
+  });
+
+  it("keeps real Voxide error strings", () => {
+    assert.equal(isEmptyVoxideWsError("usage_limit"), false);
+    assert.equal(isEmptyVoxideWsError({ message: "usage_limit" }), false);
   });
 });
 
