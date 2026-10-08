@@ -22,11 +22,14 @@ import {
   isHulumProductRequest,
   isHulumSpeakPrompt,
   isSpokenHulumResult,
+  finishedUserUtterance,
   isVoxideRefusal,
   readVoxidePublicKey,
   voxideSpeechLocale,
   VOXIDE_STARTERS,
+  type VoxideTurn,
 } from "@/lib/voxide";
+import { speakAloud, stopSpeaking } from "@/lib/speak";
 
 export type VoxideSessionIds = VoiceSessionIds;
 
@@ -85,25 +88,23 @@ function eventRole(payload: unknown): "user" | "ai" | undefined {
   return undefined;
 }
 
-type WidgetMessage = { role: "user" | "ai"; text: string };
+type WidgetMessage = VoxideTurn;
 
 function widgetMessages(client: VoxideClient): WidgetMessage[] {
   return (client.getSnapshot().messages ?? []).map((row) => ({
     role: row.role,
     text: row.text,
+    ...(row.partial === true ? { partial: true } : {}),
   }));
 }
 
 function lastProductUtterance(client: VoxideClient, fallback: string): string {
-  const messages = widgetMessages(client);
-  for (let index = messages.length - 1; index >= 0; index -= 1) {
-    const row = messages[index];
-    if (row !== undefined && row.role === "user" && isHulumProductRequest(row.text)) {
-      return row.text.trim();
-    }
-  }
-  return fallback;
+  const finished = finishedUserUtterance(widgetMessages(client));
+  return isHulumProductRequest(finished) ? finished : fallback;
 }
+
+/** Pause after the last streamed word before treating a spoken sentence as finished. */
+const SPEECH_SETTLE_MS = 1_000;
 
 type VoiceSnapshotWriter = (patch: { messages: WidgetMessage[] }) => void;
 
@@ -179,6 +180,8 @@ export function VoxideAskHulum({
     () => language ?? getLanguage(),
   );
   const speechLocale = voxideSpeechLocale(askedLanguage);
+  const speechLocaleRef = useRef(speechLocale);
+  speechLocaleRef.current = speechLocale;
 
   useEffect(() => {
     const sync = () => setAskedLanguage(language ?? getLanguage());
@@ -450,27 +453,35 @@ export function VoxideAskHulum({
       }
     };
 
+    let heardSpeech = false;
+
     const speakHulumReply = (utterance: string) => {
+      const value = utterance.trim();
       if (
         recoveringRef.current ||
-        spokeForRef.current === utterance ||
-        !isHulumProductRequest(utterance) ||
-        isLoopText(utterance)
+        spokeForRef.current === value ||
+        !isHulumProductRequest(value) ||
+        isLoopText(value)
       ) {
         return;
       }
+      const spoken = heardSpeech;
+      heardSpeech = false;
       recoveringRef.current = true;
-      lastUserRef.current = utterance;
-      client.interrupt();
-      void runOrFail(utterance)
+      lastUserRef.current = value;
+      // Voxide's model may still refuse out loud; ending its turn keeps that from playing over HULUM's answer.
+      client.disconnect();
+      void runOrFail(value)
         .then((reply) => {
           if (reply.trim() === "" || isVoxideRefusal(reply)) {
             return;
           }
-          spokeForRef.current = utterance;
+          spokeForRef.current = value;
           lastReplyRef.current = reply;
-          client.interrupt();
           presentAssistantText(client, reply);
+          if (spoken) {
+            speakAloud(reply, speechLocaleRef.current);
+          }
         })
         .finally(() => {
           recoveringRef.current = false;
@@ -493,14 +504,29 @@ export function VoxideAskHulum({
     };
 
     let lastDispatchedUser = "";
+    let settleTimer: ReturnType<typeof setTimeout> | undefined;
+    const dispatchUser = (text: string) => {
+      if (text === "" || text === lastDispatchedUser || !isHulumProductRequest(text)) {
+        return;
+      }
+      lastDispatchedUser = text;
+      rememberUser(text);
+      speakHulumReply(text);
+    };
     const unsubSnap = client.subscribe(() => {
       const messages = widgetMessages(client);
-      const lastUser = lastProductUtterance(client, "");
-      if (lastUser !== "" && lastUser !== lastDispatchedUser) {
-        lastDispatchedUser = lastUser;
-        rememberUser(lastUser);
-        speakHulumReply(lastUser);
+      const last = messages[messages.length - 1];
+      if (settleTimer !== undefined) {
+        clearTimeout(settleTimer);
+        settleTimer = undefined;
       }
+      if (last?.role === "user" && last.partial === true) {
+        heardSpeech = true;
+        stopSpeaking();
+        const streaming = last.text.trim();
+        settleTimer = setTimeout(() => dispatchUser(streaming), SPEECH_SETTLE_MS);
+      }
+      dispatchUser(lastProductUtterance(client, ""));
       const refusal = [...messages].reverse().find((row) => row.role === "ai" && isVoxideRefusal(row.text));
       if (refusal !== undefined) {
         recoverIfRefused(refusal.text);
@@ -534,8 +560,7 @@ export function VoxideAskHulum({
         return;
       }
       if (role === "user") {
-        rememberUser(text);
-        speakHulumReply(text);
+        dispatchUser(text);
         return;
       }
       if (role === "ai") {
@@ -567,6 +592,10 @@ export function VoxideAskHulum({
 
     return () => {
       clearSilence();
+      if (settleTimer !== undefined) {
+        clearTimeout(settleTimer);
+      }
+      stopSpeaking();
       unsubSnap();
       unsubError();
       unsubTranscript();

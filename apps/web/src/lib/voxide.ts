@@ -31,6 +31,32 @@ export function voxideSpeechLocale(language: LanguageCode): "en-US" | "am-ET" {
   return "en-US";
 }
 
+export type VoxideTurn = { role: "user" | "ai"; text: string; partial?: boolean };
+
+/**
+ * The latest thing the visitor said once Voxide has finished hearing it: marked final,
+ * or already followed by another message. Empty while the sentence is still streaming in.
+ */
+export function finishedUserUtterance(messages: VoxideTurn[]): string {
+  for (let index = messages.length - 1; index >= 0; index -= 1) {
+    const row = messages[index];
+    if (row?.role !== "user") {
+      continue;
+    }
+    return row.partial === true && index === messages.length - 1 ? "" : row.text.trim();
+  }
+  return "";
+}
+
+/** English always has a system voice; other locales only when the browser lists one. */
+export function canSpeakLocale(locale: string, voices: ReadonlyArray<{ lang: string }>): boolean {
+  const base = locale.slice(0, 2).toLowerCase();
+  if (base === "en") {
+    return true;
+  }
+  return voices.some((voice) => voice.lang.toLowerCase().startsWith(base));
+}
+
 /** Gemini refused or apologized instead of speaking the HULUM tool result. */
 export function isVoxideRefusal(text: string): boolean {
   return /i('d| would) love to|still don'?t have|don'?t have (the )?(right |necessary )?tools?|do not have (the )?(right |necessary )?tools?|no (ability|tool|capability)|cannot (help|do that|show|list|analyze|display)|i can'?t (analyze|show|display|list)|i('m| am) (not |un)able|lack(s)? (the )?(right |necessary )?(tools?|ability)|i have no ability|i('m| am) sorry|sorry[,.]? i|here to help with your next/i.test(

@@ -2,6 +2,13 @@
 
 HULUM records actual work. Do not invent history.
 
+## 2026-10-07 — Spoken requests get a spoken HULUM answer
+
+### Fixed
+- The voice widget waits until a spoken sentence is finished before acting. Before, it could act on the first word ("Show") and list everything instead of scholarships.
+- When HULUM answers a request, it ends Voxide's own reply, so Voxide's "I can't help with that" no longer plays over the answer.
+- HULUM's answer is read aloud with the browser's voice for spoken requests (typed requests stay silent). Amharic is read only when the browser has an Amharic voice; otherwise the answer stays as text.
+
 ## 2026-10-07 — Voice analyzes the listing on screen
 
 ### Fixed
