@@ -6,6 +6,19 @@
 
 ---
 
+## 2026-10-07 — First keyed microphone pass (local)
+
+Run by the owner in a real browser with `NEXT_PUBLIC_VOXIDE_KEY` set (`/api/sdk/init` 200).
+
+- Spoken reply (TTS): heard.
+- Speech to text: **failed** — "Show me scholarships" was not recognized.
+- Amharic speech: recognized poorly.
+- Voice "Analyze for me" gave a different decision than the button. Cause: after a voice list, voice kept the first listed opportunity and analyzed it instead of the one on screen. Fixed: on `/opportunities/[id]` the listing on screen wins, and an analysis from another listing is dropped. Reproduced and confirmed fixed in a headless browser (typed into the widget).
+
+Still open: live STT (English and Amharic), Voxide Amharic quality, deploy, CI require-check (admin), backup video.
+
+---
+
 ## 2026-10-07 — Profile redesign + photo + CV update
 
 - `/profile` reorganized into header, completeness, sections, CV card, and other documents. Same profile/documents API; no fields removed.
