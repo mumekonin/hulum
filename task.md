@@ -212,12 +212,12 @@ hulum/
 
 ## Research questions
 
-- [-] Barriers to applying for eligible opportunities among Ethiopian students.
-- [-] Causes of opportunity application failure among African youth.
+- [-] Barriers to applying for eligible opportunities among Ethiopian students. <!-- 2026-10-07 ScholarXIV searched: no direct study; adjacent evidence in docs/research/scholarxiv.md; needs journal sources or interviews -->
+- [-] Causes of opportunity application failure among African youth. <!-- 2026-10-07: adjacent evidence only (credit barriers, fragmented programs); see docs/product/research-questions.md -->
 - [x] Responsible AI eligibility uncertainty.
 - [x] Opportunity matching and decision-support systems.
-- [-] Voice-first design for non-English speakers. <!-- Ask HULUM text/quick actions proven; live non-English STT not mic-tested -->
-- [-] Multilingual interaction for English/Amharic/Afaan Oromo users. <!-- Amharic + Oromo Ask HULUM text quick actions; Oromo chrome English; live STT open (ADR 004) -->
+- [x] Voice-first design for non-English speakers. <!-- 2026-10-07: answered from 3 ASR surveys/benchmarks (docs/research/scholarxiv.md); voice + text fallback -->
+- [x] Multilingual interaction for English/Amharic/Afaan Oromo users. <!-- 2026-10-07: answered from Amharic ASR, Oromo IR, code-switching papers; confirms ADR 004 -->
 - [x] Readiness support for scholarship/internship/job applications.
 - [x] Trust and verification of opportunity requirements.
 - [x] Human oversight when AI assists eligibility decisions.
