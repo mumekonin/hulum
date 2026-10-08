@@ -752,6 +752,12 @@ h3,
   outline-color: #f5f3ed;
 }
 
+@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
+  .welcome-footer__social:hover {
+    transform: translateY(-1px);
+  }
+}
+
 .sr-only {
   position: absolute;
   width: 1px;
