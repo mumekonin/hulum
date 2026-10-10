@@ -48,9 +48,23 @@ export function AuthGateway() {
     }
   }, [router]);
 
-  function triggerGoogle() {
+  async function triggerGoogle() {
     setSim("google-loading");
     setNotice(null);
+    setBusy(true);
+    const deadline = Date.now() + 90_000;
+    while (Date.now() < deadline) {
+      try {
+        const response = await fetch(`${API_URL}/api/health`, { cache: "no-store" });
+        if (response.ok) {
+          const body = (await response.json()) as { data?: { status?: string } };
+          if (body.data?.status === "ok") break;
+        }
+      } catch {
+        // The free API is still waking. Stay on this page instead of showing Render's screen.
+      }
+      await new Promise((resolve) => window.setTimeout(resolve, 1500));
+    }
     window.location.assign(`${API_URL}/api/auth/google`);
   }
 
@@ -82,7 +96,7 @@ export function AuthGateway() {
 
       <button
         type="button"
-        disabled={busy}
+        disabled={busy || sim === "google-loading"}
         onClick={triggerGoogle}
         className="auth-google hulum-btn hulum-btn-secondary mt-7 flex h-12 w-full items-center justify-center gap-2.5 rounded-md border border-line bg-surface text-[14px] font-semibold text-ink hover:bg-surface-muted disabled:opacity-60"
       >
@@ -91,7 +105,7 @@ export function AuthGateway() {
         ) : (
           <GoogleMark />
         )}
-        <span>{sim === "google-loading" ? "Redirecting to Google…" : "Continue with Google"}</span>
+        <span>{sim === "google-loading" ? "Connecting…" : "Continue with Google"}</span>
       </button>
 
       <div className="my-5 flex items-center gap-3" aria-hidden>
